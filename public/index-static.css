@@ -1,0 +1,8 @@
+.mahjong-tile {
+  background-image: url('images/mahjong-tiles.png');
+  background-origin: padding-box;
+  background-size: 1100% 600%;
+  width: 100%;
+  height: auto;
+  padding-top: 140%;
+}
