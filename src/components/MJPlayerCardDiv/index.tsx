@@ -16,7 +16,7 @@ export default function MJPlayerCardDiv({
 }: Props) {
   return (
     <div
-      className={`bg-white bg-opacity-60 rounded-lg ${className} pr-1`}
+      className={`bg-white bg-opacity-60 rounded-lg pr-1 ${className}`}
       {...props}
     >
       <div className="flex items-stretch">
