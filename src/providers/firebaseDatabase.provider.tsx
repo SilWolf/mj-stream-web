@@ -1,8 +1,25 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import React, { createContext, useContext, PropsWithChildren } from 'react'
+import React, {
+  createContext,
+  useContext,
+  PropsWithChildren,
+  useCallback,
+  useMemo,
+  useState,
+  useEffect,
+} from 'react'
 
 import { initializeApp } from 'firebase/app'
-import { Database, getDatabase } from 'firebase/database'
+import {
+  Database as FirebaseDatabase,
+  getDatabase,
+  ref as fbRef,
+  get as fbGet,
+  set as fbSet,
+  update as fbUpdate,
+  onValue as fbOnValue,
+  ListenOptions as fbListenOptions,
+} from 'firebase/database'
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -19,18 +36,45 @@ const firebaseApp = initializeApp(firebaseConfig)
 const firebaseDatabase = getDatabase(firebaseApp)
 
 type FirebaseDatabaseContextProps = {
-  instance: Database
-  getData: () => void
-  setData: () => void
+  database: FirebaseDatabase
+  get: <T extends Record<string, unknown>>(
+    key: string
+  ) => Promise<T | undefined>
+  set: (key: string, payload: unknown) => Promise<void>
+  update: (key: string, payload: unknown) => Promise<void>
 }
 
 const contextDefaultValue = {
-  instance: firebaseDatabase,
-  getData: () => {
-    throw new Error('Not Implemented')
+  database: firebaseDatabase,
+  get: <T extends Record<string, unknown>>(
+    key: string
+  ): Promise<T | undefined> => {
+    const ref = fbRef(firebaseDatabase, key)
+    return fbGet(ref)
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          return snapshot.val() as T
+        }
+        return undefined
+      })
+      .catch((error) => {
+        console.error(error)
+        throw error
+      })
   },
-  setData: () => {
-    throw new Error('Not Implemented')
+  set: (key: string, payload: unknown) => {
+    const ref = fbRef(firebaseDatabase, key)
+    return fbSet(ref, payload).catch((error) => {
+      console.error(error)
+      throw error
+    })
+  },
+  update: (key: string, payload: unknown) => {
+    const ref = fbRef(firebaseDatabase, key)
+    return fbUpdate(ref, payload as object).catch((error) => {
+      console.error(error)
+      throw error
+    })
   },
 }
 
@@ -48,6 +92,49 @@ export default function FirebaseDatabaseProvider({
 }
 
 export const useFirebaseDatabase = () => {
-  const context = useContext(FirebaseDatabaseContext)
-  return context
+  return useContext(FirebaseDatabaseContext)
+}
+
+export const useFirebaseDatabaseByKey = <T extends Record<string, unknown>>(
+  key: string,
+  options?: fbListenOptions
+) => {
+  const { database } = useContext(FirebaseDatabaseContext)
+  const ref = useMemo(() => fbRef(database, key), [database, key])
+
+  const [data, setData] = useState<T>()
+
+  const set = useCallback(
+    (payload: T) => {
+      return fbSet(ref, payload)
+    },
+    [ref]
+  )
+
+  const update = useCallback(
+    (payload: T) => {
+      return fbUpdate(ref, payload)
+    },
+    [ref]
+  )
+
+  useEffect(() => {
+    if (options?.onlyOnce) {
+      fbGet(ref).then((snapshot) => {
+        if (snapshot.exists()) {
+          setData(snapshot.val())
+        }
+      })
+    } else {
+      fbOnValue(
+        ref,
+        (snapshot) => {
+          setData(snapshot.val())
+        },
+        options ?? {}
+      )
+    }
+  }, [options, ref])
+
+  return { data, set, update }
 }

@@ -13,13 +13,15 @@ export type Database = {
  */
 export type DatabaseV1 = {
   matches: Record<Match['id'], Match>
-  matchDetails: Record<Match['id'], MatchDetail>
-  matchActiveRounds: Record<Match['id'], MatchRound>
+  matchRounds: Record<
+    Match['id'],
+    Record<MatchRound['id'] | 'active', MatchRound>
+  >
   players: Record<Player['id'], Player>
-  playerIdentities: Record<PlayerIdentity['id'], PlayerIdentity>
-  playerPlayerIdentities: Record<Player['id'], PlayerIdentity['id']>
-  playerMatches: Record<Player['id'], string>
-  settings: Record<Match['id'], Setting>
+  playerMatches: Record<
+    Player['id'],
+    Record<Match['id'], { id: Match['id']; createdAt: string }>
+  >
 }
 
 /**
@@ -31,7 +33,8 @@ export type Match = {
   code: string
   players: Record<
     PlayerIndex,
-    PlayerIdentity & {
+    {
+      id: Player['id']
       rank: number
       score: number
       point: number
@@ -42,28 +45,21 @@ export type Match = {
   createdBy: string
   updatedAt: string
   updatedBy: string
-}
-
-export type MatchDetail = Pick<Match, 'id'> & {
-  setting: Setting
-  rounds: Record<string, MatchRound>
+  setting: MatchSetting
 }
 
 export type Player = {
   id: string
   code: string
-}
-
-export type PlayerIdentity = {
-  id: string
-  code: string
   name: string
   title?: string
   propicSrc?: string
+  masterPlayerId?: string
 }
 
 type MatchRound = {
   id: string
+  matchId: string
   code: string
   counter: string
   jackpot: number
@@ -93,4 +89,4 @@ export type PlayerResult = {
   isRevealed?: boolean
 }
 
-export type Setting = Record<string, string>
+export type MatchSetting = Record<string, string>
