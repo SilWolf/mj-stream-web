@@ -1,46 +1,24 @@
 import React from 'react'
-import MJMatchCounterSpan from './components/MJMatchCounterSpan'
-import MJPlayerCardDiv from './components/MJPlayerCardDiv'
-import MJTileDiv from './components/MJTileDiv'
-import useMatch from './hooks/useMatch'
-import BroadcastLayout from './layouts/Broadcast.layout'
+import MJMatchCounterSpan from '@/components/MJMatchCounterSpan'
+import MJPlayerCardDiv from '@/components/MJPlayerCardDiv'
+import MJTileDiv from '@/components/MJTileDiv'
+import useMatch from '@/hooks/useMatch'
+import BroadcastLayout from '@/layouts/Broadcast.layout'
 
-function AppOBSInstructionDiv() {
-  return (
-    <div className="flex-1 text-current text-[40px] flex items-center justify-center">
-      <div>
-        <p>1. 打開OBS</p>
-        <p>
-          2. 來源 {'->'} + {'->'} 瀏覽器，然後照下面設定
-        </p>
-        <p>
-          - 網址 = 此頁的網址 <strong>{window.location.href}</strong>
-          <br />- 寬度 = 1920, 高度 = 1080
-          <br /> - 自訂CSS ={' '}
-          {
-            'body { background-color: rgba(0, 0, 0, 0); color: rgba(0, 0, 0, 0); margin: 0px auto; overflow: hidden; }'
-          }
-          <br />
-          其餘默認即可。
-        </p>
-        <p>4. 確定</p>
-      </div>
-    </div>
-  )
-}
+import OBSInstructionDiv from './components/OBSInstructionDiv'
 
 type Props = {
   params: { matchId: string }
 }
 
-function App({ params: { matchId } }: Props) {
+export default function MatchDetailPage({ params: { matchId } }: Props) {
   const { match, matchActiveRound } = useMatch(matchId)
 
   if (!match || !matchActiveRound) {
     return (
       <BroadcastLayout>
         <div className="text-current">對局讀取失敗。</div>
-        <AppOBSInstructionDiv />
+        <OBSInstructionDiv />
       </BroadcastLayout>
     )
   }
@@ -67,7 +45,7 @@ function App({ params: { matchId } }: Props) {
         <div className="flex-1" />
       </div>
 
-      <AppOBSInstructionDiv />
+      <OBSInstructionDiv />
 
       <div className="flex flex-row items-end justify-center gap-x-2 text-white">
         <MJPlayerCardDiv
@@ -94,5 +72,3 @@ function App({ params: { matchId } }: Props) {
     </BroadcastLayout>
   )
 }
-
-export default App
