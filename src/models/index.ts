@@ -1,17 +1,32 @@
 export type PlayerIndex = 0 | 1 | 2 | 3
 
+/**
+ * DatabaseRoot
+ */
 export type Database = {
-  games: Record<string, Game>
-  gameDetails: Record<string, Game>
-  gameActiveRounds: Record<string, Round>
-  players: Record<string, Player>
-  playerIdentities: Record<string, PlayerIdentity>
-  playerPlayerIdentities: Record<string, string>
-  playerGames: Record<string, string>
-  settings: Record<string, Setting>
+  v1: DatabaseV1
 }
 
-export type Game = {
+/**
+ * DatabaseV1
+ * @description root interface of database
+ */
+export type DatabaseV1 = {
+  matches: Record<Match['id'], Match>
+  matchDetails: Record<Match['id'], MatchDetail>
+  matchActiveRounds: Record<Match['id'], MatchRound>
+  players: Record<Player['id'], Player>
+  playerIdentities: Record<PlayerIdentity['id'], PlayerIdentity>
+  playerPlayerIdentities: Record<Player['id'], PlayerIdentity['id']>
+  playerMatches: Record<Player['id'], string>
+  settings: Record<Match['id'], Setting>
+}
+
+/**
+ * Match
+ * @description interface of a full match
+ */
+export type Match = {
   id: string
   code: string
   players: Record<
@@ -29,9 +44,9 @@ export type Game = {
   updatedBy: string
 }
 
-export type GameDetail = Pick<Game, 'id'> & {
+export type MatchDetail = Pick<Match, 'id'> & {
   setting: Setting
-  rounds: Record<string, Round>
+  rounds: Record<string, MatchRound>
 }
 
 export type Player = {
@@ -47,42 +62,15 @@ export type PlayerIdentity = {
   propicSrc?: string
 }
 
-type Round_Base = {
+type MatchRound = {
   id: string
   code: string
-  playerInRoundMap: Record<PlayerIndex, PlayerInRound>
+  counter: string
   jackpot: number
+  resultType: RoundResultTypeEnum
+  playerResults: Record<PlayerIndex, PlayerResult>
   doras: string[]
 }
-
-type Round_ResultTypeExhausted = {
-  resultType: RoundResultTypeEnum.Exhausted
-  winners: PlayerIndex[]
-  losers: PlayerIndex[]
-}
-
-type Round_ResultTypeRon = {
-  resultType: RoundResultTypeEnum.Ron
-  winner: PlayerIndex
-  loser: PlayerIndex
-}
-
-type Round_ResultTypeSelfDrawn = {
-  resultType: RoundResultTypeEnum.SelfDrawn
-  winner: PlayerIndex
-}
-
-type Round_ResultTypeUnknown = {
-  resultType: RoundResultTypeEnum.Unknown
-}
-
-type Round_AllResultType =
-  | Round_ResultTypeExhausted
-  | Round_ResultTypeRon
-  | Round_ResultTypeSelfDrawn
-  | Round_ResultTypeUnknown
-
-export type Round = Round_Base & Round_AllResultType
 
 export enum RoundResultTypeEnum {
   Unknown = 0,
@@ -91,11 +79,18 @@ export enum RoundResultTypeEnum {
   SelfDrawn = 2,
 }
 
-export type PlayerInRound = {
+export enum PlayerResultWinnerOrLoserEnum {
+  Win = 1,
+  Lose = -1,
+  None = 0,
+}
+
+export type PlayerResult = {
   beforeScore: number
   afterScore: number
-  isWinner: boolean
-  isLoser: boolean
+  type: PlayerResultWinnerOrLoserEnum
+  isRiichi?: boolean
+  isRevealed?: boolean
 }
 
 export type Setting = Record<string, string>
