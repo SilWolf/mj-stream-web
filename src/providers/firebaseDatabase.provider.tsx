@@ -29,6 +29,8 @@ const firebaseConfig = {
   storageBucket: 'hk-m-league.appspot.com',
   messagingSenderId: '624803752404',
   appId: '1:624803752404:web:59c7b94c6655e5fb2a8e41',
+  databaseURL:
+    'https://hk-m-league-default-rtdb.asia-southeast1.firebasedatabase.app',
 }
 
 // Initialize Firebase
@@ -63,6 +65,7 @@ const contextDefaultValue = {
       })
   },
   set: (key: string, payload: unknown) => {
+    console.log(key, payload)
     const ref = fbRef(firebaseDatabase, key)
     return fbSet(ref, payload).catch((error) => {
       console.error(error)

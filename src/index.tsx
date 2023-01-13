@@ -8,6 +8,7 @@ import reportWebVitals from './reportWebVitals'
 import FirebaseDatabaseProvider from './providers/firebaseDatabase.provider'
 
 import MatchDetailPage from './pages/match/[id]/index.page'
+import DevPage from './pages/dev/index.page'
 
 // Import the functions you need from the SDKs you need
 // TODO: Add SDKs for Firebase products that you want to use
@@ -17,6 +18,7 @@ ReactDOM.render(
   <React.StrictMode>
     <FirebaseDatabaseProvider>
       <Switch>
+        <Route path="/dev" component={DevPage} />
         <Route path="/match/:matchId" component={MatchDetailPage} />
       </Switch>
     </FirebaseDatabaseProvider>
