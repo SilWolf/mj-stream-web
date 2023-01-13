@@ -22,22 +22,20 @@ const ROUND_MAP: Record<string, string> = {
   16: '北四局',
 }
 
-export default function MJMatchRoundAndSubSpan({ children, ...props }: Props) {
+export default function MJMatchCounterSpan({ children, ...props }: Props) {
   const selfChildren = useMemo(() => {
     try {
       const text = children?.toString()
       if (!text) {
         throw new Error(
-          `children=${children} is undefined in MJMatchRoundAndSubSpan`
+          `children=${children} is undefined in MJMatchCounterSpan`
         )
       }
 
       const [round, sub = ''] = children?.toString().split('.') ?? []
       const roundText = ROUND_MAP[round]
       if (!roundText) {
-        throw new Error(
-          `Unable to parse round=${round} in MJMatchRoundAndSubSpan`
-        )
+        throw new Error(`Unable to parse round=${round} in MJMatchCounterSpan`)
       }
 
       return sub ? `${roundText}${sub}本場` : roundText
