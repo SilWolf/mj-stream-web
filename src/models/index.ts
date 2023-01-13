@@ -57,7 +57,7 @@ export type Player = {
   masterPlayerId?: string
 }
 
-type MatchRound = {
+export type MatchRound = {
   id: string
   matchId: string
   code: string
