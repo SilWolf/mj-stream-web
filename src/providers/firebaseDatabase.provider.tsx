@@ -16,9 +16,16 @@ import {
   ref as fbRef,
   get as fbGet,
   set as fbSet,
+  push as fbPush,
   update as fbUpdate,
   onValue as fbOnValue,
   ListenOptions as fbListenOptions,
+  query as fbQuery,
+  DatabaseReference,
+  limitToLast,
+  Query,
+  QueryConstraint,
+  orderByChild,
 } from 'firebase/database'
 
 // Your web app's Firebase configuration
@@ -44,6 +51,7 @@ type FirebaseDatabaseContextProps = {
   ) => Promise<T | undefined>
   set: (key: string, payload: unknown) => Promise<void>
   update: (key: string, payload: unknown) => Promise<void>
+  push: (key: string, payload: unknown) => Promise<DatabaseReference>
 }
 
 const contextDefaultValue = {
@@ -65,7 +73,6 @@ const contextDefaultValue = {
       })
   },
   set: (key: string, payload: unknown) => {
-    console.log(key, payload)
     const ref = fbRef(firebaseDatabase, key)
     return fbSet(ref, payload).catch((error) => {
       console.error(error)
@@ -75,6 +82,13 @@ const contextDefaultValue = {
   update: (key: string, payload: unknown) => {
     const ref = fbRef(firebaseDatabase, key)
     return fbUpdate(ref, payload as object).catch((error) => {
+      console.error(error)
+      throw error
+    })
+  },
+  push: (key: string, payload: unknown) => {
+    const ref = fbRef(firebaseDatabase, key)
+    return fbPush(ref, payload).catch((error) => {
       console.error(error)
       throw error
     })
@@ -98,12 +112,23 @@ export const useFirebaseDatabase = () => {
   return useContext(FirebaseDatabaseContext)
 }
 
+export type UseFirebaseDatabaseByKeyOptions = fbListenOptions & {
+  order?: {
+    byChild?: string
+  }
+  filter?: {
+    limitToLast?: number
+  }
+}
+
 export const useFirebaseDatabaseByKey = <T extends Record<string, unknown>>(
   key: string,
-  options?: fbListenOptions
+  options?: UseFirebaseDatabaseByKeyOptions
 ) => {
   const { database } = useContext(FirebaseDatabaseContext)
-  const ref = useMemo(() => fbRef(database, key), [database, key])
+  const ref = useMemo(() => {
+    return fbRef(database, key)
+  }, [database, key])
 
   const [data, setData] = useState<T>()
 
@@ -122,15 +147,32 @@ export const useFirebaseDatabaseByKey = <T extends Record<string, unknown>>(
   )
 
   useEffect(() => {
+    const queryConstraint: QueryConstraint[] = []
+
+    if (options?.order) {
+      if (options.order.byChild) {
+        queryConstraint.push(orderByChild(options.order.byChild))
+      }
+    }
+
+    if (options?.filter) {
+      if (typeof options.filter.limitToLast !== 'undefined') {
+        queryConstraint.push(limitToLast(options.filter.limitToLast))
+      }
+    }
+
+    const finalRef: DatabaseReference | Query =
+      queryConstraint.length > 0 ? fbQuery(ref, ...queryConstraint) : ref
+
     if (options?.onlyOnce) {
-      fbGet(ref).then((snapshot) => {
+      fbGet(finalRef).then((snapshot) => {
         if (snapshot.exists()) {
           setData(snapshot.val())
         }
       })
     } else {
       fbOnValue(
-        ref,
+        finalRef,
         (snapshot) => {
           setData(snapshot.val())
         },

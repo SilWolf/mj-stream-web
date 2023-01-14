@@ -1,14 +1,22 @@
-import { useEffect, useMemo, useState } from 'react'
-import { Match, MatchRound, Player, PlayerIndex } from '../../models'
+import { useEffect, useState } from 'react'
+import {
+  Match,
+  MatchRound,
+  MatchBase,
+  Player,
+  PlayerIndex,
+  RawPlayer,
+} from '../../models'
 import {
   useFirebaseDatabase,
   useFirebaseDatabaseByKey,
 } from '../../providers/firebaseDatabase.provider'
 
-type MatchDTO = Omit<Match, 'players'> & {
+type MatchDTO = MatchBase & {
   players: Record<
     PlayerIndex,
     Player & {
+      position: number
       rank: number
       score: number
       point: number
@@ -16,13 +24,22 @@ type MatchDTO = Omit<Match, 'players'> & {
   >
 }
 
+const MATCH_ACTIVE_ROUND_OPTIONS = {
+  order: {
+    byChild: 'matchId',
+  },
+  filter: {
+    limitToLast: 1,
+  },
+}
+
 const useMatch = (matchId: string) => {
   const fb = useFirebaseDatabase()
   const [match, setMatch] = useState<MatchDTO | undefined>()
 
-  const { data: matchActiveRound } = useFirebaseDatabaseByKey<MatchRound>(
-    `matchRounds/${matchId}/active`
-  )
+  const { data: matchActiveRoundMap } = useFirebaseDatabaseByKey<
+    Record<string, MatchRound>
+  >(`matchRounds`, MATCH_ACTIVE_ROUND_OPTIONS)
 
   useEffect(() => {
     const asyncFn = async () => {
@@ -32,10 +49,28 @@ const useMatch = (matchId: string) => {
         return
       }
 
+      const rawPlayers: Partial<
+        Record<PlayerIndex, RawPlayer & { id: string }>
+      > = {}
+      const matchKeys = Object.keys(retrievedMatch)
+
+      for (let i = 0; i < matchKeys.length; i += 1) {
+        if (matchKeys[i].startsWith('player_')) {
+          const retrivedPlayerId = matchKeys[i].substring(
+            matchKeys[i].indexOf('_') + 1
+          )
+          const retrievedPlayer = retrievedMatch[matchKeys[i]]
+          rawPlayers[retrievedPlayer.position] = {
+            id: retrivedPlayerId,
+            ...retrievedPlayer,
+          }
+        }
+      }
+
       const players = await Promise.all(
-        Object.entries(retrievedMatch.players).map(([index, player]) =>
-          player
-            ? fb.get(`/players/${player.id}`).then((_retrievedPlayer) => ({
+        Object.entries(rawPlayers).map(([index, { id }]) =>
+          id
+            ? fb.get<Player>(`/players/${id}`).then((_retrievedPlayer) => ({
                 index: index as unknown as PlayerIndex,
                 player: _retrievedPlayer,
               }))
@@ -47,11 +82,12 @@ const useMatch = (matchId: string) => {
       ).then((_players) => {
         return _players.reduce<MatchDTO['players']>(
           (prev, curr) => {
-            Object.assign(prev[curr.index], curr.player)
-
+            if (curr.player) {
+              Object.assign(prev[curr.index], { ...curr.player })
+            }
             return prev
           },
-          { ...retrievedMatch.players } as unknown as MatchDTO['players']
+          { ...rawPlayers } as unknown as MatchDTO['players']
         )
       })
 
@@ -64,7 +100,10 @@ const useMatch = (matchId: string) => {
     asyncFn()
   }, [fb, matchId])
 
-  return { match, matchActiveRound }
+  return {
+    match,
+    matchActiveRound: Object.values(matchActiveRoundMap ?? {})[0],
+  }
 }
 
 export default useMatch
