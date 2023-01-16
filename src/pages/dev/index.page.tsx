@@ -74,8 +74,9 @@ export default function DevPage() {
     const matchRound: MatchRound = {
       matchId: matchRef.key as string,
       code: '20230114-001-1.0',
-      counter: '1.0',
-      jackpot: 0,
+      roundCount: 1,
+      subRoundCount: 1,
+      cumulatedThousands: 2,
       resultType: 0,
       playerResults: {
         0: {

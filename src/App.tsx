@@ -49,7 +49,7 @@ function App({ params: { matchId } }: Props) {
     <BroadcastLayout>
       <div className="flex flex-row items-stretch gap-x-1 text-white">
         <div className="border-[6px] rounded px-1 border-current bg-black bg-opacity-20">
-          <MJMatchCounterSpan>{matchActiveRound.counter}</MJMatchCounterSpan>
+          <MJMatchCounterSpan roundCount={matchActiveRound.roundCount} />
         </div>
         <div className="rounded bg-black bg-opacity-60 pl-0.5 pr-1 flex items-center gap-x-0.5">
           <div className="text-[20px]" style={{ writingMode: 'vertical-rl' }}>

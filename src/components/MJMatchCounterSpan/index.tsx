@@ -1,49 +1,56 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { HTMLAttributes, useMemo } from 'react'
 
-type Props = HTMLAttributes<HTMLSpanElement>
-
-const ROUND_MAP: Record<string, string> = {
-  1: '東1局',
-  2: '東2局',
-  3: '東3局',
-  4: '東4局',
-  5: '南1局',
-  6: '南2局',
-  7: '南3局',
-  8: '南4局',
-  9: '西1局',
-  10: '西2局',
-  11: '西3局',
-  12: '西4局',
-  13: '北1局',
-  14: '北2局',
-  15: '北3局',
-  16: '北4局',
+type Props = HTMLAttributes<HTMLSpanElement> & {
+  roundCount: number
+  subRoundCount?: number
 }
 
-export default function MJMatchCounterSpan({ children, ...props }: Props) {
+const ROUND_MAP: Record<string, string> = {
+  1: '東１局',
+  2: '東２局',
+  3: '東３局',
+  4: '東４局',
+  5: '南１局',
+  6: '南２局',
+  7: '南３局',
+  8: '南４局',
+  9: '西１局',
+  10: '西２局',
+  11: '西３局',
+  12: '西４局',
+  13: '北１局',
+  14: '北２局',
+  15: '北３局',
+  16: '北４局',
+}
+
+export default function MJMatchCounterSpan({
+  roundCount,
+  subRoundCount,
+  ...props
+}: Props) {
   const selfChildren = useMemo(() => {
     try {
-      const text = children?.toString()
-      if (!text) {
+      const roundText = ROUND_MAP[roundCount]
+      if (!roundText) {
         throw new Error(
-          `children=${children} is undefined in MJMatchCounterSpan`
+          `Unable to parse roundCount=${roundCount} in MJMatchCounterSpan`
         )
       }
 
-      const [round, sub = ''] = children?.toString().split('.') ?? []
-      const roundText = ROUND_MAP[round]
-      if (!roundText) {
-        throw new Error(`Unable to parse round=${round} in MJMatchCounterSpan`)
-      }
-
-      return sub && sub !== '0' ? `${roundText}${sub}本場` : roundText
+      return subRoundCount && subRoundCount !== 0
+        ? `${roundText}${subRoundCount}本場`
+        : roundText
     } catch (e) {
       console.error(e)
-      return children
+      return `${roundCount}.${subRoundCount ?? 0}`
     }
-  }, [children])
+  }, [roundCount, subRoundCount])
 
   return <span {...props}>{selfChildren}</span>
+}
+
+MJMatchCounterSpan.defaultProps = {
+  subRoundCount: 0,
 }

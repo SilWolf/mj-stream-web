@@ -26,25 +26,41 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
   return (
     <BroadcastLayout>
       <div className="flex flex-row items-stretch gap-x-4 text-white">
-        <div className="rounded-[1rem] bg-black bg-opacity-50 p-2 flex items-center gap-x-4">
-          <div className="text-[2.5rem] border-[.25rem] rounded-[.5rem] px-4 border-current">
-            <MJMatchCounterSpan>{matchActiveRound.counter}</MJMatchCounterSpan>
+        <div className="rounded-[1rem] bg-black bg-opacity-50 p-2 flex items-stretch gap-x-4">
+          <div className="font-ud text-[2.5rem] leading-[3rem] border-[.25rem] rounded-[.75rem] px-4 border-current">
+            <MJMatchCounterSpan roundCount={matchActiveRound.roundCount} />
           </div>
 
           <div className="flex flex-col justify-around">
-            <div className="flex-1 flex flex-row gap-x-2">
-              <div className="flex-1">---</div>
-              <div>0</div>
+            <div className="flex-1 flex flex-row items-center gap-x-2">
+              <div className="flex-1">
+                <img
+                  src="/images/score-hundred.png"
+                  alt="hundred"
+                  className="h-4"
+                />
+              </div>
+              <div className="font-ud">
+                {matchActiveRound.subRoundCount ?? 0}
+              </div>
             </div>
-            <div className="flex-1 flex flex-row gap-x-2">
-              <div className="flex-1">---</div>
-              <div>0</div>
+            <div className="flex-1 flex flex-row items-center gap-x-2">
+              <div className="flex-1">
+                <img
+                  src="/images/score-thousand.png"
+                  alt="thousand"
+                  className="h-4"
+                />
+              </div>
+              <div className="font-ud">
+                {matchActiveRound.cumulatedThousands ?? 0}
+              </div>
             </div>
           </div>
 
           <div className="flex items-center gap-x-2">
             {matchActiveRound.doras.map((dora) => (
-              <MJTileDiv key={dora} className="h-[4.5rem]">
+              <MJTileDiv key={dora} className="w-9">
                 {dora}
               </MJTileDiv>
             ))}

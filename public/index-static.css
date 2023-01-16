@@ -1,3 +1,13 @@
+@font-face {
+  font-family: 'KurewaGothicCjkTc';
+  src: url('fonts/KurewaGothicCjkTc-Bold.ttf');
+}
+
+@font-face {
+  font-family: 'UDDigiKyokashoN';
+  src: url('fonts/UDDigiKyokashoN-B.ttc');
+}
+
 .mahjong-tile {
   background-image: url('images/mahjong-tiles.png');
   background-origin: padding-box;

@@ -55,8 +55,9 @@ export type Player = {
 export type MatchRound = {
   matchId: string
   code: string
-  counter: string
-  jackpot: number
+  roundCount: number
+  subRoundCount: number
+  cumulatedThousands: number
   resultType: RoundResultTypeEnum
   playerResults: Record<PlayerIndex, PlayerResult>
   doras: string[]
