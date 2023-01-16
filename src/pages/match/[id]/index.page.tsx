@@ -74,22 +74,27 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
       <div className="flex flex-row items-end justify-center gap-x-8 text-white">
         <PlayerCardDiv
           name={match.players[0].name}
+          title={match.players[0].title}
           score={matchActiveRound.playerResults[0].beforeScore}
+          isEast={matchActiveRound.roundCount % 4 === 1}
           className="!bg-blue-400 !bg-opacity-60"
         />
         <PlayerCardDiv
           name={match.players[1].name}
           score={matchActiveRound.playerResults[1].beforeScore}
+          isEast={matchActiveRound.roundCount % 4 === 2}
           className="!bg-red-400 !bg-opacity-60"
         />
         <PlayerCardDiv
           name={match.players[2].name}
           score={matchActiveRound.playerResults[2].beforeScore}
+          isEast={matchActiveRound.roundCount % 4 === 3}
           className="!bg-green-400 !bg-opacity-60"
         />
         <PlayerCardDiv
           name={match.players[3].name}
           score={matchActiveRound.playerResults[3].beforeScore}
+          isEast={matchActiveRound.roundCount % 4 === 0}
           className="!bg-yellow-400 !bg-opacity-60"
         />
       </div>
