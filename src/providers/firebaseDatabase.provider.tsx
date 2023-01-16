@@ -27,6 +27,7 @@ import {
   QueryConstraint,
   orderByChild,
 } from 'firebase/database'
+import { isObjectEqual } from '@/utils/object.util'
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -119,6 +120,7 @@ export type UseFirebaseDatabaseByKeyOptions = fbListenOptions & {
   filter?: {
     limitToLast?: number
   }
+  returnSingle?: boolean
 }
 
 export const useFirebaseDatabaseByKey = <T extends Record<string, unknown>>(
@@ -131,6 +133,9 @@ export const useFirebaseDatabaseByKey = <T extends Record<string, unknown>>(
   }, [database, key])
 
   const [data, setData] = useState<T>()
+  const [lastOptions, setLastOptions] = useState<
+    UseFirebaseDatabaseByKeyOptions | undefined
+  >(options)
 
   const set = useCallback(
     (payload: T) => {
@@ -147,39 +152,55 @@ export const useFirebaseDatabaseByKey = <T extends Record<string, unknown>>(
   )
 
   useEffect(() => {
-    const queryConstraint: QueryConstraint[] = []
+    if (!isObjectEqual(options, lastOptions)) {
+      setLastOptions(options)
+    }
+  }, [lastOptions, options])
 
-    if (options?.order) {
-      if (options.order.byChild) {
-        queryConstraint.push(orderByChild(options.order.byChild))
+  useEffect(() => {
+    const queryConstraint: QueryConstraint[] = []
+    let hasAppliedOrder = false
+
+    if (lastOptions?.order) {
+      if (lastOptions.order.byChild) {
+        queryConstraint.push(orderByChild(lastOptions.order.byChild))
+        hasAppliedOrder = true
       }
     }
 
-    if (options?.filter) {
-      if (typeof options.filter.limitToLast !== 'undefined') {
-        queryConstraint.push(limitToLast(options.filter.limitToLast))
+    if (lastOptions?.filter) {
+      if (typeof lastOptions.filter.limitToLast !== 'undefined') {
+        queryConstraint.push(limitToLast(lastOptions.filter.limitToLast))
       }
     }
 
     const finalRef: DatabaseReference | Query =
       queryConstraint.length > 0 ? fbQuery(ref, ...queryConstraint) : ref
 
-    if (options?.onlyOnce) {
+    if (lastOptions?.onlyOnce) {
       fbGet(finalRef).then((snapshot) => {
         if (snapshot.exists()) {
-          setData(snapshot.val())
+          if (lastOptions.returnSingle && hasAppliedOrder) {
+            setData(Object.values(snapshot.val() ?? {})[0] as T)
+          } else {
+            setData(snapshot.val())
+          }
         }
       })
     } else {
       fbOnValue(
         finalRef,
         (snapshot) => {
-          setData(snapshot.val())
+          if (lastOptions?.returnSingle && hasAppliedOrder) {
+            setData(Object.values(snapshot.val() ?? {})[0] as T)
+          } else {
+            setData(snapshot.val())
+          }
         },
-        options ?? {}
+        lastOptions ?? {}
       )
     }
-  }, [options, ref])
+  }, [lastOptions, ref])
 
   return { data, set, update }
 }

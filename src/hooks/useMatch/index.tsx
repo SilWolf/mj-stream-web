@@ -24,22 +24,22 @@ type MatchDTO = MatchBase & {
   >
 }
 
-const MATCH_ACTIVE_ROUND_OPTIONS = {
-  order: {
-    byChild: 'matchId',
-  },
-  filter: {
-    limitToLast: 1,
-  },
-}
-
 const useMatch = (matchId: string) => {
   const fb = useFirebaseDatabase()
   const [match, setMatch] = useState<MatchDTO | undefined>()
 
-  const { data: matchActiveRoundMap } = useFirebaseDatabaseByKey<
-    Record<string, MatchRound>
-  >(`matchRounds`, MATCH_ACTIVE_ROUND_OPTIONS)
+  const { data: matchActiveRound } = useFirebaseDatabaseByKey<MatchRound>(
+    `matchRounds`,
+    {
+      order: {
+        byChild: 'matchId',
+      },
+      filter: {
+        limitToLast: 1,
+      },
+      returnSingle: true,
+    }
+  )
 
   useEffect(() => {
     const asyncFn = async () => {
@@ -102,7 +102,7 @@ const useMatch = (matchId: string) => {
 
   return {
     match,
-    matchActiveRound: Object.values(matchActiveRoundMap ?? {})[0],
+    matchActiveRound,
   }
 }
 

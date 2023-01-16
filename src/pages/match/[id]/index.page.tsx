@@ -26,15 +26,25 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
   return (
     <BroadcastLayout>
       <div className="flex flex-row items-stretch gap-x-4 text-white">
-        <div className="text-[4rem] border-[.25rem] rounded-[1rem] px-4 border-current bg-black bg-opacity-20">
-          <MJMatchCounterSpan>{matchActiveRound.counter}</MJMatchCounterSpan>
-        </div>
-        <div className="rounded-[1rem] bg-black bg-opacity-60 pl-2 pr-4 flex items-center gap-x-2">
-          <div style={{ writingMode: 'vertical-rl' }}>懸賞</div>
-          <div className="h-[55%] w-[2px] mr-2 bg-white bg-opacity-50" />
-          <div>
+        <div className="rounded-[1rem] bg-black bg-opacity-50 p-2 flex items-center gap-x-4">
+          <div className="text-[2.5rem] border-[.25rem] rounded-[.5rem] px-4 border-current">
+            <MJMatchCounterSpan>{matchActiveRound.counter}</MJMatchCounterSpan>
+          </div>
+
+          <div className="flex flex-col justify-around">
+            <div className="flex-1 flex flex-row gap-x-2">
+              <div className="flex-1">---</div>
+              <div>0</div>
+            </div>
+            <div className="flex-1 flex flex-row gap-x-2">
+              <div className="flex-1">---</div>
+              <div>0</div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-x-2">
             {matchActiveRound.doras.map((dora) => (
-              <MJTileDiv key={dora} className="w-[3rem]">
+              <MJTileDiv key={dora} className="h-[4.5rem]">
                 {dora}
               </MJTileDiv>
             ))}

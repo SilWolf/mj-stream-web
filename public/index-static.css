@@ -3,6 +3,6 @@
   background-origin: padding-box;
   background-size: 1100% 600%;
   width: 100%;
+  aspect-ratio: 5 / 7;
   height: auto;
-  padding-top: 140%;
 }

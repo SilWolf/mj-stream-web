@@ -4,22 +4,22 @@ import React, { HTMLAttributes, useMemo } from 'react'
 type Props = HTMLAttributes<HTMLSpanElement>
 
 const ROUND_MAP: Record<string, string> = {
-  1: '東一局',
-  2: '東二局',
-  3: '東三局',
-  4: '東四局',
-  5: '南一局',
-  6: '南二局',
-  7: '南三局',
-  8: '南四局',
-  9: '西一局',
-  10: '西二局',
-  11: '西三局',
-  12: '西四局',
-  13: '北一局',
-  14: '北二局',
-  15: '北三局',
-  16: '北四局',
+  1: '東1局',
+  2: '東2局',
+  3: '東3局',
+  4: '東4局',
+  5: '南1局',
+  6: '南2局',
+  7: '南3局',
+  8: '南4局',
+  9: '西1局',
+  10: '西2局',
+  11: '西3局',
+  12: '西4局',
+  13: '北1局',
+  14: '北2局',
+  15: '北3局',
+  16: '北4局',
 }
 
 export default function MJMatchCounterSpan({ children, ...props }: Props) {
@@ -38,7 +38,7 @@ export default function MJMatchCounterSpan({ children, ...props }: Props) {
         throw new Error(`Unable to parse round=${round} in MJMatchCounterSpan`)
       }
 
-      return sub ? `${roundText}${sub}本場` : roundText
+      return sub && sub !== '0' ? `${roundText}${sub}本場` : roundText
     } catch (e) {
       console.error(e)
       return children
