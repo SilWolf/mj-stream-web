@@ -16,10 +16,18 @@ import {
   ref as fbRef,
   get as fbGet,
   set as fbSet,
+  push as fbPush,
   update as fbUpdate,
   onValue as fbOnValue,
   ListenOptions as fbListenOptions,
+  query as fbQuery,
+  DatabaseReference,
+  limitToLast,
+  Query,
+  QueryConstraint,
+  orderByChild,
 } from 'firebase/database'
+import { isObjectEqual } from '@/utils/object.util'
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -44,6 +52,7 @@ type FirebaseDatabaseContextProps = {
   ) => Promise<T | undefined>
   set: (key: string, payload: unknown) => Promise<void>
   update: (key: string, payload: unknown) => Promise<void>
+  push: (key: string, payload: unknown) => Promise<DatabaseReference>
 }
 
 const contextDefaultValue = {
@@ -65,7 +74,6 @@ const contextDefaultValue = {
       })
   },
   set: (key: string, payload: unknown) => {
-    console.log(key, payload)
     const ref = fbRef(firebaseDatabase, key)
     return fbSet(ref, payload).catch((error) => {
       console.error(error)
@@ -75,6 +83,13 @@ const contextDefaultValue = {
   update: (key: string, payload: unknown) => {
     const ref = fbRef(firebaseDatabase, key)
     return fbUpdate(ref, payload as object).catch((error) => {
+      console.error(error)
+      throw error
+    })
+  },
+  push: (key: string, payload: unknown) => {
+    const ref = fbRef(firebaseDatabase, key)
+    return fbPush(ref, payload).catch((error) => {
       console.error(error)
       throw error
     })
@@ -98,14 +113,29 @@ export const useFirebaseDatabase = () => {
   return useContext(FirebaseDatabaseContext)
 }
 
+export type UseFirebaseDatabaseByKeyOptions = fbListenOptions & {
+  order?: {
+    byChild?: string
+  }
+  filter?: {
+    limitToLast?: number
+  }
+  returnSingle?: boolean
+}
+
 export const useFirebaseDatabaseByKey = <T extends Record<string, unknown>>(
   key: string,
-  options?: fbListenOptions
+  options?: UseFirebaseDatabaseByKeyOptions
 ) => {
   const { database } = useContext(FirebaseDatabaseContext)
-  const ref = useMemo(() => fbRef(database, key), [database, key])
+  const ref = useMemo(() => {
+    return fbRef(database, key)
+  }, [database, key])
 
   const [data, setData] = useState<T>()
+  const [lastOptions, setLastOptions] = useState<
+    UseFirebaseDatabaseByKeyOptions | undefined
+  >(options)
 
   const set = useCallback(
     (payload: T) => {
@@ -122,22 +152,55 @@ export const useFirebaseDatabaseByKey = <T extends Record<string, unknown>>(
   )
 
   useEffect(() => {
-    if (options?.onlyOnce) {
-      fbGet(ref).then((snapshot) => {
+    if (!isObjectEqual(options, lastOptions)) {
+      setLastOptions(options)
+    }
+  }, [lastOptions, options])
+
+  useEffect(() => {
+    const queryConstraint: QueryConstraint[] = []
+    let hasAppliedOrder = false
+
+    if (lastOptions?.order) {
+      if (lastOptions.order.byChild) {
+        queryConstraint.push(orderByChild(lastOptions.order.byChild))
+        hasAppliedOrder = true
+      }
+    }
+
+    if (lastOptions?.filter) {
+      if (typeof lastOptions.filter.limitToLast !== 'undefined') {
+        queryConstraint.push(limitToLast(lastOptions.filter.limitToLast))
+      }
+    }
+
+    const finalRef: DatabaseReference | Query =
+      queryConstraint.length > 0 ? fbQuery(ref, ...queryConstraint) : ref
+
+    if (lastOptions?.onlyOnce) {
+      fbGet(finalRef).then((snapshot) => {
         if (snapshot.exists()) {
-          setData(snapshot.val())
+          if (lastOptions.returnSingle && hasAppliedOrder) {
+            setData(Object.values(snapshot.val() ?? {})[0] as T)
+          } else {
+            setData(snapshot.val())
+          }
         }
       })
     } else {
       fbOnValue(
-        ref,
+        finalRef,
         (snapshot) => {
-          setData(snapshot.val())
+          if (lastOptions?.returnSingle && hasAppliedOrder) {
+            setData(Object.values(snapshot.val() ?? {})[0] as T)
+          } else {
+            setData(snapshot.val())
+          }
         },
-        options ?? {}
+        lastOptions ?? {}
       )
     }
-  }, [options, ref])
+  }, [lastOptions, ref])
 
   return { data, set, update }
 }

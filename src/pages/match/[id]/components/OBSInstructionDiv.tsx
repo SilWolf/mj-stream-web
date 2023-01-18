@@ -2,7 +2,7 @@ import React from 'react'
 
 export default function OBSInstructionDiv() {
   return (
-    <div className="flex-1 text-current text-[40px] flex items-center justify-center">
+    <div className="w-[80vw] ml-20 flex-1 text-current text-[40px] flex items-center justify-center">
       <div>
         <p>1. 打開OBS</p>
         <p>

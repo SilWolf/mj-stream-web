@@ -12,34 +12,13 @@ export type Database = {
  * @description root interface of database
  */
 export type DatabaseV1 = {
-  matches: Record<Match['id'], Match>
-  matchRounds: Record<
-    Match['id'],
-    Record<MatchRound['id'] | 'active', MatchRound>
-  >
-  players: Record<Player['id'], Player>
-  playerMatches: Record<
-    Player['id'],
-    Record<Match['id'], { id: Match['id']; createdAt: string }>
-  >
+  matches: Record<string, Match>
+  matchRounds: Record<string, Record<string, MatchRound>>
+  players: Record<string, Player>
 }
 
-/**
- * Match
- * @description interface of a full match
- */
-export type Match = {
-  id: string
+export type MatchBase = {
   code: string
-  players: Record<
-    PlayerIndex,
-    {
-      id: Player['id']
-      rank: number
-      score: number
-      point: number
-    }
-  >
   remark: string
   createdAt: string
   createdBy: string
@@ -48,8 +27,24 @@ export type Match = {
   setting: MatchSetting
 }
 
+/**
+ * Match
+ * @description interface of a full match
+ */
+export type Match = MatchBase &
+  Record<
+    string, // player_{id}
+    RawPlayer
+  >
+
+export type RawPlayer = {
+  position: PlayerIndex
+  rank: number
+  score: number
+  point: number
+}
+
 export type Player = {
-  id: string
   code: string
   name: string
   title?: string
@@ -58,11 +53,11 @@ export type Player = {
 }
 
 export type MatchRound = {
-  id: string
   matchId: string
   code: string
-  counter: string
-  jackpot: number
+  roundCount: number
+  subRoundCount: number
+  cumulatedThousands: number
   resultType: RoundResultTypeEnum
   playerResults: Record<PlayerIndex, PlayerResult>
   doras: string[]

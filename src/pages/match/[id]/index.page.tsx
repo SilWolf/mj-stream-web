@@ -26,15 +26,41 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
   return (
     <BroadcastLayout>
       <div className="flex flex-row items-stretch gap-x-4 text-white">
-        <div className="text-[4rem] border-[.25rem] rounded-[1rem] px-4 border-current bg-black bg-opacity-20">
-          <MJMatchCounterSpan>{matchActiveRound.counter}</MJMatchCounterSpan>
-        </div>
-        <div className="rounded-[1rem] bg-black bg-opacity-60 pl-2 pr-4 flex items-center gap-x-2">
-          <div style={{ writingMode: 'vertical-rl' }}>懸賞</div>
-          <div className="h-[55%] w-[2px] mr-2 bg-white bg-opacity-50" />
-          <div>
+        <div className="rounded-[1rem] bg-black bg-opacity-50 p-2 flex items-stretch gap-x-4">
+          <div className="font-ud text-[2.5rem] leading-[3rem] border-[.25rem] rounded-[.75rem] px-4 border-current">
+            <MJMatchCounterSpan roundCount={matchActiveRound.roundCount} />
+          </div>
+
+          <div className="flex flex-col justify-around">
+            <div className="flex-1 flex flex-row items-center gap-x-2">
+              <div className="flex-1">
+                <img
+                  src="/images/score-hundred.png"
+                  alt="hundred"
+                  className="h-4"
+                />
+              </div>
+              <div className="font-ud">
+                {matchActiveRound.subRoundCount ?? 0}
+              </div>
+            </div>
+            <div className="flex-1 flex flex-row items-center gap-x-2">
+              <div className="flex-1">
+                <img
+                  src="/images/score-thousand.png"
+                  alt="thousand"
+                  className="h-4"
+                />
+              </div>
+              <div className="font-ud">
+                {matchActiveRound.cumulatedThousands ?? 0}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-x-2">
             {matchActiveRound.doras.map((dora) => (
-              <MJTileDiv key={dora} className="w-[3rem]">
+              <MJTileDiv key={dora} className="w-9">
                 {dora}
               </MJTileDiv>
             ))}
@@ -48,22 +74,27 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
       <div className="flex flex-row items-end justify-center gap-x-8 text-white">
         <PlayerCardDiv
           name={match.players[0].name}
+          title={match.players[0].title}
           score={matchActiveRound.playerResults[0].beforeScore}
+          isEast={matchActiveRound.roundCount % 4 === 1}
           className="!bg-blue-400 !bg-opacity-60"
         />
         <PlayerCardDiv
           name={match.players[1].name}
           score={matchActiveRound.playerResults[1].beforeScore}
+          isEast={matchActiveRound.roundCount % 4 === 2}
           className="!bg-red-400 !bg-opacity-60"
         />
         <PlayerCardDiv
           name={match.players[2].name}
           score={matchActiveRound.playerResults[2].beforeScore}
+          isEast={matchActiveRound.roundCount % 4 === 3}
           className="!bg-green-400 !bg-opacity-60"
         />
         <PlayerCardDiv
           name={match.players[3].name}
           score={matchActiveRound.playerResults[3].beforeScore}
+          isEast={matchActiveRound.roundCount % 4 === 0}
           className="!bg-yellow-400 !bg-opacity-60"
         />
       </div>

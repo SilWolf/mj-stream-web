@@ -1,54 +1,40 @@
-import React, { useCallback, useEffect } from 'react'
-import { Match, MatchRound } from '@/models'
-import {
-  useFirebaseDatabase,
-  useFirebaseDatabaseByKey,
-} from '@/providers/firebaseDatabase.provider'
-import { getRandomId } from '@/utils/string.util'
+import React, { useCallback } from 'react'
+import { MatchRound } from '@/models'
+import { useFirebaseDatabase } from '@/providers/firebaseDatabase.provider'
 import { useLocation } from 'wouter'
 
 export default function DevPage() {
   const fb = useFirebaseDatabase()
-  const { data } = useFirebaseDatabaseByKey('players')
-  const [_, setLocation] = useLocation()
+  const [, setLocation] = useLocation()
 
   const handleClickGenerateTestData = useCallback(async () => {
     // try to generate fake data
-    const players = {
-      JR4KErxY1b5Q: {
-        id: 'JR4KErxY1b5Q',
+    const players = [
+      {
         code: '00001',
         name: '多井隆晴',
       },
-      oAYR08k8XTZY: {
-        id: 'oAYR08k8XTZY',
+      {
         code: '00002',
         name: '丸山奏子',
       },
-      tdNEkAI_VQj4: {
-        id: 'tdNEkAI_VQj4',
+      {
         code: '00003',
         name: '勝又健志',
       },
-      aCcV3PmRYRsa: {
-        id: 'aCcV3PmRYRsa',
+      {
         code: '00004',
         name: '二階堂亞樹',
       },
-    }
+    ]
 
-    await fb.set(`players`, players)
+    const playerIds = await Promise.all(
+      players.map((player) => fb.push('players', player))
+    ).then((result) => result.map((playerRef) => playerRef.key))
 
-    const matchId = getRandomId()
-    const match: Match = {
-      id: matchId,
+    // const matchId = getRandomId()
+    const match = {
       code: '20230114-001',
-      players: {
-        0: { id: 'oAYR08k8XTZY', score: 25000, rank: 1, point: 0 },
-        1: { id: 'aCcV3PmRYRsa', score: 25000, rank: 1, point: 0 },
-        2: { id: 'JR4KErxY1b5Q', score: 25000, rank: 1, point: 0 },
-        3: { id: 'tdNEkAI_VQj4', score: 25000, rank: 1, point: 0 },
-      },
       remark: '',
       createdAt: new Date().toISOString(),
       createdBy: 'Dicky',
@@ -57,17 +43,40 @@ export default function DevPage() {
       setting: {
         template: 'mleague',
       },
+      [`player_${playerIds[0]}`]: {
+        position: 0,
+        score: 25000,
+        rank: 1,
+        point: 0,
+      },
+      [`player_${playerIds[1]}`]: {
+        position: 1,
+        score: 25000,
+        rank: 1,
+        point: 0,
+      },
+      [`player_${playerIds[2]}`]: {
+        position: 2,
+        score: 25000,
+        rank: 1,
+        point: 0,
+      },
+      [`player_${playerIds[3]}`]: {
+        position: 3,
+        score: 25000,
+        rank: 1,
+        point: 0,
+      },
     }
 
-    await fb.set(`matches/${matchId}`, match)
+    const matchRef = await fb.push(`matches`, match)
 
-    const matchRoundId = getRandomId()
     const matchRound: MatchRound = {
-      id: matchRoundId,
-      matchId,
+      matchId: matchRef.key as string,
       code: '20230114-001-1.0',
-      counter: '1.0',
-      jackpot: 0,
+      roundCount: 1,
+      subRoundCount: 1,
+      cumulatedThousands: 2,
       resultType: 0,
       playerResults: {
         0: {
@@ -94,14 +103,10 @@ export default function DevPage() {
       doras: ['7p'],
     }
 
-    await fb.set(`matchRounds/${matchId}/active`, matchRound)
+    await fb.push(`matchRounds`, matchRound)
 
-    setLocation(`/match/${matchId}`)
+    setLocation(`/match/${matchRound.matchId}`)
   }, [fb, setLocation])
-
-  useEffect(() => {
-    console.log(data)
-  }, [data])
 
   return (
     <div className="space-y-6">

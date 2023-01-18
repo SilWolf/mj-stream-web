@@ -2378,6 +2378,11 @@
   dependencies:
     "@types/node" "*"
 
+"@types/deep-equal@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@types/deep-equal/-/deep-equal-1.0.1.tgz#71cfabb247c22bcc16d536111f50c0ed12476b03"
+  integrity sha512-mMUu4nWHLBlHtxXY17Fg6+ucS/MnndyOWyOe7MmwkoMYxvfQU2ajtRaEvqSUv+aVkMqH/C0NCI8UoVfRNQ10yg==
+
 "@types/eslint-scope@^3.7.3":
   version "3.7.4"
   resolved "https://registry.yarnpkg.com/@types/eslint-scope/-/eslint-scope-3.7.4.tgz#37fc1223f0786c39627068a12e94d6e6fc61de16"
@@ -4054,7 +4059,7 @@ dedent@^0.7.0:
   resolved "https://registry.yarnpkg.com/dedent/-/dedent-0.7.0.tgz#2495ddbaf6eb874abb0e1be9df22d2e5a544326c"
   integrity sha512-Q6fKUPqnAHAyhiUgFU7BUzLiv0kd8saH9al7tnu5Q/okj6dnupxyTgFIBjVzJATdfIAm9NAsvXNzjaKa+bxVyA==
 
-deep-equal@^2.0.5:
+deep-equal@^2.0.5, deep-equal@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/deep-equal/-/deep-equal-2.2.0.tgz#5caeace9c781028b9ff459f33b779346637c43e6"
   integrity sha512-RdpzE0Hv4lhowpIUKKMJfeH6C1pXdtT1/it80ubgWqwI3qpuxUBpC1S4hnHg+zjnuOoDkzUtUCEEkG+XG5l3Mw==
