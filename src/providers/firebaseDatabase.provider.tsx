@@ -26,6 +26,7 @@ import {
   Query,
   QueryConstraint,
   orderByChild,
+  connectDatabaseEmulator,
 } from 'firebase/database'
 import { isObjectEqual } from '@/utils/object.util'
 
@@ -44,6 +45,10 @@ const firebaseConfig = {
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig)
 const firebaseDatabase = getDatabase(firebaseApp)
+if (window.location.hostname === 'localhost') {
+  // Point to the RTDB emulator running on localhost.
+  connectDatabaseEmulator(firebaseDatabase, 'localhost', 9000)
+}
 
 type FirebaseDatabaseContextProps = {
   database: FirebaseDatabase
