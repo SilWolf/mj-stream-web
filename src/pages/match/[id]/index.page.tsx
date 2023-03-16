@@ -5,6 +5,7 @@ import useMatch from '@/hooks/useMatch'
 import BroadcastLayout from '@/layouts/Broadcast.layout'
 
 import { PlayerIndex } from '@/models'
+import { getIsPlayerEast } from '@/helpers/mahjong.helper'
 import PlayerCardDiv from './components/PlayerCardDiv'
 import OBSInstructionDiv from './components/OBSInstructionDiv'
 
@@ -80,12 +81,12 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
       <OBSInstructionDiv />
 
       <div className="flex flex-row items-end justify-center gap-x-8 text-white text-[4rem]">
-        {([0, 1, 2, 3] as PlayerIndex[]).map((index) => (
+        {(['0', '1', '2', '3'] as PlayerIndex[]).map((index) => (
           <PlayerCardDiv
             name={match.players[index].name}
             title={match.players[index].title}
             score={matchActiveRound.playerResults[index].beforeScore}
-            isEast={matchActiveRound.roundCount % 4 === (index + 1) % 4}
+            isEast={getIsPlayerEast(index, matchActiveRound.roundCount)}
             className={`${PLAYER_CARD_CLASSNAME_MAP[index]} !bg-opacity-60`}
           />
         ))}

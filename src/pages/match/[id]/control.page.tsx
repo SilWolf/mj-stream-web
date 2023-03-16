@@ -1,7 +1,9 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import useMatch from '@/hooks/useMatch'
 import { PlayerIndex } from '@/models'
 import { useConfirmDialog } from '@/components/ConfirmDialog/provider'
+import MJMatchRonDialog from '@/components/MJMatchRonDialog'
+import { getIsPlayerEast } from '@/helpers/mahjong.helper'
 import PlayerCardDiv from './components/PlayerCardDiv'
 
 const PLAYER_CARD_CLASSNAME_MAP: Record<PlayerIndex, string> = {
@@ -17,6 +19,7 @@ type Props = {
 
 export default function MatchControlPage({ params: { matchId } }: Props) {
   const { match, matchActiveRound } = useMatch(matchId)
+  const [showRonDialog, setShowRonDialog] = useState<boolean>(true)
   const confirmDialog = useConfirmDialog()
 
   const handleClickRiichi = useCallback(
@@ -46,6 +49,10 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
     [confirmDialog, match?.players]
   )
 
+  const handleClickRon = useCallback(() => {
+    setShowRonDialog(true)
+  }, [])
+
   if (!match || !matchActiveRound) {
     return <div>對局讀取失敗。</div>
   }
@@ -62,16 +69,17 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
           <div className="flex-1" />
         </div>
       </div>
+
       <div className="container mx-auto mt-8 px-8">
         <div className="space-y-4">
-          {([0, 1, 2, 3] as PlayerIndex[]).map((index) => (
+          {(['0', '1', '2', '3'] as PlayerIndex[]).map((index) => (
             <div className="flex gap-x-2 items-center">
               <div className="flex-1 text-[2.5rem]">
                 <PlayerCardDiv
                   name={match.players[index].name}
                   title={match.players[index].title}
                   score={matchActiveRound.playerResults[index].beforeScore}
-                  isEast={matchActiveRound.roundCount % 4 === (index + 1) % 4}
+                  isEast={getIsPlayerEast(index, matchActiveRound.roundCount)}
                   className={`${PLAYER_CARD_CLASSNAME_MAP[index]} !bg-opacity-60`}
                 />
               </div>
@@ -90,6 +98,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                   <button
                     type="button"
                     className="px-2 py-0.5 border border-red-600 text-red-600 rounded"
+                    onClick={handleClickRon}
                     data-id={index}
                   >
                     和了
@@ -100,6 +109,11 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
           ))}
         </div>
       </div>
+      <MJMatchRonDialog
+        match={match}
+        matchRound={matchActiveRound}
+        open={showRonDialog}
+      />
     </div>
   )
 }

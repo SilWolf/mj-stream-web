@@ -1,55 +1,55 @@
-[debug] [2023-01-22T15:04:10.463Z] ----------------------------------------------------------------------
-[debug] [2023-01-22T15:04:10.464Z] Command:       /usr/local/bin/node /usr/local/bin/firebase emulators:start
-[debug] [2023-01-22T15:04:10.464Z] CLI Version:   11.21.0
-[debug] [2023-01-22T15:04:10.464Z] Platform:      darwin
-[debug] [2023-01-22T15:04:10.464Z] Node Version:  v16.13.1
-[debug] [2023-01-22T15:04:10.465Z] Time:          Sun Jan 22 2023 23:04:10 GMT+0800 (香港標準時間)
-[debug] [2023-01-22T15:04:10.465Z] ----------------------------------------------------------------------
+[debug] [2023-03-15T12:45:32.011Z] ----------------------------------------------------------------------
+[debug] [2023-03-15T12:45:32.012Z] Command:       /usr/local/bin/node /usr/local/bin/firebase emulators:start
+[debug] [2023-03-15T12:45:32.012Z] CLI Version:   11.21.0
+[debug] [2023-03-15T12:45:32.012Z] Platform:      darwin
+[debug] [2023-03-15T12:45:32.012Z] Node Version:  v16.13.1
+[debug] [2023-03-15T12:45:32.013Z] Time:          Wed Mar 15 2023 20:45:32 GMT+0800 (Hong Kong Standard Time)
+[debug] [2023-03-15T12:45:32.013Z] ----------------------------------------------------------------------
 [debug] 
-[debug] [2023-01-22T15:04:10.496Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
-[debug] [2023-01-22T15:04:10.496Z] > authorizing via signed-in user (hkmleague.dev@gmail.com)
-[debug] [2023-01-22T15:04:10.530Z] java version "19.0.2" 2023-01-17
+[debug] [2023-03-15T12:45:32.046Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2023-03-15T12:45:32.046Z] > authorizing via signed-in user (hkmleague.dev@gmail.com)
+[debug] [2023-03-15T12:45:32.082Z] java version "19.0.2" 2023-01-17
+Java(TM) SE Runtime Environment (build 19.0.2+7-44)
 
-[debug] [2023-01-22T15:04:10.531Z] Java(TM) SE Runtime Environment (build 19.0.2+7-44)
-Java HotSpot(TM) 64-Bit Server VM (build 19.0.2+7-44, mixed mode, sharing)
+[debug] [2023-03-15T12:45:32.083Z] Java HotSpot(TM) 64-Bit Server VM (build 19.0.2+7-44, mixed mode, sharing)
 
-[debug] [2023-01-22T15:04:10.532Z] Parsed Java major version: 19
+[debug] [2023-03-15T12:45:32.085Z] Parsed Java major version: 19
 [info] i  emulators: Starting emulators: database, hosting {"metadata":{"emulator":{"name":"hub"},"message":"Starting emulators: database, hosting"}}
-[debug] [2023-01-22T15:04:10.900Z] [logging] Logging Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
-[debug] [2023-01-22T15:04:10.901Z] [database] Database Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
-[debug] [2023-01-22T15:04:10.901Z] [hosting] Hosting Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
-[debug] [2023-01-22T15:04:10.901Z] assigned listening specs for emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400},{"address":"::1","family":"IPv6","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000},{"address":"::1","family":"IPv6","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}],"database":[{"address":"127.0.0.1","family":"IPv4","port":9000}],"hosting":[{"address":"127.0.0.1","family":"IPv4","port":5000}]},"metadata":{"message":"assigned listening specs for emulators"}}
-[warn] ⚠  emulators: It seems that you are running multiple instances of the emulator suite for project hk-m-league. This may result in unexpected behavior. 
-[debug] [2023-01-22T15:04:10.903Z] [hub] writing locator at /var/folders/cm/zgxs9b6d7ts6sk938r213bx40000gp/T/hub-hk-m-league.json
-[debug] [2023-01-22T15:04:10.906Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/hk-m-league [none]
-[debug] [2023-01-22T15:04:10.915Z] Failed to make request to https://firebase.googleapis.com/v1beta1/projects/hk-m-league
-[debug] [2023-01-22T15:04:10.915Z] Failed to retrieve default database instance: {"name":"FirebaseError","children":[],"exit":2,"message":"Failed to get Firebase project hk-m-league. Please make sure the project exists and your account has permission to access it.","original":{"name":"FirebaseError","children":[],"exit":1,"message":"Failed to make request to https://firebase.googleapis.com/v1beta1/projects/hk-m-league","original":{"message":"request to https://firebase.googleapis.com/v1beta1/projects/hk-m-league failed, reason: getaddrinfo ENOTFOUND firebase.googleapis.com","type":"system","errno":"ENOTFOUND","code":"ENOTFOUND"},"status":500},"status":500} {"metadata":{"emulator":{"name":"database"},"message":"Failed to retrieve default database instance: {\"name\":\"FirebaseError\",\"children\":[],\"exit\":2,\"message\":\"Failed to get Firebase project hk-m-league. Please make sure the project exists and your account has permission to access it.\",\"original\":{\"name\":\"FirebaseError\",\"children\":[],\"exit\":1,\"message\":\"Failed to make request to https://firebase.googleapis.com/v1beta1/projects/hk-m-league\",\"original\":{\"message\":\"request to https://firebase.googleapis.com/v1beta1/projects/hk-m-league failed, reason: getaddrinfo ENOTFOUND firebase.googleapis.com\",\"type\":\"system\",\"errno\":\"ENOTFOUND\",\"code\":\"ENOTFOUND\"},\"status\":500},\"status\":500}"}}
-[debug] [2023-01-22T15:04:10.915Z] database rules config:  []
+[debug] [2023-03-15T12:45:32.550Z] [logging] Logging Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2023-03-15T12:45:32.550Z] [database] Database Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2023-03-15T12:45:32.550Z] [hosting] Hosting Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2023-03-15T12:45:32.550Z] assigned listening specs for emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400},{"address":"::1","family":"IPv6","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000},{"address":"::1","family":"IPv6","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}],"database":[{"address":"127.0.0.1","family":"IPv4","port":9000}],"hosting":[{"address":"127.0.0.1","family":"IPv4","port":5000}]},"metadata":{"message":"assigned listening specs for emulators"}}
+[debug] [2023-03-15T12:45:32.553Z] [hub] writing locator at /var/folders/cm/zgxs9b6d7ts6sk938r213bx40000gp/T/hub-hk-m-league.json
+[debug] [2023-03-15T12:45:32.556Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/hk-m-league [none]
+[debug] [2023-03-15T12:45:32.894Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/hk-m-league 200
+[debug] [2023-03-15T12:45:32.894Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/hk-m-league {"projectId":"hk-m-league","projectNumber":"624803752404","displayName":"HK M-League","name":"projects/hk-m-league","resources":{"hostingSite":"hk-m-league","realtimeDatabaseInstance":"hk-m-league-default-rtdb"},"state":"ACTIVE","etag":"1_f826689c-7ccb-4f02-a7a5-e3e030e503a8"}
+[debug] [2023-03-15T12:45:32.894Z] database rules config:  []
 [warn] ⚠  database: Did not find a Realtime Database rules file specified in a firebase.json config file. The emulator will default to allowing all reads and writes. Learn more about this option: https://firebase.google.com/docs/emulator-suite/install_and_configure#security_rules_configuration. {"metadata":{"emulator":{"name":"database"},"message":"Did not find a Realtime Database rules file specified in a firebase.json config file. The emulator will default to allowing all reads and writes. Learn more about this option: https://firebase.google.com/docs/emulator-suite/install_and_configure#security_rules_configuration."}}
-[debug] [2023-01-22T15:04:10.916Z] Ignoring unsupported arg: projectId {"metadata":{"emulator":{"name":"database"},"message":"Ignoring unsupported arg: projectId"}}
-[debug] [2023-01-22T15:04:10.916Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"database"},"message":"Ignoring unsupported arg: auto_download"}}
-[debug] [2023-01-22T15:04:10.916Z] Ignoring unsupported arg: rules {"metadata":{"emulator":{"name":"database"},"message":"Ignoring unsupported arg: rules"}}
-[debug] [2023-01-22T15:04:10.916Z] Starting Database Emulator with command {"binary":"java","args":["-Duser.language=en","-jar","/Users/silwolf/.cache/firebase/emulators/firebase-database-emulator-v4.11.0.jar","--host","127.0.0.1","--port",9000,"--single_project_mode","Warning"],"optionalArgs":["port","host","functions_emulator_port","functions_emulator_host","single_project_mode"],"joinArgs":false} {"metadata":{"emulator":{"name":"database"},"message":"Starting Database Emulator with command {\"binary\":\"java\",\"args\":[\"-Duser.language=en\",\"-jar\",\"/Users/silwolf/.cache/firebase/emulators/firebase-database-emulator-v4.11.0.jar\",\"--host\",\"127.0.0.1\",\"--port\",9000,\"--single_project_mode\",\"Warning\"],\"optionalArgs\":[\"port\",\"host\",\"functions_emulator_port\",\"functions_emulator_host\",\"single_project_mode\"],\"joinArgs\":false}"}}
+[debug] [2023-03-15T12:45:32.896Z] Ignoring unsupported arg: projectId {"metadata":{"emulator":{"name":"database"},"message":"Ignoring unsupported arg: projectId"}}
+[debug] [2023-03-15T12:45:32.896Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"database"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2023-03-15T12:45:32.896Z] Ignoring unsupported arg: rules {"metadata":{"emulator":{"name":"database"},"message":"Ignoring unsupported arg: rules"}}
+[debug] [2023-03-15T12:45:32.896Z] Starting Database Emulator with command {"binary":"java","args":["-Duser.language=en","-jar","/Users/silwolf/.cache/firebase/emulators/firebase-database-emulator-v4.11.0.jar","--host","127.0.0.1","--port",9000,"--single_project_mode","Warning"],"optionalArgs":["port","host","functions_emulator_port","functions_emulator_host","single_project_mode"],"joinArgs":false} {"metadata":{"emulator":{"name":"database"},"message":"Starting Database Emulator with command {\"binary\":\"java\",\"args\":[\"-Duser.language=en\",\"-jar\",\"/Users/silwolf/.cache/firebase/emulators/firebase-database-emulator-v4.11.0.jar\",\"--host\",\"127.0.0.1\",\"--port\",9000,\"--single_project_mode\",\"Warning\"],\"optionalArgs\":[\"port\",\"host\",\"functions_emulator_port\",\"functions_emulator_host\",\"single_project_mode\"],\"joinArgs\":false}"}}
 [info] i  database: Database Emulator logging to database-debug.log {"metadata":{"emulator":{"name":"database"},"message":"Database Emulator logging to \u001b[1mdatabase-debug.log\u001b[22m"}}
-[debug] [2023-01-22T15:04:11.470Z] 23:04:11.469 [NamespaceSystem-akka.actor.default-dispatcher-4] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started
- {"metadata":{"emulator":{"name":"database"},"message":"23:04:11.469 [NamespaceSystem-akka.actor.default-dispatcher-4] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started\n"}}
-[debug] [2023-01-22T15:04:11.555Z] 23:04:11.555 [main] INFO com.firebase.server.forge.App$ - Listening at 127.0.0.1:9000
- {"metadata":{"emulator":{"name":"database"},"message":"23:04:11.555 [main] INFO com.firebase.server.forge.App$ - Listening at 127.0.0.1:9000\n"}}
-[debug] [2023-01-22T15:04:11.678Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/hk-m-league/sites 
-[debug] [2023-01-22T15:04:11.681Z] Failed to list hosting sites
-[debug] Failed to make request to https://firebasehosting.googleapis.com/v1beta1/projects/hk-m-league/sites
-[debug] [2023-01-22T15:04:11.681Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/hk-m-league/webApps/-/config [none]
-[debug] [2023-01-22T15:04:11.682Z] fetchWebSetup error: FirebaseError: Failed to make request to https://firebase.googleapis.com/v1beta1/projects/hk-m-league/webApps/-/config
-[warn] ⚠  hosting: Using web app configuration from cache. 
-[debug] [2023-01-22T15:04:11.683Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/hk-m-league [none]
-[debug] [2023-01-22T15:04:11.684Z] Failed to make request to https://firebase.googleapis.com/v1beta1/projects/hk-m-league
+[debug] [2023-03-15T12:45:33.472Z] 20:45:33.471 [NamespaceSystem-akka.actor.default-dispatcher-5] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started
+ {"metadata":{"emulator":{"name":"database"},"message":"20:45:33.471 [NamespaceSystem-akka.actor.default-dispatcher-5] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started\n"}}
+[debug] [2023-03-15T12:45:33.555Z] 20:45:33.554 [main] INFO com.firebase.server.forge.App$ - Listening at 127.0.0.1:9000
+ {"metadata":{"emulator":{"name":"database"},"message":"20:45:33.554 [main] INFO com.firebase.server.forge.App$ - Listening at 127.0.0.1:9000\n"}}
+[debug] [2023-03-15T12:45:33.664Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/hk-m-league/sites 
+[debug] [2023-03-15T12:45:34.223Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/hk-m-league/sites 200
+[debug] [2023-03-15T12:45:34.223Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/hk-m-league/sites {"sites":[{"name":"projects/hk-m-league/sites/hk-m-league","defaultUrl":"https://hk-m-league.web.app","type":"DEFAULT_SITE"}]}
+[debug] [2023-03-15T12:45:34.224Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/hk-m-league/webApps/-/config [none]
+[debug] [2023-03-15T12:45:35.225Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/hk-m-league/webApps/-/config 200
+[debug] [2023-03-15T12:45:35.225Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/hk-m-league/webApps/-/config {"projectId":"hk-m-league","appId":"1:624803752404:web:59c7b94c6655e5fb2a8e41","databaseURL":"https://hk-m-league-default-rtdb.asia-southeast1.firebasedatabase.app","storageBucket":"hk-m-league.appspot.com","apiKey":"AIzaSyDiuniOaBkqF63lLXun7yFpMTx7VryQOs4","authDomain":"hk-m-league.firebaseapp.com","messagingSenderId":"624803752404"}
+[debug] [2023-03-15T12:45:35.233Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/hk-m-league [none]
+[debug] [2023-03-15T12:45:35.543Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/hk-m-league 200
+[debug] [2023-03-15T12:45:35.543Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/hk-m-league {"projectId":"hk-m-league","projectNumber":"624803752404","displayName":"HK M-League","name":"projects/hk-m-league","resources":{"hostingSite":"hk-m-league","realtimeDatabaseInstance":"hk-m-league-default-rtdb"},"state":"ACTIVE","etag":"1_f826689c-7ccb-4f02-a7a5-e3e030e503a8"}
 [info] i  hosting[hk-m-league]: Serving hosting files from: build {"metadata":{"emulator":{"name":"hosting"},"message":"Serving hosting files from: \u001b[1mbuild\u001b[22m"}}
 [info] ✔  hosting[hk-m-league]: Local server: http://127.0.0.1:5000 {"metadata":{"emulator":{"name":"hosting"},"message":"Local server: \u001b[4m\u001b[1mhttp://127.0.0.1:5000\u001b[22m\u001b[24m"}}
-[debug] [2023-01-22T15:04:11.733Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"ui"},"message":"Ignoring unsupported arg: auto_download"}}
-[debug] [2023-01-22T15:04:11.733Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"ui"},"message":"Ignoring unsupported arg: port"}}
-[debug] [2023-01-22T15:04:11.733Z] Starting Emulator UI with command {"binary":"node","args":["/Users/silwolf/.cache/firebase/emulators/ui-v1.11.2/server/server.js"],"optionalArgs":[],"joinArgs":false} {"metadata":{"emulator":{"name":"ui"},"message":"Starting Emulator UI with command {\"binary\":\"node\",\"args\":[\"/Users/silwolf/.cache/firebase/emulators/ui-v1.11.2/server/server.js\"],\"optionalArgs\":[],\"joinArgs\":false}"}}
+[debug] [2023-03-15T12:45:35.626Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"ui"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2023-03-15T12:45:35.626Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"ui"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2023-03-15T12:45:35.626Z] Starting Emulator UI with command {"binary":"node","args":["/Users/silwolf/.cache/firebase/emulators/ui-v1.11.2/server/server.js"],"optionalArgs":[],"joinArgs":false} {"metadata":{"emulator":{"name":"ui"},"message":"Starting Emulator UI with command {\"binary\":\"node\",\"args\":[\"/Users/silwolf/.cache/firebase/emulators/ui-v1.11.2/server/server.js\"],\"optionalArgs\":[],\"joinArgs\":false}"}}
 [info] i  ui: Emulator UI logging to ui-debug.log {"metadata":{"emulator":{"name":"ui"},"message":"Emulator UI logging to \u001b[1mui-debug.log\u001b[22m"}}
-[debug] [2023-01-22T15:04:11.793Z] Web / API server started at 127.0.0.1:4000
+[debug] [2023-03-15T12:45:35.734Z] Web / API server started at 127.0.0.1:4000
 Web / API server started at ::1:4000
  {"metadata":{"emulator":{"name":"ui"},"message":"Web / API server started at 127.0.0.1:4000\nWeb / API server started at ::1:4000\n"}}
 [info] 
@@ -70,6 +70,5 @@ Web / API server started at ::1:4000
 
 Issues? Report them at https://github.com/firebase/firebase-tools/issues and attach the *-debug.log files.
  
-[debug] [2023-01-22T15:04:15.773Z] 23:04:15.772 [NamespaceSystem-akka.actor.default-dispatcher-7] INFO com.firebase.core.namespace.NamespaceActor - hk-m-league successfully activated FBKV (SurveyIdle(0)) wait: 79ms, init: 0ms
-23:04:15.772 [NamespaceSystem-akka.actor.default-dispatcher-10] INFO com.firebase.core.namespace.NamespaceActor - hk-m-league-default-rtdb successfully activated FBKV (SurveyIdle(0)) wait: 79ms, init: 0ms
- {"metadata":{"emulator":{"name":"database"},"message":"23:04:15.772 [NamespaceSystem-akka.actor.default-dispatcher-7] INFO com.firebase.core.namespace.NamespaceActor - hk-m-league successfully activated FBKV (SurveyIdle(0)) wait: 79ms, init: 0ms\n23:04:15.772 [NamespaceSystem-akka.actor.default-dispatcher-10] INFO com.firebase.core.namespace.NamespaceActor - hk-m-league-default-rtdb successfully activated FBKV (SurveyIdle(0)) wait: 79ms, init: 0ms\n"}}
+[debug] [2023-03-15T12:45:52.936Z] 20:45:52.936 [NamespaceSystem-akka.actor.default-dispatcher-5] INFO com.firebase.core.namespace.NamespaceActor - hk-m-league-default-rtdb successfully activated FBKV (SurveyIdle(0)) wait: 75ms, init: 0ms
+ {"metadata":{"emulator":{"name":"database"},"message":"20:45:52.936 [NamespaceSystem-akka.actor.default-dispatcher-5] INFO com.firebase.core.namespace.NamespaceActor - hk-m-league-default-rtdb successfully activated FBKV (SurveyIdle(0)) wait: 75ms, init: 0ms\n"}}

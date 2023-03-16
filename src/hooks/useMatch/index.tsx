@@ -12,7 +12,7 @@ import {
   useFirebaseDatabaseByKey,
 } from '../../providers/firebaseDatabase.provider'
 
-type MatchDTO = MatchBase & {
+export type MatchDTO = MatchBase & {
   players: Record<
     PlayerIndex,
     Player & {

@@ -1,4 +1,3 @@
-23:04:11.469 [NamespaceSystem-akka.actor.default-dispatcher-4] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started
-23:04:11.555 [main] INFO com.firebase.server.forge.App$ - Listening at 127.0.0.1:9000
-23:04:15.772 [NamespaceSystem-akka.actor.default-dispatcher-7] INFO com.firebase.core.namespace.NamespaceActor - hk-m-league successfully activated FBKV (SurveyIdle(0)) wait: 79ms, init: 0ms
-23:04:15.772 [NamespaceSystem-akka.actor.default-dispatcher-10] INFO com.firebase.core.namespace.NamespaceActor - hk-m-league-default-rtdb successfully activated FBKV (SurveyIdle(0)) wait: 79ms, init: 0ms
+20:45:33.471 [NamespaceSystem-akka.actor.default-dispatcher-5] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started
+20:45:33.554 [main] INFO com.firebase.server.forge.App$ - Listening at 127.0.0.1:9000
+20:45:52.936 [NamespaceSystem-akka.actor.default-dispatcher-5] INFO com.firebase.core.namespace.NamespaceActor - hk-m-league-default-rtdb successfully activated FBKV (SurveyIdle(0)) wait: 75ms, init: 0ms
