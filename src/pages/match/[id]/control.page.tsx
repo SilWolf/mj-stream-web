@@ -7,13 +7,16 @@ import {
   RoundResultTypeEnum,
 } from '@/models'
 import { useConfirmDialog } from '@/components/ConfirmDialog/provider'
-import MJMatchRonDialog from '@/components/MJMatchRonDialog'
+import MJMatchRonDialog, {
+  MJMatchRonProps,
+} from '@/components/MJMatchRonDialog'
 import {
   formatPlayerResultsByPreviousPlayerResults,
   generateMatchCode,
   getIsPlayerEast,
   getPlayerIndexOfEastByRound,
 } from '@/helpers/mahjong.helper'
+import { useBoolean } from 'react-use'
 import PlayerCardDiv from './components/PlayerCardDiv'
 
 const PLAYER_CARD_CLASSNAME_MAP: Record<PlayerIndex, string> = {
@@ -30,7 +33,10 @@ type Props = {
 export default function MatchControlPage({ params: { matchId } }: Props) {
   const { match, matchCurrentRound, updateCurrentMatchRound, pushMatchRound } =
     useMatch(matchId)
-  const [showRonDialog, setShowRonDialog] = useState<boolean>(true)
+  const [isShowingRonDialog, toggleRonDialog] = useBoolean(false)
+  const [ronDialogProps, setRonDialogProps] = useState<
+    Pick<MJMatchRonProps, 'initialActivePlayerIndex'>
+  >({ initialActivePlayerIndex: '0' })
   const confirmDialog = useConfirmDialog()
 
   const handleClickRiichi = useCallback(
@@ -60,55 +66,75 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
     [confirmDialog, match?.players]
   )
 
-  const handleClickRon = useCallback(() => {
-    setShowRonDialog(true)
-  }, [])
+  const handleClickRon = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      const playerIndex = e?.currentTarget.getAttribute(
+        'data-player-index'
+      ) as PlayerIndex
 
-  const handleSubmitMatchRonDialog = useCallback(
-    (updatedMatchRound: MatchRound) => {
-      updateCurrentMatchRound(updatedMatchRound)
-
-      const eastPlayerIndex = getPlayerIndexOfEastByRound(
-        updatedMatchRound.roundCount
-      )
-      const isGoExtendedRound =
-        updatedMatchRound.playerResults[eastPlayerIndex].type ===
-        PlayerResultWinnerOrLoserEnum.Win
-      const isGameEnded =
-        !isGoExtendedRound && updatedMatchRound.roundCount >= 8
-
-      if (isGameEnded) {
-        // TODO: Proceed to Game End
-
+      if (!playerIndex) {
         return
       }
 
-      const newRoundCount = isGoExtendedRound
-        ? updatedMatchRound.roundCount
-        : updatedMatchRound.roundCount + 1
-      const newExtendedRoundCount = isGoExtendedRound
-        ? updatedMatchRound.extendedRoundCount + 1
-        : 0
-
-      const newMatchRound: MatchRound = {
-        matchId,
-        code: generateMatchCode(
-          matchId,
-          updatedMatchRound.roundCount,
-          updatedMatchRound.extendedRoundCount
-        ),
-        roundCount: newRoundCount,
-        extendedRoundCount: newExtendedRoundCount,
-        cumulatedThousands: 0,
-        resultType: RoundResultTypeEnum.Unknown,
-        playerResults: formatPlayerResultsByPreviousPlayerResults(
-          updatedMatchRound.playerResults
-        ),
-        doras: {},
-      }
-      pushMatchRound(newMatchRound)
+      setRonDialogProps({
+        initialActivePlayerIndex: playerIndex,
+      })
+      toggleRonDialog()
     },
-    [matchId, pushMatchRound, updateCurrentMatchRound]
+    [toggleRonDialog]
+  )
+
+  const handleSubmitMatchRonDialog = useCallback(
+    (updatedMatchRound: MatchRound) => {
+      try {
+        const eastPlayerIndex = getPlayerIndexOfEastByRound(
+          updatedMatchRound.roundCount
+        )
+        const isGoExtendedRound =
+          updatedMatchRound.playerResults[eastPlayerIndex].type ===
+          PlayerResultWinnerOrLoserEnum.Win
+        const isGameEnded =
+          !isGoExtendedRound && updatedMatchRound.roundCount >= 8
+
+        if (isGameEnded) {
+          // TODO: Proceed to Game End
+
+          return
+        }
+
+        const newRoundCount = isGoExtendedRound
+          ? updatedMatchRound.roundCount
+          : updatedMatchRound.roundCount + 1
+        const newExtendedRoundCount = isGoExtendedRound
+          ? updatedMatchRound.extendedRoundCount + 1
+          : 0
+
+        const newMatchRound: MatchRound = {
+          matchId,
+          code: generateMatchCode(
+            matchId,
+            updatedMatchRound.roundCount,
+            updatedMatchRound.extendedRoundCount
+          ),
+          roundCount: newRoundCount,
+          extendedRoundCount: newExtendedRoundCount,
+          cumulatedThousands: 0,
+          resultType: RoundResultTypeEnum.Unknown,
+          playerResults: formatPlayerResultsByPreviousPlayerResults(
+            updatedMatchRound.playerResults
+          ),
+          doras: {},
+        }
+
+        updateCurrentMatchRound(updatedMatchRound)
+        pushMatchRound(newMatchRound)
+
+        toggleRonDialog(false)
+      } catch (e) {
+        console.error(e)
+      }
+    },
+    [matchId, pushMatchRound, toggleRonDialog, updateCurrentMatchRound]
   )
 
   if (!match || !matchCurrentRound) {
@@ -157,7 +183,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                     type="button"
                     className="px-2 py-0.5 border border-red-600 text-red-600 rounded"
                     onClick={handleClickRon}
-                    data-id={index}
+                    data-player-index={index}
                   >
                     和了
                   </button>
@@ -170,8 +196,10 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
       <MJMatchRonDialog
         match={match}
         currentMatchRound={matchCurrentRound}
-        open={showRonDialog}
+        open={isShowingRonDialog}
         onSubmit={handleSubmitMatchRonDialog}
+        onClose={toggleRonDialog}
+        {...ronDialogProps}
       />
     </div>
   )

@@ -1,5 +1,11 @@
-import React, { ChangeEvent, useCallback, useMemo, useState } from 'react'
-import MJUIDialog from '@/components/MJUI/MJUIDialog'
+import React, {
+  ChangeEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
+import MJUIDialog, { MJUIDialogProps } from '@/components/MJUI/MJUIDialog'
 import MJUIButton from '@/components/MJUI/MJUIButton'
 import {
   MatchRound,
@@ -19,23 +25,22 @@ import MJMatchCounterSpan from '../MJMatchCounterSpan'
 import MJUISelect from '../MJUI/MJUISelect'
 import MJHanFuScoreSpan from '../MJHanFuScoreSpan'
 
-type Props = {
-  open: boolean
+export type MJMatchRonProps = Pick<MJUIDialogProps, 'open' | 'onClose'> & {
   match: MatchDTO
   currentMatchRound: MatchRound
-  initialActivePlayer?: string
-  initialTargetPlayer?: string
+  initialActivePlayerIndex?: PlayerIndex
+  initialTargetPlayerIndex?: PlayerIndex | '-1'
   onSubmit?: (resultMatchRound: MatchRound) => unknown
 }
 
 export default function MJMatchRonDialog({
-  open,
   match,
   currentMatchRound,
-  initialActivePlayer = '0',
-  initialTargetPlayer = '-1',
+  initialActivePlayerIndex = '0',
+  initialTargetPlayerIndex = '-1',
   onSubmit,
-}: Props) {
+  ...dialogProps
+}: MJMatchRonProps) {
   const [compiledScore, setCompiledScore] = useState<MJCompiledScore>({
     win: 1000,
     target: 1000,
@@ -56,7 +61,7 @@ export default function MJMatchRonDialog({
   const [isConfirm, setIsConfirm] = useState<boolean>(false)
   const [activePlayerIndex, setActivePlayerIndex] = useState<
     string | undefined
-  >(initialActivePlayer)
+  >(initialActivePlayerIndex)
   const activePlayer = useMemo(
     () =>
       typeof activePlayerIndex !== 'undefined'
@@ -67,7 +72,7 @@ export default function MJMatchRonDialog({
 
   const [targetPlayerIndex, setTargetPlayerIndex] = useState<
     string | undefined
-  >(initialTargetPlayer)
+  >(initialTargetPlayerIndex)
   const targetPlayer = useMemo(
     () =>
       typeof targetPlayerIndex !== 'undefined'
@@ -189,8 +194,16 @@ export default function MJMatchRonDialog({
     onSubmit(updatedMatchRound)
   }, [compiledScore, currentMatchRound, onSubmit, previewPlayerResults])
 
+  useEffect(() => {
+    if (dialogProps.open) {
+      // reset form
+
+      setActivePlayerIndex(initialActivePlayerIndex)
+    }
+  }, [dialogProps.open, initialActivePlayerIndex])
+
   return (
-    <MJUIDialog title={title} open={open}>
+    <MJUIDialog title={title} {...dialogProps}>
       <div className="space-y-8">
         <div className="flex gap-x-4 items-center">
           <div className="flex-1">

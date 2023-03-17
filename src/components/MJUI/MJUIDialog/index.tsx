@@ -4,18 +4,18 @@ export type MJUIDialogProps = {
   open?: boolean
   title?: React.ReactNode
   children: React.ReactNode
-  onClickClose?: () => void
+  onClose?: () => void
 }
 
 export default function MJUIDialog({
   open,
   title,
   children,
-  onClickClose,
+  onClose,
 }: MJUIDialogProps) {
   const handleClickClose = useCallback(() => {
-    onClickClose?.()
-  }, [onClickClose])
+    onClose?.()
+  }, [onClose])
 
   if (!open) {
     return null
@@ -30,7 +30,7 @@ export default function MJUIDialog({
             <div className="text-center md:text-left">
               <p className="font-bold mb-4">{title}</p>
               {children}
-              {onClickClose && (
+              {onClose && (
                 <button
                   type="button"
                   className="absolute top-4 right-4"
@@ -50,7 +50,7 @@ export default function MJUIDialog({
 MJUIDialog.defaultProps = {
   open: false,
   title: '',
-  onClickClose: () => {
+  onClose: () => {
     //
   },
 }
