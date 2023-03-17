@@ -75,7 +75,7 @@ export default function DevPage() {
       matchId: matchRef.key as string,
       code: '20230114-001-1.0',
       roundCount: 1,
-      subRoundCount: 1,
+      extendedRoundCount: 1,
       cumulatedThousands: 2,
       resultType: 0,
       playerResults: {

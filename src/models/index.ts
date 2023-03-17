@@ -56,11 +56,11 @@ export type MatchRound = {
   matchId: string
   code: string
   roundCount: number
-  subRoundCount: number
+  extendedRoundCount: number
   cumulatedThousands: number
   resultType: RoundResultTypeEnum
   playerResults: Record<PlayerIndex, PlayerResult>
-  doras: string[]
+  doras: Record<number, string>
 }
 
 export const enum RoundResultTypeEnum {

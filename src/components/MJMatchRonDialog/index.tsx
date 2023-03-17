@@ -1,11 +1,17 @@
 import React, { ChangeEvent, useCallback, useMemo, useState } from 'react'
 import MJUIDialog from '@/components/MJUI/MJUIDialog'
 import MJUIButton from '@/components/MJUI/MJUIButton'
-import { MatchRound, PlayerIndex, PlayerPositionEnum } from '@/models'
+import {
+  MatchRound,
+  PlayerIndex,
+  PlayerPositionEnum,
+  PlayerResultWinnerOrLoserEnum,
+} from '@/models'
 import { MatchDTO } from '@/hooks/useMatch'
 import {
   getIsPlayerEast,
   getPlayerPosition,
+  getRoundResultTypeByCompiledScore,
   MJCompiledScore,
 } from '@/helpers/mahjong.helper'
 import MJHanFuScoreSelect from '@/components/MJHanFuScoreSelect'
@@ -16,17 +22,19 @@ import MJHanFuScoreSpan from '../MJHanFuScoreSpan'
 type Props = {
   open: boolean
   match: MatchDTO
-  matchRound: MatchRound
+  currentMatchRound: MatchRound
   initialActivePlayer?: string
   initialTargetPlayer?: string
+  onSubmit?: (resultMatchRound: MatchRound) => unknown
 }
 
 export default function MJMatchRonDialog({
   open,
   match,
-  matchRound,
+  currentMatchRound,
   initialActivePlayer = '0',
   initialTargetPlayer = '-1',
+  onSubmit,
 }: Props) {
   const [compiledScore, setCompiledScore] = useState<MJCompiledScore>({
     win: 1000,
@@ -39,11 +47,11 @@ export default function MJMatchRonDialog({
     ).map((index) => ({
       index: index.toString(),
       name: match.players[index].name,
-      position: getPlayerPosition(index, matchRound.roundCount),
+      position: getPlayerPosition(index, currentMatchRound.roundCount),
     }))
 
     return _players
-  }, [match.players, matchRound.roundCount])
+  }, [match.players, currentMatchRound.roundCount])
 
   const [isConfirm, setIsConfirm] = useState<boolean>(false)
   const [activePlayerIndex, setActivePlayerIndex] = useState<
@@ -79,38 +87,38 @@ export default function MJMatchRonDialog({
     return (
       <div>
         <MJMatchCounterSpan
-          roundCount={matchRound.roundCount}
-          subRoundCount={matchRound.subRoundCount}
+          roundCount={currentMatchRound.roundCount}
+          extendedRoundCount={currentMatchRound.extendedRoundCount}
         />
         <span> 和了</span>
       </div>
     )
-  }, [matchRound.roundCount, matchRound.subRoundCount])
+  }, [currentMatchRound.roundCount, currentMatchRound.extendedRoundCount])
 
   const previewPlayerResults = useMemo(() => {
     const playerIndexes = Object.keys(
-      matchRound.playerResults
+      currentMatchRound.playerResults
     ) as unknown as PlayerIndex[]
 
     const newPreviewPlayerResults: MatchRound['playerResults'] = {
       '0': {
-        beforeScore: matchRound.playerResults['0'].afterScore,
-        afterScore: matchRound.playerResults['0'].afterScore,
+        beforeScore: currentMatchRound.playerResults['0'].afterScore,
+        afterScore: currentMatchRound.playerResults['0'].afterScore,
         type: 0,
       },
       '1': {
-        beforeScore: matchRound.playerResults['1'].afterScore,
-        afterScore: matchRound.playerResults['1'].afterScore,
+        beforeScore: currentMatchRound.playerResults['1'].afterScore,
+        afterScore: currentMatchRound.playerResults['1'].afterScore,
         type: 0,
       },
       '2': {
-        beforeScore: matchRound.playerResults['2'].afterScore,
-        afterScore: matchRound.playerResults['2'].afterScore,
+        beforeScore: currentMatchRound.playerResults['2'].afterScore,
+        afterScore: currentMatchRound.playerResults['2'].afterScore,
         type: 0,
       },
       '3': {
-        beforeScore: matchRound.playerResults['3'].afterScore,
-        afterScore: matchRound.playerResults['3'].afterScore,
+        beforeScore: currentMatchRound.playerResults['3'].afterScore,
+        afterScore: currentMatchRound.playerResults['3'].afterScore,
         type: 0,
       },
     }
@@ -125,27 +133,35 @@ export default function MJMatchRonDialog({
       if (currentPlayerIndex === activePlayerIndex) {
         newPreviewPlayerResults[currentPlayerIndex].afterScore +=
           compiledScore.win
+        newPreviewPlayerResults[currentPlayerIndex].type =
+          PlayerResultWinnerOrLoserEnum.Win
       } else if (
         compiledScore.target &&
         currentPlayerIndex === targetPlayerIndex
       ) {
         newPreviewPlayerResults[currentPlayerIndex].afterScore -=
           compiledScore.target
+        newPreviewPlayerResults[currentPlayerIndex].type =
+          PlayerResultWinnerOrLoserEnum.Lose
       } else if (compiledScore.all) {
         newPreviewPlayerResults[currentPlayerIndex].afterScore -=
           compiledScore.all
+        newPreviewPlayerResults[currentPlayerIndex].type =
+          PlayerResultWinnerOrLoserEnum.Lose
       } else if (compiledScore.east && compiledScore.others) {
-        if (getIsPlayerEast(currentPlayerIndex, matchRound.roundCount)) {
+        if (getIsPlayerEast(currentPlayerIndex, currentMatchRound.roundCount)) {
           newPreviewPlayerResults[currentPlayerIndex].afterScore -=
             compiledScore.east
+          newPreviewPlayerResults[currentPlayerIndex].type =
+            PlayerResultWinnerOrLoserEnum.Lose
         } else {
           newPreviewPlayerResults[currentPlayerIndex].afterScore -=
             compiledScore.others
+          newPreviewPlayerResults[currentPlayerIndex].type =
+            PlayerResultWinnerOrLoserEnum.Lose
         }
       }
     }
-
-    console.log(newPreviewPlayerResults)
 
     return newPreviewPlayerResults
   }, [
@@ -155,9 +171,23 @@ export default function MJMatchRonDialog({
     compiledScore.others,
     compiledScore.target,
     compiledScore.win,
-    matchRound,
+    currentMatchRound,
     targetPlayerIndex,
   ])
+
+  const handleSubmit = useCallback(() => {
+    if (!onSubmit) {
+      return
+    }
+
+    const updatedMatchRound: MatchRound = {
+      ...currentMatchRound,
+      resultType: getRoundResultTypeByCompiledScore(compiledScore),
+      playerResults: previewPlayerResults,
+    }
+
+    onSubmit(updatedMatchRound)
+  }, [compiledScore, currentMatchRound, onSubmit, previewPlayerResults])
 
   return (
     <MJUIDialog title={title} open={open}>
@@ -238,7 +268,11 @@ export default function MJMatchRonDialog({
             </label>
           </div>
 
-          <MJUIButton className="w-full" disabled={!isConfirm}>
+          <MJUIButton
+            onClick={handleSubmit}
+            className="w-full"
+            disabled={!isConfirm}
+          >
             提交並播出分數變動動畫
           </MJUIButton>
         </div>

@@ -1,4 +1,10 @@
-import { PlayerIndex, PlayerPositionEnum } from '@/models'
+import {
+  PlayerIndex,
+  PlayerPositionEnum,
+  PlayerResult,
+  PlayerResultWinnerOrLoserEnum,
+  RoundResultTypeEnum,
+} from '@/models'
 
 const PLAYER_POSITION_ARRAY = [
   PlayerPositionEnum.East,
@@ -6,6 +12,8 @@ const PLAYER_POSITION_ARRAY = [
   PlayerPositionEnum.West,
   PlayerPositionEnum.North,
 ]
+
+const PLAYER_INDEX_ARRAY: PlayerIndex[] = ['0', '1', '2', '3']
 
 export const convertPlayerIndexToPosition = (playerIndex: PlayerIndex) =>
   parseInt(playerIndex, 10)
@@ -15,7 +23,9 @@ export const getPlayerPosition = (
   round: number
 ): PlayerPositionEnum =>
   PLAYER_POSITION_ARRAY[
-    (convertPlayerIndexToPosition(playerIndex) + round - 1) %
+    (4 +
+      convertPlayerIndexToPosition(playerIndex) -
+      ((round - 1) % PLAYER_POSITION_ARRAY.length)) %
       PLAYER_POSITION_ARRAY.length
   ]
 
@@ -132,3 +142,71 @@ export const getScoreByHanAndFu = (
 
   return expectedScore
 }
+
+export const getRoundResultTypeByCompiledScore = (
+  compiledScore: MJCompiledScore
+): RoundResultTypeEnum => {
+  if (compiledScore.all || compiledScore.east) {
+    return RoundResultTypeEnum.SelfDrawn
+  }
+
+  if (compiledScore.target) {
+    return RoundResultTypeEnum.Ron
+  }
+
+  return RoundResultTypeEnum.Unknown
+}
+
+export const getPlayerIndexOfEastByRound = (round: number): PlayerIndex =>
+  PLAYER_INDEX_ARRAY[(round - 1) % PLAYER_INDEX_ARRAY.length]
+
+export const formatPlayerResultsByScores = (
+  scores: Record<PlayerIndex, number>
+): Record<PlayerIndex, PlayerResult> => {
+  return {
+    '0': {
+      beforeScore: scores['0'],
+      afterScore: scores['0'],
+      isRevealed: false,
+      isRiichi: false,
+      type: PlayerResultWinnerOrLoserEnum.None,
+    },
+    '1': {
+      beforeScore: scores['1'],
+      afterScore: scores['1'],
+      isRevealed: false,
+      isRiichi: false,
+      type: PlayerResultWinnerOrLoserEnum.None,
+    },
+    '2': {
+      beforeScore: scores['2'],
+      afterScore: scores['2'],
+      isRevealed: false,
+      isRiichi: false,
+      type: PlayerResultWinnerOrLoserEnum.None,
+    },
+    '3': {
+      beforeScore: scores['3'],
+      afterScore: scores['3'],
+      isRevealed: false,
+      isRiichi: false,
+      type: PlayerResultWinnerOrLoserEnum.None,
+    },
+  }
+}
+
+export const formatPlayerResultsByPreviousPlayerResults = (
+  prev: Record<PlayerIndex, PlayerResult>
+): Record<PlayerIndex, PlayerResult> =>
+  formatPlayerResultsByScores({
+    '0': prev['0'].afterScore,
+    '1': prev['1'].afterScore,
+    '2': prev['2'].afterScore,
+    '3': prev['3'].afterScore,
+  })
+
+export const generateMatchCode = (
+  matchId: string,
+  round: number,
+  extendedRound: number
+) => `${matchId}-${round}.${extendedRound}`

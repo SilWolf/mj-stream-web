@@ -3,7 +3,7 @@ import React, { HTMLAttributes, useMemo } from 'react'
 
 type Props = HTMLAttributes<HTMLSpanElement> & {
   roundCount: number
-  subRoundCount?: number
+  extendedRoundCount?: number
 }
 
 const ROUND_MAP: Record<string, string> = {
@@ -27,7 +27,7 @@ const ROUND_MAP: Record<string, string> = {
 
 export default function MJMatchCounterSpan({
   roundCount,
-  subRoundCount,
+  extendedRoundCount,
   ...props
 }: Props) {
   const selfChildren = useMemo(() => {
@@ -39,18 +39,18 @@ export default function MJMatchCounterSpan({
         )
       }
 
-      return subRoundCount && subRoundCount !== 0
-        ? `${roundText}${subRoundCount}本場`
+      return extendedRoundCount && extendedRoundCount !== 0
+        ? `${roundText}${extendedRoundCount}本場`
         : roundText
     } catch (e) {
       console.error(e)
-      return `${roundCount}.${subRoundCount ?? 0}`
+      return `${roundCount}.${extendedRoundCount ?? 0}`
     }
-  }, [roundCount, subRoundCount])
+  }, [roundCount, extendedRoundCount])
 
   return <span {...props}>{selfChildren}</span>
 }
 
 MJMatchCounterSpan.defaultProps = {
-  subRoundCount: 0,
+  extendedRoundCount: 0,
 }

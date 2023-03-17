@@ -27,6 +27,7 @@ import {
   QueryConstraint,
   orderByChild,
   connectDatabaseEmulator,
+  equalTo,
 } from 'firebase/database'
 import { isObjectEqual } from '@/utils/object.util'
 
@@ -124,6 +125,7 @@ export type UseFirebaseDatabaseByKeyOptions = fbListenOptions & {
   }
   filter?: {
     limitToLast?: number
+    equalTo?: string | number | boolean | null
   }
   returnSingle?: boolean
 }
@@ -137,21 +139,40 @@ export const useFirebaseDatabaseByKey = <T extends Record<string, unknown>>(
     return fbRef(database, key)
   }, [database, key])
 
-  const [data, setData] = useState<T>()
+  const [rawData, setRawData] = useState<T>()
   const [lastOptions, setLastOptions] = useState<
     UseFirebaseDatabaseByKeyOptions | undefined
   >(options)
 
   const set = useCallback(
     (payload: T) => {
+      if (lastOptions?.returnSingle && rawData) {
+        const rawDataKey = Object.keys(rawData)[0]
+        if (rawDataKey) {
+          return fbSet(fbRef(database, `${key}/${rawDataKey}`), payload)
+        }
+      }
       return fbSet(ref, payload)
     },
-    [ref]
+    [database, key, lastOptions?.returnSingle, rawData, ref]
   )
 
   const update = useCallback(
     (payload: T) => {
+      if (lastOptions?.returnSingle && rawData) {
+        const rawDataKey = Object.keys(rawData)[0]
+        if (rawDataKey) {
+          return fbUpdate(fbRef(database, `${key}/${rawDataKey}`), payload)
+        }
+      }
       return fbUpdate(ref, payload)
+    },
+    [database, key, lastOptions?.returnSingle, rawData, ref]
+  )
+
+  const push = useCallback(
+    (payload: T) => {
+      return fbPush(ref, payload)
     },
     [ref]
   )
@@ -164,16 +185,18 @@ export const useFirebaseDatabaseByKey = <T extends Record<string, unknown>>(
 
   useEffect(() => {
     const queryConstraint: QueryConstraint[] = []
-    let hasAppliedOrder = false
 
     if (lastOptions?.order) {
       if (lastOptions.order.byChild) {
         queryConstraint.push(orderByChild(lastOptions.order.byChild))
-        hasAppliedOrder = true
       }
     }
 
     if (lastOptions?.filter) {
+      if (typeof lastOptions.filter.equalTo !== 'undefined') {
+        queryConstraint.push(equalTo(lastOptions.filter.equalTo))
+      }
+
       if (typeof lastOptions.filter.limitToLast !== 'undefined') {
         queryConstraint.push(limitToLast(lastOptions.filter.limitToLast))
       }
@@ -185,27 +208,27 @@ export const useFirebaseDatabaseByKey = <T extends Record<string, unknown>>(
     if (lastOptions?.onlyOnce) {
       fbGet(finalRef).then((snapshot) => {
         if (snapshot.exists()) {
-          if (lastOptions.returnSingle && hasAppliedOrder) {
-            setData(Object.values(snapshot.val() ?? {})[0] as T)
-          } else {
-            setData(snapshot.val())
-          }
+          setRawData(snapshot.val())
         }
       })
     } else {
       fbOnValue(
         finalRef,
         (snapshot) => {
-          if (lastOptions?.returnSingle && hasAppliedOrder) {
-            setData(Object.values(snapshot.val() ?? {})[0] as T)
-          } else {
-            setData(snapshot.val())
-          }
+          setRawData(snapshot.val())
         },
         lastOptions ?? {}
       )
     }
   }, [lastOptions, ref])
 
-  return { data, set, update }
+  const returnData = useMemo(() => {
+    if (lastOptions?.returnSingle) {
+      return Object.values(rawData ?? {})[0] as T
+    }
+
+    return rawData
+  }, [rawData, lastOptions?.returnSingle])
+
+  return { data: returnData, set, update, push }
 }

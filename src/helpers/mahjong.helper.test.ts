@@ -1,6 +1,6 @@
 import { getPlayerPosition } from './mahjong.helper'
 
-describe('mahjong.helper', () => {
+describe('getPlayerPosition', () => {
   it('Round 1', () => {
     expect(getPlayerPosition('0', 1)).toEqual(0)
     expect(getPlayerPosition('1', 1)).toEqual(1)
@@ -9,10 +9,10 @@ describe('mahjong.helper', () => {
   })
 
   it('Round 2', () => {
-    expect(getPlayerPosition('0', 2)).toEqual(1)
-    expect(getPlayerPosition('1', 2)).toEqual(2)
-    expect(getPlayerPosition('2', 2)).toEqual(3)
-    expect(getPlayerPosition('3', 2)).toEqual(0)
+    expect(getPlayerPosition('0', 2)).toEqual(3)
+    expect(getPlayerPosition('1', 2)).toEqual(0)
+    expect(getPlayerPosition('2', 2)).toEqual(1)
+    expect(getPlayerPosition('3', 2)).toEqual(2)
   })
 
   it('Round 3', () => {
@@ -23,10 +23,10 @@ describe('mahjong.helper', () => {
   })
 
   it('Round 4', () => {
-    expect(getPlayerPosition('0', 4)).toEqual(3)
-    expect(getPlayerPosition('1', 4)).toEqual(0)
-    expect(getPlayerPosition('2', 4)).toEqual(1)
-    expect(getPlayerPosition('3', 4)).toEqual(2)
+    expect(getPlayerPosition('0', 4)).toEqual(1)
+    expect(getPlayerPosition('1', 4)).toEqual(2)
+    expect(getPlayerPosition('2', 4)).toEqual(3)
+    expect(getPlayerPosition('3', 4)).toEqual(0)
   })
 
   it('Round 5', () => {

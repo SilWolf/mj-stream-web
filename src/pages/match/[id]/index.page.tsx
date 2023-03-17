@@ -21,9 +21,9 @@ type Props = {
 }
 
 export default function MatchDetailPage({ params: { matchId } }: Props) {
-  const { match, matchActiveRound } = useMatch(matchId)
+  const { match, matchCurrentRound, matchCurrentRoundDoras } = useMatch(matchId)
 
-  if (!match || !matchActiveRound) {
+  if (!match || !matchCurrentRound) {
     return (
       <BroadcastLayout>
         <div className="text-current">對局讀取失敗。</div>
@@ -37,7 +37,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
       <div className="flex flex-row items-stretch gap-x-4 text-white">
         <div className="rounded-[1rem] bg-black bg-opacity-50 p-2 flex items-stretch gap-x-4">
           <div className="font-ud text-[2.5rem] leading-[3rem] border-[.25rem] rounded-[.75rem] px-4 border-current">
-            <MJMatchCounterSpan roundCount={matchActiveRound.roundCount} />
+            <MJMatchCounterSpan roundCount={matchCurrentRound.roundCount} />
           </div>
 
           <div className="flex flex-col justify-around">
@@ -50,7 +50,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
                 />
               </div>
               <div className="font-ud">
-                {matchActiveRound.subRoundCount ?? 0}
+                {matchCurrentRound.extendedRoundCount ?? 0}
               </div>
             </div>
             <div className="flex-1 flex flex-row items-center gap-x-2">
@@ -62,13 +62,13 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
                 />
               </div>
               <div className="font-ud">
-                {matchActiveRound.cumulatedThousands ?? 0}
+                {matchCurrentRound.cumulatedThousands ?? 0}
               </div>
             </div>
           </div>
 
           <div className="flex items-center gap-x-2">
-            {matchActiveRound.doras.map((dora) => (
+            {matchCurrentRoundDoras.map((dora) => (
               <MJTileDiv key={dora} className="w-9">
                 {dora}
               </MJTileDiv>
@@ -83,10 +83,11 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
       <div className="flex flex-row items-end justify-center gap-x-8 text-white text-[4rem]">
         {(['0', '1', '2', '3'] as PlayerIndex[]).map((index) => (
           <PlayerCardDiv
+            key={index}
             name={match.players[index].name}
             title={match.players[index].title}
-            score={matchActiveRound.playerResults[index].beforeScore}
-            isEast={getIsPlayerEast(index, matchActiveRound.roundCount)}
+            score={matchCurrentRound.playerResults[index].beforeScore}
+            isEast={getIsPlayerEast(index, matchCurrentRound.roundCount)}
             className={`${PLAYER_CARD_CLASSNAME_MAP[index]} !bg-opacity-60`}
           />
         ))}
