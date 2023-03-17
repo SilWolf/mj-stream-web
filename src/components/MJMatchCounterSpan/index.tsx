@@ -3,31 +3,31 @@ import React, { HTMLAttributes, useMemo } from 'react'
 
 type Props = HTMLAttributes<HTMLSpanElement> & {
   roundCount: number
-  subRoundCount?: number
+  extendedRoundCount?: number
 }
 
 const ROUND_MAP: Record<string, string> = {
-  1: '東１局',
-  2: '東２局',
-  3: '東３局',
-  4: '東４局',
-  5: '南１局',
-  6: '南２局',
-  7: '南３局',
-  8: '南４局',
-  9: '西１局',
-  10: '西２局',
-  11: '西３局',
-  12: '西４局',
-  13: '北１局',
-  14: '北２局',
-  15: '北３局',
-  16: '北４局',
+  1: '東1局',
+  2: '東2局',
+  3: '東3局',
+  4: '東4局',
+  5: '南1局',
+  6: '南2局',
+  7: '南3局',
+  8: '南4局',
+  9: '西1局',
+  10: '西2局',
+  11: '西3局',
+  12: '西4局',
+  13: '北1局',
+  14: '北2局',
+  15: '北3局',
+  16: '北4局',
 }
 
 export default function MJMatchCounterSpan({
   roundCount,
-  subRoundCount,
+  extendedRoundCount,
   ...props
 }: Props) {
   const selfChildren = useMemo(() => {
@@ -39,18 +39,18 @@ export default function MJMatchCounterSpan({
         )
       }
 
-      return subRoundCount && subRoundCount !== 0
-        ? `${roundText}${subRoundCount}本場`
+      return extendedRoundCount && extendedRoundCount !== 0
+        ? `${roundText}${extendedRoundCount}本場`
         : roundText
     } catch (e) {
       console.error(e)
-      return `${roundCount}.${subRoundCount ?? 0}`
+      return `${roundCount}.${extendedRoundCount ?? 0}`
     }
-  }, [roundCount, subRoundCount])
+  }, [roundCount, extendedRoundCount])
 
   return <span {...props}>{selfChildren}</span>
 }
 
 MJMatchCounterSpan.defaultProps = {
-  subRoundCount: 0,
+  extendedRoundCount: 0,
 }

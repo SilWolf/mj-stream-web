@@ -1,4 +1,4 @@
-export type PlayerIndex = 0 | 1 | 2 | 3
+export type PlayerIndex = '0' | '1' | '2' | '3'
 
 /**
  * DatabaseRoot
@@ -56,24 +56,31 @@ export type MatchRound = {
   matchId: string
   code: string
   roundCount: number
-  subRoundCount: number
+  extendedRoundCount: number
   cumulatedThousands: number
   resultType: RoundResultTypeEnum
   playerResults: Record<PlayerIndex, PlayerResult>
-  doras: string[]
+  doras: Record<number, string>
 }
 
-export enum RoundResultTypeEnum {
+export const enum RoundResultTypeEnum {
   Unknown = 0,
   Exhausted = -1,
   Ron = 1,
   SelfDrawn = 2,
 }
 
-export enum PlayerResultWinnerOrLoserEnum {
+export const enum PlayerResultWinnerOrLoserEnum {
   Win = 1,
   Lose = -1,
   None = 0,
+}
+
+export const enum PlayerPositionEnum {
+  East = 0,
+  South = 1,
+  West = 2,
+  North = 3,
 }
 
 export type PlayerResult = {

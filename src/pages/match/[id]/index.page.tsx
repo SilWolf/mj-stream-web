@@ -4,17 +4,26 @@ import MJTileDiv from '@/components/MJTileDiv'
 import useMatch from '@/hooks/useMatch'
 import BroadcastLayout from '@/layouts/Broadcast.layout'
 
+import { PlayerIndex } from '@/models'
+import { getIsPlayerEast } from '@/helpers/mahjong.helper'
 import PlayerCardDiv from './components/PlayerCardDiv'
 import OBSInstructionDiv from './components/OBSInstructionDiv'
+
+const PLAYER_CARD_CLASSNAME_MAP: Record<PlayerIndex, string> = {
+  0: '!bg-blue-400',
+  1: '!bg-red-400',
+  2: '!bg-green-400',
+  3: '!bg-yellow-400',
+}
 
 type Props = {
   params: { matchId: string }
 }
 
 export default function MatchDetailPage({ params: { matchId } }: Props) {
-  const { match, matchActiveRound } = useMatch(matchId)
+  const { match, matchCurrentRound, matchCurrentRoundDoras } = useMatch(matchId)
 
-  if (!match || !matchActiveRound) {
+  if (!match || !matchCurrentRound) {
     return (
       <BroadcastLayout>
         <div className="text-current">對局讀取失敗。</div>
@@ -28,7 +37,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
       <div className="flex flex-row items-stretch gap-x-4 text-white">
         <div className="rounded-[1rem] bg-black bg-opacity-50 p-2 flex items-stretch gap-x-4">
           <div className="font-ud text-[2.5rem] leading-[3rem] border-[.25rem] rounded-[.75rem] px-4 border-current">
-            <MJMatchCounterSpan roundCount={matchActiveRound.roundCount} />
+            <MJMatchCounterSpan roundCount={matchCurrentRound.roundCount} />
           </div>
 
           <div className="flex flex-col justify-around">
@@ -41,7 +50,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
                 />
               </div>
               <div className="font-ud">
-                {matchActiveRound.subRoundCount ?? 0}
+                {matchCurrentRound.extendedRoundCount ?? 0}
               </div>
             </div>
             <div className="flex-1 flex flex-row items-center gap-x-2">
@@ -53,13 +62,13 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
                 />
               </div>
               <div className="font-ud">
-                {matchActiveRound.cumulatedThousands ?? 0}
+                {matchCurrentRound.cumulatedThousands ?? 0}
               </div>
             </div>
           </div>
 
           <div className="flex items-center gap-x-2">
-            {matchActiveRound.doras.map((dora) => (
+            {matchCurrentRoundDoras.map((dora) => (
               <MJTileDiv key={dora} className="w-9">
                 {dora}
               </MJTileDiv>
@@ -71,32 +80,17 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
 
       <OBSInstructionDiv />
 
-      <div className="flex flex-row items-end justify-center gap-x-8 text-white">
-        <PlayerCardDiv
-          name={match.players[0].name}
-          title={match.players[0].title}
-          score={matchActiveRound.playerResults[0].beforeScore}
-          isEast={matchActiveRound.roundCount % 4 === 1}
-          className="!bg-blue-400 !bg-opacity-60"
-        />
-        <PlayerCardDiv
-          name={match.players[1].name}
-          score={matchActiveRound.playerResults[1].beforeScore}
-          isEast={matchActiveRound.roundCount % 4 === 2}
-          className="!bg-red-400 !bg-opacity-60"
-        />
-        <PlayerCardDiv
-          name={match.players[2].name}
-          score={matchActiveRound.playerResults[2].beforeScore}
-          isEast={matchActiveRound.roundCount % 4 === 3}
-          className="!bg-green-400 !bg-opacity-60"
-        />
-        <PlayerCardDiv
-          name={match.players[3].name}
-          score={matchActiveRound.playerResults[3].beforeScore}
-          isEast={matchActiveRound.roundCount % 4 === 0}
-          className="!bg-yellow-400 !bg-opacity-60"
-        />
+      <div className="flex flex-row items-end justify-center gap-x-8 text-white text-[4rem]">
+        {(['0', '1', '2', '3'] as PlayerIndex[]).map((index) => (
+          <PlayerCardDiv
+            key={index}
+            name={match.players[index].name}
+            title={match.players[index].title}
+            score={matchCurrentRound.playerResults[index].beforeScore}
+            isEast={getIsPlayerEast(index, matchCurrentRound.roundCount)}
+            className={`${PLAYER_CARD_CLASSNAME_MAP[index]} !bg-opacity-60`}
+          />
+        ))}
       </div>
     </BroadcastLayout>
   )

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   Match,
   MatchRound,
@@ -12,7 +12,7 @@ import {
   useFirebaseDatabaseByKey,
 } from '../../providers/firebaseDatabase.provider'
 
-type MatchDTO = MatchBase & {
+export type MatchDTO = MatchBase & {
   players: Record<
     PlayerIndex,
     Player & {
@@ -28,18 +28,20 @@ const useMatch = (matchId: string) => {
   const fb = useFirebaseDatabase()
   const [match, setMatch] = useState<MatchDTO | undefined>()
 
-  const { data: matchActiveRound } = useFirebaseDatabaseByKey<MatchRound>(
-    `matchRounds`,
-    {
-      order: {
-        byChild: 'matchId',
-      },
-      filter: {
-        limitToLast: 1,
-      },
-      returnSingle: true,
-    }
-  )
+  const {
+    data: matchCurrentRound,
+    update: updateCurrentMatchRound,
+    push: pushMatchRound,
+  } = useFirebaseDatabaseByKey<MatchRound>(`matchRounds`, {
+    order: {
+      byChild: 'matchId',
+    },
+    filter: {
+      limitToLast: 1,
+      equalTo: matchId,
+    },
+    returnSingle: true,
+  })
 
   useEffect(() => {
     const asyncFn = async () => {
@@ -100,9 +102,17 @@ const useMatch = (matchId: string) => {
     asyncFn()
   }, [fb, matchId])
 
+  const matchCurrentRoundDoras = useMemo(
+    () => Object.values(matchCurrentRound?.doras ?? {}),
+    [matchCurrentRound]
+  )
+
   return {
     match,
-    matchActiveRound,
+    matchCurrentRound,
+    matchCurrentRoundDoras,
+    updateCurrentMatchRound,
+    pushMatchRound,
   }
 }
 
