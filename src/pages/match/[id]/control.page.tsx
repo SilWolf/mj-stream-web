@@ -3,6 +3,7 @@ import useMatch from '@/hooks/useMatch'
 import {
   MatchRound,
   PlayerIndex,
+  PlayerResult,
   PlayerResultWinnerOrLoserEnum,
   RoundResultTypeEnum,
 } from '@/models'
@@ -54,16 +55,46 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
   >({ initialActivePlayerIndex: '0' })
   const confirmDialog = useConfirmDialog()
 
-  const handleClickRiichi = useCallback(
+  const handleClickReveal = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
-      const id = e.currentTarget.getAttribute(
-        'data-id'
+      const playerIndex = e.currentTarget.getAttribute(
+        'data-player-index'
       ) as unknown as PlayerIndex
-      if (!id) {
+      if (!playerIndex) {
         return
       }
 
-      const player = match?.players[id]
+      const player = match?.players[playerIndex]
+      if (!player) {
+        return
+      }
+
+      updateCurrentMatchRound({
+        playerResults: {
+          ...(matchCurrentRound?.playerResults as Record<
+            PlayerIndex,
+            PlayerResult
+          >),
+          [playerIndex]: {
+            ...matchCurrentRound?.playerResults[playerIndex],
+            isRevealed: true,
+          },
+        },
+      })
+    },
+    [match?.players, matchCurrentRound?.playerResults, updateCurrentMatchRound]
+  )
+
+  const handleClickRiichi = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      const playerIndex = e.currentTarget.getAttribute(
+        'data-player-index'
+      ) as unknown as PlayerIndex
+      if (!playerIndex) {
+        return
+      }
+
+      const player = match?.players[playerIndex]
       if (!player) {
         return
       }
@@ -72,13 +103,30 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         title: '確定要立直嗎？',
         content: `一旦點擊確定，就會播出立直動畫，請確定立直的是 ${player.name}！`,
         onClickOk: async () => {
+          updateCurrentMatchRound({
+            playerResults: {
+              ...(matchCurrentRound?.playerResults as Record<
+                PlayerIndex,
+                PlayerResult
+              >),
+              [playerIndex]: {
+                ...matchCurrentRound?.playerResults[playerIndex],
+                isRiichi: true,
+              },
+            },
+          })
           return new Promise((res) => {
             setTimeout(res, 3000)
           })
         },
       })
     },
-    [confirmDialog, match?.players]
+    [
+      confirmDialog,
+      match?.players,
+      matchCurrentRound?.playerResults,
+      updateCurrentMatchRound,
+    ]
   )
 
   const handleClickDora = useCallback(
@@ -290,27 +338,47 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                   className={`${PLAYER_CARD_CLASSNAME_MAP[index]} !bg-opacity-60`}
                 />
               </div>
-              <div className="space-y-1">
-                <div>
-                  <button
-                    type="button"
-                    className="px-2 py-0.5 border border-blue-600 text-blue-600 rounded"
-                    onClick={handleClickRiichi}
-                    data-id={index}
-                  >
-                    立直
-                  </button>
-                </div>
-                <div>
-                  <button
-                    type="button"
-                    className="px-2 py-0.5 border border-red-600 text-red-600 rounded"
-                    onClick={handleClickRon}
-                    data-player-index={index}
-                  >
-                    和了
-                  </button>
-                </div>
+              <div>
+                <button
+                  type="button"
+                  className={`${
+                    matchCurrentRound.playerResults[index].isRevealed
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-white text-blue-600 opacity-30'
+                  } h-16 w-16 border-2 border-blue-600  rounded-full text-lg`}
+                  onClick={handleClickReveal}
+                  data-player-index={index}
+                >
+                  {matchCurrentRound.playerResults[index].isRevealed
+                    ? '已副露'
+                    : '副露?'}
+                </button>
+              </div>
+              <div>
+                <button
+                  type="button"
+                  className={`${
+                    matchCurrentRound.playerResults[index].isRiichi
+                      ? 'bg-orange-600 text-white'
+                      : 'bg-white text-orange-600 opacity-30'
+                  } h-16 w-16 border-2 border-orange-600  rounded-full text-lg`}
+                  onClick={handleClickRiichi}
+                  data-player-index={index}
+                >
+                  {matchCurrentRound.playerResults[index].isRiichi
+                    ? '已立直'
+                    : '立直?'}
+                </button>
+              </div>
+              <div className="pl-6">
+                <button
+                  type="button"
+                  className="bg-red-100 text-red-600 h-12 w-16 rounded text-lg"
+                  onClick={handleClickRon}
+                  data-player-index={index}
+                >
+                  和了
+                </button>
               </div>
             </div>
           ))}
