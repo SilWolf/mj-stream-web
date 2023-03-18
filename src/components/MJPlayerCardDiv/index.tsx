@@ -1,5 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import MJAmountSpan from '@/components/MJAmountSpan'
+import { isSameArray } from '@/utils/array.util'
 import React, { HTMLAttributes, useEffect, useState } from 'react'
 
 type Props = HTMLAttributes<HTMLDivElement> & {
@@ -32,11 +33,10 @@ export default function MJPlayerCardDiv({
   }, [score])
 
   useEffect(() => {
-    setStoredScoreChanges(scoreChanges)
-    setTimeout(() => {
-      setStoredScoreChanges(undefined)
-    }, 4000)
-  }, [scoreChanges])
+    if (!isSameArray(scoreChanges, storedScoreChanges)) {
+      setStoredScoreChanges(scoreChanges)
+    }
+  }, [scoreChanges, storedScoreChanges])
 
   return (
     <div>
@@ -60,8 +60,8 @@ export default function MJPlayerCardDiv({
                     <MJAmountSpan
                       signed
                       value={scoreChange}
-                      positiveClassName="text-green-500"
-                      negativeClassName="text-red-500"
+                      positiveClassName="text-green-400"
+                      negativeClassName="text-red-400"
                     />
                   </div>
                 ))}
