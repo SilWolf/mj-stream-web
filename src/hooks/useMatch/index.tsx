@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from 'react'
+import { convertArrayToObject } from '@/utils/array.util'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   Match,
   MatchRound,
@@ -107,10 +108,18 @@ const useMatch = (matchId: string) => {
     [matchCurrentRound]
   )
 
+  const setCurrentRoundDoras = useCallback(
+    (doraTileKeys: string[]) => {
+      updateCurrentMatchRound({ doras: convertArrayToObject(doraTileKeys) })
+    },
+    [updateCurrentMatchRound]
+  )
+
   return {
     match,
     matchCurrentRound,
     matchCurrentRoundDoras,
+    setCurrentRoundDoras,
     updateCurrentMatchRound,
     pushMatchRound,
   }

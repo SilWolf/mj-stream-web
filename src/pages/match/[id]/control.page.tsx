@@ -18,6 +18,10 @@ import {
 } from '@/helpers/mahjong.helper'
 import { useBoolean } from 'react-use'
 import MJPlayerCardDiv from '@/components/MJPlayerCardDiv'
+import MJTileDiv, { MJTileKey } from '@/components/MJTileDiv'
+import MJMatchCounterSpan from '@/components/MJMatchCounterSpan'
+import MJUIDialog from '@/components/MJUI/MJUIDialog'
+import MJTileKeyboardDiv from '@/components/MJTileKeyboardDiv'
 
 const PLAYER_CARD_CLASSNAME_MAP: Record<PlayerIndex, string> = {
   0: '!bg-blue-400',
@@ -31,8 +35,19 @@ type Props = {
 }
 
 export default function MatchControlPage({ params: { matchId } }: Props) {
-  const { match, matchCurrentRound, updateCurrentMatchRound, pushMatchRound } =
-    useMatch(matchId)
+  const {
+    match,
+    matchCurrentRound,
+    matchCurrentRoundDoras,
+    updateCurrentMatchRound,
+    pushMatchRound,
+    setCurrentRoundDoras,
+  } = useMatch(matchId)
+
+  const [clickedDoraIndex, setClickedDoraIndex] = useState<number | undefined>(
+    undefined
+  )
+
   const [isShowingRonDialog, toggleRonDialog] = useBoolean(false)
   const [ronDialogProps, setRonDialogProps] = useState<
     Pick<MJMatchRonProps, 'initialActivePlayerIndex'>
@@ -65,6 +80,54 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
     },
     [confirmDialog, match?.players]
   )
+
+  const handleClickDora = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      const doraIndex = parseInt(
+        e.currentTarget?.getAttribute('data-index') as string,
+        10
+      )
+
+      if (typeof doraIndex !== 'undefined' && !Number.isNaN(doraIndex)) {
+        setClickedDoraIndex(doraIndex)
+      }
+    },
+    []
+  )
+
+  const handleSubmitDoraKeyboard = useCallback(
+    (tileKey: MJTileKey) => {
+      if (typeof clickedDoraIndex !== 'undefined') {
+        const newDoras = [...matchCurrentRoundDoras]
+
+        if (clickedDoraIndex === -1) {
+          newDoras.push(tileKey)
+        } else {
+          newDoras[clickedDoraIndex] = tileKey
+        }
+
+        setCurrentRoundDoras(newDoras)
+        setClickedDoraIndex(undefined)
+      }
+    },
+    [clickedDoraIndex, matchCurrentRoundDoras, setCurrentRoundDoras]
+  )
+
+  const handleRemoveDoraKeyboard = useCallback(() => {
+    if (typeof clickedDoraIndex !== 'undefined') {
+      const newDoras = [...matchCurrentRoundDoras]
+
+      if (clickedDoraIndex > -1) {
+        newDoras.splice(clickedDoraIndex, 1)
+        setCurrentRoundDoras(newDoras)
+        setClickedDoraIndex(undefined)
+      }
+    }
+  }, [clickedDoraIndex, matchCurrentRoundDoras, setCurrentRoundDoras])
+
+  const handleCloseDoraKeyboard = useCallback(() => {
+    setClickedDoraIndex(undefined)
+  }, [])
 
   const handleClickRon = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -154,7 +217,64 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         </div>
       </div>
 
-      <div className="container mx-auto mt-8 px-8">
+      <div className="container mx-auto mt-8 px-8 space-y-6">
+        <div className="flex flex-row items-stretch gap-x-4 text-white">
+          <div className="rounded-[1rem] bg-black bg-opacity-50 p-2 flex items-stretch gap-x-4">
+            <div className="font-ud text-[2.5rem] border-[.25rem] rounded-[.75rem] px-4 border-current flex items-center justify-center">
+              <MJMatchCounterSpan roundCount={matchCurrentRound.roundCount} />
+            </div>
+            <div className="flex flex-col justify-around">
+              <div className="flex-1 flex flex-row items-center gap-x-2">
+                <div className="flex-1">
+                  <img
+                    src="/images/score-hundred.png"
+                    alt="hundred"
+                    className="h-4"
+                  />
+                </div>
+                <div className="font-ud">
+                  {matchCurrentRound.extendedRoundCount ?? 0}
+                </div>
+              </div>
+              <div className="flex-1 flex flex-row items-center gap-x-2">
+                <div className="flex-1">
+                  <img
+                    src="/images/score-thousand.png"
+                    alt="thousand"
+                    className="h-4"
+                  />
+                </div>
+                <div className="font-ud">
+                  {matchCurrentRound.cumulatedThousands ?? 0}
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-x-2">
+              {matchCurrentRoundDoras.map((dora, index) => (
+                <MJTileDiv
+                  key={dora}
+                  className="w-9 cursor-pointer"
+                  data-index={index}
+                  onClick={handleClickDora}
+                >
+                  {dora}
+                </MJTileDiv>
+              ))}
+              <div>
+                <button
+                  type="button"
+                  className="rounded-full border border-white h-16 w-16 text-sm"
+                  data-index="-1"
+                  onClick={handleClickDora}
+                >
+                  +懸賞
+                </button>
+              </div>
+            </div>
+          </div>
+          <div className="flex-1" />
+        </div>
+
         <div className="space-y-4">
           {(['0', '1', '2', '3'] as PlayerIndex[]).map((index) => (
             <div className="flex gap-x-2 items-center">
@@ -196,6 +316,21 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
           ))}
         </div>
       </div>
+
+      <MJUIDialog
+        open={typeof clickedDoraIndex !== 'undefined'}
+        title="選擇懸賞"
+        onClose={handleCloseDoraKeyboard}
+      >
+        <MJTileKeyboardDiv
+          onSubmit={handleSubmitDoraKeyboard}
+          onRemove={handleRemoveDoraKeyboard}
+          canRemove={
+            typeof clickedDoraIndex !== 'undefined' && clickedDoraIndex > 0
+          }
+        />
+      </MJUIDialog>
+
       <MJMatchRonDialog
         match={match}
         currentMatchRound={matchCurrentRound}

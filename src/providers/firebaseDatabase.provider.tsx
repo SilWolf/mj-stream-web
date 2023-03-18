@@ -158,7 +158,7 @@ export const useFirebaseDatabaseByKey = <T extends Record<string, unknown>>(
   )
 
   const update = useCallback(
-    (payload: T) => {
+    (payload: Partial<T>) => {
       if (lastOptions?.returnSingle && rawData) {
         const rawDataKey = Object.keys(rawData)[0]
         if (rawDataKey) {

@@ -4,6 +4,7 @@ import { useFirebaseDatabase } from '@/providers/firebaseDatabase.provider'
 import { useLocation } from 'wouter'
 import MJUIButton from '@/components/MJUI/MJUIButton'
 import MJPlayerCardDiv from '@/components/MJPlayerCardDiv'
+import MJTileKeyboardDiv from '@/components/MJTileKeyboardDiv'
 
 export default function DevPage() {
   const fb = useFirebaseDatabase()
@@ -151,6 +152,10 @@ export default function DevPage() {
           </div>
           <MJUIButton onClick={handleClickAdd}>增加</MJUIButton>
           <MJUIButton onClick={handleClickMinus}>減少</MJUIButton>
+        </div>
+
+        <div>
+          <MJTileKeyboardDiv />
         </div>
       </div>
     </div>

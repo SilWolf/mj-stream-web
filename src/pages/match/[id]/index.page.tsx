@@ -35,7 +35,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
   return (
     <BroadcastLayout>
       <div className="flex flex-row items-stretch gap-x-4 text-white">
-        <div className="rounded-[1rem] bg-black bg-opacity-50 p-2 flex items-stretch gap-x-4">
+        <div className="rounded-[1rem] bg-black bg-opacity-50 p-2 pr-4 flex items-stretch gap-x-4 transition-[width]">
           <div className="font-ud text-[2.5rem] leading-[3rem] border-[.25rem] rounded-[.75rem] px-4 border-current">
             <MJMatchCounterSpan roundCount={matchCurrentRound.roundCount} />
           </div>
@@ -69,7 +69,10 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
 
           <div className="flex items-center gap-x-2">
             {matchCurrentRoundDoras.map((dora) => (
-              <MJTileDiv key={dora} className="w-9">
+              <MJTileDiv
+                key={dora}
+                className="w-9 animate-[fadeIn_0.5s_ease-in-out]"
+              >
                 {dora}
               </MJTileDiv>
             ))}

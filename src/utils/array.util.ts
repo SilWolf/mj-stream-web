@@ -21,3 +21,15 @@ export const isSameArray = (
 
   return true
 }
+
+export const convertArrayToObject = <T = unknown>(
+  arr: T[]
+): Record<string, T> => {
+  const result: Record<string, T> = {}
+
+  for (let i = 0; i < arr.length; i += 1) {
+    result[i.toString()] = arr[i]
+  }
+
+  return result
+}
