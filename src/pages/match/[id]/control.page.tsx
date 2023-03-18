@@ -17,7 +17,7 @@ import {
   getPlayerIndexOfEastByRound,
 } from '@/helpers/mahjong.helper'
 import { useBoolean } from 'react-use'
-import PlayerCardDiv from './components/PlayerCardDiv'
+import MJPlayerCardDiv from '@/components/MJPlayerCardDiv'
 
 const PLAYER_CARD_CLASSNAME_MAP: Record<PlayerIndex, string> = {
   0: '!bg-blue-400',
@@ -159,7 +159,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
           {(['0', '1', '2', '3'] as PlayerIndex[]).map((index) => (
             <div className="flex gap-x-2 items-center">
               <div className="flex-1 text-[2.5rem]">
-                <PlayerCardDiv
+                <MJPlayerCardDiv
                   name={match.players[index].name}
                   title={match.players[index].title}
                   score={matchCurrentRound.playerResults[index].beforeScore}

@@ -6,7 +6,7 @@ import BroadcastLayout from '@/layouts/Broadcast.layout'
 
 import { PlayerIndex } from '@/models'
 import { getIsPlayerEast } from '@/helpers/mahjong.helper'
-import PlayerCardDiv from './components/PlayerCardDiv'
+import MJPlayerCardDiv from '@/components/MJPlayerCardDiv'
 import OBSInstructionDiv from './components/OBSInstructionDiv'
 
 const PLAYER_CARD_CLASSNAME_MAP: Record<PlayerIndex, string> = {
@@ -82,7 +82,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
 
       <div className="flex flex-row items-end justify-center gap-x-8 text-white text-[4rem]">
         {(['0', '1', '2', '3'] as PlayerIndex[]).map((index) => (
-          <PlayerCardDiv
+          <MJPlayerCardDiv
             key={index}
             name={match.players[index].name}
             title={match.players[index].title}

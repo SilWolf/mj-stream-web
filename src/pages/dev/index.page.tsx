@@ -3,7 +3,7 @@ import { MatchRound } from '@/models'
 import { useFirebaseDatabase } from '@/providers/firebaseDatabase.provider'
 import { useLocation } from 'wouter'
 import MJUIButton from '@/components/MJUI/MJUIButton'
-import MJPlayerCardDiv from '../match/[id]/components/PlayerCardDiv'
+import MJPlayerCardDiv from '@/components/MJPlayerCardDiv'
 
 export default function DevPage() {
   const fb = useFirebaseDatabase()
