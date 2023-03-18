@@ -2,6 +2,7 @@
 import MJAmountSpan from '@/components/MJAmountSpan'
 import { isSameArray } from '@/utils/array.util'
 import React, { HTMLAttributes, useEffect, useState } from 'react'
+import { useBoolean } from 'react-use'
 
 type Props = HTMLAttributes<HTMLDivElement> & {
   propicSrc?: string
@@ -27,16 +28,18 @@ export default function MJPlayerCardDiv({
   >(undefined)
 
   useEffect(() => {
-    setTimeout(() => {
-      setStoredScore(score)
-    }, 2550)
-  }, [score])
-
-  useEffect(() => {
-    if (!isSameArray(scoreChanges, storedScoreChanges)) {
+    if (score !== storedScore) {
       setStoredScoreChanges(scoreChanges)
+
+      setTimeout(() => {
+        setStoredScore(score)
+      }, 2550)
+
+      setTimeout(() => {
+        setStoredScoreChanges(undefined)
+      }, 3000)
     }
-  }, [scoreChanges, storedScoreChanges])
+  }, [score, scoreChanges, storedScore])
 
   return (
     <div>
@@ -54,7 +57,7 @@ export default function MJPlayerCardDiv({
             {...props}
           >
             {storedScoreChanges && (
-              <div className="absolute bottom-[1.8em] pr-[0.125em] right-0 font-ud text-[1em] leading-none animate-[fadeIn_3s_ease-in-out_0s_1_normal_forwards]">
+              <div className="absolute bottom-[1.8em] pr-[0.125em] right-0 font-ud text-[1em] leading-none animate-[fadeIn_3s_ease-in-out]">
                 {storedScoreChanges.map((scoreChange) => (
                   <div>
                     <MJAmountSpan

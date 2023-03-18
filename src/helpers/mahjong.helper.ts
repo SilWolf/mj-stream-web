@@ -160,37 +160,45 @@ export const getRoundResultTypeByCompiledScore = (
 export const getPlayerIndexOfEastByRound = (round: number): PlayerIndex =>
   PLAYER_INDEX_ARRAY[(round - 1) % PLAYER_INDEX_ARRAY.length]
 
-export const formatPlayerResultsByScores = (
-  scores: Record<PlayerIndex, number>
+export const formatPlayerResultsByPrev = (
+  prev: Record<PlayerIndex, PlayerResult>
 ): Record<PlayerIndex, PlayerResult> => {
   return {
     '0': {
-      beforeScore: scores['0'],
-      afterScore: scores['0'],
+      beforeScore: prev['0'].afterScore,
+      afterScore: prev['0'].afterScore,
       isRevealed: false,
       isRiichi: false,
       type: PlayerResultWinnerOrLoserEnum.None,
+      scoreChanges: [],
+      prevScoreChanges: prev['0'].scoreChanges,
     },
     '1': {
-      beforeScore: scores['1'],
-      afterScore: scores['1'],
+      beforeScore: prev['1'].afterScore,
+      afterScore: prev['1'].afterScore,
       isRevealed: false,
       isRiichi: false,
       type: PlayerResultWinnerOrLoserEnum.None,
+      scoreChanges: [],
+      prevScoreChanges: prev['1'].scoreChanges,
     },
     '2': {
-      beforeScore: scores['2'],
-      afterScore: scores['2'],
+      beforeScore: prev['2'].afterScore,
+      afterScore: prev['2'].afterScore,
       isRevealed: false,
       isRiichi: false,
       type: PlayerResultWinnerOrLoserEnum.None,
+      scoreChanges: [],
+      prevScoreChanges: prev['2'].scoreChanges,
     },
     '3': {
-      beforeScore: scores['3'],
-      afterScore: scores['3'],
+      beforeScore: prev['3'].afterScore,
+      afterScore: prev['3'].afterScore,
       isRevealed: false,
       isRiichi: false,
       type: PlayerResultWinnerOrLoserEnum.None,
+      scoreChanges: [],
+      prevScoreChanges: prev['3'].scoreChanges,
     },
   }
 }
@@ -198,11 +206,11 @@ export const formatPlayerResultsByScores = (
 export const formatPlayerResultsByPreviousPlayerResults = (
   prev: Record<PlayerIndex, PlayerResult>
 ): Record<PlayerIndex, PlayerResult> =>
-  formatPlayerResultsByScores({
-    '0': prev['0'].afterScore,
-    '1': prev['1'].afterScore,
-    '2': prev['2'].afterScore,
-    '3': prev['3'].afterScore,
+  formatPlayerResultsByPrev({
+    '0': prev['0'],
+    '1': prev['1'],
+    '2': prev['2'],
+    '3': prev['3'],
   })
 
 export const generateMatchCode = (

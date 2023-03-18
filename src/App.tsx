@@ -73,21 +73,25 @@ function App({ params: { matchId } }: Props) {
         <MJPlayerCardDiv
           name={match.players[0].name}
           score={matchCurrentRound.playerResults[0].beforeScore}
+          scoreChanges={matchCurrentRound.playerResults[0].prevScoreChanges}
           className="!bg-blue-400 !bg-opacity-60"
         />
         <MJPlayerCardDiv
           name={match.players[1].name}
           score={matchCurrentRound.playerResults[1].beforeScore}
+          scoreChanges={matchCurrentRound.playerResults[1].prevScoreChanges}
           className="!bg-red-400 !bg-opacity-60"
         />
         <MJPlayerCardDiv
           name={match.players[2].name}
           score={matchCurrentRound.playerResults[2].beforeScore}
+          scoreChanges={matchCurrentRound.playerResults[2].prevScoreChanges}
           className="!bg-green-400 !bg-opacity-60"
         />
         <MJPlayerCardDiv
           name={match.players[3].name}
           score={matchCurrentRound.playerResults[3].beforeScore}
+          scoreChanges={matchCurrentRound.playerResults[3].prevScoreChanges}
           className="!bg-yellow-400 !bg-opacity-60"
         />
       </div>

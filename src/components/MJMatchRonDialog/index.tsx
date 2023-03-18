@@ -110,21 +110,33 @@ export default function MJMatchRonDialog({
         beforeScore: currentMatchRound.playerResults['0'].afterScore,
         afterScore: currentMatchRound.playerResults['0'].afterScore,
         type: 0,
+        scoreChanges: [],
+        prevScoreChanges:
+          currentMatchRound.playerResults['0'].prevScoreChanges ?? [],
       },
       '1': {
         beforeScore: currentMatchRound.playerResults['1'].afterScore,
         afterScore: currentMatchRound.playerResults['1'].afterScore,
         type: 0,
+        scoreChanges: [],
+        prevScoreChanges:
+          currentMatchRound.playerResults['1'].prevScoreChanges ?? [],
       },
       '2': {
         beforeScore: currentMatchRound.playerResults['2'].afterScore,
         afterScore: currentMatchRound.playerResults['2'].afterScore,
         type: 0,
+        scoreChanges: [],
+        prevScoreChanges:
+          currentMatchRound.playerResults['2'].prevScoreChanges ?? [],
       },
       '3': {
         beforeScore: currentMatchRound.playerResults['3'].afterScore,
         afterScore: currentMatchRound.playerResults['3'].afterScore,
         type: 0,
+        scoreChanges: [],
+        prevScoreChanges:
+          currentMatchRound.playerResults['3'].prevScoreChanges ?? [],
       },
     }
 
@@ -140,6 +152,9 @@ export default function MJMatchRonDialog({
           compiledScore.win
         newPreviewPlayerResults[currentPlayerIndex].type =
           PlayerResultWinnerOrLoserEnum.Win
+        newPreviewPlayerResults[currentPlayerIndex].scoreChanges = [
+          compiledScore.win,
+        ]
       } else if (
         compiledScore.target &&
         currentPlayerIndex === targetPlayerIndex
@@ -148,22 +163,34 @@ export default function MJMatchRonDialog({
           compiledScore.target
         newPreviewPlayerResults[currentPlayerIndex].type =
           PlayerResultWinnerOrLoserEnum.Lose
+        newPreviewPlayerResults[currentPlayerIndex].scoreChanges = [
+          -compiledScore.target,
+        ]
       } else if (compiledScore.all) {
         newPreviewPlayerResults[currentPlayerIndex].afterScore -=
           compiledScore.all
         newPreviewPlayerResults[currentPlayerIndex].type =
           PlayerResultWinnerOrLoserEnum.Lose
+        newPreviewPlayerResults[currentPlayerIndex].scoreChanges = [
+          -compiledScore.all,
+        ]
       } else if (compiledScore.east && compiledScore.others) {
         if (getIsPlayerEast(currentPlayerIndex, currentMatchRound.roundCount)) {
           newPreviewPlayerResults[currentPlayerIndex].afterScore -=
             compiledScore.east
           newPreviewPlayerResults[currentPlayerIndex].type =
             PlayerResultWinnerOrLoserEnum.Lose
+          newPreviewPlayerResults[currentPlayerIndex].scoreChanges = [
+            -compiledScore.east,
+          ]
         } else {
           newPreviewPlayerResults[currentPlayerIndex].afterScore -=
             compiledScore.others
           newPreviewPlayerResults[currentPlayerIndex].type =
             PlayerResultWinnerOrLoserEnum.Lose
+          newPreviewPlayerResults[currentPlayerIndex].scoreChanges = [
+            -compiledScore.others,
+          ]
         }
       }
     }

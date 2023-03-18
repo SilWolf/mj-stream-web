@@ -86,6 +86,8 @@ export const enum PlayerPositionEnum {
 export type PlayerResult = {
   beforeScore: number
   afterScore: number
+  scoreChanges: number[]
+  prevScoreChanges: number[]
   type: PlayerResultWinnerOrLoserEnum
   isRiichi?: boolean
   isRevealed?: boolean

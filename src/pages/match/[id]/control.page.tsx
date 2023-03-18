@@ -163,6 +163,9 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                   name={match.players[index].name}
                   title={match.players[index].title}
                   score={matchCurrentRound.playerResults[index].beforeScore}
+                  scoreChanges={
+                    matchCurrentRound.playerResults[index].prevScoreChanges
+                  }
                   isEast={getIsPlayerEast(index, matchCurrentRound.roundCount)}
                   className={`${PLAYER_CARD_CLASSNAME_MAP[index]} !bg-opacity-60`}
                 />
