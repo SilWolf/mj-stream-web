@@ -1,21 +1,43 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { HTMLAttributes } from 'react'
+import MJAnimatedNumberSpan from '@/components/MJAnimatedNumberSpan'
+import React, { HTMLAttributes, useEffect, useState } from 'react'
 
 type Props = HTMLAttributes<HTMLDivElement> & {
   propicSrc?: string
   name: string
   score: number
+  scoreChanges?: number[]
   isEast?: boolean
+  onAnimationEnd?: () => void
 }
 
 export default function MJPlayerCardDiv({
   propicSrc,
   name,
   score,
+  scoreChanges = [],
   isEast,
   className,
   ...props
 }: Props) {
+  const [storedScore, setStoredScore] = useState<number>(score)
+  const [storedScoreChanges, setStoredScoreChanges] = useState<
+    number[] | undefined
+  >(undefined)
+
+  useEffect(() => {
+    setTimeout(() => {
+      setStoredScore(score)
+    }, 2550)
+  }, [score])
+
+  useEffect(() => {
+    setStoredScoreChanges(scoreChanges)
+    setTimeout(() => {
+      setStoredScoreChanges(undefined)
+    }, 4000)
+  }, [scoreChanges])
+
   return (
     <div>
       <div className="relative">
@@ -28,11 +50,18 @@ export default function MJPlayerCardDiv({
           <div className="h-[0.25em]" />
           <div className="text-[0.375em] leading-none pr-[0.45em]">{name}</div>
           <div
-            className={`w-full text-right bg-white bg-opacity-60 rounded-[0.125em] pl-[2.5em] pr-[0.125em] ${className}`}
+            className={`relative w-full text-right bg-white bg-opacity-60 rounded-[0.125em] pl-[2.5em] pr-[0.125em] ${className}`}
             {...props}
           >
+            {storedScoreChanges && (
+              <div className="absolute bottom-[1.8em] pr-[0.125em] right-0 font-ud text-[1em] leading-none animate-[fadeIn_3s_ease-in-out_0s_1_normal_forwards]">
+                {storedScoreChanges.map((scoreChange) => (
+                  <div>{scoreChange}</div>
+                ))}
+              </div>
+            )}
             <div className="font-ud flex-1 text-[1em] leading-none">
-              {score}
+              <MJAnimatedNumberSpan value={storedScore} />
             </div>
           </div>
         </div>

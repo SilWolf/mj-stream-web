@@ -1,7 +1,9 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import { MatchRound } from '@/models'
 import { useFirebaseDatabase } from '@/providers/firebaseDatabase.provider'
 import { useLocation } from 'wouter'
+import MJUIButton from '@/components/MJUI/MJUIButton'
+import MJPlayerCardDiv from '../match/[id]/components/PlayerCardDiv'
 
 export default function DevPage() {
   const fb = useFirebaseDatabase()
@@ -108,12 +110,40 @@ export default function DevPage() {
     setLocation(`/match/${matchRound.matchId}`)
   }, [fb, setLocation])
 
+  const [score, setScore] = useState<number>(25000)
+  const [scoreChanges, setScoreChanges] = useState<number[]>([])
+
+  const handleClickAdd = useCallback(() => {
+    setScore((prev) => prev + 2000)
+    setScoreChanges([2000])
+  }, [])
+
+  const handleClickMinus = useCallback(() => {
+    setScore((prev) => prev - 3000)
+    setScoreChanges([-1000, -2000])
+  }, [])
+
   return (
-    <div className="space-y-6">
-      <div>
-        <button type="button" onClick={handleClickGenerateTestData}>
-          生成測試數據及打開 /match/:matchId
-        </button>
+    <div className="container mx-auto max-w-screen-md">
+      <div className="space-y-6">
+        <div>
+          <MJUIButton type="button" onClick={handleClickGenerateTestData}>
+            生成測試數據及打開 /match/:matchId
+          </MJUIButton>
+        </div>
+
+        <div>
+          <div className="text-[4rem]">
+            <MJPlayerCardDiv
+              name="測試機械人"
+              score={score}
+              scoreChanges={scoreChanges}
+              className="!bg-yellow-400 !bg-opacity-60"
+            />
+          </div>
+          <MJUIButton onClick={handleClickAdd}>增加</MJUIButton>
+          <MJUIButton onClick={handleClickMinus}>減少</MJUIButton>
+        </div>
       </div>
     </div>
   )
