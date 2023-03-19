@@ -24,6 +24,7 @@ import MJMatchCounterSpan from '@/components/MJMatchCounterSpan'
 import MJUIDialog from '@/components/MJUI/MJUIDialog'
 import MJTileKeyboardDiv from '@/components/MJTileKeyboardDiv'
 import MJMatchHistoryTable from '@/components/MJMatchHistoryTable'
+import MJMatchExhaustedDialog from '@/components/MJMatchExhaustedDialog'
 
 const PLAYER_CARD_CLASSNAME_MAP: Record<PlayerIndex, string> = {
   0: '!bg-blue-400',
@@ -55,6 +56,8 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
     Pick<MJMatchRonProps, 'initialActivePlayerIndex'>
   >({ initialActivePlayerIndex: '0' })
   const confirmDialog = useConfirmDialog()
+
+  const [isShowingExhaustedDialog, toggleExhaustedDialog] = useBoolean(false)
 
   const handleClickReveal = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -196,6 +199,10 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
     [toggleRonDialog]
   )
 
+  const handleClickExhausted = useCallback(() => {
+    toggleExhaustedDialog()
+  }, [toggleExhaustedDialog])
+
   const handleSubmitMatchRonDialog = useCallback(
     (updatedMatchRound: MatchRound) => {
       try {
@@ -250,6 +257,60 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
     [matchId, pushMatchRound, toggleRonDialog, updateCurrentMatchRound]
   )
 
+  const handleSubmitMatchExhaustedDialog = useCallback(
+    (updatedMatchRound: MatchRound) => {
+      try {
+        const eastPlayerIndex = getPlayerIndexOfEastByRound(
+          updatedMatchRound.roundCount
+        )
+        const isGoExtendedRound =
+          updatedMatchRound.playerResults[eastPlayerIndex].type ===
+          PlayerResultWinnerOrLoserEnum.Win
+        const isGameEnded =
+          !isGoExtendedRound && updatedMatchRound.roundCount >= 8
+
+        const newRoundCount = isGoExtendedRound
+          ? updatedMatchRound.roundCount
+          : updatedMatchRound.roundCount + 1
+        const newExtendedRoundCount = isGoExtendedRound
+          ? updatedMatchRound.extendedRoundCount + 1
+          : 0
+
+        const newMatchRound: MatchRound = {
+          matchId,
+          code: generateMatchRoundCode(
+            matchId,
+            updatedMatchRound.roundCount,
+            updatedMatchRound.extendedRoundCount
+          ),
+          roundCount: newRoundCount,
+          extendedRoundCount: newExtendedRoundCount,
+          cumulatedThousands: updatedMatchRound.cumulatedThousands,
+          resultType: RoundResultTypeEnum.Unknown,
+          playerResults: formatPlayerResultsByPreviousPlayerResults(
+            updatedMatchRound.playerResults
+          ),
+          doras: {},
+        }
+
+        updateCurrentMatchRound(updatedMatchRound)
+        pushMatchRound(newMatchRound)
+
+        toggleExhaustedDialog(false)
+
+        if (isGameEnded) {
+          // TODO: Proceed to Game End
+          alert('對局結束。')
+
+          return
+        }
+      } catch (e) {
+        console.error(e)
+      }
+    },
+    [matchId, pushMatchRound, toggleExhaustedDialog, updateCurrentMatchRound]
+  )
+
   if (!match || !matchCurrentRound) {
     return <div>對局讀取失敗。</div>
   }
@@ -269,7 +330,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
 
       <div className="container mx-auto mt-8 px-8 space-y-6">
         <div className="flex flex-row items-stretch gap-x-4 text-white">
-          <div className="rounded-[1rem] bg-black bg-opacity-50 p-2 flex items-stretch gap-x-4">
+          <div className="shrink-0 rounded-[1rem] bg-black bg-opacity-50 p-2 flex items-stretch gap-x-4">
             <div className="font-ud text-[2.5rem] border-[.25rem] rounded-[.75rem] px-4 border-current flex items-center justify-center">
               <MJMatchCounterSpan roundCount={matchCurrentRound.roundCount} />
             </div>
@@ -323,6 +384,15 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
             </div>
           </div>
           <div className="flex-1" />
+          <div className="shrink-0">
+            <button
+              type="button"
+              className="bg-gray-100 text-gray-600 h-12 w-16 rounded text-lg"
+              onClick={handleClickExhausted}
+            >
+              流局
+            </button>
+          </div>
         </div>
 
         <div className="space-y-4">
@@ -410,6 +480,15 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         open={isShowingRonDialog}
         onSubmit={handleSubmitMatchRonDialog}
         onClose={toggleRonDialog}
+        {...ronDialogProps}
+      />
+
+      <MJMatchExhaustedDialog
+        match={match}
+        currentMatchRound={matchCurrentRound}
+        open={isShowingExhaustedDialog}
+        onSubmit={handleSubmitMatchExhaustedDialog}
+        onClose={toggleExhaustedDialog}
         {...ronDialogProps}
       />
     </div>

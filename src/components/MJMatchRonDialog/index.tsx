@@ -24,6 +24,7 @@ import MJHanFuScoreSelect from '@/components/MJHanFuScoreSelect'
 import MJMatchCounterSpan from '../MJMatchCounterSpan'
 import MJUISelect from '../MJUI/MJUISelect'
 import MJHanFuScoreSpan from '../MJHanFuScoreSpan'
+import MJAmountSpan from '../MJAmountSpan'
 
 export type MJMatchRonProps = Pick<MJUIDialogProps, 'open' | 'onClose'> & {
   match: MatchDTO
@@ -276,6 +277,7 @@ export default function MJMatchRonDialog({
       // reset form
 
       setActivePlayerIndex(initialActivePlayerIndex)
+      setIsConfirm(false)
     }
   }, [dialogProps.open, initialActivePlayerIndex])
 
@@ -332,8 +334,15 @@ export default function MJMatchRonDialog({
                     <th>{match.players[index].name}</th>
                     <td>{previewPlayerResults[index].beforeScore}</td>
                     <td>
-                      {previewPlayerResults[index].afterScore -
-                        previewPlayerResults[index].beforeScore}
+                      <MJAmountSpan
+                        signed
+                        value={
+                          previewPlayerResults[index].afterScore -
+                          previewPlayerResults[index].beforeScore
+                        }
+                        positiveClassName="text-green-400"
+                        negativeClassName="text-red-400"
+                      />
                     </td>
                     <td className="text-right">
                       {previewPlayerResults[index].afterScore}
