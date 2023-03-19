@@ -45,11 +45,9 @@ export type RawPlayer = {
 }
 
 export type Player = {
-  code: string
   name: string
   title?: string
   propicSrc?: string
-  masterPlayerId?: string
 }
 
 export type MatchRound = {

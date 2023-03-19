@@ -81,6 +81,32 @@ export default function MJMatchRonDialog({
     [targetPlayerIndex, players]
   )
 
+  const handleChangeHanFuScoreSelect = useCallback(
+    (newScore: MJCompiledScore) => {
+      const newCompiledScore = { ...newScore }
+      if (currentMatchRound.extendedRoundCount > 0) {
+        newCompiledScore.win += currentMatchRound.extendedRoundCount * 300
+
+        if (newCompiledScore.target) {
+          newCompiledScore.target += currentMatchRound.extendedRoundCount * 300
+        }
+        if (newCompiledScore.all) {
+          newCompiledScore.all += currentMatchRound.extendedRoundCount * 100
+        }
+        if (newCompiledScore.east) {
+          newCompiledScore.east += currentMatchRound.extendedRoundCount * 100
+        }
+      }
+
+      if (currentMatchRound.cumulatedThousands > 0) {
+        newCompiledScore.win += currentMatchRound.cumulatedThousands * 1000
+      }
+
+      setCompiledScore(newCompiledScore)
+    },
+    [currentMatchRound.cumulatedThousands, currentMatchRound.extendedRoundCount]
+  )
+
   const handleChangeIsConfirm = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       setIsConfirm(e.currentTarget.checked)
@@ -107,6 +133,7 @@ export default function MJMatchRonDialog({
 
     const newPreviewPlayerResults: MatchRound['playerResults'] = {
       '0': {
+        ...currentMatchRound.playerResults['0'],
         beforeScore: currentMatchRound.playerResults['0'].afterScore,
         afterScore: currentMatchRound.playerResults['0'].afterScore,
         type: 0,
@@ -115,6 +142,7 @@ export default function MJMatchRonDialog({
           currentMatchRound.playerResults['0'].prevScoreChanges ?? [],
       },
       '1': {
+        ...currentMatchRound.playerResults['1'],
         beforeScore: currentMatchRound.playerResults['1'].afterScore,
         afterScore: currentMatchRound.playerResults['1'].afterScore,
         type: 0,
@@ -123,6 +151,7 @@ export default function MJMatchRonDialog({
           currentMatchRound.playerResults['1'].prevScoreChanges ?? [],
       },
       '2': {
+        ...currentMatchRound.playerResults['2'],
         beforeScore: currentMatchRound.playerResults['2'].afterScore,
         afterScore: currentMatchRound.playerResults['2'].afterScore,
         type: 0,
@@ -131,6 +160,7 @@ export default function MJMatchRonDialog({
           currentMatchRound.playerResults['2'].prevScoreChanges ?? [],
       },
       '3': {
+        ...currentMatchRound.playerResults['3'],
         beforeScore: currentMatchRound.playerResults['3'].afterScore,
         afterScore: currentMatchRound.playerResults['3'].afterScore,
         type: 0,
@@ -143,6 +173,8 @@ export default function MJMatchRonDialog({
     if (activePlayerIndex === targetPlayerIndex) {
       return newPreviewPlayerResults
     }
+
+    let activePlayerBonus = 0
 
     for (let i = 0; i < playerIndexes.length; i += 1) {
       const currentPlayerIndex = playerIndexes[i]
@@ -193,6 +225,24 @@ export default function MJMatchRonDialog({
           ]
         }
       }
+
+      if (
+        currentPlayerIndex !== activePlayerIndex &&
+        newPreviewPlayerResults[currentPlayerIndex].isRiichi
+      ) {
+        newPreviewPlayerResults[currentPlayerIndex].afterScore -= 1000
+        newPreviewPlayerResults[currentPlayerIndex].scoreChanges.unshift(-1000)
+
+        activePlayerBonus += 1000
+      }
+    }
+
+    if (activePlayerIndex && activePlayerBonus > 0) {
+      newPreviewPlayerResults[activePlayerIndex as PlayerIndex].afterScore +=
+        activePlayerBonus
+      newPreviewPlayerResults[
+        activePlayerIndex as PlayerIndex
+      ].scoreChanges.unshift(activePlayerBonus)
     }
 
     return newPreviewPlayerResults
@@ -264,7 +314,7 @@ export default function MJMatchRonDialog({
         <MJHanFuScoreSelect
           isEast={activePlayer?.position === PlayerPositionEnum.East}
           isRon={targetPlayerIndex !== '-1'}
-          onChangeScore={setCompiledScore}
+          onChangeScore={handleChangeHanFuScoreSelect}
         />
 
         <div className="text-2xl font-bold text-center bg-gray-600 text-white py-2">

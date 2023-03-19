@@ -7,12 +7,14 @@ import './index.css'
 import reportWebVitals from './reportWebVitals'
 import FirebaseDatabaseProvider from './providers/firebaseDatabase.provider'
 
+import IndexPage from './pages/index.page'
 import MatchDetailPage from './pages/match/[id]/index.page'
 import MatchControlPage from './pages/match/[id]/control.page'
 import DevPage from './pages/dev/index.page'
 import ConfirmDialogProvider from './components/ConfirmDialog/provider'
 import TestForScoreSelectPage from './pages/test/score-select.page'
 import TestForDialogPage from './pages/test/dialog'
+import CreateMatchPage from './pages/create-match/index.page'
 
 // Import the functions you need from the SDKs you need
 // TODO: Add SDKs for Firebase products that you want to use
@@ -23,6 +25,8 @@ ReactDOM.render(
     <FirebaseDatabaseProvider>
       <ConfirmDialogProvider>
         <Switch>
+          <Route path="/" component={IndexPage} />
+          <Route path="/create-match" component={CreateMatchPage} />
           <Route path="/dev" component={DevPage} />
           <Route path="/match/:matchId" component={MatchDetailPage} />
           <Route path="/match/:matchId/control" component={MatchControlPage} />

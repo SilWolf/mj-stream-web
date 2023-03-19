@@ -5,6 +5,7 @@ import {
   PlayerResultWinnerOrLoserEnum,
   RoundResultTypeEnum,
 } from '@/models'
+import { getRandomId, getYearString } from '@/utils/string.util'
 
 const PLAYER_POSITION_ARRAY = [
   PlayerPositionEnum.East,
@@ -213,8 +214,10 @@ export const formatPlayerResultsByPreviousPlayerResults = (
     '3': prev['3'],
   })
 
-export const generateMatchCode = (
-  matchId: string,
+export const generateMatchCode = () => `${getYearString()}-${getRandomId(6)}`
+
+export const generateMatchRoundCode = (
+  matchCode: string,
   round: number,
   extendedRound: number
-) => `${matchId}-${round}.${extendedRound}`
+) => `${matchCode}-${round}.${extendedRound}`

@@ -13,7 +13,7 @@ import MJMatchRonDialog, {
 } from '@/components/MJMatchRonDialog'
 import {
   formatPlayerResultsByPreviousPlayerResults,
-  generateMatchCode,
+  generateMatchRoundCode,
   getIsPlayerEast,
   getPlayerIndexOfEastByRound,
 } from '@/helpers/mahjong.helper'
@@ -222,7 +222,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
 
         const newMatchRound: MatchRound = {
           matchId,
-          code: generateMatchCode(
+          code: generateMatchRoundCode(
             matchId,
             updatedMatchRound.roundCount,
             updatedMatchRound.extendedRoundCount
