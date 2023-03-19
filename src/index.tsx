@@ -9,6 +9,7 @@ import FirebaseDatabaseProvider from './providers/firebaseDatabase.provider'
 
 import IndexPage from './pages/index.page'
 import MatchDetailPage from './pages/match/[id]/index.page'
+import MatchOBSPage from './pages/match/[id]/obs.page'
 import MatchControlPage from './pages/match/[id]/control.page'
 import DevPage from './pages/dev/index.page'
 import ConfirmDialogProvider from './components/ConfirmDialog/provider'
@@ -29,6 +30,7 @@ ReactDOM.render(
           <Route path="/create-match" component={CreateMatchPage} />
           <Route path="/dev" component={DevPage} />
           <Route path="/match/:matchId" component={MatchDetailPage} />
+          <Route path="/match/:matchId/obs" component={MatchOBSPage} />
           <Route path="/match/:matchId/control" component={MatchControlPage} />
           <Route path="/test/score-select" component={TestForScoreSelectPage} />
           <Route path="/test/dialog" component={TestForDialogPage} />

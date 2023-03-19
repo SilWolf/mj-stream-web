@@ -317,18 +317,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
 
   return (
     <div>
-      <div className="w-full bg-white">
-        <div className="flex">
-          <div className="border-r border-gray-200">
-            <button type="button" className="p-2 leading-none">
-              <span className="material-symbols-outlined">menu</span>
-            </button>
-          </div>
-          <div className="flex-1" />
-        </div>
-      </div>
-
-      <div className="container mx-auto mt-8 px-8 space-y-6">
+      <div className="container mx-auto my-8 px-8 space-y-6">
         <div className="flex flex-row items-stretch gap-x-4 text-white">
           <div className="shrink-0 rounded-[1rem] bg-black bg-opacity-50 p-2 flex items-stretch gap-x-4">
             <div className="font-ud text-[2.5rem] border-[.25rem] rounded-[.75rem] px-4 border-current flex items-center justify-center">

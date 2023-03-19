@@ -150,7 +150,7 @@ function CreateMatchPage() {
 
     await fb.push(`matchRounds`, matchRound)
 
-    setLocation(`/match/${matchRound.matchId}`)
+    setLocation(`/match/${matchRound.matchId}/obs`)
   }, [fb, players, setLocation])
 
   return (

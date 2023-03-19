@@ -117,7 +117,7 @@ export default function DevPage() {
 
     await fb.push(`matchRounds`, matchRound)
 
-    setLocation(`/match/${matchRound.matchId}`)
+    setLocation(`/match/${matchRound.matchId}/obs`)
   }, [fb, setLocation])
 
   const [score, setScore] = useState<number>(25000)
@@ -138,7 +138,7 @@ export default function DevPage() {
       <div className="space-y-6">
         <div>
           <MJUIButton type="button" onClick={handleClickGenerateTestData}>
-            生成測試數據及打開 /match/:matchId
+            生成測試數據及打開 /match/:matchId/obs
           </MJUIButton>
         </div>
 

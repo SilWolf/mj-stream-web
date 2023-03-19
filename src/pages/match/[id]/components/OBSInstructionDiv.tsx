@@ -12,8 +12,12 @@ const cssText = `body {
   display: none;
 }`
 
-export default function OBSInstructionDiv() {
-  const controlUrl = useMemo(() => `${window.location.href}/control`, [])
+type Props = {
+  matchId: string
+}
+
+export default function OBSInstructionDiv({ matchId }: Props) {
+  const controlUrl = useMemo(() => `/match/${matchId}/control`, [matchId])
 
   const handleClickCopy = useCallback(() => {
     window.navigator.clipboard.writeText(cssText)
