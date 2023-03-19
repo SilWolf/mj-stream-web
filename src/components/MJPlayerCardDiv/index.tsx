@@ -1,8 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import MJAmountSpan from '@/components/MJAmountSpan'
-import { isSameArray } from '@/utils/array.util'
 import React, { HTMLAttributes, useEffect, useState } from 'react'
-import { useBoolean } from 'react-use'
+import MJRiichiBgDiv from '../MJRiichiBgDiv'
 
 type Props = HTMLAttributes<HTMLDivElement> & {
   propicSrc?: string
@@ -10,6 +9,7 @@ type Props = HTMLAttributes<HTMLDivElement> & {
   score: number
   scoreChanges?: number[]
   isEast?: boolean
+  isRiichi?: boolean
   onAnimationEnd?: () => void
 }
 
@@ -19,6 +19,7 @@ export default function MJPlayerCardDiv({
   score,
   scoreChanges = [],
   isEast,
+  isRiichi,
   className,
   ...props
 }: Props) {
@@ -44,9 +45,14 @@ export default function MJPlayerCardDiv({
   return (
     <div>
       <div className="relative">
-        <div className="w-[1.5em] h-full absolute bottom-0 left-0 pl-[0.125em] pb-[0.125em]">
-          <div className="w-full h-full bg-white bg-opacity-50 rounded-[0.125em]">
-            {propicSrc && <img src={propicSrc} alt={name} />}
+        <div className="w-[1.5em] h-full absolute -bottom-[0.075em] left-0 z-10">
+          {isRiichi && (
+            <MJRiichiBgDiv className="w-full h-full rounded-[0.125em] overflow-hidden" />
+          )}
+          <div className="absolute bottom-0 left-0 w-full h-full p-[0.075em]">
+            <div className="w-full h-full bg-white rounded-[0.125em]">
+              {propicSrc && <img src={propicSrc} alt={name} />}
+            </div>
           </div>
         </div>
         <div className="flex flex-col gap-y-[0.125em] items-end justify-end">

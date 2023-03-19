@@ -98,6 +98,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
               matchCurrentRound.playerResults[index].prevScoreChanges
             }
             isEast={getIsPlayerEast(index, matchCurrentRound.roundCount)}
+            isRiichi={matchCurrentRound.playerResults[index].isRiichi}
             className={`${PLAYER_CARD_CLASSNAME_MAP[index]} !bg-opacity-60`}
           />
         ))}

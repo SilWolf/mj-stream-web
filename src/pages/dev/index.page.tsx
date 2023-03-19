@@ -5,6 +5,7 @@ import { useLocation } from 'wouter'
 import MJUIButton from '@/components/MJUI/MJUIButton'
 import MJPlayerCardDiv from '@/components/MJPlayerCardDiv'
 import MJTileKeyboardDiv from '@/components/MJTileKeyboardDiv'
+import MJRiichiBgDiv from '@/components/MJRiichiBgDiv'
 
 export default function DevPage() {
   const fb = useFirebaseDatabase()
@@ -156,6 +157,10 @@ export default function DevPage() {
 
         <div>
           <MJTileKeyboardDiv />
+        </div>
+
+        <div>
+          <MJRiichiBgDiv className="w-32 h-32" />
         </div>
       </div>
     </div>
