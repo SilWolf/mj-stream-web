@@ -81,7 +81,11 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
         <div className="flex-1" />
       </div>
 
-      <OBSInstructionDiv />
+      <div className="flex-1 flex items-center justify-center">
+        <div className="body-hidden mx-20">
+          <OBSInstructionDiv />
+        </div>
+      </div>
 
       <div className="flex flex-row items-end justify-center gap-x-8 text-white text-[4rem]">
         {(['0', '1', '2', '3'] as PlayerIndex[]).map((index) => (

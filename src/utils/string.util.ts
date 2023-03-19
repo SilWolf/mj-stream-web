@@ -7,3 +7,6 @@ export const getYearString = () => {
   const date = new Date()
   return `${date.getFullYear()}${date.getMonth() + 1}${date.getDate()}`
 }
+
+export const getQrCodeImgSrc = (value: string) =>
+  `https://api.qrserver.com/v1/create-qr-code/?size=512x512&data=${value}`
