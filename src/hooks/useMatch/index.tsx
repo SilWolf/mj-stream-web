@@ -1,4 +1,4 @@
-import { convertArrayToObject } from '@/utils/array.util'
+import { convertArrayToObject, getLastItemOfArray } from '@/utils/array.util'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   Match,
@@ -30,19 +30,47 @@ const useMatch = (matchId: string) => {
   const [match, setMatch] = useState<MatchDTO | undefined>()
 
   const {
-    data: matchCurrentRound,
-    update: updateCurrentMatchRound,
+    data: matchRounds,
+    update: updateMatchRounds,
     push: pushMatchRound,
   } = useFirebaseDatabaseByKey<MatchRound>(`matchRounds`, {
     order: {
       byChild: 'matchId',
     },
     filter: {
-      limitToLast: 1,
       equalTo: matchId,
     },
-    returnSingle: true,
   })
+
+  const matchCurrentRound = useMemo(
+    () => getLastItemOfArray(Object.values(matchRounds ?? {})) ?? undefined,
+    [matchRounds]
+  )
+
+  const matchCurrentRoundDoras = useMemo(
+    () => Object.values(matchCurrentRound?.doras ?? {}),
+    [matchCurrentRound]
+  )
+
+  const updateCurrentMatchRound = useCallback(
+    (payload: Partial<MatchRound>) => {
+      const currentMatchRoundId = getLastItemOfArray(
+        Object.keys(matchRounds ?? {})
+      )
+
+      if (!currentMatchRoundId) {
+        return
+      }
+
+      updateMatchRounds({
+        [currentMatchRoundId]: {
+          ...matchCurrentRound,
+          ...payload,
+        },
+      })
+    },
+    [matchCurrentRound, matchRounds, updateMatchRounds]
+  )
 
   useEffect(() => {
     const asyncFn = async () => {
@@ -103,11 +131,6 @@ const useMatch = (matchId: string) => {
     asyncFn()
   }, [fb, matchId])
 
-  const matchCurrentRoundDoras = useMemo(
-    () => Object.values(matchCurrentRound?.doras ?? {}),
-    [matchCurrentRound]
-  )
-
   const setCurrentRoundDoras = useCallback(
     (doraTileKeys: string[]) => {
       updateCurrentMatchRound({ doras: convertArrayToObject(doraTileKeys) })
@@ -117,6 +140,7 @@ const useMatch = (matchId: string) => {
 
   return {
     match,
+    matchRounds,
     matchCurrentRound,
     matchCurrentRoundDoras,
     setCurrentRoundDoras,

@@ -127,7 +127,6 @@ export type UseFirebaseDatabaseByKeyOptions = fbListenOptions & {
     limitToLast?: number
     equalTo?: string | number | boolean | null
   }
-  returnSingle?: boolean
 }
 
 export const useFirebaseDatabaseByKey = <T extends Record<string, unknown>>(
@@ -139,35 +138,23 @@ export const useFirebaseDatabaseByKey = <T extends Record<string, unknown>>(
     return fbRef(database, key)
   }, [database, key])
 
-  const [rawData, setRawData] = useState<T>()
+  const [rawData, setRawData] = useState<Record<string, T>>()
   const [lastOptions, setLastOptions] = useState<
     UseFirebaseDatabaseByKeyOptions | undefined
   >(options)
 
   const set = useCallback(
-    (payload: T) => {
-      if (lastOptions?.returnSingle && rawData) {
-        const rawDataKey = Object.keys(rawData)[0]
-        if (rawDataKey) {
-          return fbSet(fbRef(database, `${key}/${rawDataKey}`), payload)
-        }
-      }
+    (payload: Record<string, Partial<T>>) => {
       return fbSet(ref, payload)
     },
-    [database, key, lastOptions?.returnSingle, rawData, ref]
+    [ref]
   )
 
   const update = useCallback(
-    (payload: Partial<T>) => {
-      if (lastOptions?.returnSingle && rawData) {
-        const rawDataKey = Object.keys(rawData)[0]
-        if (rawDataKey) {
-          return fbUpdate(fbRef(database, `${key}/${rawDataKey}`), payload)
-        }
-      }
+    (payload: Record<string, Partial<T>>) => {
       return fbUpdate(ref, payload)
     },
-    [database, key, lastOptions?.returnSingle, rawData, ref]
+    [ref]
   )
 
   const push = useCallback(
@@ -223,12 +210,8 @@ export const useFirebaseDatabaseByKey = <T extends Record<string, unknown>>(
   }, [lastOptions, ref])
 
   const returnData = useMemo(() => {
-    if (lastOptions?.returnSingle) {
-      return Object.values(rawData ?? {})[0] as T
-    }
-
     return rawData
-  }, [rawData, lastOptions?.returnSingle])
+  }, [rawData])
 
   return { data: returnData, set, update, push }
 }

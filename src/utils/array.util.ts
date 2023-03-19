@@ -33,3 +33,11 @@ export const convertArrayToObject = <T = unknown>(
 
   return result
 }
+
+export const getLastItemOfArray = <T = unknown>(arr: T[]) => {
+  if (arr.length === 0) {
+    return undefined
+  }
+
+  return arr[arr.length - 1]
+}

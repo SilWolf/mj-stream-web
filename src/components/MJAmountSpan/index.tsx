@@ -7,6 +7,7 @@ type Props = {
   negativeClassName?: string
   value: number
   animated?: boolean
+  hideZero?: boolean
 }
 
 function MJAmountSpan({
@@ -16,6 +17,7 @@ function MJAmountSpan({
   negativeClassName,
   value,
   animated,
+  hideZero,
 }: Props) {
   const [storedValue, setStoredValue] = useState<number>(value)
   const ref = useRef<HTMLSpanElement>(null)
@@ -23,6 +25,10 @@ function MJAmountSpan({
   const formatNumber = useCallback(
     (newValue: number) => {
       if (newValue === 0) {
+        if (hideZero) {
+          return ''
+        }
+
         return newValue.toString()
       }
 

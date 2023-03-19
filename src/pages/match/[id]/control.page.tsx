@@ -23,6 +23,7 @@ import MJTileDiv, { MJTileKey } from '@/components/MJTileDiv'
 import MJMatchCounterSpan from '@/components/MJMatchCounterSpan'
 import MJUIDialog from '@/components/MJUI/MJUIDialog'
 import MJTileKeyboardDiv from '@/components/MJTileKeyboardDiv'
+import MJMatchHistoryTable from '@/components/MJMatchHistoryTable'
 
 const PLAYER_CARD_CLASSNAME_MAP: Record<PlayerIndex, string> = {
   0: '!bg-blue-400',
@@ -207,12 +208,6 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         const isGameEnded =
           !isGoExtendedRound && updatedMatchRound.roundCount >= 8
 
-        if (isGameEnded) {
-          // TODO: Proceed to Game End
-
-          return
-        }
-
         const newRoundCount = isGoExtendedRound
           ? updatedMatchRound.roundCount
           : updatedMatchRound.roundCount + 1
@@ -241,6 +236,13 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         pushMatchRound(newMatchRound)
 
         toggleRonDialog(false)
+
+        if (isGameEnded) {
+          // TODO: Proceed to Game End
+          alert('對局結束。')
+
+          return
+        }
       } catch (e) {
         console.error(e)
       }
@@ -383,6 +385,8 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
             </div>
           ))}
         </div>
+
+        <MJMatchHistoryTable matchId={matchId} className="w-full table-auto" />
       </div>
 
       <MJUIDialog

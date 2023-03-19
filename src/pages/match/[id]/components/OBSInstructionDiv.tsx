@@ -13,10 +13,7 @@ const cssText = `body {
 }`
 
 export default function OBSInstructionDiv() {
-  const controlUrl = useMemo(
-    () => getQrCodeImgSrc(`${window.location.href}/control`),
-    []
-  )
+  const controlUrl = useMemo(() => `${window.location.href}/control`, [])
 
   const handleClickCopy = useCallback(() => {
     window.navigator.clipboard.writeText(cssText)
@@ -53,7 +50,11 @@ export default function OBSInstructionDiv() {
           rel="noreferrer"
           className="text-center underline"
         >
-          <img className="block w-32 h-32" src={controlUrl} alt="" />
+          <img
+            className="block w-32 h-32"
+            src={getQrCodeImgSrc(controlUrl)}
+            alt=""
+          />
           <p>管理後台</p>
         </a>
       </div>
