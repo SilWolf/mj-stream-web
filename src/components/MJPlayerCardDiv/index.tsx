@@ -57,11 +57,11 @@ export default function MJPlayerCardDiv({
   return (
     <div>
       <div className="relative">
-        <div className="w-[1.75em] h-full absolute -bottom-[0.075em] left-0 z-10">
+        <div className="w-[1.75em] h-full absolute -bottom-[0.075em] -left-[0.075em] z-10">
           {isRiichi && (
             <MJRiichiBgDiv className="w-full h-full rounded-[0.125em] overflow-hidden" />
           )}
-          <div className="absolute bottom-0 left-0 w-full h-full pr-[0.075em] pb-[0.075em]">
+          <div className="absolute bottom-0 left-0 w-full h-full p-[0.075em]">
             <div
               className="w-full h-full bg-white rounded-[0.125em]"
               style={{ background: mainColor }}

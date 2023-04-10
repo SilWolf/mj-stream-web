@@ -29,8 +29,8 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
   return (
     <BroadcastLayout>
       <div className="flex flex-row items-stretch gap-x-4 text-white">
-        <div className="rounded-[1rem] bg-black bg-opacity-50 p-2 pr-4 flex items-stretch gap-x-4 transition-[width]">
-          <div className="font-ud text-[3.5rem] leading-[4rem] border-[.35rem] rounded-[.75rem] px-8 border-current">
+        <div className="rounded-[1rem] bg-black bg-opacity-50 p-2 pr-4 flex items-stretch gap-x-6 transition-[width]">
+          <div className="font-ud text-[4.5rem] leading-[5rem] border-[.35rem] rounded-[.75rem] px-8 border-current">
             <MJMatchCounterSpan roundCount={matchCurrentRound.roundCount} />
           </div>
 
@@ -43,7 +43,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
                   className="h-4"
                 />
               </div>
-              <div className="font-ud">
+              <div className="font-ud text-[1.2rem]">
                 {matchCurrentRound.extendedRoundCount ?? 0}
               </div>
             </div>
@@ -55,7 +55,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
                   className="h-4"
                 />
               </div>
-              <div className="font-ud">
+              <div className="font-ud text-[1.2rem]">
                 {matchCurrentRound.cumulatedThousands ?? 0}
               </div>
             </div>
@@ -65,7 +65,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
             {matchCurrentRoundDoras.map((dora) => (
               <MJTileDiv
                 key={dora}
-                className="w-12 animate-[fadeIn_0.5s_ease-in-out]"
+                className="w-14 animate-[fadeIn_0.5s_ease-in-out]"
               >
                 {dora}
               </MJTileDiv>
