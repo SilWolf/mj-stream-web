@@ -6,15 +6,10 @@ import BroadcastLayout from '@/layouts/Broadcast.layout'
 
 import { PlayerIndex } from '@/models'
 import { getIsPlayerEast } from '@/helpers/mahjong.helper'
-import MJPlayerCardDiv from '@/components/MJPlayerCardDiv'
+import MJPlayerCardDiv, {
+  MJPlayerCardMainColorMap,
+} from '@/components/MJPlayerCardDiv'
 import OBSInstructionDiv from './components/OBSInstructionDiv'
-
-const PLAYER_CARD_CLASSNAME_MAP: Record<PlayerIndex, string> = {
-  0: '!bg-blue-400',
-  1: '!bg-red-400',
-  2: '!bg-green-400',
-  3: '!bg-yellow-400',
-}
 
 type Props = {
   params: { matchId: string }
@@ -92,13 +87,14 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
             key={index}
             name={match.players[index].name}
             title={match.players[index].title}
+            propicSrc={match.players[index].propicSrc}
             score={matchCurrentRound.playerResults[index].beforeScore}
             scoreChanges={
               matchCurrentRound.playerResults[index].prevScoreChanges
             }
             isEast={getIsPlayerEast(index, matchCurrentRound.roundCount)}
             isRiichi={matchCurrentRound.playerResults[index].isRiichi}
-            className={`${PLAYER_CARD_CLASSNAME_MAP[index]} !bg-opacity-60`}
+            mainColor={MJPlayerCardMainColorMap[index]}
           />
         ))}
       </div>

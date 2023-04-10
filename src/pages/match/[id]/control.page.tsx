@@ -18,20 +18,15 @@ import {
   getPlayerIndexOfEastByRound,
 } from '@/helpers/mahjong.helper'
 import { useBoolean } from 'react-use'
-import MJPlayerCardDiv from '@/components/MJPlayerCardDiv'
+import MJPlayerCardDiv, {
+  MJPlayerCardMainColorMap,
+} from '@/components/MJPlayerCardDiv'
 import MJTileDiv, { MJTileKey } from '@/components/MJTileDiv'
 import MJMatchCounterSpan from '@/components/MJMatchCounterSpan'
 import MJUIDialog from '@/components/MJUI/MJUIDialog'
 import MJTileKeyboardDiv from '@/components/MJTileKeyboardDiv'
 import MJMatchHistoryTable from '@/components/MJMatchHistoryTable'
 import MJMatchExhaustedDialog from '@/components/MJMatchExhaustedDialog'
-
-const PLAYER_CARD_CLASSNAME_MAP: Record<PlayerIndex, string> = {
-  0: '!bg-blue-400',
-  1: '!bg-red-400',
-  2: '!bg-green-400',
-  3: '!bg-yellow-400',
-}
 
 type Props = {
   params: { matchId: string }
@@ -389,13 +384,14 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                 <MJPlayerCardDiv
                   name={match.players[index].name}
                   title={match.players[index].title}
+                  propicSrc={match.players[index].propicSrc}
                   score={matchCurrentRound.playerResults[index].beforeScore}
                   scoreChanges={
                     matchCurrentRound.playerResults[index].prevScoreChanges
                   }
                   isEast={getIsPlayerEast(index, matchCurrentRound.roundCount)}
                   isRiichi={matchCurrentRound.playerResults[index].isRiichi}
-                  className={`${PLAYER_CARD_CLASSNAME_MAP[index]} !bg-opacity-60`}
+                  mainColor={MJPlayerCardMainColorMap[index]}
                 />
               </div>
               <div>

@@ -28,6 +28,35 @@ function CreateMatchPage() {
     },
   })
 
+  const handleChangeProfilePic = useCallback(
+    (e: React.MouseEvent) => {
+      if (!e.currentTarget) {
+        return
+      }
+
+      const playerIndex = e.currentTarget.getAttribute(
+        'data-player-index'
+      ) as PlayerIndex
+
+      if (!playerIndex) {
+        return
+      }
+
+      const newValue = prompt('請輸入圖片網址', players[playerIndex].propicSrc)
+
+      if (newValue) {
+        setPlayers((prev) => ({
+          ...prev,
+          [playerIndex]: {
+            ...players[playerIndex],
+            propicSrc: newValue,
+          },
+        }))
+      }
+    },
+    [players]
+  )
+
   const handleChange = useCallback(
     (newValue: string | null | undefined, e: React.MouseEvent) => {
       if (!e.currentTarget) {
@@ -174,15 +203,21 @@ function CreateMatchPage() {
                   </div>
                   <div className="flex-1 flex items-center gap-x-2 bg-white bg-opacity-30 rounded p-2">
                     <div className="shrink-0">
-                      <div
-                        className="w-14 h-14 bg-center bg-contain"
-                        style={{
-                          backgroundImage: `url(${
-                            players[playerIndex].propicSrc ??
-                            '/images/portrait-placeholder.jpeg'
-                          })`,
-                        }}
-                      />
+                      <button
+                        type="button"
+                        onClick={handleChangeProfilePic}
+                        data-player-index={playerIndex}
+                      >
+                        <div
+                          className="w-14 h-14 bg-center bg-contain bg-no-repeat"
+                          style={{
+                            backgroundImage: `url(${
+                              players[playerIndex].propicSrc ??
+                              '/images/portrait-placeholder.jpeg'
+                            })`,
+                          }}
+                        />
+                      </button>
                     </div>
                     <div className="flex-1">
                       <div>
