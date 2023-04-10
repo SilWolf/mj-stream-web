@@ -145,7 +145,9 @@ function CreateMatchPage() {
 
   const handleClickStart = useCallback(async () => {
     const playerIds = await Promise.all(
-      Object.values(players).map((player) => fb.push('players', player))
+      Object.values(players).map((player) =>
+        player._id ? { key: player._id } : fb.push('players', player)
+      )
     ).then((result) => result.map((playerRef) => playerRef.key))
 
     // const matchId = getRandomId()
