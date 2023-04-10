@@ -162,7 +162,7 @@ function CreateMatchPage() {
     } else {
       playerIds.push(
         await fb
-          .push('players', playerValues[0])
+          .push('players', playerValues[1])
           .then((ref) => ref.key as string)
       )
     }
@@ -172,7 +172,7 @@ function CreateMatchPage() {
     } else {
       playerIds.push(
         await fb
-          .push('players', playerValues[0])
+          .push('players', playerValues[2])
           .then((ref) => ref.key as string)
       )
     }
@@ -182,7 +182,7 @@ function CreateMatchPage() {
     } else {
       playerIds.push(
         await fb
-          .push('players', playerValues[0])
+          .push('players', playerValues[3])
           .then((ref) => ref.key as string)
       )
     }
