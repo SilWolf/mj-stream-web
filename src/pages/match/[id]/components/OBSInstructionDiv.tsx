@@ -17,7 +17,10 @@ type Props = {
 }
 
 export default function OBSInstructionDiv({ matchId }: Props) {
-  const controlUrl = useMemo(() => `/match/${matchId}/control`, [matchId])
+  const controlUrl = useMemo(
+    () => `${window.location.origin}/match/${matchId}/control`,
+    [matchId]
+  )
 
   const handleClickCopy = useCallback(() => {
     window.navigator.clipboard.writeText(cssText)

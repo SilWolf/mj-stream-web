@@ -97,6 +97,9 @@ export default function MJMatchRonDialog({
         if (newCompiledScore.east) {
           newCompiledScore.east += currentMatchRound.extendedRoundCount * 100
         }
+        if (newCompiledScore.others) {
+          newCompiledScore.others += currentMatchRound.extendedRoundCount * 100
+        }
       }
 
       if (currentMatchRound.cumulatedThousands > 0) {

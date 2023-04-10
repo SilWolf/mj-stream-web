@@ -272,9 +272,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         const newRoundCount = isGoExtendedRound
           ? updatedMatchRound.roundCount
           : updatedMatchRound.roundCount + 1
-        const newExtendedRoundCount = isGoExtendedRound
-          ? updatedMatchRound.extendedRoundCount + 1
-          : 0
+        const newExtendedRoundCount = updatedMatchRound.extendedRoundCount + 1
 
         const newMatchRound: MatchRound = {
           matchId,
