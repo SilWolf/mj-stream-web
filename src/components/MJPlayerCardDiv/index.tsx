@@ -58,21 +58,28 @@ export default function MJPlayerCardDiv({
     <div>
       <div className="relative">
         <div className="w-[1.75em] h-full absolute -bottom-[0.075em] -left-[0.075em] z-10">
-          {isRiichi && (
-            <MJRiichiBgDiv className="w-full h-full rounded-[0.125em] overflow-hidden" />
-          )}
-          <div className="absolute bottom-0 left-0 w-full h-full p-[0.075em]">
+          <div className="absolute bottom-0 left-0 w-full aspect-[554/792] p-[0.075em]">
             <div
-              className="w-full h-full bg-white rounded-[0.125em]"
+              className="w-full h-full bg-white rounded-[0.3em]"
               style={{ background: mainColor }}
             >
+              {isRiichi && (
+                <MJRiichiBgDiv className="absolute -z-10 w-full h-full top-0 left-0 rounded-[0.3em] overflow-hidden" />
+              )}
               {propicSrc && (
                 <img
-                  className="w-full h-full rounded-[0.125em]"
-                  src={propicSrc}
+                  className="w-full h-full rounded-[0.3em]"
+                  // src={propicSrc}
+                  src="https://drive.google.com/uc?id=10qih_phVwj4_6BMzX6F0zEtVXSU_ClYu"
                   alt={name}
                 />
               )}
+              <img
+                className="w-full h-full rounded-[0.3em]"
+                // src={propicSrc}
+                src="https://drive.google.com/uc?id=10qih_phVwj4_6BMzX6F0zEtVXSU_ClYu"
+                alt={name}
+              />
             </div>
           </div>
         </div>
@@ -82,7 +89,7 @@ export default function MJPlayerCardDiv({
           </div>
           <div className="text-[0.375em] leading-none pr-[0.45em]">{name}</div>
           <div
-            className={`relative w-full text-right bg-white  min-w-[5.5em] pr-[0.125em] rounded-bl-lg ${className}`}
+            className={`relative w-full text-right bg-white  min-w-[5.5em] pr-[0.125em] rounded-bl-[0.3em] ${className}`}
             {...props}
             style={{
               background: `linear-gradient(to right, #ffffff, ${mainColor})`,
@@ -102,7 +109,7 @@ export default function MJPlayerCardDiv({
                 ))}
               </div>
             )}
-            <div className="font-ud flex-1 text-[1em] leading-none text-white">
+            <div className="font-ud flex-1 text-[1.2em] leading-none text-white">
               <MJAmountSpan animated value={storedScore} />
             </div>
           </div>
