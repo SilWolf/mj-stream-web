@@ -30,7 +30,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
     <BroadcastLayout>
       <div className="flex flex-row items-stretch gap-x-4 text-white">
         <div className="rounded-[1rem] bg-black bg-opacity-50 p-2 pr-4 flex items-stretch gap-x-4 transition-[width]">
-          <div className="font-ud text-[2.5rem] leading-[3rem] border-[.25rem] rounded-[.75rem] px-4 border-current">
+          <div className="font-ud text-[3.5rem] leading-[4rem] border-[.35rem] rounded-[.75rem] px-8 border-current">
             <MJMatchCounterSpan roundCount={matchCurrentRound.roundCount} />
           </div>
 
@@ -61,11 +61,11 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
             </div>
           </div>
 
-          <div className="flex items-center gap-x-2">
+          <div className="flex items-center gap-x-3">
             {matchCurrentRoundDoras.map((dora) => (
               <MJTileDiv
                 key={dora}
-                className="w-9 animate-[fadeIn_0.5s_ease-in-out]"
+                className="w-12 animate-[fadeIn_0.5s_ease-in-out]"
               >
                 {dora}
               </MJTileDiv>
@@ -81,7 +81,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
         </div>
       </div>
 
-      <div className="flex flex-row items-end justify-center gap-x-8 text-white text-[4rem]">
+      <div className="flex flex-row items-end justify-center gap-x-8 text-white text-[4.8rem]">
         {(['0', '1', '2', '3'] as PlayerIndex[]).map((index) => (
           <MJPlayerCardDiv
             key={index}

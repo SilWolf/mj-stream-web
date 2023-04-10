@@ -82,7 +82,7 @@ export default function MJPlayerCardDiv({
           </div>
           <div className="text-[0.375em] leading-none pr-[0.45em]">{name}</div>
           <div
-            className={`relative w-full text-right bg-white  min-w-[5.5em] pr-[0.125em] ${className}`}
+            className={`relative w-full text-right bg-white  min-w-[5.5em] pr-[0.125em] rounded-bl-lg ${className}`}
             {...props}
             style={{
               background: `linear-gradient(to right, #ffffff, ${mainColor})`,
