@@ -144,11 +144,48 @@ function CreateMatchPage() {
   )
 
   const handleClickStart = useCallback(async () => {
-    const playerIds = await Promise.all(
-      Object.values(players).map((player) =>
-        player._id ? { key: player._id } : fb.push('players', player)
+    const playerIds: string[] = []
+    const playerValues = Object.values(players)
+
+    if (playerValues[0]._id) {
+      playerIds.push(playerValues[0]._id)
+    } else {
+      playerIds.push(
+        await fb
+          .push('players', playerValues[0])
+          .then((ref) => ref.key as string)
       )
-    ).then((result) => result.map((playerRef) => playerRef.key))
+    }
+
+    if (playerValues[1]._id) {
+      playerIds.push(playerValues[1]._id)
+    } else {
+      playerIds.push(
+        await fb
+          .push('players', playerValues[0])
+          .then((ref) => ref.key as string)
+      )
+    }
+
+    if (playerValues[2]._id) {
+      playerIds.push(playerValues[2]._id)
+    } else {
+      playerIds.push(
+        await fb
+          .push('players', playerValues[0])
+          .then((ref) => ref.key as string)
+      )
+    }
+
+    if (playerValues[3]._id) {
+      playerIds.push(playerValues[3]._id)
+    } else {
+      playerIds.push(
+        await fb
+          .push('players', playerValues[0])
+          .then((ref) => ref.key as string)
+      )
+    }
 
     // const matchId = getRandomId()
     const match = {
