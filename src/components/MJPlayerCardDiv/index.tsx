@@ -74,12 +74,6 @@ export default function MJPlayerCardDiv({
                   alt={name}
                 />
               )}
-              <img
-                className="w-full h-full rounded-[0.3em]"
-                // src={propicSrc}
-                src="https://drive.google.com/uc?id=10qih_phVwj4_6BMzX6F0zEtVXSU_ClYu"
-                alt={name}
-              />
             </div>
           </div>
         </div>
