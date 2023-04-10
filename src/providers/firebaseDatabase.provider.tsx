@@ -129,7 +129,9 @@ export type UseFirebaseDatabaseByKeyOptions = fbListenOptions & {
   }
 }
 
-export const useFirebaseDatabaseByKey = <T extends Record<string, unknown>>(
+export const useFirebaseDatabaseByKey = <
+  T extends Record<string, unknown> | string
+>(
   key: string,
   options?: UseFirebaseDatabaseByKeyOptions
 ) => {

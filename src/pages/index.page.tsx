@@ -26,6 +26,14 @@ function IndexPage() {
               </button>
             </div>
             <div className="flex-1">
+              <a
+                href="/players"
+                className="block text-center w-full bg-gray-200 text-black text-4xl p-4 rounded-lg"
+              >
+                玩家列表
+              </a>
+            </div>
+            <div className="flex-1">
               <button
                 type="button"
                 className="w-full bg-gray-200 text-black text-4xl p-4 rounded-lg"

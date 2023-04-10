@@ -6,6 +6,7 @@ type Props = HTMLAttributes<HTMLButtonElement> & {
   placeholder?: string
   onEdit?: (newValue: string | undefined | null, e: React.MouseEvent) => void
   required?: boolean
+  disabled?: boolean
 }
 
 function MJInlineEditDiv({
@@ -14,6 +15,7 @@ function MJInlineEditDiv({
   placeholder = '(空)',
   onEdit,
   required,
+  disabled,
   ...buttonProps
 }: Props) {
   const handleClickEdit = useCallback(
@@ -28,6 +30,14 @@ function MJInlineEditDiv({
     },
     [onEdit, question, required, value]
   )
+
+  if (disabled) {
+    return (
+      <div>
+        {value || <span className="italic text-gray-400">{placeholder}</span>}
+      </div>
+    )
+  }
 
   return (
     <div className="flex items-center gap-x-1">

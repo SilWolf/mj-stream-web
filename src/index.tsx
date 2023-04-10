@@ -12,6 +12,8 @@ import MatchDetailPage from './pages/match/[id]/index.page'
 import MatchOBSPage from './pages/match/[id]/obs.page'
 import MatchControlPage from './pages/match/[id]/control.page'
 import DevPage from './pages/dev/index.page'
+import PlayersPage from './pages/players/index.page'
+import PlayersDetailPage from './pages/players/[id]/index.page'
 import ConfirmDialogProvider from './components/ConfirmDialog/provider'
 import TestForScoreSelectPage from './pages/test/score-select.page'
 import TestForDialogPage from './pages/test/dialog'
@@ -32,6 +34,8 @@ ReactDOM.render(
           <Route path="/match/:matchId" component={MatchDetailPage} />
           <Route path="/match/:matchId/obs" component={MatchOBSPage} />
           <Route path="/match/:matchId/control" component={MatchControlPage} />
+          <Route path="/players" component={PlayersPage} />
+          <Route path="/players/:playerId" component={PlayersDetailPage} />
           <Route path="/test/score-select" component={TestForScoreSelectPage} />
           <Route path="/test/dialog" component={TestForDialogPage} />
         </Switch>

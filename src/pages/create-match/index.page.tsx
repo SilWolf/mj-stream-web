@@ -2,18 +2,28 @@ import MJPositionSpan from '@/components/MJPositionSpan'
 import { MatchRound, Player, PlayerIndex } from '@/models'
 import React, { useCallback, useState } from 'react'
 import MJInlineEditButton from '@/components/MJInlineEditButton'
-import { useFirebaseDatabase } from '@/providers/firebaseDatabase.provider'
+import {
+  useFirebaseDatabase,
+  useFirebaseDatabaseByKey,
+} from '@/providers/firebaseDatabase.provider'
 import {
   generateMatchCode,
   generateMatchRoundCode,
 } from '@/helpers/mahjong.helper'
 import { useLocation } from 'wouter'
+import MJPlayerSelectDialog from '@/components/MJPlayerSelectDialog'
+import { useBoolean } from 'react-use'
 
 function CreateMatchPage() {
   const fb = useFirebaseDatabase()
   const [, setLocation] = useLocation()
 
-  const [players, setPlayers] = useState<Record<PlayerIndex, Player>>({
+  const { data: databasePlayers = {} } =
+    useFirebaseDatabaseByKey<Player>('players')
+
+  const [players, setPlayers] = useState<
+    Record<PlayerIndex, Player & { _id?: string }>
+  >({
     '0': {
       name: '玩家A',
     },
@@ -92,6 +102,46 @@ function CreateMatchPage() {
   const handleClickEnterCode = useCallback(() => {
     alert('輸入會員編號功能未開放。')
   }, [])
+
+  const [selectedPlayerIndex, setSelectedPlayerIndex] = useState<
+    PlayerIndex | undefined
+  >()
+  const [showPlayerSelectDialog, togglePlayerSelectDialog] = useBoolean(false)
+
+  const handleClickSelectPlayer = useCallback(
+    (e: React.MouseEvent) => {
+      if (!e.currentTarget) {
+        return
+      }
+
+      const playerIndex = e.currentTarget.getAttribute(
+        'data-player-index'
+      ) as PlayerIndex
+
+      setSelectedPlayerIndex(playerIndex)
+      togglePlayerSelectDialog(true)
+    },
+    [togglePlayerSelectDialog]
+  )
+
+  const handleSelectPlayer = useCallback(
+    (_id: string, player: Player) => {
+      if (!selectedPlayerIndex) {
+        return
+      }
+
+      setPlayers((prev) => ({
+        ...prev,
+        [selectedPlayerIndex]: {
+          ...players[selectedPlayerIndex],
+          ...player,
+          _id,
+        },
+      }))
+      togglePlayerSelectDialog(false)
+    },
+    [players, selectedPlayerIndex, togglePlayerSelectDialog]
+  )
 
   const handleClickStart = useCallback(async () => {
     const playerIds = await Promise.all(
@@ -183,97 +233,118 @@ function CreateMatchPage() {
   }, [fb, players, setLocation])
 
   return (
-    <div className="container mx-auto max-w-screen-sm">
-      <div className="min-h-screen flex flex-col py-16 gap-y-4">
-        <div className="shrink-0">
-          <a href="/" className="underline">
-            &lt; 回上一頁
-          </a>
-        </div>
-        <div className="flex-1">
-          <div className="space-y-4">
-            <h1 className="text-4xl">玩家</h1>
+    <>
+      <div className="container mx-auto max-w-screen-sm">
+        <div className="min-h-screen flex flex-col py-16 gap-y-4">
+          <div className="shrink-0">
+            <a href="/" className="underline">
+              &lt; 回上一頁
+            </a>
+          </div>
+          <div className="flex-1">
             <div className="space-y-4">
-              {(['0', '1', '2', '3'] as PlayerIndex[]).map((playerIndex) => (
-                <div key={playerIndex} className="flex items-center gap-x-2">
-                  <div className="shrink-0">
-                    <div className="h-14 w-14 border-4 rounded border-black text-[2.5rem] flex items-center justify-center">
-                      <MJPositionSpan playerIndex={playerIndex} />
-                    </div>
-                  </div>
-                  <div className="flex-1 flex items-center gap-x-2 bg-white bg-opacity-30 rounded p-2">
+              <h1 className="text-4xl">玩家</h1>
+              <div className="space-y-4">
+                {(['0', '1', '2', '3'] as PlayerIndex[]).map((playerIndex) => (
+                  <div key={playerIndex} className="flex items-center gap-x-2">
                     <div className="shrink-0">
+                      <div className="h-14 w-14 border-4 rounded border-black text-[2.5rem] flex items-center justify-center">
+                        <MJPositionSpan playerIndex={playerIndex} />
+                      </div>
+                    </div>
+                    <div className="flex-1 flex items-center gap-x-2 bg-white bg-opacity-30 rounded p-2">
+                      <div className="shrink-0">
+                        <button
+                          type="button"
+                          onClick={handleChangeProfilePic}
+                          data-player-index={playerIndex}
+                          disabled={!!players[playerIndex]._id}
+                        >
+                          <div
+                            className="w-14 h-14 bg-center bg-contain bg-no-repeat"
+                            style={{
+                              backgroundImage: `url(${
+                                players[playerIndex].propicSrc ??
+                                '/images/portrait-placeholder.jpeg'
+                              })`,
+                            }}
+                          />
+                        </button>
+                      </div>
+                      <div className="flex-1">
+                        <div>
+                          <MJInlineEditButton
+                            value={players[playerIndex].title}
+                            placeholder="(無頭銜)"
+                            data-player-index={playerIndex}
+                            data-column="title"
+                            onEdit={handleChange}
+                            disabled={!!players[playerIndex]._id}
+                          />
+                        </div>
+                        <div className="text-2xl">
+                          <MJInlineEditButton
+                            required
+                            value={players[playerIndex].name}
+                            data-player-index={playerIndex}
+                            data-column="name"
+                            onEdit={handleChange}
+                            disabled={!!players[playerIndex]._id}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="shrink-0 space-x-2">
                       <button
                         type="button"
-                        onClick={handleChangeProfilePic}
                         data-player-index={playerIndex}
+                        onClick={handleClickQRScan}
                       >
-                        <div
-                          className="w-14 h-14 bg-center bg-contain bg-no-repeat"
-                          style={{
-                            backgroundImage: `url(${
-                              players[playerIndex].propicSrc ??
-                              '/images/portrait-placeholder.jpeg'
-                            })`,
-                          }}
-                        />
+                        <span className="material-symbols-outlined">
+                          qr_code_scanner
+                        </span>
+                      </button>
+                      <button
+                        type="button"
+                        data-player-index={playerIndex}
+                        onClick={handleClickEnterCode}
+                      >
+                        <span className="material-symbols-outlined">123</span>
+                      </button>
+                      <button
+                        type="button"
+                        data-player-index={playerIndex}
+                        onClick={handleClickSelectPlayer}
+                      >
+                        <span className="material-symbols-outlined">
+                          arrow_drop_down_circle
+                        </span>
                       </button>
                     </div>
-                    <div className="flex-1">
-                      <div>
-                        <MJInlineEditButton
-                          value={players[playerIndex].title}
-                          placeholder="(無頭銜)"
-                          data-player-index={playerIndex}
-                          data-column="title"
-                          onEdit={handleChange}
-                        />
-                      </div>
-                      <div className="text-2xl">
-                        <MJInlineEditButton
-                          required
-                          value={players[playerIndex].name}
-                          data-player-index={playerIndex}
-                          data-column="name"
-                          onEdit={handleChange}
-                        />
-                      </div>
-                    </div>
                   </div>
-                  <div className="shrink-0 space-x-2">
-                    <button
-                      type="button"
-                      data-player-index={playerIndex}
-                      onClick={handleClickQRScan}
-                    >
-                      <span className="material-symbols-outlined">
-                        qr_code_scanner
-                      </span>
-                    </button>
-                    <button
-                      type="button"
-                      data-player-index={playerIndex}
-                      onClick={handleClickEnterCode}
-                    >
-                      <span className="material-symbols-outlined">123</span>
-                    </button>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-        <div className="shrink-0 space-y-4">
-          <button
-            type="button"
-            className="w-full bg-blue-600 text-white text-4xl p-4 rounded-lg"
-            onClick={handleClickStart}
-          >
-            開始
-          </button>
+          <div className="shrink-0 space-y-4">
+            <button
+              type="button"
+              className="w-full bg-blue-600 text-white text-4xl p-4 rounded-lg"
+              onClick={handleClickStart}
+            >
+              開始
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+
+      <MJPlayerSelectDialog
+        open={showPlayerSelectDialog}
+        players={databasePlayers}
+        onSelect={handleSelectPlayer}
+        onClose={togglePlayerSelectDialog}
+      />
+    </>
   )
 }
 
