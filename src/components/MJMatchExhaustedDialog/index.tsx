@@ -5,7 +5,7 @@ import React, {
   useMemo,
   useState,
 } from 'react'
-import MJUIDialog, { MJUIDialogProps } from '@/components/MJUI/MJUIDialog'
+import MJUIDialogV2, { MJUIDialogV2Props } from '@/components/MJUI/MJUIDialogV2'
 import MJUIButton from '@/components/MJUI/MJUIButton'
 import {
   MatchRound,
@@ -19,7 +19,7 @@ import MJMatchCounterSpan from '../MJMatchCounterSpan'
 import MJUISwitch from '../MJUI/MJUISwitch'
 import MJAmountSpan from '../MJAmountSpan'
 
-export type MJMatchRonProps = Pick<MJUIDialogProps, 'open' | 'onClose'> & {
+export type MJMatchRonProps = Pick<MJUIDialogV2Props, 'open' | 'onClose'> & {
   match: MatchDTO
   currentMatchRound: MatchRound
   onSubmit?: (resultMatchRound: MatchRound) => unknown
@@ -212,7 +212,7 @@ export default function MJMatchExhaustedDialog({
   }, [dialogProps.open])
 
   return (
-    <MJUIDialog title={title} {...dialogProps}>
+    <MJUIDialogV2 title={title} {...dialogProps}>
       <div className="space-y-8">
         <div className="space-y-2">
           <p className="text-right text-xs text-gray-500">聽牌？</p>
@@ -283,6 +283,6 @@ export default function MJMatchExhaustedDialog({
           </MJUIButton>
         </div>
       </div>
-    </MJUIDialog>
+    </MJUIDialogV2>
   )
 }

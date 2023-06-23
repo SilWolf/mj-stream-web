@@ -5,7 +5,7 @@ import React, {
   useMemo,
   useState,
 } from 'react'
-import MJUIDialog, { MJUIDialogProps } from '@/components/MJUI/MJUIDialog'
+import MJUIDialogV2, { MJUIDialogV2Props } from '@/components/MJUI/MJUIDialogV2'
 import MJUIButton from '@/components/MJUI/MJUIButton'
 import {
   MatchRound,
@@ -26,7 +26,7 @@ import MJUISelect from '../MJUI/MJUISelect'
 import MJHanFuScoreSpan from '../MJHanFuScoreSpan'
 import MJAmountSpan from '../MJAmountSpan'
 
-export type MJMatchRonProps = Pick<MJUIDialogProps, 'open' | 'onClose'> & {
+export type MJMatchRonProps = Pick<MJUIDialogV2Props, 'open' | 'onClose'> & {
   match: MatchDTO
   currentMatchRound: MatchRound
   initialActivePlayerIndex?: PlayerIndex
@@ -285,7 +285,7 @@ export default function MJMatchRonDialog({
   }, [dialogProps.open, initialActivePlayerIndex])
 
   return (
-    <MJUIDialog title={title} {...dialogProps}>
+    <MJUIDialogV2 title={title} {...dialogProps}>
       <div className="space-y-8">
         <div className="flex gap-x-4 items-center">
           <div className="flex-1">
@@ -379,6 +379,6 @@ export default function MJMatchRonDialog({
           </MJUIButton>
         </div>
       </div>
-    </MJUIDialog>
+    </MJUIDialogV2>
   )
 }

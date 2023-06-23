@@ -15,8 +15,6 @@ import DevPage from './pages/dev/index.page'
 import PlayersPage from './pages/players/index.page'
 import PlayersDetailPage from './pages/players/[id]/index.page'
 import ConfirmDialogProvider from './components/ConfirmDialog/provider'
-import TestForScoreSelectPage from './pages/test/score-select.page'
-import TestForDialogPage from './pages/test/dialog'
 import CreateMatchPage from './pages/create-match/index.page'
 
 // Import the functions you need from the SDKs you need
@@ -36,8 +34,6 @@ ReactDOM.render(
           <Route path="/match/:matchId/control" component={MatchControlPage} />
           <Route path="/players" component={PlayersPage} />
           <Route path="/players/:playerId" component={PlayersDetailPage} />
-          <Route path="/test/score-select" component={TestForScoreSelectPage} />
-          <Route path="/test/dialog" component={TestForDialogPage} />
         </Switch>
       </ConfirmDialogProvider>
     </FirebaseDatabaseProvider>
