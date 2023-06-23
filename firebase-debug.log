@@ -1,0 +1,98 @@
+[debug] [2023-06-23T09:31:56.631Z] ----------------------------------------------------------------------
+[debug] [2023-06-23T09:31:56.632Z] Command:       /usr/local/bin/node /usr/local/bin/firebase emulators:start
+[debug] [2023-06-23T09:31:56.632Z] CLI Version:   11.21.0
+[debug] [2023-06-23T09:31:56.632Z] Platform:      darwin
+[debug] [2023-06-23T09:31:56.632Z] Node Version:  v16.13.1
+[debug] [2023-06-23T09:31:56.633Z] Time:          Fri Jun 23 2023 17:31:56 GMT+0800 (香港標準時間)
+[debug] [2023-06-23T09:31:56.634Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2023-06-23T09:31:56.635Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[debug] [2023-06-23T09:31:56.675Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2023-06-23T09:31:56.675Z] > authorizing via signed-in user (hkmleague.dev@gmail.com)
+[debug] [2023-06-23T09:31:57.056Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
+[debug] [2023-06-23T09:31:57.057Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
+[debug] [2023-06-23T09:31:57.128Z] java version "19.0.2" 2023-01-17
+
+[debug] [2023-06-23T09:31:57.128Z] Java(TM) SE Runtime Environment (build 19.0.2+7-44)
+Java HotSpot(TM) 64-Bit Server VM (build 19.0.2+7-44, mixed mode, sharing)
+
+[debug] [2023-06-23T09:31:57.131Z] Parsed Java major version: 19
+[info] i  emulators: Starting emulators: database, hosting {"metadata":{"emulator":{"name":"hub"},"message":"Starting emulators: database, hosting"}}
+[debug] [2023-06-23T09:31:57.754Z] [logging] Logging Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2023-06-23T09:31:57.754Z] [database] Database Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2023-06-23T09:31:57.754Z] [hosting] Hosting Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2023-06-23T09:31:57.754Z] assigned listening specs for emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400},{"address":"::1","family":"IPv6","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000},{"address":"::1","family":"IPv6","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}],"database":[{"address":"127.0.0.1","family":"IPv4","port":9000}],"hosting":[{"address":"127.0.0.1","family":"IPv4","port":5000}]},"metadata":{"message":"assigned listening specs for emulators"}}
+[debug] [2023-06-23T09:31:57.756Z] [hub] writing locator at /var/folders/cm/zgxs9b6d7ts6sk938r213bx40000gp/T/hub-hk-m-league.json
+[debug] [2023-06-23T09:31:57.758Z] > refreshing access token with scopes: []
+[debug] [2023-06-23T09:31:57.759Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2023-06-23T09:31:57.759Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2023-06-23T09:31:57.846Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2023-06-23T09:31:57.846Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2023-06-23T09:31:57.860Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/hk-m-league [none]
+[debug] [2023-06-23T09:31:58.224Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/hk-m-league 200
+[debug] [2023-06-23T09:31:58.224Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/hk-m-league {"projectId":"hk-m-league","projectNumber":"624803752404","displayName":"HK M-League","name":"projects/hk-m-league","resources":{"hostingSite":"hk-m-league","realtimeDatabaseInstance":"hk-m-league-default-rtdb","storageBucket":"hk-m-league.appspot.com","locationId":"asia-northeast3"},"state":"ACTIVE","etag":"1_0ea41edf-fc8e-486d-9e13-0d35703fc283"}
+[debug] [2023-06-23T09:31:58.225Z] database rules config:  []
+[warn] ⚠  database: Did not find a Realtime Database rules file specified in a firebase.json config file. The emulator will default to allowing all reads and writes. Learn more about this option: https://firebase.google.com/docs/emulator-suite/install_and_configure#security_rules_configuration. {"metadata":{"emulator":{"name":"database"},"message":"Did not find a Realtime Database rules file specified in a firebase.json config file. The emulator will default to allowing all reads and writes. Learn more about this option: https://firebase.google.com/docs/emulator-suite/install_and_configure#security_rules_configuration."}}
+[debug] [2023-06-23T09:31:58.226Z] Ignoring unsupported arg: projectId {"metadata":{"emulator":{"name":"database"},"message":"Ignoring unsupported arg: projectId"}}
+[debug] [2023-06-23T09:31:58.226Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"database"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2023-06-23T09:31:58.226Z] Ignoring unsupported arg: rules {"metadata":{"emulator":{"name":"database"},"message":"Ignoring unsupported arg: rules"}}
+[debug] [2023-06-23T09:31:58.226Z] Starting Database Emulator with command {"binary":"java","args":["-Duser.language=en","-jar","/Users/silwolf/.cache/firebase/emulators/firebase-database-emulator-v4.11.0.jar","--host","127.0.0.1","--port",9000,"--single_project_mode","Warning"],"optionalArgs":["port","host","functions_emulator_port","functions_emulator_host","single_project_mode"],"joinArgs":false} {"metadata":{"emulator":{"name":"database"},"message":"Starting Database Emulator with command {\"binary\":\"java\",\"args\":[\"-Duser.language=en\",\"-jar\",\"/Users/silwolf/.cache/firebase/emulators/firebase-database-emulator-v4.11.0.jar\",\"--host\",\"127.0.0.1\",\"--port\",9000,\"--single_project_mode\",\"Warning\"],\"optionalArgs\":[\"port\",\"host\",\"functions_emulator_port\",\"functions_emulator_host\",\"single_project_mode\"],\"joinArgs\":false}"}}
+[info] i  database: Database Emulator logging to database-debug.log {"metadata":{"emulator":{"name":"database"},"message":"Database Emulator logging to \u001b[1mdatabase-debug.log\u001b[22m"}}
+[debug] [2023-06-23T09:31:58.964Z] 17:31:58.963 [NamespaceSystem-akka.actor.default-dispatcher-4] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started
+ {"metadata":{"emulator":{"name":"database"},"message":"17:31:58.963 [NamespaceSystem-akka.actor.default-dispatcher-4] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started\n"}}
+[debug] [2023-06-23T09:31:59.055Z] 17:31:59.055 [main] INFO com.firebase.server.forge.App$ - Listening at 127.0.0.1:9000
+ {"metadata":{"emulator":{"name":"database"},"message":"17:31:59.055 [main] INFO com.firebase.server.forge.App$ - Listening at 127.0.0.1:9000\n"}}
+[debug] [2023-06-23T09:31:59.243Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/hk-m-league/sites 
+[debug] [2023-06-23T09:31:59.742Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/hk-m-league/sites 200
+[debug] [2023-06-23T09:31:59.742Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/hk-m-league/sites {"sites":[{"name":"projects/hk-m-league/sites/hk-m-league","defaultUrl":"https://hk-m-league.web.app","type":"DEFAULT_SITE"}]}
+[debug] [2023-06-23T09:31:59.743Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/hk-m-league/webApps/-/config [none]
+[debug] [2023-06-23T09:32:00.713Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/hk-m-league/webApps/-/config 200
+[debug] [2023-06-23T09:32:00.713Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/hk-m-league/webApps/-/config {"projectId":"hk-m-league","appId":"1:624803752404:web:59c7b94c6655e5fb2a8e41","databaseURL":"https://hk-m-league-default-rtdb.asia-southeast1.firebasedatabase.app","storageBucket":"hk-m-league.appspot.com","locationId":"asia-northeast3","apiKey":"AIzaSyDiuniOaBkqF63lLXun7yFpMTx7VryQOs4","authDomain":"hk-m-league.firebaseapp.com","messagingSenderId":"624803752404"}
+[debug] [2023-06-23T09:32:00.727Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/hk-m-league [none]
+[debug] [2023-06-23T09:32:01.113Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/hk-m-league 200
+[debug] [2023-06-23T09:32:01.114Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/hk-m-league {"projectId":"hk-m-league","projectNumber":"624803752404","displayName":"HK M-League","name":"projects/hk-m-league","resources":{"hostingSite":"hk-m-league","realtimeDatabaseInstance":"hk-m-league-default-rtdb","storageBucket":"hk-m-league.appspot.com","locationId":"asia-northeast3"},"state":"ACTIVE","etag":"1_0ea41edf-fc8e-486d-9e13-0d35703fc283"}
+[info] i  hosting[hk-m-league]: Serving hosting files from: build {"metadata":{"emulator":{"name":"hosting"},"message":"Serving hosting files from: \u001b[1mbuild\u001b[22m"}}
+[info] ✔  hosting[hk-m-league]: Local server: http://127.0.0.1:5000 {"metadata":{"emulator":{"name":"hosting"},"message":"Local server: \u001b[4m\u001b[1mhttp://127.0.0.1:5000\u001b[22m\u001b[24m"}}
+[debug] [2023-06-23T09:32:01.216Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"ui"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2023-06-23T09:32:01.216Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"ui"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2023-06-23T09:32:01.216Z] Starting Emulator UI with command {"binary":"node","args":["/Users/silwolf/.cache/firebase/emulators/ui-v1.11.2/server/server.js"],"optionalArgs":[],"joinArgs":false} {"metadata":{"emulator":{"name":"ui"},"message":"Starting Emulator UI with command {\"binary\":\"node\",\"args\":[\"/Users/silwolf/.cache/firebase/emulators/ui-v1.11.2/server/server.js\"],\"optionalArgs\":[],\"joinArgs\":false}"}}
+[info] i  ui: Emulator UI logging to ui-debug.log {"metadata":{"emulator":{"name":"ui"},"message":"Emulator UI logging to \u001b[1mui-debug.log\u001b[22m"}}
+[debug] [2023-06-23T09:32:01.282Z] Web / API server started at 127.0.0.1:4000
+ {"metadata":{"emulator":{"name":"ui"},"message":"Web / API server started at 127.0.0.1:4000\n"}}
+[debug] [2023-06-23T09:32:01.283Z] Web / API server started at ::1:4000
+ {"metadata":{"emulator":{"name":"ui"},"message":"Web / API server started at ::1:4000\n"}}
+[info] 
+┌─────────────────────────────────────────────────────────────┐
+│ ✔  All emulators ready! It is now safe to connect your app. │
+│ i  View Emulator UI at http://127.0.0.1:4000/               │
+└─────────────────────────────────────────────────────────────┘
+
+┌──────────┬────────────────┬────────────────────────────────┐
+│ Emulator │ Host:Port      │ View in Emulator UI            │
+├──────────┼────────────────┼────────────────────────────────┤
+│ Database │ 127.0.0.1:9000 │ http://127.0.0.1:4000/database │
+├──────────┼────────────────┼────────────────────────────────┤
+│ Hosting  │ 127.0.0.1:5000 │ n/a                            │
+└──────────┴────────────────┴────────────────────────────────┘
+  Emulator Hub running at 127.0.0.1:4400
+  Other reserved ports: 4500
+
+Issues? Report them at https://github.com/firebase/firebase-tools/issues and attach the *-debug.log files.
+ 
+[debug] [2023-06-23T09:32:06.414Z] 17:32:06.414 [NamespaceSystem-akka.actor.default-dispatcher-7] INFO com.firebase.core.namespace.NamespaceActor - hk-m-league successfully activated FBKV (SurveyIdle(0)) wait: 83ms, init: 0ms
+ {"metadata":{"emulator":{"name":"database"},"message":"17:32:06.414 [NamespaceSystem-akka.actor.default-dispatcher-7] INFO com.firebase.core.namespace.NamespaceActor - hk-m-league successfully activated FBKV (SurveyIdle(0)) wait: 83ms, init: 0ms\n"}}
+[debug] [2023-06-23T09:32:21.651Z] 17:32:21.651 [FirebaseWorkerPool-1-1] WARN com.firebase.core.persistence.backend.dummy.EmulatorMetadataPersistence - Multiple projectIds are not recommended in single project mode. Requested 
+namespace hk-m-league-default-rtdb, but the emulator is configured for hk-m-league. To 
+opt-out of single project mode add/set the single_project_mode: false property in 
+the firebase.json emulators config. 
+ {"metadata":{"emulator":{"name":"database"},"message":"17:32:21.651 [FirebaseWorkerPool-1-1] WARN com.firebase.core.persistence.backend.dummy.EmulatorMetadataPersistence - Multiple projectIds are not recommended in single project mode. Requested \nnamespace hk-m-league-default-rtdb, but the emulator is configured for hk-m-league. To \nopt-out of single project mode add/set the single_project_mode: false property in \nthe firebase.json emulators config. \n"}}
+[debug] [2023-06-23T09:32:21.657Z] 17:32:21.654 [NamespaceSystem-akka.actor.default-dispatcher-5] INFO com.firebase.core.namespace.NamespaceActor - hk-m-league-default-rtdb successfully activated FBKV (SurveyIdle(0)) wait: 1ms, init: 0ms
+ {"metadata":{"emulator":{"name":"database"},"message":"17:32:21.654 [NamespaceSystem-akka.actor.default-dispatcher-5] INFO com.firebase.core.namespace.NamespaceActor - hk-m-league-default-rtdb successfully activated FBKV (SurveyIdle(0)) wait: 1ms, init: 0ms\n"}}
+[debug] [2023-06-23T09:41:22.091Z] 17:41:22.091 [FirebaseWorkerPool-1-3] WARN com.firebase.core.persistence.backend.dummy.EmulatorMetadataPersistence - Multiple projectIds are not recommended in single project mode. Requested 
+namespace fake-server, but the emulator is configured for hk-m-league,hk-m-league-default-rtdb. To 
+opt-out of single project mode add/set the single_project_mode: false property in 
+the firebase.json emulators config. 
+ {"metadata":{"emulator":{"name":"database"},"message":"17:41:22.091 [FirebaseWorkerPool-1-3] WARN com.firebase.core.persistence.backend.dummy.EmulatorMetadataPersistence - Multiple projectIds are not recommended in single project mode. Requested \nnamespace fake-server, but the emulator is configured for hk-m-league,hk-m-league-default-rtdb. To \nopt-out of single project mode add/set the single_project_mode: false property in \nthe firebase.json emulators config. \n"}}
+[debug] [2023-06-23T09:41:22.096Z] 17:41:22.095 [NamespaceSystem-akka.actor.default-dispatcher-20] INFO com.firebase.core.namespace.NamespaceActor - fake-server successfully activated FBKV (SurveyIdle(0)) wait: 1ms, init: 0ms
+ {"metadata":{"emulator":{"name":"database"},"message":"17:41:22.095 [NamespaceSystem-akka.actor.default-dispatcher-20] INFO com.firebase.core.namespace.NamespaceActor - fake-server successfully activated FBKV (SurveyIdle(0)) wait: 1ms, init: 0ms\n"}}
+[info] i  hosting: 127.0.0.1 - - [23/Jun/2023:09:45:03 +0000] "GET /hk-m-league/.json HTTP/1.1" 404 156 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36" {"metadata":{"emulator":{"name":"hosting"},"message":"127.0.0.1 - - [23/Jun/2023:09:45:03 +0000] \"GET /hk-m-league/.json HTTP/1.1\" 404 156 \"-\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36\""}}

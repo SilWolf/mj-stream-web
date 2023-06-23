@@ -13,7 +13,7 @@ type Props = HTMLAttributes<HTMLDivElement> & {
   isEast?: boolean
   isRiichi?: boolean
   onAnimationEnd?: () => void
-  mainColor?: string
+  color?: string
 }
 
 export const MJPlayerCardMainColorMap: Record<PlayerIndex, string> = {
@@ -31,7 +31,7 @@ export default function MJPlayerCardDiv({
   scoreChanges = [],
   isEast,
   isRiichi,
-  mainColor = '#ffffff',
+  color = '#ffffff',
   className,
   ...props
 }: Props) {
@@ -61,7 +61,7 @@ export default function MJPlayerCardDiv({
           <div className="absolute bottom-0 left-0 w-full aspect-[554/792] p-[0.075em]">
             <div
               className="w-full h-full bg-white rounded-[0.3em]"
-              style={{ background: mainColor }}
+              style={{ background: color }}
             >
               {isRiichi && (
                 <MJRiichiBgDiv className="absolute -z-10 w-full h-full top-0 left-0 rounded-[0.3em] overflow-hidden" />
@@ -85,7 +85,7 @@ export default function MJPlayerCardDiv({
             className={`relative w-full text-right bg-white  min-w-[5.5em] pr-[0.125em] rounded-bl-[0.3em] ${className}`}
             {...props}
             style={{
-              background: `linear-gradient(to right, #ffffff, ${mainColor})`,
+              background: `linear-gradient(to right, #ffffff, ${color})`,
             }}
           >
             {storedScoreChanges && (

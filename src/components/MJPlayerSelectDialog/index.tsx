@@ -1,22 +1,24 @@
 import React, { useCallback, useMemo } from 'react'
 import { Player } from '@/models'
-import MJUIDialog, { MJUIDialogProps } from '../MJUI/MJUIDialog'
+import MJUIDialogV2, { MJUIDialogV2Props } from '../MJUI/MJUIDialogV2'
 
 type Props = {
   players: Record<string, Player>
   onSelect: (id: string, player: Player) => unknown
-} & Omit<MJUIDialogProps, 'children'>
+} & Omit<MJUIDialogV2Props, 'children'>
 
 function MJPlayerSelectDialog({ players, onSelect, ...dialogProps }: Props) {
   const myPlayers = useMemo(
     () =>
-      Object.entries(players).map(
-        ([_id, player]) => ({
-          ...player,
-          _id,
-        }),
-        []
-      ),
+      players
+        ? Object.entries(players).map(
+            ([_id, player]) => ({
+              ...player,
+              _id,
+            }),
+            []
+          )
+        : [],
     [players]
   )
 
@@ -38,7 +40,7 @@ function MJPlayerSelectDialog({ players, onSelect, ...dialogProps }: Props) {
   )
 
   return (
-    <MJUIDialog title="選擇玩家" {...dialogProps}>
+    <MJUIDialogV2 title="選擇玩家" {...dialogProps}>
       <div className="space-y-4">
         {myPlayers.map((player) => (
           <button
@@ -67,7 +69,7 @@ function MJPlayerSelectDialog({ players, onSelect, ...dialogProps }: Props) {
           </button>
         ))}
       </div>
-    </MJUIDialog>
+    </MJUIDialogV2>
   )
 }
 

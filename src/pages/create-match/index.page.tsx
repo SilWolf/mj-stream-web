@@ -1,7 +1,6 @@
 import MJPositionSpan from '@/components/MJPositionSpan'
 import { MatchRound, Player, PlayerIndex } from '@/models'
 import React, { useCallback, useState } from 'react'
-import MJInlineEditButton from '@/components/MJInlineEditButton'
 import {
   useFirebaseDatabase,
   useFirebaseDatabaseByKey,
@@ -13,6 +12,8 @@ import {
 import { useLocation } from 'wouter'
 import MJPlayerSelectDialog from '@/components/MJPlayerSelectDialog'
 import { useBoolean } from 'react-use'
+import MJPlayerInfoCardDiv from '@/components/MJPlayerInfoCardDiv'
+import MJUIButton from '@/components/MJUI/MJUIButton'
 
 function CreateMatchPage() {
   const fb = useFirebaseDatabase()
@@ -26,73 +27,28 @@ function CreateMatchPage() {
   >({
     '0': {
       name: '玩家A',
+      color: '#6700cf',
     },
     '1': {
       name: '玩家B',
+      color: '#00b5de',
     },
     '2': {
       name: '玩家C',
+      color: '#e3277b',
     },
     '3': {
       name: '玩家D',
+      color: '#03ada5',
     },
   })
 
-  const handleChangeProfilePic = useCallback(
-    (e: React.MouseEvent) => {
-      if (!e.currentTarget) {
-        return
-      }
-
-      const playerIndex = e.currentTarget.getAttribute(
-        'data-player-index'
-      ) as PlayerIndex
-
-      if (!playerIndex) {
-        return
-      }
-
-      const newValue = prompt('請輸入圖片網址', players[playerIndex].propicSrc)
-
-      if (newValue) {
-        setPlayers((prev) => ({
-          ...prev,
-          [playerIndex]: {
-            ...players[playerIndex],
-            propicSrc: newValue,
-          },
-        }))
-      }
+  const handleEditPlayer = useCallback(
+    (playerIndex: PlayerIndex, newPlayer: Player) => {
+      setPlayers((prev) => ({ ...prev, [playerIndex]: newPlayer }))
+      return Promise.resolve()
     },
-    [players]
-  )
-
-  const handleChange = useCallback(
-    (newValue: string | null | undefined, e: React.MouseEvent) => {
-      if (!e.currentTarget) {
-        return
-      }
-
-      const playerIndex = e.currentTarget.getAttribute(
-        'data-player-index'
-      ) as PlayerIndex
-      const column = e.currentTarget.getAttribute('data-column') as
-        | 'name'
-        | 'title'
-
-      if (!playerIndex || !column) {
-        return
-      }
-
-      setPlayers((prev) => ({
-        ...prev,
-        [playerIndex]: {
-          ...players[playerIndex],
-          [column]: newValue,
-        },
-      }))
-    },
-    [players]
+    []
   )
 
   const handleClickQRScan = useCallback(() => {
@@ -142,6 +98,10 @@ function CreateMatchPage() {
     },
     [players, selectedPlayerIndex, togglePlayerSelectDialog]
   )
+
+  const handleCloseSelectPlayerDialog = useCallback(() => {
+    togglePlayerSelectDialog(false)
+  }, [togglePlayerSelectDialog])
 
   const handleClickStart = useCallback(async () => {
     const playerIds: string[] = []
@@ -291,48 +251,13 @@ function CreateMatchPage() {
                         <MJPositionSpan playerIndex={playerIndex} />
                       </div>
                     </div>
-                    <div className="flex-1 flex items-center gap-x-2 bg-white bg-opacity-30 rounded p-2">
-                      <div className="shrink-0">
-                        <button
-                          type="button"
-                          onClick={handleChangeProfilePic}
-                          data-player-index={playerIndex}
-                          disabled={!!players[playerIndex]._id}
-                        >
-                          <div
-                            className="w-14 h-14 bg-center bg-contain bg-no-repeat"
-                            style={{
-                              backgroundImage: `url(${
-                                players[playerIndex].propicSrc ??
-                                '/images/portrait-placeholder.jpeg'
-                              })`,
-                            }}
-                          />
-                        </button>
-                      </div>
-                      <div className="flex-1">
-                        <div>
-                          <MJInlineEditButton
-                            value={players[playerIndex].title}
-                            placeholder="(無頭銜)"
-                            data-player-index={playerIndex}
-                            data-column="title"
-                            onEdit={handleChange}
-                            disabled={!!players[playerIndex]._id}
-                          />
-                        </div>
-                        <div className="text-2xl">
-                          <MJInlineEditButton
-                            required
-                            value={players[playerIndex].name}
-                            data-player-index={playerIndex}
-                            data-column="name"
-                            onEdit={handleChange}
-                            disabled={!!players[playerIndex]._id}
-                          />
-                        </div>
-                      </div>
-                    </div>
+
+                    <MJPlayerInfoCardDiv
+                      playerIndex={playerIndex}
+                      player={players[playerIndex]}
+                      onEdit={handleEditPlayer}
+                    />
+
                     <div className="shrink-0 space-x-2">
                       <button
                         type="button"
@@ -366,13 +291,14 @@ function CreateMatchPage() {
             </div>
           </div>
           <div className="shrink-0 space-y-4">
-            <button
-              type="button"
-              className="w-full bg-blue-600 text-white text-4xl p-4 rounded-lg"
+            <MJUIButton
+              variant="primary"
+              size="xlarge"
+              className="w-full"
               onClick={handleClickStart}
             >
-              開始
-            </button>
+              開始對局
+            </MJUIButton>
           </div>
         </div>
       </div>
@@ -381,7 +307,7 @@ function CreateMatchPage() {
         open={showPlayerSelectDialog}
         players={databasePlayers}
         onSelect={handleSelectPlayer}
-        onClose={togglePlayerSelectDialog}
+        onClose={handleCloseSelectPlayerDialog}
       />
     </>
   )

@@ -45,9 +45,10 @@ export type RawPlayer = {
 }
 
 export type Player = {
-  name: string
   title?: string
+  name: string
   propicSrc?: string
+  color?: string
 }
 
 export type MatchRound = {
