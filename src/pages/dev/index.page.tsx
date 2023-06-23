@@ -151,7 +151,7 @@ export default function DevPage() {
               score={score}
               scoreChanges={scoreChanges}
               className="!bg-yellow-400 !bg-opacity-60"
-              mainColor={MJPlayerCardMainColorMap[0]}
+              color={MJPlayerCardMainColorMap[0]}
             />
           </div>
           <MJUIButton onClick={handleClickAdd}>增加</MJUIButton>

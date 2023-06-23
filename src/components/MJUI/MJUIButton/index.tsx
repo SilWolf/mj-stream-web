@@ -1,16 +1,59 @@
 import React, { ButtonHTMLAttributes, useMemo } from 'react'
+import { cva } from 'cva'
+
+const button = cva(['font-semibold', 'border', 'rounded'], {
+  variants: {
+    variant: {
+      primary: [
+        'bg-teal-800',
+        'text-white',
+        'border-transparent',
+        'hover:bg-teal-700',
+      ],
+      // **or**
+      // primary: "bg-blue-500 text-white border-transparent hover:bg-blue-600",
+      secondary: [
+        'bg-white',
+        'text-gray-800',
+        'border-gray-400',
+        'hover:bg-gray-100',
+      ],
+    },
+    size: {
+      small: ['text-sm', 'py-1', 'px-2'],
+      medium: ['text-base', 'py-2', 'px-4'],
+    },
+  },
+  compoundVariants: [
+    {
+      variant: 'primary',
+      size: 'medium',
+      class: 'uppercase',
+      // **or** if you're a React.js user, `className` may feel more consistent:
+      // className: "uppercase"
+    },
+  ],
+  defaultVariants: {
+    variant: 'primary',
+    size: 'medium',
+  },
+})
+
+type MJUIButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  variant?: 'primary' | 'secondary'
+  size?: 'medium' | 'small'
+}
 
 export default function MJUIButton({
+  variant,
+  size,
   className,
   ...props
-}: ButtonHTMLAttributes<HTMLButtonElement>) {
-  const myClassName = useMemo(() => {
-    if (props.disabled) {
-      return `text-white bg-gray-300 dark:bg-gray-300 cursor-not-allowed font-medium rounded-lg text-sm px-5 py-2.5 text-center ${className}`
-    }
-
-    return `text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 ${className}`
-  }, [className, props.disabled])
+}: MJUIButtonProps) {
+  const myClassName = useMemo(
+    () => button({ variant, size, className }),
+    [variant, size, className]
+  )
 
   // eslint-disable-next-line react/button-has-type
   return <button className={myClassName} {...props} />

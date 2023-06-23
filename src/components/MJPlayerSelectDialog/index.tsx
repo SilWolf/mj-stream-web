@@ -10,13 +10,15 @@ type Props = {
 function MJPlayerSelectDialog({ players, onSelect, ...dialogProps }: Props) {
   const myPlayers = useMemo(
     () =>
-      Object.entries(players).map(
-        ([_id, player]) => ({
-          ...player,
-          _id,
-        }),
-        []
-      ),
+      players
+        ? Object.entries(players).map(
+            ([_id, player]) => ({
+              ...player,
+              _id,
+            }),
+            []
+          )
+        : [],
     [players]
   )
 

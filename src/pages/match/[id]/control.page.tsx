@@ -391,7 +391,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                   }
                   isEast={getIsPlayerEast(index, matchCurrentRound.roundCount)}
                   isRiichi={matchCurrentRound.playerResults[index].isRiichi}
-                  mainColor={MJPlayerCardMainColorMap[index]}
+                  color={MJPlayerCardMainColorMap[index]}
                 />
               </div>
               <div>

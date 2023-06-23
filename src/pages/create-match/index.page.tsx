@@ -13,6 +13,7 @@ import {
 import { useLocation } from 'wouter'
 import MJPlayerSelectDialog from '@/components/MJPlayerSelectDialog'
 import { useBoolean } from 'react-use'
+import MJPlayerInfoCardDiv from '@/components/MJPlayerInfoCardDiv'
 
 function CreateMatchPage() {
   const fb = useFirebaseDatabase()
@@ -291,48 +292,9 @@ function CreateMatchPage() {
                         <MJPositionSpan playerIndex={playerIndex} />
                       </div>
                     </div>
-                    <div className="flex-1 flex items-center gap-x-2 bg-white bg-opacity-30 rounded p-2">
-                      <div className="shrink-0">
-                        <button
-                          type="button"
-                          onClick={handleChangeProfilePic}
-                          data-player-index={playerIndex}
-                          disabled={!!players[playerIndex]._id}
-                        >
-                          <div
-                            className="w-14 h-14 bg-center bg-contain bg-no-repeat"
-                            style={{
-                              backgroundImage: `url(${
-                                players[playerIndex].propicSrc ??
-                                '/images/portrait-placeholder.jpeg'
-                              })`,
-                            }}
-                          />
-                        </button>
-                      </div>
-                      <div className="flex-1">
-                        <div>
-                          <MJInlineEditButton
-                            value={players[playerIndex].title}
-                            placeholder="(無頭銜)"
-                            data-player-index={playerIndex}
-                            data-column="title"
-                            onEdit={handleChange}
-                            disabled={!!players[playerIndex]._id}
-                          />
-                        </div>
-                        <div className="text-2xl">
-                          <MJInlineEditButton
-                            required
-                            value={players[playerIndex].name}
-                            data-player-index={playerIndex}
-                            data-column="name"
-                            onEdit={handleChange}
-                            disabled={!!players[playerIndex]._id}
-                          />
-                        </div>
-                      </div>
-                    </div>
+
+                    <MJPlayerInfoCardDiv player={players[playerIndex]} />
+
                     <div className="shrink-0 space-x-2">
                       <button
                         type="button"
