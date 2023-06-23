@@ -1,5 +1,5 @@
 import React, { ButtonHTMLAttributes, useMemo } from 'react'
-import { cva } from 'cva'
+import { cva, VariantProps } from 'cva'
 
 const button = cva(['font-semibold', 'border', 'rounded'], {
   variants: {
@@ -22,6 +22,8 @@ const button = cva(['font-semibold', 'border', 'rounded'], {
     size: {
       small: ['text-sm', 'py-1', 'px-2'],
       medium: ['text-base', 'py-2', 'px-4'],
+      large: ['text-md', 'py-1', 'px-2'],
+      xlarge: ['text-2xl', 'py-4', 'px-4'],
     },
   },
   compoundVariants: [
@@ -39,10 +41,8 @@ const button = cva(['font-semibold', 'border', 'rounded'], {
   },
 })
 
-type MJUIButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: 'primary' | 'secondary'
-  size?: 'medium' | 'small'
-}
+type MJUIButtonProps = ButtonHTMLAttributes<HTMLButtonElement> &
+  VariantProps<typeof button>
 
 export default function MJUIButton({
   variant,

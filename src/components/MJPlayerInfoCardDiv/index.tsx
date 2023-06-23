@@ -1,5 +1,11 @@
-import { Player } from '@/models'
-import React, { FormEvent, useCallback, useRef, useState } from 'react'
+import { Player, PlayerIndex } from '@/models'
+import React, {
+  FormEvent,
+  HTMLAttributes,
+  useCallback,
+  useRef,
+  useState,
+} from 'react'
 import { useBoolean } from 'react-use'
 import MJUIDialogV2 from '../MJUI/MJUIDialogV2'
 import MJUIButton from '../MJUI/MJUIButton'
@@ -8,11 +14,19 @@ import MJUIInputForColor from '../MJUI/MJUIInputForColor'
 import MJUIFormGroup from '../MJUI/MJUIFormGroup'
 import MJPlayerCardDiv from '../MJPlayerCardDiv'
 
-type Props = {
+type Props = HTMLAttributes<HTMLDivElement> & {
   player: Player
+  playerIndex: PlayerIndex
+  onEdit?: (playerIndex: PlayerIndex, newPlayer: Player) => Promise<unknown>
 }
 
-function MJPlayerInfoCardDiv({ player }: Props) {
+function MJPlayerInfoCardDiv({
+  player,
+  playerIndex,
+  onEdit,
+  children,
+  ...divProps
+}: Props) {
   const [isShowEditDialog, toggleEditDialog] = useBoolean(false)
   const [modifiedPlayer, setModifiedPlayer] = useState<Player>(player)
 
@@ -59,26 +73,33 @@ function MJPlayerInfoCardDiv({ player }: Props) {
     handleClickRefreshPreview()
   }, [handleClickRefreshPreview, player, toggleEditDialog])
 
-  const handleSubmitEditForm = useCallback((e: FormEvent) => {
-    e.preventDefault()
+  const handleSubmitEditForm = useCallback(
+    (e: FormEvent) => {
+      e.preventDefault()
 
-    const elements = [
-      ...(e.target as HTMLFormElement).querySelectorAll('input'),
-    ]
+      if (!onEdit) {
+        return
+      }
 
-    const newPlayer: Player = { name: '' }
-    for (let i = 0; i < elements.length; i += 1) {
-      const ele = elements[i] as HTMLInputElement
-      if (ele) {
-        const key = ele.getAttribute('id')
-        if (key) {
-          newPlayer[key as keyof Player] = ele.value
+      const elements = [
+        ...(e.target as HTMLFormElement).querySelectorAll('input'),
+      ]
+
+      const newPlayer: Player = { name: '' }
+      for (let i = 0; i < elements.length; i += 1) {
+        const ele = elements[i] as HTMLInputElement
+        if (ele) {
+          const key = ele.getAttribute('id')
+          if (key) {
+            newPlayer[key as keyof Player] = ele.value
+          }
         }
       }
-    }
 
-    setModifiedPlayer(newPlayer)
-  }, [])
+      onEdit(playerIndex, newPlayer).then(() => toggleEditDialog(false))
+    },
+    [onEdit, playerIndex, toggleEditDialog]
+  )
 
   const handleCloseEditDialog = useCallback(
     () => toggleEditDialog(false),
@@ -87,13 +108,19 @@ function MJPlayerInfoCardDiv({ player }: Props) {
 
   return (
     <>
-      <div className="flex-1 flex items-center gap-x-2 bg-white bg-opacity-30 rounded p-2">
+      <div
+        className="flex-1 flex items-center gap-x-2 bg-white bg-opacity-30 rounded p-2 border-4"
+        style={{
+          borderColor: player.color ?? '#115e59',
+        }}
+        {...divProps}
+      >
         <div className="shrink-0">
           <div
-            className="w-14 h-14 bg-center bg-contain bg-no-repeat"
+            className="w-14 h-14 bg-center bg-contain bg-no-repeat rounded"
             style={{
               backgroundImage: `url(${
-                player.propicSrc ?? '/images/portrait-placeholder.jpeg'
+                player.propicSrc || '/images/portrait-placeholder.jpeg'
               })`,
             }}
           />
@@ -102,11 +129,13 @@ function MJPlayerInfoCardDiv({ player }: Props) {
           <div>{player.title ?? '(無頭銜)'}</div>
           <div className="text-2xl">{player.name ?? '(無名稱)'}</div>
         </div>
-        <div className="shrink-0">
-          <button type="button" onClick={handleClickEdit}>
-            <span className="material-symbols-outlined">edit</span>
-          </button>
-        </div>
+        {onEdit && (
+          <div className="shrink-0">
+            <button type="button" onClick={handleClickEdit}>
+              <span className="material-symbols-outlined">edit</span>
+            </button>
+          </div>
+        )}
       </div>
 
       <MJUIDialogV2
@@ -158,6 +187,7 @@ function MJPlayerInfoCardDiv({ player }: Props) {
                   className="w-full"
                   variant="secondary"
                   type="button"
+                  onClick={handleCloseEditDialog}
                 >
                   取消
                 </MJUIButton>
