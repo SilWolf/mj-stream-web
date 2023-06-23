@@ -59,6 +59,28 @@ function CreateMatchPage() {
     alert('輸入會員編號功能未開放。')
   }, [])
 
+  const handleClickSwap = useCallback((e: React.MouseEvent) => {
+    const ele = e.currentTarget as HTMLButtonElement
+    if (!ele) {
+      return
+    }
+
+    const playerIndex = ele.getAttribute('data-playerIndex') as PlayerIndex
+    if (!playerIndex) {
+      return
+    }
+
+    const nextPlayerIndex: PlayerIndex =
+      // eslint-disable-next-line no-nested-ternary
+      playerIndex === '0' ? '1' : playerIndex === '1' ? '2' : '3'
+
+    setPlayers((prev) => ({
+      ...prev,
+      [playerIndex]: prev[nextPlayerIndex],
+      [nextPlayerIndex]: prev[playerIndex],
+    }))
+  }, [])
+
   const [selectedPlayerIndex, setSelectedPlayerIndex] = useState<
     PlayerIndex | undefined
   >()
@@ -243,56 +265,81 @@ function CreateMatchPage() {
           <div className="flex-1">
             <div className="space-y-4">
               <h1 className="text-4xl">玩家</h1>
-              <div className="space-y-4">
+              <div className="space-y-2">
                 {(['0', '1', '2', '3'] as PlayerIndex[]).map((playerIndex) => (
-                  <div key={playerIndex} className="flex items-center gap-x-2">
-                    <div className="shrink-0">
-                      <div className="h-14 w-14 border-4 rounded border-black text-[2.5rem] flex items-center justify-center">
-                        <MJPositionSpan playerIndex={playerIndex} />
+                  <>
+                    <div
+                      key={playerIndex}
+                      className="flex items-center gap-x-2"
+                    >
+                      <div className="shrink-0">
+                        <div className="h-14 w-14 border-4 rounded border-black text-[2.5rem] flex items-center justify-center">
+                          <MJPositionSpan playerIndex={playerIndex} />
+                        </div>
+                      </div>
+
+                      <MJPlayerInfoCardDiv
+                        playerIndex={playerIndex}
+                        player={players[playerIndex]}
+                        onEdit={handleEditPlayer}
+                      />
+
+                      <div className="shrink-0 space-x-2">
+                        <MJUIButton
+                          variant="icon"
+                          color="secondary"
+                          type="button"
+                          data-player-index={playerIndex}
+                          onClick={handleClickQRScan}
+                        >
+                          <span className="material-symbols-outlined">
+                            qr_code_scanner
+                          </span>
+                        </MJUIButton>
+                        <MJUIButton
+                          variant="icon"
+                          color="secondary"
+                          type="button"
+                          data-player-index={playerIndex}
+                          onClick={handleClickEnterCode}
+                        >
+                          <span className="material-symbols-outlined">123</span>
+                        </MJUIButton>
+                        <MJUIButton
+                          variant="icon"
+                          color="secondary"
+                          type="button"
+                          data-player-index={playerIndex}
+                          onClick={handleClickSelectPlayer}
+                        >
+                          <span className="material-symbols-outlined">
+                            arrow_drop_down_circle
+                          </span>
+                        </MJUIButton>
                       </div>
                     </div>
-
-                    <MJPlayerInfoCardDiv
-                      playerIndex={playerIndex}
-                      player={players[playerIndex]}
-                      onEdit={handleEditPlayer}
-                    />
-
-                    <div className="shrink-0 space-x-2">
-                      <button
-                        type="button"
-                        data-player-index={playerIndex}
-                        onClick={handleClickQRScan}
-                      >
-                        <span className="material-symbols-outlined">
-                          qr_code_scanner
-                        </span>
-                      </button>
-                      <button
-                        type="button"
-                        data-player-index={playerIndex}
-                        onClick={handleClickEnterCode}
-                      >
-                        <span className="material-symbols-outlined">123</span>
-                      </button>
-                      <button
-                        type="button"
-                        data-player-index={playerIndex}
-                        onClick={handleClickSelectPlayer}
-                      >
-                        <span className="material-symbols-outlined">
-                          arrow_drop_down_circle
-                        </span>
-                      </button>
-                    </div>
-                  </div>
+                    {playerIndex !== '3' && (
+                      <div className="text-center">
+                        <MJUIButton
+                          variant="icon"
+                          color="secondary"
+                          type="button"
+                          data-playerIndex={playerIndex}
+                          onClick={handleClickSwap}
+                        >
+                          <span className="material-symbols-outlined">
+                            swap_vert
+                          </span>
+                        </MJUIButton>
+                      </div>
+                    )}
+                  </>
                 ))}
               </div>
             </div>
           </div>
           <div className="shrink-0 space-y-4">
             <MJUIButton
-              variant="primary"
               size="xlarge"
               className="w-full"
               onClick={handleClickStart}

@@ -1,43 +1,85 @@
 import React, { ButtonHTMLAttributes, useMemo } from 'react'
 import { cva, VariantProps } from 'cva'
 
-const button = cva(['font-semibold', 'border', 'rounded'], {
+const button = cva(['font-semibold'], {
   variants: {
     variant: {
-      primary: [
-        'bg-teal-800',
-        'text-white',
-        'border-transparent',
-        'hover:bg-teal-700',
-      ],
-      // **or**
-      // primary: "bg-blue-500 text-white border-transparent hover:bg-blue-600",
-      secondary: [
-        'bg-white',
-        'text-gray-800',
-        'border-gray-400',
-        'hover:bg-gray-100',
-      ],
+      contained: ['border', 'rounded'],
+      text: [],
+      icon: ['hover:bg-opacity-50 leading-4'],
+    },
+    color: {
+      primary: [],
+      secondary: [],
     },
     size: {
-      small: ['text-sm', 'py-1', 'px-2'],
-      medium: ['text-base', 'py-2', 'px-4'],
-      large: ['text-md', 'py-1', 'px-2'],
-      xlarge: ['text-2xl', 'py-4', 'px-4'],
+      small: ['text-sm'],
+      medium: ['text-base'],
+      large: ['text-md'],
+      xlarge: ['text-2xl'],
     },
   },
   compoundVariants: [
     {
-      variant: 'primary',
+      variant: 'contained',
+      size: 'small',
+      className: 'py-1 px-2',
+    },
+    {
+      variant: 'contained',
       size: 'medium',
-      class: 'uppercase',
-      // **or** if you're a React.js user, `className` may feel more consistent:
-      // className: "uppercase"
+      className: 'py-2 px-4',
+    },
+    {
+      variant: 'contained',
+      size: 'large',
+      className: 'py-2 px-4',
+    },
+    {
+      variant: 'contained',
+      size: 'xlarge',
+      className: 'py-4 px-4',
+    },
+    {
+      color: 'primary',
+      variant: 'contained',
+      className: 'bg-teal-800 text-white border-transparent hover:bg-teal-700',
+    },
+    {
+      color: 'secondary',
+      variant: 'contained',
+      className: 'bg-white text-gray-800 border-gray-400 hover:bg-gray-100',
+    },
+    {
+      color: 'primary',
+      variant: 'text',
+      className: 'text-teal-800 hover:text-teal-700',
+    },
+    {
+      color: 'secondary',
+      variant: 'text',
+      className: 'text-gray-800 hover:text-gray-700',
+    },
+    {
+      color: 'primary',
+      variant: 'icon',
+      className: 'text-teal-800 hover:text-teal-700 hover:bg-teal-100',
+    },
+    {
+      color: 'secondary',
+      variant: 'icon',
+      className: 'text-gray-800 hover:text-gray-700 hover:bg-gray-100',
+    },
+    {
+      color: 'primary',
+      size: 'medium',
+      className: 'uppercase',
     },
   ],
   defaultVariants: {
-    variant: 'primary',
+    color: 'primary',
     size: 'medium',
+    variant: 'contained',
   },
 })
 
@@ -45,14 +87,15 @@ type MJUIButtonProps = ButtonHTMLAttributes<HTMLButtonElement> &
   VariantProps<typeof button>
 
 export default function MJUIButton({
-  variant,
+  color,
   size,
+  variant,
   className,
   ...props
 }: MJUIButtonProps) {
   const myClassName = useMemo(
-    () => button({ variant, size, className }),
-    [variant, size, className]
+    () => button({ color, size, variant, className }),
+    [color, size, variant, className]
   )
 
   // eslint-disable-next-line react/button-has-type

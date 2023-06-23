@@ -131,9 +131,14 @@ function MJPlayerInfoCardDiv({
         </div>
         {onEdit && (
           <div className="shrink-0">
-            <button type="button" onClick={handleClickEdit}>
+            <MJUIButton
+              variant="icon"
+              color="secondary"
+              type="button"
+              onClick={handleClickEdit}
+            >
               <span className="material-symbols-outlined">edit</span>
-            </button>
+            </MJUIButton>
           </div>
         )}
       </div>
@@ -163,8 +168,9 @@ function MJPlayerInfoCardDiv({
             <div className="mb-6">
               <div className="mb-2">
                 預覽{' '}
-                <button
-                  className="text-teal-800 gap-x-1 ml-2"
+                <MJUIButton
+                  variant="text"
+                  size="small"
                   type="button"
                   onClick={handleClickRefreshPreview}
                 >
@@ -174,7 +180,7 @@ function MJPlayerInfoCardDiv({
                       refresh
                     </span>
                   </div>
-                </button>
+                </MJUIButton>
               </div>
               <div className="text-[4rem] px-4 pt-6 pb-1 bg-gray-800 text-white relative">
                 <MJPlayerCardDiv {...modifiedPlayer} score={25000} />
@@ -185,7 +191,7 @@ function MJPlayerInfoCardDiv({
               <div className="flex-1">
                 <MJUIButton
                   className="w-full"
-                  variant="secondary"
+                  color="secondary"
                   type="button"
                   onClick={handleCloseEditDialog}
                 >
