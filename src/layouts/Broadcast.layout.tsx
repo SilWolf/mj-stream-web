@@ -7,7 +7,7 @@ export default function BroadcastLayout({
 }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={`w-screen h-screen mx-auto flex flex-col gap-y-4 items-stretch p-6 ${className} overflow-hidden`}
+      className={`w-screen h-screen mx-auto flex flex-col gap-y-4 items-stretch p-10 ${className} overflow-hidden`}
       {...props}
     >
       {children}

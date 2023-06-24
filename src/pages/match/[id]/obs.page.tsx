@@ -51,7 +51,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
           </div>
 
           <div className="flex flex-col justify-around">
-            <div className="flex-1 flex flex-row items-center gap-x-2">
+            <div className="flex-1 flex flex-row items-center gap-x-3">
               <div className="flex-1">
                 <img
                   src="/images/score-hundred.png"
@@ -59,11 +59,11 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
                   className="h-5"
                 />
               </div>
-              <div className="text-[1.5rem]">
+              <div className="text-[2.2rem] pb-1.5 leading-none">
                 {matchCurrentRound.extendedRoundCount ?? 0}
               </div>
             </div>
-            <div className="flex-1 flex flex-row items-center gap-x-2">
+            <div className="flex-1 flex flex-row items-center gap-x-3">
               <div className="flex-1">
                 <img
                   src="/images/score-thousand.png"
@@ -71,7 +71,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
                   className="h-5"
                 />
               </div>
-              <div className="text-[1.5rem]">
+              <div className="text-[2.2rem] pb-1.5 leading-none">
                 {matchCurrentRound.cumulatedThousands ?? 0}
               </div>
             </div>
