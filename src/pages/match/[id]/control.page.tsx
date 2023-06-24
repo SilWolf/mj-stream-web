@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useState, useMemo } from 'react'
 import useMatch from '@/hooks/useMatch'
 import {
   MatchRound,
@@ -412,13 +412,13 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                   name={match.players[index].name}
                   title={match.players[index].title}
                   propicSrc={match.players[index].propicSrc}
+                  color={match.players[index].color}
                   score={matchCurrentRound.playerResults[index].afterScore}
                   scoreChanges={
                     matchCurrentRound.playerResults[index].scoreChanges
                   }
                   isEast={getIsPlayerEast(index, matchCurrentRound.roundCount)}
                   isRiichi={matchCurrentRound.playerResults[index].isRiichi}
-                  color={MJPlayerCardMainColorMap[index]}
                 />
               </div>
               <div>

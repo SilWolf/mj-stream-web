@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import MJMatchCounterSpan from '@/components/MJMatchCounterSpan'
 import MJTileDiv from '@/components/MJTileDiv'
 import useMatch from '@/hooks/useMatch'
@@ -17,6 +17,21 @@ type Props = {
 
 export default function MatchDetailPage({ params: { matchId } }: Props) {
   const { match, matchCurrentRound, matchCurrentRoundDoras } = useMatch(matchId)
+
+  const players = useMemo(() => {
+    if (!match || !matchCurrentRound) {
+      return []
+    }
+
+    return (['0', '1', '2', '3'] as PlayerIndex[]).map((index) => ({
+      ...match.players[index],
+      color: match.players[index].color ?? MJPlayerCardMainColorMap[index],
+      currentStatus: {
+        ...matchCurrentRound.playerResults[index],
+        isEast: getIsPlayerEast(index, matchCurrentRound.roundCount),
+      },
+    }))
+  }, [match, matchCurrentRound])
 
   if (!match || !matchCurrentRound) {
     return (
@@ -85,19 +100,17 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
       </div>
 
       <div className="flex flex-row items-end justify-center gap-x-8 text-white text-[4.8rem]">
-        {(['0', '1', '2', '3'] as PlayerIndex[]).map((index) => (
+        {players.map((player) => (
           <MJPlayerCardDiv
-            key={index}
-            name={match.players[index].name}
-            title={match.players[index].title}
-            propicSrc={match.players[index].propicSrc}
-            score={matchCurrentRound.playerResults[index].beforeScore}
-            scoreChanges={
-              matchCurrentRound.playerResults[index].prevScoreChanges
-            }
-            isEast={getIsPlayerEast(index, matchCurrentRound.roundCount)}
-            isRiichi={matchCurrentRound.playerResults[index].isRiichi}
-            color={MJPlayerCardMainColorMap[index]}
+            key={player.name}
+            name={player.name}
+            title={player.title}
+            propicSrc={player.propicSrc}
+            color={player.color}
+            score={player.currentStatus.beforeScore}
+            scoreChanges={player.currentStatus.prevScoreChanges}
+            isEast={player.currentStatus.isEast}
+            isRiichi={player.currentStatus.isRiichi}
           />
         ))}
       </div>

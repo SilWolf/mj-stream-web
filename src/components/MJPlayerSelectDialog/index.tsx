@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo } from 'react'
 import { Player } from '@/models'
 import MJUIDialogV2, { MJUIDialogV2Props } from '../MJUI/MJUIDialogV2'
+import MJPlayerInfoCardDiv from '../MJPlayerInfoCardDiv'
 
 type Props = {
   players: Record<string, Player>
@@ -41,31 +42,16 @@ function MJPlayerSelectDialog({ players, onSelect, ...dialogProps }: Props) {
 
   return (
     <MJUIDialogV2 title="選擇玩家" {...dialogProps}>
-      <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
         {myPlayers.map((player) => (
           <button
             type="button"
             key={player._id}
-            className="flex items-center gap-x-2"
+            className="text-left flex items-center gap-x-2"
             onClick={handleClickPlayer}
             data-id={player._id}
           >
-            <div className="flex-1 flex items-center gap-x-2 bg-white bg-opacity-30 rounded p-2">
-              <div className="shrink-0">
-                <div
-                  className="w-14 h-14 bg-center bg-contain bg-no-repeat"
-                  style={{
-                    backgroundImage: `url(${
-                      player.propicSrc ?? '/images/portrait-placeholder.jpeg'
-                    })`,
-                  }}
-                />
-              </div>
-              <div className="flex-1">
-                <div>{player.title}</div>
-                <div className="text-2xl">{player.name}</div>
-              </div>
-            </div>
+            <MJPlayerInfoCardDiv playerIndex="0" player={player} />
           </button>
         ))}
       </div>
