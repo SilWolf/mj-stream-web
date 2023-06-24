@@ -42,6 +42,11 @@ function MJPlayerSelectDialog({ players, onSelect, ...dialogProps }: Props) {
 
   return (
     <MJUIDialogV2 title="選擇玩家" {...dialogProps}>
+      {myPlayers.length === 0 && (
+        <div className="text-gray-500 text-center py-4">
+          沒有儲存的玩家。請先在外面新增玩家，然後開始對局，下一次該玩家就可供選擇。
+        </div>
+      )}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
         {myPlayers.map((player) => (
           <button

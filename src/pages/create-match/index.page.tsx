@@ -15,6 +15,25 @@ import { useBoolean } from 'react-use'
 import MJPlayerInfoCardDiv from '@/components/MJPlayerInfoCardDiv'
 import MJUIButton from '@/components/MJUI/MJUIButton'
 
+const DEFAULT_PLAYER: Record<PlayerIndex, Player> = {
+  '0': {
+    name: '玩家A',
+    color: '#6700cf',
+  },
+  '1': {
+    name: '玩家B',
+    color: '#00b5de',
+  },
+  '2': {
+    name: '玩家C',
+    color: '#e3277b',
+  },
+  '3': {
+    name: '玩家D',
+    color: '#03ada5',
+  },
+}
+
 function CreateMatchPage() {
   const fb = useFirebaseDatabase()
   const [, setLocation] = useLocation()
@@ -23,24 +42,12 @@ function CreateMatchPage() {
     useFirebaseDatabaseByKey<Player>('players')
 
   const [players, setPlayers] = useState<
-    Record<PlayerIndex, Player & { _id?: string }>
+    Record<PlayerIndex, (Player & { _id?: string }) | undefined>
   >({
-    '0': {
-      name: '玩家A',
-      color: '#6700cf',
-    },
-    '1': {
-      name: '玩家B',
-      color: '#00b5de',
-    },
-    '2': {
-      name: '玩家C',
-      color: '#e3277b',
-    },
-    '3': {
-      name: '玩家D',
-      color: '#03ada5',
-    },
+    '0': undefined,
+    '1': undefined,
+    '2': undefined,
+    '3': undefined,
   })
 
   const handleEditPlayer = useCallback(
@@ -51,21 +58,13 @@ function CreateMatchPage() {
     []
   )
 
-  const handleClickQRScan = useCallback(() => {
-    alert('掃瞄QR Code功能未開放。')
-  }, [])
-
-  const handleClickEnterCode = useCallback(() => {
-    alert('輸入會員編號功能未開放。')
-  }, [])
-
   const handleClickSwap = useCallback((e: React.MouseEvent) => {
     const ele = e.currentTarget as HTMLButtonElement
     if (!ele) {
       return
     }
 
-    const playerIndex = ele.getAttribute('data-playerIndex') as PlayerIndex
+    const playerIndex = ele.getAttribute('data-player-index') as PlayerIndex
     if (!playerIndex) {
       return
     }
@@ -85,6 +84,23 @@ function CreateMatchPage() {
     PlayerIndex | undefined
   >()
   const [showPlayerSelectDialog, togglePlayerSelectDialog] = useBoolean(false)
+
+  const handleClickAddPlayer = useCallback((e: React.MouseEvent) => {
+    if (!e.currentTarget) {
+      return
+    }
+
+    const playerIndex = e.currentTarget.getAttribute(
+      'data-player-index'
+    ) as PlayerIndex
+
+    setPlayers((prev) => ({
+      ...prev,
+      [playerIndex]: {
+        ...DEFAULT_PLAYER[playerIndex],
+      },
+    }))
+  }, [])
 
   const handleClickSelectPlayer = useCallback(
     (e: React.MouseEvent) => {
@@ -125,9 +141,32 @@ function CreateMatchPage() {
     togglePlayerSelectDialog(false)
   }, [togglePlayerSelectDialog])
 
+  const handleClickRemovePlayer = useCallback((e: React.MouseEvent) => {
+    const ele = e.currentTarget as HTMLButtonElement
+    if (!ele) {
+      return
+    }
+
+    const playerIndex = ele.getAttribute('data-player-index') as PlayerIndex
+    if (!playerIndex) {
+      return
+    }
+
+    setPlayers((prev) => ({ ...prev, [playerIndex]: undefined }))
+  }, [])
+
   const handleClickStart = useCallback(async () => {
     const playerIds: string[] = []
     const playerValues = Object.values(players)
+
+    if (
+      !playerValues[0] ||
+      !playerValues[1] ||
+      !playerValues[2] ||
+      !playerValues[3]
+    ) {
+      return
+    }
 
     if (playerValues[0]._id) {
       playerIds.push(playerValues[0]._id)
@@ -279,14 +318,40 @@ function CreateMatchPage() {
                         </div>
                       </div>
 
-                      <MJPlayerInfoCardDiv
-                        playerIndex={playerIndex}
-                        player={players[playerIndex]}
-                        onEdit={handleEditPlayer}
-                      />
+                      {players[playerIndex] ? (
+                        <MJPlayerInfoCardDiv
+                          playerIndex={playerIndex}
+                          player={players[playerIndex]!}
+                          onEdit={handleEditPlayer}
+                        />
+                      ) : (
+                        <div className="w-full h-16 p-4 flex items-center justify-center gap-x-2 border-2 border-gray-800 border-dashed rounded">
+                          <MJUIButton
+                            variant="text"
+                            onClick={handleClickAddPlayer}
+                            data-player-index={playerIndex}
+                          >
+                            <span className="text-sm leading-none material-symbols-outlined">
+                              add
+                            </span>
+                            新增玩家
+                          </MJUIButton>
+                          <span>或</span>
+                          <MJUIButton
+                            variant="text"
+                            onClick={handleClickSelectPlayer}
+                            data-player-index={playerIndex}
+                          >
+                            <span className="text-sm leading-none material-symbols-outlined">
+                              expand_circle_down
+                            </span>
+                            選擇玩家
+                          </MJUIButton>
+                        </div>
+                      )}
 
                       <div className="shrink-0 space-x-2">
-                        <MJUIButton
+                        {/* <MJUIButton
                           variant="icon"
                           color="secondary"
                           type="button"
@@ -316,6 +381,18 @@ function CreateMatchPage() {
                           <span className="material-symbols-outlined">
                             arrow_drop_down_circle
                           </span>
+                        </MJUIButton> */}
+                        <MJUIButton
+                          variant="icon"
+                          color="danger"
+                          type="button"
+                          data-player-index={playerIndex}
+                          onClick={handleClickRemovePlayer}
+                          disabled={!players[playerIndex]}
+                        >
+                          <span className="material-symbols-outlined">
+                            delete
+                          </span>
                         </MJUIButton>
                       </div>
                     </div>
@@ -325,7 +402,7 @@ function CreateMatchPage() {
                           variant="icon"
                           color="secondary"
                           type="button"
-                          data-playerIndex={playerIndex}
+                          data-player-index={playerIndex}
                           onClick={handleClickSwap}
                         >
                           <span className="material-symbols-outlined">
