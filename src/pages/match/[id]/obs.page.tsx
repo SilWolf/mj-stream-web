@@ -43,7 +43,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
     <BroadcastLayout>
       <div className="flex flex-row items-stretch gap-x-4 text-white">
         <div className="rounded-[1rem] bg-black bg-opacity-50 p-2 pr-4 flex items-stretch gap-x-6 transition-[width]">
-          <div className="text-[4.5rem] leading-none border-[.4rem] rounded-[.75rem] px-6 pb-[0.15em] border-current flex items-center justify-center">
+          <div className="text-[4rem] leading-none border-[.35rem] rounded-[.75rem] px-6 pt-[0.05em] pb-[0.2em] border-current flex items-center justify-center">
             <MJMatchCounterSpan
               roundCount={matchCurrentRound.roundCount}
               max={8}
