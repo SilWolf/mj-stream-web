@@ -109,9 +109,9 @@ function MJPlayerInfoCardDiv({
   return (
     <>
       <div
-        className="flex-1 flex items-center gap-x-2 bg-white bg-opacity-30 rounded p-2 border-4"
+        className="flex-1 flex items-center gap-x-2 rounded p-2 text-white"
         style={{
-          borderColor: player.color ?? '#115e59',
+          background: player.color ?? '#115e59',
         }}
         {...divProps}
       >
@@ -133,7 +133,7 @@ function MJPlayerInfoCardDiv({
           <div className="shrink-0">
             <MJUIButton
               variant="icon"
-              color="secondary"
+              color="inverted"
               type="button"
               onClick={handleClickEdit}
             >
@@ -160,7 +160,10 @@ function MJPlayerInfoCardDiv({
               <MJUIFormGroup className="mb-6" label="圖片URL (https://...)">
                 <MJUIInput id="propicSrc" type="url" placeholder="https://" />
               </MJUIFormGroup>
-              <MJUIFormGroup className="mb-6" label="顏色">
+              <MJUIFormGroup
+                className="mb-6"
+                label="顏色（務必選能看清楚白字的深色）"
+              >
                 <MJUIInputForColor id="color" />
               </MJUIFormGroup>
             </div>
