@@ -312,9 +312,9 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
   return (
     <div>
       <div className="container mx-auto my-8 px-8 space-y-6">
-        <div className="flex flex-row items-stretch gap-x-4 text-white">
+        <div className="flex flex-row items-center gap-x-4 text-white">
           <div className="shrink-0 rounded-[1rem] bg-black bg-opacity-50 p-2 flex items-stretch gap-x-4">
-            <div className="font-ud text-[2.5rem] border-[.25rem] rounded-[.75rem] px-4 border-current flex items-center justify-center">
+            <div className="text-[2.5rem] leading-none border-[.25rem] rounded-[.75rem] px-6 pb-[0.15em] border-current flex items-center justify-center">
               <MJMatchCounterSpan
                 roundCount={matchCurrentRound.roundCount}
                 max={8}
@@ -329,9 +329,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                     className="h-4"
                   />
                 </div>
-                <div className="font-ud">
-                  {matchCurrentRound.extendedRoundCount ?? 0}
-                </div>
+                <div>{matchCurrentRound.extendedRoundCount ?? 0}</div>
               </div>
               <div className="flex-1 flex flex-row items-center gap-x-2">
                 <div className="flex-1">
@@ -341,9 +339,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                     className="h-4"
                   />
                 </div>
-                <div className="font-ud">
-                  {matchCurrentRound.cumulatedThousands ?? 0}
-                </div>
+                <div>{matchCurrentRound.cumulatedThousands ?? 0}</div>
               </div>
             </div>
             <div className="flex items-center gap-x-2">
@@ -373,40 +369,39 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
             </div>
           </div>
           <div className="flex-1" />
-          <div className="shrink-0 space-x-4">
-            {(matchCurrentRound.nextRoundType === NextRoundTypeEnum.Normal ||
-              matchCurrentRound.nextRoundType ===
-                NextRoundTypeEnum.Extended) && (
-              <MJUIButton
-                color="success"
-                type="button"
-                className="animate-pulse"
-                onClick={handleClickGoNextRound}
-              >
-                進入
-                <MJMatchCounterSpan
-                  roundCount={
-                    matchCurrentRound.nextRoundType === NextRoundTypeEnum.Normal
-                      ? matchCurrentRound.roundCount + 1
-                      : matchCurrentRound.roundCount
-                  }
-                  extendedRoundCount={
-                    matchCurrentRound.nextRoundType ===
-                    NextRoundTypeEnum.Extended
-                      ? matchCurrentRound.extendedRoundCount + 1
-                      : 0
-                  }
-                />
-              </MJUIButton>
-            )}
+        </div>
+
+        <div className="text-right space-x-4">
+          {(matchCurrentRound.nextRoundType === NextRoundTypeEnum.Normal ||
+            matchCurrentRound.nextRoundType === NextRoundTypeEnum.Extended) && (
             <MJUIButton
-              color="secondary"
+              color="success"
               type="button"
-              onClick={handleClickExhausted}
+              className="animate-pulse"
+              onClick={handleClickGoNextRound}
             >
-              流局
+              進入
+              <MJMatchCounterSpan
+                roundCount={
+                  matchCurrentRound.nextRoundType === NextRoundTypeEnum.Normal
+                    ? matchCurrentRound.roundCount + 1
+                    : matchCurrentRound.roundCount
+                }
+                extendedRoundCount={
+                  matchCurrentRound.nextRoundType === NextRoundTypeEnum.Extended
+                    ? matchCurrentRound.extendedRoundCount + 1
+                    : 0
+                }
+              />
             </MJUIButton>
-          </div>
+          )}
+          <MJUIButton
+            color="secondary"
+            type="button"
+            onClick={handleClickExhausted}
+          >
+            流局
+          </MJUIButton>
         </div>
 
         <div className="space-y-4">

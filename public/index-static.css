@@ -8,6 +8,16 @@
   src: url('fonts/UDDigiKyokashoN-B.ttc');
 }
 
+@font-face {
+  font-family: 'lansui';
+  src: url('fonts/Iansui-Regular.ttf');
+}
+
+@font-face {
+  font-family: 'YuPearl';
+  src: url('fonts/YuPearl-Regular.ttf');
+}
+
 .mahjong-tile {
   background-image: url('images/mahjong-tiles.png');
   background-origin: padding-box;

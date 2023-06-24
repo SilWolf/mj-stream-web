@@ -25,7 +25,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
       <div className="container mx-auto my-8 px-8 space-y-6">
         <div className="flex flex-row items-stretch gap-x-4 text-white">
           <div className="shrink-0 rounded-[1rem] bg-black bg-opacity-50 p-2 flex items-stretch gap-x-4">
-            <div className="font-ud text-[2.5rem] border-[.25rem] rounded-[.75rem] px-4 border-current flex items-center justify-center">
+            <div className="text-[2.5rem] leading-none border-[.25rem] rounded-[.75rem] pb-[0.3em] pt-[0.2em] px-4 border-current flex items-center justify-center">
               <MJMatchCounterSpan
                 roundCount={matchCurrentRound.roundCount}
                 max={8}
@@ -40,9 +40,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                     className="h-4"
                   />
                 </div>
-                <div className="font-ud">
-                  {matchCurrentRound.extendedRoundCount ?? 0}
-                </div>
+                <div>{matchCurrentRound.extendedRoundCount ?? 0}</div>
               </div>
               <div className="flex-1 flex flex-row items-center gap-x-2">
                 <div className="flex-1">
@@ -52,9 +50,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                     className="h-4"
                   />
                 </div>
-                <div className="font-ud">
-                  {matchCurrentRound.cumulatedThousands ?? 0}
-                </div>
+                <div>{matchCurrentRound.cumulatedThousands ?? 0}</div>
               </div>
             </div>
             <div className="flex items-center gap-x-2">

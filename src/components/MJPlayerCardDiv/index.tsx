@@ -82,21 +82,19 @@ export default function MJPlayerCardDiv({
               storedScoreChanges ? 'opacity-0' : 'opacity-100'
             }`}
           >
-            <div className="mb-2 text-[0.3em] leading-none">
-              {title ?? '雀魂八段'}
-            </div>
+            <div className="mb-2 text-[0.3em] leading-none">{title ?? ' '}</div>
             <div className="text-[0.5em] leading-none">{name}</div>
           </div>
 
           <div
-            className={`relative w-full text-right bg-white  min-w-[5.5em] pr-[0.125em] rounded-bl-[0.3em] ${className}`}
+            className={`relative w-full text-right bg-white  min-w-[5.5em] py-1 pr-[0.125em] rounded-bl-[0.3em] ${className}`}
             {...props}
             style={{
               background: `linear-gradient(to right, #ffffff, ${color})`,
             }}
           >
             {storedScoreChanges && (
-              <div className="absolute bottom-[1.8em] pr-[0.125em] right-0 font-ud text-[1em] leading-none animate-[drop_3s_ease-in-out]">
+              <div className="absolute bottom-[1.8em] pr-[0.125em] right-0 font-numeric text-[1em] leading-none animate-[drop_3s_ease-in-out]">
                 {storedScoreChanges.map((scoreChange) => (
                   <div>
                     <MJAmountSpan
@@ -109,7 +107,7 @@ export default function MJPlayerCardDiv({
                 ))}
               </div>
             )}
-            <div className="font-ud flex-1 text-[1.2em] leading-none text-white">
+            <div className="font-numeric text-[0.9em] flex-1 leading-none text-white">
               <MJAmountSpan animated value={storedScore} />
             </div>
           </div>

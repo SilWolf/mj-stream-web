@@ -38,7 +38,7 @@ function MJAmountSpan({
 
       return Math.floor(newValue).toString()
     },
-    [signed]
+    [hideZero, signed]
   )
 
   const storedValueDisplay = useMemo(
@@ -48,10 +48,10 @@ function MJAmountSpan({
 
   const myClassName = useMemo(() => {
     if (value > 0) {
-      return `${className} ${positiveClassName}`
+      return `${className ?? ''} ${positiveClassName ?? ''}`
     }
     if (value < 0) {
-      return `${className} ${negativeClassName}`
+      return `${className ?? ''} ${negativeClassName ?? ''}`
     }
 
     return className
