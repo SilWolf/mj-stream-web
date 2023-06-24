@@ -58,6 +58,7 @@ export type MatchRound = {
   extendedRoundCount: number
   cumulatedThousands: number
   resultType: RoundResultTypeEnum
+  nextRoundType: NextRoundTypeEnum
   playerResults: Record<PlayerIndex, PlayerResult>
   doras: Record<number, string>
 }
@@ -67,6 +68,13 @@ export const enum RoundResultTypeEnum {
   Exhausted = -1,
   Ron = 1,
   SelfDrawn = 2,
+}
+
+export const enum NextRoundTypeEnum {
+  Unknown = 0,
+  Normal = 1,
+  Extended = 2,
+  End = -1,
 }
 
 export const enum PlayerResultWinnerOrLoserEnum {

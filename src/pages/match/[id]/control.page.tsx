@@ -1,7 +1,9 @@
+/* eslint-disable no-nested-ternary */
 import React, { useCallback, useState } from 'react'
 import useMatch from '@/hooks/useMatch'
 import {
   MatchRound,
+  NextRoundTypeEnum,
   PlayerIndex,
   PlayerResult,
   PlayerResultWinnerOrLoserEnum,
@@ -203,6 +205,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
   const handleSubmitMatchRonDialog = useCallback(
     (updatedMatchRound: MatchRound) => {
       try {
+        // Check if match is over
         const eastPlayerIndex = getPlayerIndexOfEastByRound(
           updatedMatchRound.roundCount
         )
@@ -212,46 +215,25 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         const isGameEnded =
           !isGoExtendedRound && updatedMatchRound.roundCount >= 8
 
-        const newRoundCount = isGoExtendedRound
-          ? updatedMatchRound.roundCount
-          : updatedMatchRound.roundCount + 1
-        const newExtendedRoundCount = isGoExtendedRound
-          ? updatedMatchRound.extendedRoundCount + 1
-          : 0
-
-        const newMatchRound: MatchRound = {
-          matchId,
-          code: generateMatchRoundCode(
-            matchId,
-            updatedMatchRound.roundCount,
-            updatedMatchRound.extendedRoundCount
-          ),
-          roundCount: newRoundCount,
-          extendedRoundCount: newExtendedRoundCount,
-          cumulatedThousands: 0,
-          resultType: RoundResultTypeEnum.Unknown,
-          playerResults: formatPlayerResultsByPreviousPlayerResults(
-            updatedMatchRound.playerResults
-          ),
-          doras: {},
-        }
-
-        updateCurrentMatchRound(updatedMatchRound)
-        pushMatchRound(newMatchRound)
-
-        toggleRonDialog(false)
-
         if (isGameEnded) {
           // TODO: Proceed to Game End
           alert('對局結束。')
-
-          return
         }
+
+        updateCurrentMatchRound({
+          ...updatedMatchRound,
+          nextRoundType: isGameEnded
+            ? NextRoundTypeEnum.End
+            : isGoExtendedRound
+            ? NextRoundTypeEnum.Extended
+            : NextRoundTypeEnum.Normal,
+        })
+        toggleRonDialog(false)
       } catch (e) {
         console.error(e)
       }
     },
-    [matchId, pushMatchRound, toggleRonDialog, updateCurrentMatchRound]
+    [toggleRonDialog, updateCurrentMatchRound]
   )
 
   const handleSubmitMatchExhaustedDialog = useCallback(
@@ -266,45 +248,62 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         const isGameEnded =
           !isGoExtendedRound && updatedMatchRound.roundCount >= 8
 
-        const newRoundCount = isGoExtendedRound
-          ? updatedMatchRound.roundCount
-          : updatedMatchRound.roundCount + 1
-        const newExtendedRoundCount = updatedMatchRound.extendedRoundCount + 1
-
-        const newMatchRound: MatchRound = {
-          matchId,
-          code: generateMatchRoundCode(
-            matchId,
-            updatedMatchRound.roundCount,
-            updatedMatchRound.extendedRoundCount
-          ),
-          roundCount: newRoundCount,
-          extendedRoundCount: newExtendedRoundCount,
-          cumulatedThousands: updatedMatchRound.cumulatedThousands,
-          resultType: RoundResultTypeEnum.Unknown,
-          playerResults: formatPlayerResultsByPreviousPlayerResults(
-            updatedMatchRound.playerResults
-          ),
-          doras: {},
-        }
-
-        updateCurrentMatchRound(updatedMatchRound)
-        pushMatchRound(newMatchRound)
-
-        toggleExhaustedDialog(false)
-
         if (isGameEnded) {
           // TODO: Proceed to Game End
           alert('對局結束。')
-
-          return
         }
+
+        updateCurrentMatchRound({
+          ...updatedMatchRound,
+          nextRoundType: isGameEnded
+            ? NextRoundTypeEnum.End
+            : isGoExtendedRound
+            ? NextRoundTypeEnum.Extended
+            : NextRoundTypeEnum.Normal,
+        })
+        toggleExhaustedDialog(false)
       } catch (e) {
         console.error(e)
       }
     },
-    [matchId, pushMatchRound, toggleExhaustedDialog, updateCurrentMatchRound]
+    [toggleExhaustedDialog, updateCurrentMatchRound]
   )
+
+  const handleClickGoNextRound = useCallback(() => {
+    if (!matchCurrentRound) {
+      return
+    }
+
+    const newRoundCount =
+      matchCurrentRound.nextRoundType === NextRoundTypeEnum.Normal
+        ? matchCurrentRound.roundCount + 1
+        : matchCurrentRound.roundCount
+
+    const newExtendedRoundCount =
+      matchCurrentRound.nextRoundType === NextRoundTypeEnum.Extended
+        ? matchCurrentRound.extendedRoundCount + 1
+        : 0
+
+    const newMatchRound: MatchRound = {
+      matchId,
+      code: generateMatchRoundCode(
+        matchId,
+        newRoundCount,
+        newExtendedRoundCount
+      ),
+      roundCount: newRoundCount,
+      extendedRoundCount: newExtendedRoundCount,
+      cumulatedThousands: 0,
+      resultType: RoundResultTypeEnum.Unknown,
+      nextRoundType: NextRoundTypeEnum.Unknown,
+      playerResults: formatPlayerResultsByPreviousPlayerResults(
+        matchCurrentRound.playerResults
+      ),
+      doras: {},
+    }
+
+    pushMatchRound(newMatchRound)
+  }, [matchCurrentRound, matchId, pushMatchRound])
 
   if (!match || !matchCurrentRound) {
     return <div>對局讀取失敗。</div>
@@ -362,6 +361,9 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                 <MJUIButton
                   type="button"
                   color="secondary"
+                  className={`${
+                    matchCurrentRoundDoras.length === 0 && 'animate-bounce'
+                  }`}
                   data-index="-1"
                   onClick={handleClickDora}
                 >
@@ -371,7 +373,32 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
             </div>
           </div>
           <div className="flex-1" />
-          <div className="shrink-0">
+          <div className="shrink-0 space-x-4">
+            {(matchCurrentRound.nextRoundType === NextRoundTypeEnum.Normal ||
+              matchCurrentRound.nextRoundType ===
+                NextRoundTypeEnum.Extended) && (
+              <MJUIButton
+                color="success"
+                type="button"
+                className="animate-pulse"
+                onClick={handleClickGoNextRound}
+              >
+                進入
+                <MJMatchCounterSpan
+                  roundCount={
+                    matchCurrentRound.nextRoundType === NextRoundTypeEnum.Normal
+                      ? matchCurrentRound.roundCount + 1
+                      : matchCurrentRound.roundCount
+                  }
+                  extendedRoundCount={
+                    matchCurrentRound.nextRoundType ===
+                    NextRoundTypeEnum.Extended
+                      ? matchCurrentRound.extendedRoundCount + 1
+                      : 0
+                  }
+                />
+              </MJUIButton>
+            )}
             <MJUIButton
               color="secondary"
               type="button"
@@ -390,9 +417,9 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                   name={match.players[index].name}
                   title={match.players[index].title}
                   propicSrc={match.players[index].propicSrc}
-                  score={matchCurrentRound.playerResults[index].beforeScore}
+                  score={matchCurrentRound.playerResults[index].afterScore}
                   scoreChanges={
-                    matchCurrentRound.playerResults[index].prevScoreChanges
+                    matchCurrentRound.playerResults[index].scoreChanges
                   }
                   isEast={getIsPlayerEast(index, matchCurrentRound.roundCount)}
                   isRiichi={matchCurrentRound.playerResults[index].isRiichi}

@@ -215,6 +215,7 @@ function CreateMatchPage() {
       extendedRoundCount: 0,
       cumulatedThousands: 0,
       resultType: 0,
+      nextRoundType: 0,
       playerResults: {
         '0': {
           beforeScore: 25000,

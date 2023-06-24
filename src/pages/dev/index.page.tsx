@@ -84,6 +84,7 @@ export default function DevPage() {
       extendedRoundCount: 1,
       cumulatedThousands: 2,
       resultType: 0,
+      nextRoundType: 0,
       playerResults: {
         0: {
           beforeScore: 25000,

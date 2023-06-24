@@ -11,6 +11,7 @@ const button = cva(['font-semibold'], {
     color: {
       primary: [],
       secondary: [],
+      success: [],
       danger: [],
       inverted: [],
     },
@@ -58,6 +59,12 @@ const button = cva(['font-semibold'], {
         'bg-white text-gray-800 border-gray-400 hover:enabled:bg-gray-100',
     },
     {
+      color: 'success',
+      variant: 'contained',
+      className:
+        'bg-green-100 text-green-500 border-green-400 hover:enabled:bg-green-200',
+    },
+    {
       color: 'danger',
       variant: 'contained',
       className:
@@ -72,6 +79,11 @@ const button = cva(['font-semibold'], {
       color: 'secondary',
       variant: 'text',
       className: 'text-gray-800 hover:enabled:text-gray-700',
+    },
+    {
+      color: 'success',
+      variant: 'text',
+      className: 'text-green-800 hover:enabled:text-green-700',
     },
     {
       color: 'danger',
@@ -94,6 +106,12 @@ const button = cva(['font-semibold'], {
       variant: 'icon',
       className:
         'text-gray-800 hover:enabled:text-gray-700 hover:enabled:bg-gray-100',
+    },
+    {
+      color: 'success',
+      variant: 'icon',
+      className:
+        'text-green-800 hover:enabled:text-green-700 hover:enabled:bg-green-100',
     },
     {
       color: 'danger',

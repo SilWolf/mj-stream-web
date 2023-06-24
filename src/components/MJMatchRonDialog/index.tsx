@@ -125,39 +125,39 @@ export default function MJMatchRonDialog({
     const newPreviewPlayerResults: MatchRound['playerResults'] = {
       '0': {
         ...currentMatchRound.playerResults['0'],
-        beforeScore: currentMatchRound.playerResults['0'].afterScore,
-        afterScore: currentMatchRound.playerResults['0'].afterScore,
+        beforeScore: currentMatchRound.playerResults['0'].beforeScore,
+        afterScore: currentMatchRound.playerResults['0'].beforeScore,
         type: 0,
         scoreChanges: [],
         prevScoreChanges:
-          currentMatchRound.playerResults['0'].prevScoreChanges ?? [],
+          currentMatchRound.playerResults['0'].scoreChanges ?? [],
       },
       '1': {
         ...currentMatchRound.playerResults['1'],
-        beforeScore: currentMatchRound.playerResults['1'].afterScore,
-        afterScore: currentMatchRound.playerResults['1'].afterScore,
+        beforeScore: currentMatchRound.playerResults['1'].beforeScore,
+        afterScore: currentMatchRound.playerResults['1'].beforeScore,
         type: 0,
         scoreChanges: [],
         prevScoreChanges:
-          currentMatchRound.playerResults['1'].prevScoreChanges ?? [],
+          currentMatchRound.playerResults['1'].scoreChanges ?? [],
       },
       '2': {
         ...currentMatchRound.playerResults['2'],
-        beforeScore: currentMatchRound.playerResults['2'].afterScore,
-        afterScore: currentMatchRound.playerResults['2'].afterScore,
+        beforeScore: currentMatchRound.playerResults['2'].beforeScore,
+        afterScore: currentMatchRound.playerResults['2'].beforeScore,
         type: 0,
         scoreChanges: [],
         prevScoreChanges:
-          currentMatchRound.playerResults['2'].prevScoreChanges ?? [],
+          currentMatchRound.playerResults['2'].scoreChanges ?? [],
       },
       '3': {
         ...currentMatchRound.playerResults['3'],
-        beforeScore: currentMatchRound.playerResults['3'].afterScore,
-        afterScore: currentMatchRound.playerResults['3'].afterScore,
+        beforeScore: currentMatchRound.playerResults['3'].beforeScore,
+        afterScore: currentMatchRound.playerResults['3'].beforeScore,
         type: 0,
         scoreChanges: [],
         prevScoreChanges:
-          currentMatchRound.playerResults['3'].prevScoreChanges ?? [],
+          currentMatchRound.playerResults['3'].scoreChanges ?? [],
       },
     }
 
