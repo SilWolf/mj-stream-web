@@ -172,7 +172,7 @@ export const formatPlayerResultsByPrev = (
       isRiichi: false,
       type: PlayerResultWinnerOrLoserEnum.None,
       scoreChanges: [],
-      prevScoreChanges: prev['0'].scoreChanges,
+      prevScoreChanges: prev['0'].scoreChanges ?? [],
     },
     '1': {
       beforeScore: prev['1'].afterScore,
@@ -181,7 +181,7 @@ export const formatPlayerResultsByPrev = (
       isRiichi: false,
       type: PlayerResultWinnerOrLoserEnum.None,
       scoreChanges: [],
-      prevScoreChanges: prev['1'].scoreChanges,
+      prevScoreChanges: prev['1'].scoreChanges ?? [],
     },
     '2': {
       beforeScore: prev['2'].afterScore,
@@ -190,7 +190,7 @@ export const formatPlayerResultsByPrev = (
       isRiichi: false,
       type: PlayerResultWinnerOrLoserEnum.None,
       scoreChanges: [],
-      prevScoreChanges: prev['2'].scoreChanges,
+      prevScoreChanges: prev['2'].scoreChanges ?? [],
     },
     '3': {
       beforeScore: prev['3'].afterScore,
@@ -199,7 +199,7 @@ export const formatPlayerResultsByPrev = (
       isRiichi: false,
       type: PlayerResultWinnerOrLoserEnum.None,
       scoreChanges: [],
-      prevScoreChanges: prev['3'].scoreChanges,
+      prevScoreChanges: prev['3'].scoreChanges ?? [],
     },
   }
 }

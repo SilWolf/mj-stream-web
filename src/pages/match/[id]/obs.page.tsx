@@ -107,8 +107,8 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
             title={player.title}
             propicSrc={player.propicSrc}
             color={player.color}
-            score={player.currentStatus.beforeScore}
-            scoreChanges={player.currentStatus.prevScoreChanges}
+            score={player.currentStatus.afterScore}
+            scoreChanges={player.currentStatus.scoreChanges}
             isEast={player.currentStatus.isEast}
             isRiichi={player.currentStatus.isRiichi}
           />

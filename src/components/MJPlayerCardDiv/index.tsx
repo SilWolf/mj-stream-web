@@ -94,7 +94,7 @@ export default function MJPlayerCardDiv({
             }}
           >
             {storedScoreChanges && (
-              <div className="absolute bottom-[1.8em] pr-[0.125em] right-0 font-numeric text-[1em] leading-none animate-[drop_3s_ease-in-out]">
+              <div className="absolute bottom-[1.8em] pr-[0.125em] right-0 text-[1em] leading-none animate-[drop_3s_ease-in-out]">
                 {storedScoreChanges.map((scoreChange) => (
                   <div>
                     <MJAmountSpan
@@ -107,7 +107,7 @@ export default function MJPlayerCardDiv({
                 ))}
               </div>
             )}
-            <div className="font-numeric text-[0.9em] flex-1 leading-none text-white">
+            <div className="text-[0.9em] flex-1 leading-none pb-[0.15em] text-white">
               <MJAmountSpan animated value={storedScore} />
             </div>
           </div>
