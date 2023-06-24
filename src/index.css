@@ -8,6 +8,6 @@
   }
 
   dialog {
-    @apply w-full sm:max-w-xs md:max-w-sm lg:max-w-md;
+    @apply w-full max-w-3xl;
   }
 }

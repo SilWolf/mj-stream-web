@@ -70,6 +70,7 @@ function MJMatchHistoryTable({ matchId, ...tableProps }: Props) {
               <MJMatchCounterSpan
                 roundCount={matchRound.roundCount}
                 extendedRoundCount={matchRound.extendedRoundCount}
+                max={8}
               />
             </td>
             <td className="text-center">

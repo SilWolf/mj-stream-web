@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react'
 import MJTileDiv, { MJTileKey } from '../MJTileDiv'
+import MJUIButton from '../MJUI/MJUIButton'
 
 const tileGroups: MJTileKey[][] = [
   ['1m', '2m', '3m', '4m', '5m', '6m', '7m', '8m', '9m', '0m'],
@@ -12,9 +13,15 @@ type Props = {
   onSubmit?: (tileKey: MJTileKey) => void
   onRemove?: () => void
   canRemove?: boolean
+  hideRedTiles?: boolean
 }
 
-function MJTileKeyboardDiv({ onSubmit, onRemove, canRemove }: Props) {
+function MJTileKeyboardDiv({
+  onSubmit,
+  onRemove,
+  canRemove,
+  hideRedTiles,
+}: Props) {
   const [selectedTileKey, setSelectedTileKey] = useState<
     MJTileKey | undefined
   >()
@@ -33,54 +40,68 @@ function MJTileKeyboardDiv({ onSubmit, onRemove, canRemove }: Props) {
   const handleClickSubmit = useCallback(() => {
     if (selectedTileKey && onSubmit) {
       onSubmit?.(selectedTileKey)
+      setSelectedTileKey(undefined)
     }
   }, [onSubmit, selectedTileKey])
 
   const handleClickRemove = useCallback(() => {
     if (canRemove) {
       onRemove?.()
+      setSelectedTileKey(undefined)
     }
   }, [canRemove, onRemove])
 
   return (
-    <div className="grid grid-cols-10 gap-1 lg:gap-4 items-center text-center">
-      {tileGroups.map((tileGroup) =>
-        tileGroup.map((tileKey) => (
-          <button
-            type="button"
-            onClick={handleClickTile}
-            data-key={tileKey}
-            className={`${
-              selectedTileKey === tileKey
-                ? 'bg-blue-400'
-                : 'bg-black bg-opacity-20'
-            } rounded p-1 lg:p-2`}
-          >
-            <MJTileDiv>{tileKey}</MJTileDiv>
-          </button>
-        ))
-      )}
-      <div />
-      <div>
-        {canRemove && (
-          <button
-            type="button"
-            className="rounded-full bg-white border border-white text-sm lg:text-md h-12 w-12 lg:h-16 lg:w-16"
-            onClick={handleClickRemove}
-          >
-            移除
-          </button>
+    <div>
+      <div
+        className={`mb-4 grid ${
+          hideRedTiles ? 'grid-cols-9' : 'grid-cols-10'
+        } gap-1 lg:gap-x-2 lg:gap-y-4 items-center text-center`}
+      >
+        {tileGroups.map((tileGroup) =>
+          tileGroup.map(
+            (tileKey: string) =>
+              (!tileKey.startsWith('0') || !hideRedTiles) && (
+                <button
+                  type="button"
+                  onClick={handleClickTile}
+                  data-key={tileKey}
+                  className={`${
+                    selectedTileKey === tileKey
+                      ? 'bg-blue-400'
+                      : 'bg-black bg-opacity-20'
+                  } rounded p-1 lg:p-2`}
+                >
+                  <MJTileDiv>{tileKey}</MJTileDiv>
+                </button>
+              )
+          )
         )}
       </div>
-      <div>
-        <button
-          type="button"
-          className="rounded-full bg-blue-400 disabled:opacity-20 border border-white text-sm lg:text-md h-12 w-12 lg:h-16 lg:w-16"
-          onClick={handleClickSubmit}
-          disabled={!selectedTileKey}
-        >
-          確定
-        </button>
+      <div className="flex gap-x-4">
+        {canRemove && (
+          <div className="flex-1">
+            <MJUIButton
+              className="w-full"
+              type="button"
+              color="secondary"
+              onClick={handleClickRemove}
+            >
+              移除
+            </MJUIButton>
+          </div>
+        )}
+        <div className="flex-1">
+          <MJUIButton
+            className="w-full"
+            type="button"
+            color="primary"
+            onClick={handleClickSubmit}
+            disabled={!selectedTileKey}
+          >
+            確定
+          </MJUIButton>
+        </div>
       </div>
     </div>
   )

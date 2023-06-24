@@ -1,10 +1,4 @@
-import React, {
-  ChangeEvent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import MJUIDialogV2, { MJUIDialogV2Props } from '@/components/MJUI/MJUIDialogV2'
 import MJUIButton from '@/components/MJUI/MJUIButton'
 import {
@@ -59,7 +53,6 @@ export default function MJMatchRonDialog({
     return _players
   }, [match.players, currentMatchRound.roundCount])
 
-  const [isConfirm, setIsConfirm] = useState<boolean>(false)
   const [activePlayerIndex, setActivePlayerIndex] = useState<
     string | undefined
   >(initialActivePlayerIndex)
@@ -111,19 +104,13 @@ export default function MJMatchRonDialog({
     [currentMatchRound.cumulatedThousands, currentMatchRound.extendedRoundCount]
   )
 
-  const handleChangeIsConfirm = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      setIsConfirm(e.currentTarget.checked)
-    },
-    []
-  )
-
   const title = useMemo(() => {
     return (
       <div>
         <MJMatchCounterSpan
           roundCount={currentMatchRound.roundCount}
           extendedRoundCount={currentMatchRound.extendedRoundCount}
+          max={8}
         />
         <span> 和了</span>
       </div>
@@ -280,7 +267,6 @@ export default function MJMatchRonDialog({
       // reset form
 
       setActivePlayerIndex(initialActivePlayerIndex)
-      setIsConfirm(false)
     }
   }, [dialogProps.open, initialActivePlayerIndex])
 
@@ -358,23 +344,7 @@ export default function MJMatchRonDialog({
         </div>
 
         <div className="space-y-2">
-          <div>
-            <label htmlFor="isConfirm">
-              <input
-                id="isConfirm"
-                type="checkbox"
-                checked={isConfirm}
-                onChange={handleChangeIsConfirm}
-              />
-              我已確認上述分數變動正確無誤
-            </label>
-          </div>
-
-          <MJUIButton
-            onClick={handleSubmit}
-            className="w-full"
-            disabled={!isConfirm}
-          >
+          <MJUIButton onClick={handleSubmit} className="w-full">
             提交並播出分數變動動畫
           </MJUIButton>
         </div>

@@ -23,10 +23,11 @@ import MJPlayerCardDiv, {
 } from '@/components/MJPlayerCardDiv'
 import MJTileDiv, { MJTileKey } from '@/components/MJTileDiv'
 import MJMatchCounterSpan from '@/components/MJMatchCounterSpan'
-import MJUIDialog from '@/components/MJUI/MJUIDialog'
 import MJTileKeyboardDiv from '@/components/MJTileKeyboardDiv'
 import MJMatchHistoryTable from '@/components/MJMatchHistoryTable'
 import MJMatchExhaustedDialog from '@/components/MJMatchExhaustedDialog'
+import MJUIDialogV2 from '@/components/MJUI/MJUIDialogV2'
+import MJUIButton from '@/components/MJUI/MJUIButton'
 
 type Props = {
   params: { matchId: string }
@@ -76,7 +77,8 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
           >),
           [playerIndex]: {
             ...matchCurrentRound?.playerResults[playerIndex],
-            isRevealed: true,
+            isRevealed:
+              !matchCurrentRound?.playerResults[playerIndex].isRevealed,
           },
         },
       })
@@ -314,7 +316,10 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         <div className="flex flex-row items-stretch gap-x-4 text-white">
           <div className="shrink-0 rounded-[1rem] bg-black bg-opacity-50 p-2 flex items-stretch gap-x-4">
             <div className="font-ud text-[2.5rem] border-[.25rem] rounded-[.75rem] px-4 border-current flex items-center justify-center">
-              <MJMatchCounterSpan roundCount={matchCurrentRound.roundCount} />
+              <MJMatchCounterSpan
+                roundCount={matchCurrentRound.roundCount}
+                max={8}
+              />
             </div>
             <div className="flex flex-col justify-around">
               <div className="flex-1 flex flex-row items-center gap-x-2">
@@ -354,26 +359,26 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                 </MJTileDiv>
               ))}
               <div>
-                <button
+                <MJUIButton
                   type="button"
-                  className="rounded-full border border-white h-16 w-16 text-sm"
+                  color="secondary"
                   data-index="-1"
                   onClick={handleClickDora}
                 >
                   +懸賞
-                </button>
+                </MJUIButton>
               </div>
             </div>
           </div>
           <div className="flex-1" />
           <div className="shrink-0">
-            <button
+            <MJUIButton
+              color="secondary"
               type="button"
-              className="bg-gray-100 text-gray-600 h-12 w-16 rounded text-lg"
               onClick={handleClickExhausted}
             >
               流局
-            </button>
+            </MJUIButton>
           </div>
         </div>
 
@@ -427,14 +432,14 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                 </button>
               </div>
               <div className="pl-6">
-                <button
+                <MJUIButton
+                  color="danger"
                   type="button"
-                  className="bg-red-100 text-red-600 h-12 w-16 rounded text-lg"
                   onClick={handleClickRon}
                   data-player-index={index}
                 >
                   和了
-                </button>
+                </MJUIButton>
               </div>
             </div>
           ))}
@@ -443,26 +448,27 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         <MJMatchHistoryTable matchId={matchId} className="w-full table-auto" />
       </div>
 
-      <MJUIDialog
+      <MJUIDialogV2
         open={typeof clickedDoraIndex !== 'undefined'}
         title="選擇懸賞"
         onClose={handleCloseDoraKeyboard}
       >
         <MJTileKeyboardDiv
+          hideRedTiles
           onSubmit={handleSubmitDoraKeyboard}
           onRemove={handleRemoveDoraKeyboard}
           canRemove={
             typeof clickedDoraIndex !== 'undefined' && clickedDoraIndex > 0
           }
         />
-      </MJUIDialog>
+      </MJUIDialogV2>
 
       <MJMatchRonDialog
         match={match}
         currentMatchRound={matchCurrentRound}
         open={isShowingRonDialog}
         onSubmit={handleSubmitMatchRonDialog}
-        onClose={toggleRonDialog}
+        onClose={() => toggleRonDialog(false)}
         {...ronDialogProps}
       />
 
@@ -471,7 +477,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         currentMatchRound={matchCurrentRound}
         open={isShowingExhaustedDialog}
         onSubmit={handleSubmitMatchExhaustedDialog}
-        onClose={toggleExhaustedDialog}
+        onClose={() => toggleExhaustedDialog(false)}
         {...ronDialogProps}
       />
     </div>

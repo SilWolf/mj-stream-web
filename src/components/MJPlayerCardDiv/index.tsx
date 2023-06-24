@@ -77,10 +77,17 @@ export default function MJPlayerCardDiv({
           </div>
         </div>
         <div className="flex flex-col gap-y-[0.125em] items-end justify-end min-h-[2.2em]">
-          <div className="text-[0.3em] leading-none pr-[0.45em]">
-            {title ?? ' '}
+          <div
+            className={`text-right transition-opacity duration-700 ${
+              storedScoreChanges ? 'opacity-0' : 'opacity-100'
+            }`}
+          >
+            <div className="mb-2 text-[0.3em] leading-none">
+              {title ?? '雀魂八段'}
+            </div>
+            <div className="text-[0.5em] leading-none">{name}</div>
           </div>
-          <div className="text-[0.375em] leading-none pr-[0.45em]">{name}</div>
+
           <div
             className={`relative w-full text-right bg-white  min-w-[5.5em] pr-[0.125em] rounded-bl-[0.3em] ${className}`}
             {...props}

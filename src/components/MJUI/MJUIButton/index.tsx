@@ -6,17 +6,22 @@ const button = cva(['font-semibold'], {
     variant: {
       contained: ['border', 'rounded'],
       text: [],
-      icon: ['hover:bg-opacity-50 leading-4'],
+      icon: ['hover:enabled:bg-opacity-50 leading-4'],
     },
     color: {
       primary: [],
       secondary: [],
+      danger: [],
+      inverted: [],
     },
     size: {
       small: ['text-sm'],
       medium: ['text-base'],
       large: ['text-md'],
       xlarge: ['text-2xl'],
+    },
+    disabled: {
+      true: ['cursor-not-allowed opacity-30'],
     },
   },
   compoundVariants: [
@@ -43,32 +48,58 @@ const button = cva(['font-semibold'], {
     {
       color: 'primary',
       variant: 'contained',
-      className: 'bg-teal-800 text-white border-transparent hover:bg-teal-700',
+      className:
+        'bg-teal-800 text-white border-transparent hover:enabled:bg-teal-700',
     },
     {
       color: 'secondary',
       variant: 'contained',
-      className: 'bg-white text-gray-800 border-gray-400 hover:bg-gray-100',
+      className:
+        'bg-white text-gray-800 border-gray-400 hover:enabled:bg-gray-100',
+    },
+    {
+      color: 'danger',
+      variant: 'contained',
+      className:
+        'bg-red-100 text-red-500 border-red-400 hover:enabled:bg-red-200',
     },
     {
       color: 'primary',
       variant: 'text',
-      className: 'text-teal-800 hover:text-teal-700',
+      className: 'text-teal-800 hover:enabled:text-teal-700',
     },
     {
       color: 'secondary',
       variant: 'text',
-      className: 'text-gray-800 hover:text-gray-700',
+      className: 'text-gray-800 hover:enabled:text-gray-700',
+    },
+    {
+      color: 'danger',
+      variant: 'text',
+      className: 'text-red-800 hover:enabled:text-red-700',
+    },
+    {
+      color: 'inverted',
+      variant: 'text',
+      className: 'text-gray-100 hover:enabled:text-gray-0',
     },
     {
       color: 'primary',
       variant: 'icon',
-      className: 'text-teal-800 hover:text-teal-700 hover:bg-teal-100',
+      className:
+        'text-teal-800 hover:enabled:text-teal-700 hover:enabled:bg-teal-100',
     },
     {
       color: 'secondary',
       variant: 'icon',
-      className: 'text-gray-800 hover:text-gray-700 hover:bg-gray-100',
+      className:
+        'text-gray-800 hover:enabled:text-gray-700 hover:enabled:bg-gray-100',
+    },
+    {
+      color: 'danger',
+      variant: 'icon',
+      className:
+        'text-red-800 hover:enabled:text-red-700 hover:enabled:bg-red-100',
     },
     {
       color: 'primary',
@@ -94,8 +125,8 @@ export default function MJUIButton({
   ...props
 }: MJUIButtonProps) {
   const myClassName = useMemo(
-    () => button({ color, size, variant, className }),
-    [color, size, variant, className]
+    () => button({ color, size, variant, disabled: props.disabled, className }),
+    [color, size, variant, props.disabled, className]
   )
 
   // eslint-disable-next-line react/button-has-type

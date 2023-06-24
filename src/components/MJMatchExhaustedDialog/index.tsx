@@ -1,10 +1,4 @@
-import React, {
-  ChangeEvent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import MJUIDialogV2, { MJUIDialogV2Props } from '@/components/MJUI/MJUIDialogV2'
 import MJUIButton from '@/components/MJUI/MJUIButton'
 import {
@@ -71,20 +65,13 @@ export default function MJMatchExhaustedDialog({
     []
   )
 
-  const [isConfirm, setIsConfirm] = useState<boolean>(false)
-  const handleChangeIsConfirm = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      setIsConfirm(e.currentTarget.checked)
-    },
-    []
-  )
-
   const title = useMemo(() => {
     return (
       <div>
         <MJMatchCounterSpan
           roundCount={currentMatchRound.roundCount}
           extendedRoundCount={currentMatchRound.extendedRoundCount}
+          max={8}
         />
         <span> 流局</span>
       </div>
@@ -206,8 +193,6 @@ export default function MJMatchExhaustedDialog({
         '2': false,
         '3': false,
       })
-
-      setIsConfirm(false)
     }
   }, [dialogProps.open])
 
@@ -262,23 +247,7 @@ export default function MJMatchExhaustedDialog({
         </div>
 
         <div className="space-y-2">
-          <div>
-            <label htmlFor="isConfirm">
-              <input
-                id="isConfirm"
-                type="checkbox"
-                checked={isConfirm}
-                onChange={handleChangeIsConfirm}
-              />
-              我已確認上述分數變動正確無誤
-            </label>
-          </div>
-
-          <MJUIButton
-            onClick={handleSubmit}
-            className="w-full"
-            disabled={!isConfirm}
-          >
+          <MJUIButton onClick={handleSubmit} className="w-full">
             提交並播出分數變動動畫
           </MJUIButton>
         </div>

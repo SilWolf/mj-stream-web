@@ -4,6 +4,7 @@ import React, { HTMLAttributes, useMemo } from 'react'
 type Props = HTMLAttributes<HTMLSpanElement> & {
   roundCount: number
   extendedRoundCount?: number
+  max?: number
 }
 
 const ROUND_MAP: Record<string, string> = {
@@ -28,11 +29,12 @@ const ROUND_MAP: Record<string, string> = {
 export default function MJMatchCounterSpan({
   roundCount,
   extendedRoundCount,
+  max = 16,
   ...props
 }: Props) {
   const selfChildren = useMemo(() => {
     try {
-      const roundText = ROUND_MAP[roundCount]
+      const roundText = ROUND_MAP[Math.min(roundCount, max)]
       if (!roundText) {
         throw new Error(
           `Unable to parse roundCount=${roundCount} in MJMatchCounterSpan`
@@ -46,7 +48,7 @@ export default function MJMatchCounterSpan({
       console.error(e)
       return `${roundCount}.${extendedRoundCount ?? 0}`
     }
-  }, [roundCount, extendedRoundCount])
+  }, [roundCount, max, extendedRoundCount])
 
   return <span {...props}>{selfChildren}</span>
 }

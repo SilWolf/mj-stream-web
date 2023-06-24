@@ -6,14 +6,14 @@ import React, {
   useCallback,
   PropsWithChildren,
 } from 'react'
-import ConfirmDialog, { ConfirmDialogProps } from '.'
+import ConfirmDialog, { ConfirmDialogOptions } from '.'
 
 type ConfirmDialogContextProps = {
   isShowConfirmDialog: boolean
   setIsShowConfirmDialog: React.Dispatch<React.SetStateAction<boolean>>
-  confirmDialogOptions: ConfirmDialogProps
+  confirmDialogOptions: ConfirmDialogOptions
   setConfirmDialogOptions: React.Dispatch<
-    React.SetStateAction<ConfirmDialogProps>
+    React.SetStateAction<ConfirmDialogOptions>
   >
 }
 
@@ -37,7 +37,7 @@ export default function ConfirmDialogProvider({
 }: PropsWithChildren<unknown>) {
   const [isShowConfirmDialog, setIsShowConfirmDialog] = useState<boolean>(false)
   const [confirmDialogOptions, setConfirmDialogOptions] =
-    useState<ConfirmDialogProps>({ title: '警告' })
+    useState<ConfirmDialogOptions>({ title: '警告' })
 
   const value = useMemo(
     () => ({
@@ -49,11 +49,25 @@ export default function ConfirmDialogProvider({
     [confirmDialogOptions, isShowConfirmDialog]
   )
 
+  const handleCloseDialog = useCallback(() => {
+    setIsShowConfirmDialog(false)
+  }, [])
+
   return (
     <ConfirmDialogContext.Provider value={value}>
       {children}
-
-      {isShowConfirmDialog && <ConfirmDialog {...confirmDialogOptions} />}
+      <ConfirmDialog
+        open={isShowConfirmDialog}
+        okButtonText={confirmDialogOptions.okButtonText}
+        cancelButtonText={confirmDialogOptions.cancelButtonText}
+        onClickOk={confirmDialogOptions.onClickOk}
+        onClickCancel={confirmDialogOptions.onClickCancel}
+        onClose={handleCloseDialog}
+        {...confirmDialogOptions}
+        hideCloseButton
+      >
+        {confirmDialogOptions.content}
+      </ConfirmDialog>
     </ConfirmDialogContext.Provider>
   )
 }
@@ -61,7 +75,7 @@ export default function ConfirmDialogProvider({
 export const useConfirmDialog = () => {
   const context = useContext(ConfirmDialogContext)
   const showConfirmDialog = useCallback(
-    (options: ConfirmDialogProps) => {
+    (options: ConfirmDialogOptions) => {
       const onClickOk = async () => {
         return (options.onClickOk ?? (async () => Promise.resolve()))().then(
           () => {

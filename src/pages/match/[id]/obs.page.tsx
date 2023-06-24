@@ -31,7 +31,10 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
       <div className="flex flex-row items-stretch gap-x-4 text-white">
         <div className="rounded-[1rem] bg-black bg-opacity-50 p-2 pr-4 flex items-stretch gap-x-6 transition-[width]">
           <div className="font-ud text-[4.5rem] leading-[5rem] border-[.35rem] rounded-[.75rem] px-8 border-current">
-            <MJMatchCounterSpan roundCount={matchCurrentRound.roundCount} />
+            <MJMatchCounterSpan
+              roundCount={matchCurrentRound.roundCount}
+              max={8}
+            />
           </div>
 
           <div className="flex flex-col justify-around">
