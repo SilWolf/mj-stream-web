@@ -3,9 +3,7 @@ import { MatchRound } from '@/models'
 import { useFirebaseDatabase } from '@/providers/firebaseDatabase.provider'
 import { useLocation } from 'wouter'
 import MJUIButton from '@/components/MJUI/MJUIButton'
-import MJPlayerCardDiv, {
-  MJPlayerCardMainColorMap,
-} from '@/components/MJPlayerCardDiv'
+import MJPlayerCardDiv from '@/components/MJPlayerCardDiv'
 import MJTileKeyboardDiv from '@/components/MJTileKeyboardDiv'
 import MJRiichiBgDiv from '@/components/MJRiichiBgDiv'
 
@@ -152,7 +150,7 @@ export default function DevPage() {
               score={score}
               scoreChanges={scoreChanges}
               className="!bg-yellow-400 !bg-opacity-60"
-              color={MJPlayerCardMainColorMap[0]}
+              color="#282828"
             />
           </div>
           <MJUIButton onClick={handleClickAdd}>增加</MJUIButton>

@@ -6,9 +6,7 @@ import BroadcastLayout from '@/layouts/Broadcast.layout'
 
 import { PlayerIndex } from '@/models'
 import { getIsPlayerEast } from '@/helpers/mahjong.helper'
-import MJPlayerCardDiv, {
-  MJPlayerCardMainColorMap,
-} from '@/components/MJPlayerCardDiv'
+import MJPlayerCardDiv from '@/components/MJPlayerCardDiv'
 import OBSInstructionDiv from './components/OBSInstructionDiv'
 
 type Props = {
@@ -25,7 +23,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
 
     return (['0', '1', '2', '3'] as PlayerIndex[]).map((index) => ({
       ...match.players[index],
-      color: match.players[index].color ?? MJPlayerCardMainColorMap[index],
+      color: match.players[index].color,
       currentStatus: {
         ...matchCurrentRound.playerResults[index],
         isEast: getIsPlayerEast(index, matchCurrentRound.roundCount),
@@ -45,7 +43,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
     <BroadcastLayout>
       <div className="flex flex-row items-stretch gap-x-4 text-white">
         <div className="rounded-[1rem] bg-black bg-opacity-50 p-2 pr-4 flex items-stretch gap-x-6 transition-[width]">
-          <div className="text-[2.5rem] leading-none border-[.25rem] rounded-[.75rem] px-6 pb-[0.15em] border-current flex items-center justify-center">
+          <div className="text-[4.5rem] leading-none border-[.4rem] rounded-[.75rem] px-6 pb-[0.15em] border-current flex items-center justify-center">
             <MJMatchCounterSpan
               roundCount={matchCurrentRound.roundCount}
               max={8}
@@ -58,10 +56,10 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
                 <img
                   src="/images/score-hundred.png"
                   alt="hundred"
-                  className="h-4"
+                  className="h-5"
                 />
               </div>
-              <div className="text-[1.2rem]">
+              <div className="text-[1.5rem]">
                 {matchCurrentRound.extendedRoundCount ?? 0}
               </div>
             </div>
@@ -70,10 +68,10 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
                 <img
                   src="/images/score-thousand.png"
                   alt="thousand"
-                  className="h-4"
+                  className="h-5"
                 />
               </div>
-              <div className="text-[1.2rem]">
+              <div className="text-[1.5rem]">
                 {matchCurrentRound.cumulatedThousands ?? 0}
               </div>
             </div>
@@ -83,7 +81,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
             {matchCurrentRoundDoras.map((dora) => (
               <MJTileDiv
                 key={dora}
-                className="w-10 animate-[fadeIn_0.5s_ease-in-out]"
+                className="w-14 animate-[fadeIn_0.5s_ease-in-out]"
               >
                 {dora}
               </MJTileDiv>

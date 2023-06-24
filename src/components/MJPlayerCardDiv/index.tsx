@@ -16,13 +16,6 @@ type Props = HTMLAttributes<HTMLDivElement> & {
   color?: string
 }
 
-export const MJPlayerCardMainColorMap: Record<PlayerIndex, string> = {
-  '0': '#6700cf',
-  '1': '#00b5de',
-  '2': '#e3277b',
-  '3': '#03ada5',
-}
-
 export default function MJPlayerCardDiv({
   propicSrc,
   title,

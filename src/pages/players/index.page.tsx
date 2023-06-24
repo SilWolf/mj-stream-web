@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react'
 import { Player } from '@/models'
 import { useFirebaseDatabaseByKey } from '@/providers/firebaseDatabase.provider'
+import MJPlayerInfoCardDiv from '@/components/MJPlayerInfoCardDiv'
 
 function PlayersPage() {
   const { data: playersMap } = useFirebaseDatabaseByKey<Player>('players', {
@@ -33,23 +34,7 @@ function PlayersPage() {
               {players &&
                 players.map((player) => (
                   <div key={player._id} className="flex items-center gap-x-2">
-                    <div className="flex-1 flex items-center gap-x-2 bg-white bg-opacity-30 rounded p-2">
-                      <div className="shrink-0">
-                        <div
-                          className="w-14 h-14 bg-center bg-contain bg-no-repeat"
-                          style={{
-                            backgroundImage: `url(${
-                              player.propicSrc ??
-                              '/images/portrait-placeholder.jpeg'
-                            })`,
-                          }}
-                        />
-                      </div>
-                      <div className="flex-1">
-                        <div>{player.title}</div>
-                        <div className="text-2xl">{player.name}</div>
-                      </div>
-                    </div>
+                    <MJPlayerInfoCardDiv player={player} playerIndex="0" />
                     <div className="shrink-0 space-x-2">
                       <a href={`/players/${player._id}`} type="button">
                         <span className="material-symbols-outlined">edit</span>

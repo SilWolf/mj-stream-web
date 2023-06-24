@@ -20,9 +20,7 @@ import {
   getPlayerIndexOfEastByRound,
 } from '@/helpers/mahjong.helper'
 import { useBoolean } from 'react-use'
-import MJPlayerCardDiv, {
-  MJPlayerCardMainColorMap,
-} from '@/components/MJPlayerCardDiv'
+import MJPlayerCardDiv from '@/components/MJPlayerCardDiv'
 import MJTileDiv, { MJTileKey } from '@/components/MJTileDiv'
 import MJMatchCounterSpan from '@/components/MJMatchCounterSpan'
 import MJTileKeyboardDiv from '@/components/MJTileKeyboardDiv'

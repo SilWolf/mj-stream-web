@@ -2,9 +2,7 @@ import React from 'react'
 import useMatch from '@/hooks/useMatch'
 import { PlayerIndex } from '@/models'
 import { getIsPlayerEast } from '@/helpers/mahjong.helper'
-import MJPlayerCardDiv, {
-  MJPlayerCardMainColorMap,
-} from '@/components/MJPlayerCardDiv'
+import MJPlayerCardDiv from '@/components/MJPlayerCardDiv'
 import MJTileDiv from '@/components/MJTileDiv'
 import MJMatchCounterSpan from '@/components/MJMatchCounterSpan'
 import MJMatchHistoryTable from '@/components/MJMatchHistoryTable'
@@ -82,7 +80,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                   }
                   isEast={getIsPlayerEast(index, matchCurrentRound.roundCount)}
                   isRiichi={matchCurrentRound.playerResults[index].isRiichi}
-                  color={MJPlayerCardMainColorMap[index]}
+                  color={match.players[index].color}
                 />
               </div>
             </div>

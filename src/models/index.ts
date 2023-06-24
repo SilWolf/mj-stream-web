@@ -45,6 +45,7 @@ export type RawPlayer = {
 }
 
 export type Player = {
+  _id?: string
   title?: string
   name: string
   propicSrc?: string

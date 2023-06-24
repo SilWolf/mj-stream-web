@@ -11,7 +11,7 @@ function IndexPage() {
         <div className="text-center">
           <img
             src="/images/hkmsca-logo.png"
-            className="w-64 mx-auto"
+            className="w-48 mx-auto"
             alt="HKMSCA"
           />
         </div>
@@ -48,6 +48,15 @@ function IndexPage() {
                 開新對局
               </MJUIButton>
             </a>
+          </div>
+          <div>
+            <div className="text-center">
+              {/* <a href="/players">
+                <MJUIButton color="secondary" size="large">
+                  玩家列表
+                </MJUIButton>
+              </a> */}
+            </div>
           </div>
           {/* <div className="flex gap-x-4">
             <div className="flex-1">
