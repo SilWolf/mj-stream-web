@@ -73,8 +73,9 @@ export const enum RoundResultTypeEnum {
 
 export const enum NextRoundTypeEnum {
   Unknown = 0,
-  Normal = 1,
+  NextRound = 1,
   Extended = 2,
+  NextRoundAndExtended = 3,
   End = -1,
 }
 

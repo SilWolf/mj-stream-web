@@ -224,7 +224,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
             ? NextRoundTypeEnum.End
             : isGoExtendedRound
             ? NextRoundTypeEnum.Extended
-            : NextRoundTypeEnum.Normal,
+            : NextRoundTypeEnum.NextRound,
         })
         toggleRonDialog(false)
       } catch (e) {
@@ -240,11 +240,10 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         const eastPlayerIndex = getPlayerIndexOfEastByRound(
           updatedMatchRound.roundCount
         )
-        const isGoExtendedRound =
-          updatedMatchRound.playerResults[eastPlayerIndex].type ===
+        const isGoNextRound =
+          updatedMatchRound.playerResults[eastPlayerIndex].type !==
           PlayerResultWinnerOrLoserEnum.Win
-        const isGameEnded =
-          !isGoExtendedRound && updatedMatchRound.roundCount >= 8
+        const isGameEnded = isGoNextRound && updatedMatchRound.roundCount >= 8
 
         if (isGameEnded) {
           // TODO: Proceed to Game End
@@ -255,9 +254,9 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
           ...updatedMatchRound,
           nextRoundType: isGameEnded
             ? NextRoundTypeEnum.End
-            : isGoExtendedRound
-            ? NextRoundTypeEnum.Extended
-            : NextRoundTypeEnum.Normal,
+            : isGoNextRound
+            ? NextRoundTypeEnum.NextRoundAndExtended
+            : NextRoundTypeEnum.Extended,
         })
         toggleExhaustedDialog(false)
       } catch (e) {
@@ -273,12 +272,14 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
     }
 
     const newRoundCount =
-      matchCurrentRound.nextRoundType === NextRoundTypeEnum.Normal
+      matchCurrentRound.nextRoundType === NextRoundTypeEnum.NextRound ||
+      matchCurrentRound.nextRoundType === NextRoundTypeEnum.NextRoundAndExtended
         ? matchCurrentRound.roundCount + 1
         : matchCurrentRound.roundCount
 
     const newExtendedRoundCount =
-      matchCurrentRound.nextRoundType === NextRoundTypeEnum.Extended
+      matchCurrentRound.nextRoundType === NextRoundTypeEnum.Extended ||
+      matchCurrentRound.nextRoundType === NextRoundTypeEnum.NextRoundAndExtended
         ? matchCurrentRound.extendedRoundCount + 1
         : 0
 
@@ -370,7 +371,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         </div>
 
         <div className="text-right space-x-4">
-          {(matchCurrentRound.nextRoundType === NextRoundTypeEnum.Normal ||
+          {(matchCurrentRound.nextRoundType === NextRoundTypeEnum.NextRound ||
             matchCurrentRound.nextRoundType === NextRoundTypeEnum.Extended) && (
             <MJUIButton
               color="success"
@@ -381,7 +382,8 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
               進入
               <MJMatchCounterSpan
                 roundCount={
-                  matchCurrentRound.nextRoundType === NextRoundTypeEnum.Normal
+                  matchCurrentRound.nextRoundType ===
+                  NextRoundTypeEnum.NextRound
                     ? matchCurrentRound.roundCount + 1
                     : matchCurrentRound.roundCount
                 }
