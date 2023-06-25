@@ -371,30 +371,35 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         </div>
 
         <div className="text-right space-x-4">
-          {(matchCurrentRound.nextRoundType === NextRoundTypeEnum.NextRound ||
-            matchCurrentRound.nextRoundType === NextRoundTypeEnum.Extended) && (
-            <MJUIButton
-              color="success"
-              type="button"
-              className="animate-pulse"
-              onClick={handleClickGoNextRound}
-            >
-              進入
-              <MJMatchCounterSpan
-                roundCount={
-                  matchCurrentRound.nextRoundType ===
-                  NextRoundTypeEnum.NextRound
-                    ? matchCurrentRound.roundCount + 1
-                    : matchCurrentRound.roundCount
-                }
-                extendedRoundCount={
-                  matchCurrentRound.nextRoundType === NextRoundTypeEnum.Extended
-                    ? matchCurrentRound.extendedRoundCount + 1
-                    : 0
-                }
-              />
-            </MJUIButton>
-          )}
+          {matchCurrentRound.nextRoundType !== NextRoundTypeEnum.Unknown &&
+            matchCurrentRound.nextRoundType !== NextRoundTypeEnum.End && (
+              <MJUIButton
+                color="success"
+                type="button"
+                className="animate-pulse"
+                onClick={handleClickGoNextRound}
+              >
+                進入
+                <MJMatchCounterSpan
+                  roundCount={
+                    matchCurrentRound.nextRoundType ===
+                    NextRoundTypeEnum.NextRound ||
+                    matchCurrentRound.nextRoundType ===
+                    NextRoundTypeEnum.NextRoundAndExtended ||
+                      ? matchCurrentRound.roundCount + 1
+                      : matchCurrentRound.roundCount
+                  }
+                  extendedRoundCount={
+                    matchCurrentRound.nextRoundType ===
+                    NextRoundTypeEnum.Extended || 
+                    matchCurrentRound.nextRoundType ===
+                    NextRoundTypeEnum.NextRoundAndExtended
+                      ? matchCurrentRound.extendedRoundCount + 1
+                      : 0
+                  }
+                />
+              </MJUIButton>
+            )}
           <MJUIButton
             color="secondary"
             type="button"
