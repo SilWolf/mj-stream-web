@@ -291,7 +291,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
       ),
       roundCount: newRoundCount,
       extendedRoundCount: newExtendedRoundCount,
-      cumulatedThousands: 0,
+      cumulatedThousands: matchCurrentRound.cumulatedThousands,
       resultType: RoundResultTypeEnum.Unknown,
       nextRoundType: NextRoundTypeEnum.Unknown,
       playerResults: formatPlayerResultsByPreviousPlayerResults(

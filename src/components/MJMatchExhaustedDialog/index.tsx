@@ -86,8 +86,8 @@ export default function MJMatchExhaustedDialog({
     const newPreviewPlayerResults: MatchRound['playerResults'] = {
       '0': {
         ...currentMatchRound.playerResults['0'],
-        beforeScore: currentMatchRound.playerResults['0'].afterScore,
-        afterScore: currentMatchRound.playerResults['0'].afterScore,
+        beforeScore: currentMatchRound.playerResults['0'].beforeScore,
+        afterScore: currentMatchRound.playerResults['0'].beforeScore,
         type: 0,
         scoreChanges: [],
         prevScoreChanges:
@@ -95,8 +95,8 @@ export default function MJMatchExhaustedDialog({
       },
       '1': {
         ...currentMatchRound.playerResults['1'],
-        beforeScore: currentMatchRound.playerResults['1'].afterScore,
-        afterScore: currentMatchRound.playerResults['1'].afterScore,
+        beforeScore: currentMatchRound.playerResults['1'].beforeScore,
+        afterScore: currentMatchRound.playerResults['1'].beforeScore,
         type: 0,
         scoreChanges: [],
         prevScoreChanges:
@@ -104,8 +104,8 @@ export default function MJMatchExhaustedDialog({
       },
       '2': {
         ...currentMatchRound.playerResults['2'],
-        beforeScore: currentMatchRound.playerResults['2'].afterScore,
-        afterScore: currentMatchRound.playerResults['2'].afterScore,
+        beforeScore: currentMatchRound.playerResults['2'].beforeScore,
+        afterScore: currentMatchRound.playerResults['2'].beforeScore,
         type: 0,
         scoreChanges: [],
         prevScoreChanges:
@@ -113,8 +113,8 @@ export default function MJMatchExhaustedDialog({
       },
       '3': {
         ...currentMatchRound.playerResults['3'],
-        beforeScore: currentMatchRound.playerResults['3'].afterScore,
-        afterScore: currentMatchRound.playerResults['3'].afterScore,
+        beforeScore: currentMatchRound.playerResults['3'].beforeScore,
+        afterScore: currentMatchRound.playerResults['3'].beforeScore,
         type: 0,
         scoreChanges: [],
         prevScoreChanges:
