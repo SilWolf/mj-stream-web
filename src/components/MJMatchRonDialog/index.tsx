@@ -257,6 +257,7 @@ export default function MJMatchRonDialog({
       ...currentMatchRound,
       resultType: getRoundResultTypeByCompiledScore(compiledScore),
       playerResults: previewPlayerResults,
+      cumulatedThousands: 0,
     }
 
     onSubmit(updatedMatchRound)

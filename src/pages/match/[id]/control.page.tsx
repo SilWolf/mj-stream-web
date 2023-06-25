@@ -383,17 +383,17 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                 <MJMatchCounterSpan
                   roundCount={
                     matchCurrentRound.nextRoundType ===
-                    NextRoundTypeEnum.NextRound ||
+                      NextRoundTypeEnum.NextRound ||
                     matchCurrentRound.nextRoundType ===
-                    NextRoundTypeEnum.NextRoundAndExtended ||
+                      NextRoundTypeEnum.NextRoundAndExtended
                       ? matchCurrentRound.roundCount + 1
                       : matchCurrentRound.roundCount
                   }
                   extendedRoundCount={
                     matchCurrentRound.nextRoundType ===
-                    NextRoundTypeEnum.Extended || 
+                      NextRoundTypeEnum.Extended ||
                     matchCurrentRound.nextRoundType ===
-                    NextRoundTypeEnum.NextRoundAndExtended
+                      NextRoundTypeEnum.NextRoundAndExtended
                       ? matchCurrentRound.extendedRoundCount + 1
                       : 0
                   }
