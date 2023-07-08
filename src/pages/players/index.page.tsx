@@ -34,7 +34,7 @@ function PlayersPage() {
               {players &&
                 players.map((player) => (
                   <div key={player._id} className="flex items-center gap-x-2">
-                    <MJPlayerInfoCardDiv player={player} playerIndex="0" />
+                    <MJPlayerInfoCardDiv player={player} />
                     <div className="shrink-0 space-x-2">
                       <a href={`/players/${player._id}`} type="button">
                         <span className="material-symbols-outlined">edit</span>
