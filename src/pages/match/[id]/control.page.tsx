@@ -28,6 +28,7 @@ import MJMatchHistoryTable from '@/components/MJMatchHistoryTable'
 import MJMatchExhaustedDialog from '@/components/MJMatchExhaustedDialog'
 import MJUIDialogV2 from '@/components/MJUI/MJUIDialogV2'
 import MJUIButton from '@/components/MJUI/MJUIButton'
+import MJMatchHotfixDialog from '@/components/MJMatchHotifxDialog'
 
 type Props = {
   params: { matchId: string }
@@ -54,6 +55,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
   const confirmDialog = useConfirmDialog()
 
   const [isShowingExhaustedDialog, toggleExhaustedDialog] = useBoolean(false)
+  const [isShowingHotfixDialog, toggleHotfixDialog] = useBoolean(false)
 
   const handleClickReveal = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -197,8 +199,12 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
   )
 
   const handleClickExhausted = useCallback(() => {
-    toggleExhaustedDialog()
+    toggleExhaustedDialog(true)
   }, [toggleExhaustedDialog])
+
+  const handleClickHotfix = useCallback(() => {
+    toggleHotfixDialog(true)
+  }, [toggleHotfixDialog])
 
   const handleSubmitMatchRonDialog = useCallback(
     (updatedMatchRound: MatchRound) => {
@@ -264,6 +270,37 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
       }
     },
     [toggleExhaustedDialog, updateCurrentMatchRound]
+  )
+
+  const handleSubmitMatchHotfixDialog = useCallback(
+    (updatedMatchRound: MatchRound) => {
+      try {
+        const newMatchRound: MatchRound = {
+          matchId,
+          code: generateMatchRoundCode(
+            matchId,
+            updatedMatchRound.roundCount,
+            updatedMatchRound.extendedRoundCount
+          ),
+          roundCount: updatedMatchRound.roundCount,
+          extendedRoundCount: updatedMatchRound.extendedRoundCount,
+          cumulatedThousands: updatedMatchRound.cumulatedThousands,
+          resultType: RoundResultTypeEnum.Unknown,
+          nextRoundType: NextRoundTypeEnum.Unknown,
+          playerResults: formatPlayerResultsByPreviousPlayerResults(
+            updatedMatchRound.playerResults
+          ),
+          doras: {},
+        }
+
+        pushMatchRound(newMatchRound)
+
+        toggleHotfixDialog(false)
+      } catch (e) {
+        console.error(e)
+      }
+    },
+    [matchId, pushMatchRound, toggleHotfixDialog]
   )
 
   const handleClickGoNextRound = useCallback(() => {
@@ -400,6 +437,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                 />
               </MJUIButton>
             )}
+
           <MJUIButton
             color="secondary"
             type="button"
@@ -473,6 +511,16 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         </div>
 
         <MJMatchHistoryTable matchId={matchId} className="w-full table-auto" />
+
+        <div>
+          <MJUIButton
+            color="secondary"
+            type="button"
+            onClick={handleClickHotfix}
+          >
+            手動調整分數
+          </MJUIButton>
+        </div>
       </div>
 
       <MJUIDialogV2
@@ -505,6 +553,15 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         open={isShowingExhaustedDialog}
         onSubmit={handleSubmitMatchExhaustedDialog}
         onClose={() => toggleExhaustedDialog(false)}
+        {...ronDialogProps}
+      />
+
+      <MJMatchHotfixDialog
+        match={match}
+        currentMatchRound={matchCurrentRound}
+        open={isShowingHotfixDialog}
+        onSubmit={handleSubmitMatchHotfixDialog}
+        onClose={() => toggleHotfixDialog(false)}
         {...ronDialogProps}
       />
     </div>

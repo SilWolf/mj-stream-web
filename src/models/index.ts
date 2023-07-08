@@ -72,6 +72,7 @@ export const enum RoundResultTypeEnum {
   Exhausted = -1,
   Ron = 1,
   SelfDrawn = 2,
+  Hotfix = -2,
 }
 
 export const enum NextRoundTypeEnum {
@@ -79,6 +80,7 @@ export const enum NextRoundTypeEnum {
   NextRound = 1,
   Extended = 2,
   NextRoundAndExtended = 3,
+  Hotfix = -2,
   End = -1,
 }
 
