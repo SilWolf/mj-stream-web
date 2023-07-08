@@ -12,7 +12,7 @@ import {
 import { useLocation } from 'wouter'
 import MJPlayerSelectDialog from '@/components/MJPlayerSelectDialog'
 import { useBoolean } from 'react-use'
-import MJPlayerInfoCardDiv from '@/components/MJPlayerInfoCardDiv'
+import MJPlayerInfoCardEditableDiv from '@/components/MJPlayerInfoCardEditableDiv'
 import MJUIButton from '@/components/MJUI/MJUIButton'
 
 const DEFAULT_PLAYER: Record<PlayerIndex, Player> = {
@@ -40,6 +40,8 @@ function CreateMatchPage() {
 
   const { data: databasePlayers = {} } =
     useFirebaseDatabaseByKey<Player>('players')
+
+  const { data: databaseTeams = {} } = useFirebaseDatabaseByKey<Player>('teams')
 
   const [players, setPlayers] = useState<
     Record<PlayerIndex, (Player & { _id?: string }) | undefined>
@@ -220,24 +222,28 @@ function CreateMatchPage() {
         template: 'mleague',
       },
       [`player_${playerIds[0]}`]: {
+        playerId: playerIds[0],
         position: 0,
         score: 25000,
         rank: 1,
         point: 0,
       },
       [`player_${playerIds[1]}`]: {
+        playerId: playerIds[1],
         position: 1,
         score: 25000,
         rank: 1,
         point: 0,
       },
       [`player_${playerIds[2]}`]: {
+        playerId: playerIds[2],
         position: 2,
         score: 25000,
         rank: 1,
         point: 0,
       },
       [`player_${playerIds[3]}`]: {
+        playerId: playerIds[3],
         position: 3,
         score: 25000,
         rank: 1,
@@ -319,24 +325,13 @@ function CreateMatchPage() {
                       </div>
 
                       {players[playerIndex] ? (
-                        <MJPlayerInfoCardDiv
+                        <MJPlayerInfoCardEditableDiv
                           playerIndex={playerIndex}
                           player={players[playerIndex]!}
                           onEdit={handleEditPlayer}
                         />
                       ) : (
                         <div className="w-full h-16 p-4 flex items-center justify-center gap-x-2 border-2 border-gray-800 border-dashed rounded">
-                          <MJUIButton
-                            variant="text"
-                            onClick={handleClickAddPlayer}
-                            data-player-index={playerIndex}
-                          >
-                            <span className="text-sm leading-none material-symbols-outlined">
-                              add
-                            </span>
-                            新增玩家
-                          </MJUIButton>
-                          <span>或</span>
                           <MJUIButton
                             variant="text"
                             onClick={handleClickSelectPlayer}

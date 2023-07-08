@@ -15,6 +15,7 @@ export type DatabaseV1 = {
   matches: Record<string, Match>
   matchRounds: Record<string, Record<string, MatchRound>>
   players: Record<string, Player>
+  teams: Record<string, Team>
 }
 
 export type MatchBase = {
@@ -38,6 +39,8 @@ export type Match = MatchBase &
   >
 
 export type RawPlayer = {
+  playerId: string
+  teamId?: string
   position: PlayerIndex
   rank: number
   score: number
@@ -103,3 +106,10 @@ export type PlayerResult = {
 }
 
 export type MatchSetting = Record<string, string>
+
+export type Team = {
+  _id?: string
+  name: string
+  color: string
+  logoUrl?: string
+}

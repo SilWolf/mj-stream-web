@@ -1,43 +1,32 @@
-import { Player } from '@/models'
+import { Team } from '@/models'
 import React, { HTMLAttributes, useCallback } from 'react'
 import MJUIButton from '../MJUI/MJUIButton'
 
 type Props = HTMLAttributes<HTMLDivElement> & {
-  player: Player
-  onClickEdit?: (newPlayer: Player) => unknown
+  team: Team
+  onClickEdit?: (newTeam: Team) => unknown
 }
 
-function MJPlayerInfoCardDiv({
-  player,
+function MJTeamInfoCardDiv({
+  team,
   onClickEdit,
   children,
   ...divProps
 }: Props) {
   const handleClickEdit = useCallback(() => {
-    onClickEdit?.(player)
-  }, [onClickEdit, player])
+    onClickEdit?.(team)
+  }, [onClickEdit, team])
 
   return (
     <div
       className="flex-1 flex items-center gap-x-2 rounded p-2 text-white"
       style={{
-        background: player.color ?? '#115e59',
+        background: team.color ?? '#115e59',
       }}
       {...divProps}
     >
-      <div className="shrink-0">
-        <div
-          className="w-14 h-14 bg-center bg-contain bg-no-repeat rounded"
-          style={{
-            backgroundImage: `url(${
-              player.propicSrc || '/images/portrait-placeholder.jpeg'
-            })`,
-          }}
-        />
-      </div>
       <div className="flex-1">
-        <div>{player.title ?? '(無頭銜)'}</div>
-        <div className="text-2xl">{player.name ?? '(無名稱)'}</div>
+        <div className="text-2xl">{team.name ?? '(無名稱)'}</div>
       </div>
 
       {onClickEdit && (
@@ -56,4 +45,4 @@ function MJPlayerInfoCardDiv({
   )
 }
 
-export default MJPlayerInfoCardDiv
+export default MJTeamInfoCardDiv

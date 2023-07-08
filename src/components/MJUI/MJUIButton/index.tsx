@@ -140,6 +140,7 @@ export default function MJUIButton({
   size,
   variant,
   className,
+  type = 'button',
   ...props
 }: MJUIButtonProps) {
   const myClassName = useMemo(
@@ -148,5 +149,5 @@ export default function MJUIButton({
   )
 
   // eslint-disable-next-line react/button-has-type
-  return <button className={myClassName} {...props} />
+  return <button type={type} className={myClassName} {...props} />
 }
