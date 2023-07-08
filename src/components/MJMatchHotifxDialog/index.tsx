@@ -76,6 +76,9 @@ export default function MJMatchHotfixDialog({
               afterScore: data.player_3,
             },
           },
+          cumulatedThousands: data.cumulatedThousands,
+          roundCount: data.roundCount,
+          extendedRoundCount: data.extendedRoundCount,
         }
 
         onSubmit(updatedMatchRound)

@@ -17,6 +17,12 @@ function IndexPage() {
         </div>
         <div className="flex-1 bg-gray-100 bg-opacity-50 rounded p-8 min-h-0 overflow-scroll">
           <ul>
+            <li className="font-bold">2022-07-08</li>
+            <ul className="list-disc pl-4 mb-4">
+              <li>新增「隊伍」</li>
+              <li>新增「手動調整分數」</li>
+            </ul>
+
             <li className="font-bold">2022-06-23</li>
             <ul className="list-disc pl-4">
               <li>改善多處介面</li>

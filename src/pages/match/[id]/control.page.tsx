@@ -275,6 +275,11 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
   const handleSubmitMatchHotfixDialog = useCallback(
     (updatedMatchRound: MatchRound) => {
       try {
+        updateCurrentMatchRound({
+          playerResults: updatedMatchRound.playerResults,
+          resultType: RoundResultTypeEnum.Hotfix,
+        })
+
         const newMatchRound: MatchRound = {
           matchId,
           code: generateMatchRoundCode(

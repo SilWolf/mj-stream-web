@@ -1,5 +1,6 @@
 import React, { TableHTMLAttributes, useMemo } from 'react'
 import useMatch from '@/hooks/useMatch'
+import { RoundResultTypeEnum } from '@/models'
 import MJMatchCounterSpan from '../MJMatchCounterSpan'
 import MJAmountSpan from '../MJAmountSpan'
 
@@ -64,49 +65,71 @@ function MJMatchHistoryTable({ matchId, ...tableProps }: Props) {
             </td>
           </tr>
         )}
-        {matchRoundsEntries.map(([matchRoundId, matchRound]) => (
-          <tr key={matchRoundId} className="even:bg-gray-200 [&>td]:p-2">
-            <td className="text-center">
-              <MJMatchCounterSpan
-                roundCount={matchRound.roundCount}
-                extendedRoundCount={matchRound.extendedRoundCount}
-                max={8}
-              />
-            </td>
-            <td className="text-center">
-              <MJMatchHistoryAmountSpan
-                value={
-                  matchRound.playerResults['0'].afterScore -
-                  matchRound.playerResults['0'].beforeScore
-                }
-              />
-            </td>
-            <td className="text-center">
-              <MJMatchHistoryAmountSpan
-                value={
-                  matchRound.playerResults['1'].afterScore -
-                  matchRound.playerResults['1'].beforeScore
-                }
-              />
-            </td>
-            <td className="text-center">
-              <MJMatchHistoryAmountSpan
-                value={
-                  matchRound.playerResults['2'].afterScore -
-                  matchRound.playerResults['2'].beforeScore
-                }
-              />
-            </td>
-            <td className="text-center">
-              <MJMatchHistoryAmountSpan
-                value={
-                  matchRound.playerResults['3'].afterScore -
-                  matchRound.playerResults['3'].beforeScore
-                }
-              />
-            </td>
-          </tr>
-        ))}
+        {matchRoundsEntries.map(([matchRoundId, matchRound]) => {
+          if (matchRound.resultType === RoundResultTypeEnum.Hotfix) {
+            return (
+              <tr key={matchRoundId} className="even:bg-gray-200 [&>td]:p-2">
+                <td className="text-center">手動調整</td>
+                <td className="text-center">
+                  {matchRound.playerResults['0'].afterScore}
+                </td>
+                <td className="text-center">
+                  {matchRound.playerResults['1'].afterScore}
+                </td>
+                <td className="text-center">
+                  {matchRound.playerResults['2'].afterScore}
+                </td>
+                <td className="text-center">
+                  {matchRound.playerResults['3'].afterScore}
+                </td>
+              </tr>
+            )
+          }
+
+          return (
+            <tr key={matchRoundId} className="even:bg-gray-200 [&>td]:p-2">
+              <td className="text-center">
+                <MJMatchCounterSpan
+                  roundCount={matchRound.roundCount}
+                  extendedRoundCount={matchRound.extendedRoundCount}
+                  max={8}
+                />
+              </td>
+              <td className="text-center">
+                <MJMatchHistoryAmountSpan
+                  value={
+                    matchRound.playerResults['0'].afterScore -
+                    matchRound.playerResults['0'].beforeScore
+                  }
+                />
+              </td>
+              <td className="text-center">
+                <MJMatchHistoryAmountSpan
+                  value={
+                    matchRound.playerResults['1'].afterScore -
+                    matchRound.playerResults['1'].beforeScore
+                  }
+                />
+              </td>
+              <td className="text-center">
+                <MJMatchHistoryAmountSpan
+                  value={
+                    matchRound.playerResults['2'].afterScore -
+                    matchRound.playerResults['2'].beforeScore
+                  }
+                />
+              </td>
+              <td className="text-center">
+                <MJMatchHistoryAmountSpan
+                  value={
+                    matchRound.playerResults['3'].afterScore -
+                    matchRound.playerResults['3'].beforeScore
+                  }
+                />
+              </td>
+            </tr>
+          )
+        })}
         {matchRoundsEntries[matchRoundsEntries.length - 1] && (
           <tr className="even:bg-gray-200 [&>td]:p-2">
             <td className="text-center" />
