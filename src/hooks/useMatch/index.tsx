@@ -74,6 +74,11 @@ const useMatch = (matchId: string) => {
 
   useEffect(() => {
     const asyncFn = async () => {
+      if (!matchId) {
+        setMatch(undefined)
+        return
+      }
+
       const retrievedMatch = await fb.get<Match>(`/matches/${matchId}`)
       if (!retrievedMatch) {
         setMatch(undefined)
@@ -121,6 +126,8 @@ const useMatch = (matchId: string) => {
           { ...rawPlayers } as unknown as MatchDTO['players']
         )
       })
+
+      console.log('ret', retrievedMatch)
 
       setMatch({
         ...retrievedMatch,

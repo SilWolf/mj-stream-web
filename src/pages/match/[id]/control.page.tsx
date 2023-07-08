@@ -29,12 +29,16 @@ import MJMatchExhaustedDialog from '@/components/MJMatchExhaustedDialog'
 import MJUIDialogV2 from '@/components/MJUI/MJUIDialogV2'
 import MJUIButton from '@/components/MJUI/MJUIButton'
 import MJMatchHotfixDialog from '@/components/MJMatchHotifxDialog'
+import { useFirebaseDatabaseByKey } from '@/providers/firebaseDatabase.provider'
 
 type Props = {
   params: { matchId: string }
 }
 
 export default function MatchControlPage({ params: { matchId } }: Props) {
+  const { data: obsInfo, set: setObsInfo } =
+    useFirebaseDatabaseByKey<string>('obs/1')
+
   const {
     match,
     matchCurrentRound,
@@ -305,7 +309,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         console.error(e)
       }
     },
-    [matchId, pushMatchRound, toggleHotfixDialog]
+    [matchId, pushMatchRound, toggleHotfixDialog, updateCurrentMatchRound]
   )
 
   const handleClickGoNextRound = useCallback(() => {
@@ -345,6 +349,12 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
 
     pushMatchRound(newMatchRound)
   }, [matchCurrentRound, matchId, pushMatchRound])
+
+  const handleClickStartOBS = useCallback(() => {
+    setObsInfo({
+      matchId,
+    })
+  }, [matchId, setObsInfo])
 
   if (!match || !matchCurrentRound) {
     return <div>對局讀取失敗。</div>
@@ -410,6 +420,18 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
             </div>
           </div>
           <div className="flex-1" />
+          <div className="shrink-0">
+            {obsInfo?.matchId !== matchId && (
+              <MJUIButton
+                color="success"
+                type="button"
+                className="animate-pulse"
+                onClick={handleClickStartOBS}
+              >
+                開始OBS
+              </MJUIButton>
+            )}
+          </div>
         </div>
 
         <div className="text-right space-x-4">
