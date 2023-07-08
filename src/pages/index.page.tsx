@@ -58,32 +58,38 @@ function IndexPage() {
               </a> */}
             </div>
           </div>
-          {/* <div className="flex gap-x-4">
-            <div className="flex-1">
+          <div className="flex gap-x-4">
+            {/* <div className="flex-1">
               <button
                 type="button"
                 className="w-full bg-gray-200 text-black text-4xl p-4 rounded-lg"
               >
                 對局列表
               </button>
-            </div>
+            </div> */}
             <div className="flex-1">
-              <a
-                href="/players"
-                className="block text-center w-full bg-gray-200 text-black text-4xl p-4 rounded-lg"
-              >
-                玩家列表
+              <a href="/players">
+                <MJUIButton className="w-full" color="secondary">
+                  玩家列表
+                </MJUIButton>
               </a>
             </div>
             <div className="flex-1">
+              <a href="/teams">
+                <MJUIButton className="w-full" color="secondary">
+                  隊伍列表
+                </MJUIButton>
+              </a>
+            </div>
+            {/* <div className="flex-1">
               <button
                 type="button"
                 className="w-full bg-gray-200 text-black text-4xl p-4 rounded-lg"
               >
                 使用說明
               </button>
-            </div>
-          </div> */}
+            </div> */}
+          </div>
         </div>
       </div>
     </div>

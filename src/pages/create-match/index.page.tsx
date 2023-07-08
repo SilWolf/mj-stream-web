@@ -334,17 +334,6 @@ function CreateMatchPage() {
                         <div className="w-full h-16 p-4 flex items-center justify-center gap-x-2 border-2 border-gray-800 border-dashed rounded">
                           <MJUIButton
                             variant="text"
-                            onClick={handleClickAddPlayer}
-                            data-player-index={playerIndex}
-                          >
-                            <span className="text-sm leading-none material-symbols-outlined">
-                              add
-                            </span>
-                            新增玩家
-                          </MJUIButton>
-                          <span>或</span>
-                          <MJUIButton
-                            variant="text"
                             onClick={handleClickSelectPlayer}
                             data-player-index={playerIndex}
                           >

@@ -1,11 +1,22 @@
 import { Player } from '@/models'
-import React, { HTMLAttributes } from 'react'
+import React, { HTMLAttributes, useCallback } from 'react'
+import MJUIButton from '../MJUI/MJUIButton'
 
 type Props = HTMLAttributes<HTMLDivElement> & {
   player: Player
+  onClickEdit?: (newPlayer: Player) => unknown
 }
 
-function MJPlayerInfoCardDiv({ player, children, ...divProps }: Props) {
+function MJPlayerInfoCardDiv({
+  player,
+  onClickEdit,
+  children,
+  ...divProps
+}: Props) {
+  const handleClickEdit = useCallback(() => {
+    onClickEdit?.(player)
+  }, [onClickEdit, player])
+
   return (
     <div
       className="flex-1 flex items-center gap-x-2 rounded p-2 text-white"
@@ -28,6 +39,19 @@ function MJPlayerInfoCardDiv({ player, children, ...divProps }: Props) {
         <div>{player.title ?? '(無頭銜)'}</div>
         <div className="text-2xl">{player.name ?? '(無名稱)'}</div>
       </div>
+
+      {onClickEdit && (
+        <div className="shrink-0">
+          <MJUIButton
+            variant="icon"
+            color="inverted"
+            type="button"
+            onClick={handleClickEdit}
+          >
+            <span className="material-symbols-outlined">edit</span>
+          </MJUIButton>
+        </div>
+      )}
     </div>
   )
 }
