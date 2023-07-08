@@ -348,6 +348,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
     }
 
     pushMatchRound(newMatchRound)
+    setClickedDoraIndex(-1)
   }, [matchCurrentRound, matchId, pushMatchRound])
 
   const handleClickStartOBS = useCallback(() => {
