@@ -8,6 +8,10 @@ export default function BroadcastLayout({
   return (
     <div
       className={`w-screen h-screen mx-auto flex flex-col gap-y-4 items-stretch p-10 ${className} overflow-hidden`}
+      style={{
+        background:
+          'linear-gradient(transparent, transparent 73%, rgba(0, 0, 0, 0.35))',
+      }}
       {...props}
     >
       {children}
