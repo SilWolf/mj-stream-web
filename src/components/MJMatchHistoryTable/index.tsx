@@ -1,11 +1,20 @@
 import React, { TableHTMLAttributes, useMemo } from 'react'
-import useMatch from '@/hooks/useMatch'
-import { RoundResultTypeEnum } from '@/models'
+import { MatchRound, Player, PlayerIndex, RoundResultTypeEnum } from '@/models'
 import MJMatchCounterSpan from '../MJMatchCounterSpan'
 import MJAmountSpan from '../MJAmountSpan'
+import MJPlayerInfoCardDiv from '../MJPlayerInfoCardDiv'
 
 type Props = TableHTMLAttributes<HTMLTableElement> & {
-  matchId: string
+  players: Record<
+    PlayerIndex,
+    Player & {
+      position: number
+      rank: number
+      score: number
+      point: number
+    }
+  >
+  matchRounds: Record<string, MatchRound> | undefined
 }
 
 function MJMatchHistoryAmountSpan({ value }: { value: number }) {
@@ -20,11 +29,9 @@ function MJMatchHistoryAmountSpan({ value }: { value: number }) {
   )
 }
 
-function MJMatchHistoryTable({ matchId, ...tableProps }: Props) {
-  const { match, matchRounds } = useMatch(matchId)
-
+function MJMatchHistoryTable({ players, matchRounds, ...tableProps }: Props) {
   const matchRoundsEntries = useMemo(
-    () => Object.entries(matchRounds ?? []),
+    () => Object.entries(matchRounds ?? {}),
     [matchRounds]
   )
 
@@ -32,11 +39,19 @@ function MJMatchHistoryTable({ matchId, ...tableProps }: Props) {
     <table {...tableProps}>
       <thead>
         <tr className="border-b border-gray-400 [&>th]:p-2">
-          <th>局數</th>
-          <th>{match?.players['0'].name}</th>
-          <th>{match?.players['1'].name}</th>
-          <th>{match?.players['2'].name}</th>
-          <th>{match?.players['3'].name}</th>
+          <th className="w-12">局數</th>
+          <th className="w-min-[120px] w-[22%]">
+            <MJPlayerInfoCardDiv player={players['0']} />
+          </th>
+          <th className="w-min-[120px] w-[22%]">
+            <MJPlayerInfoCardDiv player={players['1']} />
+          </th>
+          <th className="w-min-[120px] w-[22%]">
+            <MJPlayerInfoCardDiv player={players['2']} />
+          </th>
+          <th className="w-min-[120px] w-[22%]">
+            <MJPlayerInfoCardDiv player={players['3']} />
+          </th>
         </tr>
       </thead>
       <tbody>

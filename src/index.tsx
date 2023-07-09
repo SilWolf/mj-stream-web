@@ -17,6 +17,7 @@ import ConfirmDialogProvider from './components/ConfirmDialog/provider'
 import CreateMatchPage from './pages/create-match/index.page'
 import TeamsPage from './pages/teams/index.page'
 import ObsPage from './pages/obs/[obsRoomId]/index.page'
+import ObsScorePage from './pages/obs/[obsRoomId]/socre.page'
 
 // Import the functions you need from the SDKs you need
 // TODO: Add SDKs for Firebase products that you want to use
@@ -34,6 +35,7 @@ ReactDOM.render(
           <Route path="/match/:matchId/obs" component={MatchOBSPage} />
           <Route path="/match/:matchId/control" component={MatchControlPage} />
           <Route path="/obs/:obsRoomId" component={ObsPage} />
+          <Route path="/obs/:obsRoomId/score" component={ObsScorePage} />
           <Route path="/players" component={PlayersPage} />
           <Route path="/teams" component={TeamsPage} />
         </Switch>

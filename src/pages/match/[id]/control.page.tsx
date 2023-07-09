@@ -41,6 +41,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
 
   const {
     match,
+    matchRounds,
     matchCurrentRound,
     matchCurrentRoundDoras,
     updateCurrentMatchRound,
@@ -538,7 +539,11 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
           ))}
         </div>
 
-        <MJMatchHistoryTable matchId={matchId} className="w-full table-auto" />
+        <MJMatchHistoryTable
+          players={match.players}
+          matchRounds={matchRounds ?? {}}
+          className="w-full table-auto"
+        />
 
         <div>
           <MJUIButton

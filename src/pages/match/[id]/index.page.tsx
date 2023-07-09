@@ -12,7 +12,8 @@ type Props = {
 }
 
 export default function MatchControlPage({ params: { matchId } }: Props) {
-  const { match, matchCurrentRound, matchCurrentRoundDoras } = useMatch(matchId)
+  const { match, matchRounds, matchCurrentRound, matchCurrentRoundDoras } =
+    useMatch(matchId)
 
   if (!match || !matchCurrentRound) {
     return <div>對局讀取失敗。</div>
@@ -87,7 +88,11 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
           ))}
         </div>
 
-        <MJMatchHistoryTable matchId={matchId} className="w-full table-auto" />
+        <MJMatchHistoryTable
+          players={match.players}
+          matchRounds={matchRounds}
+          className="w-full table-auto"
+        />
       </div>
     </div>
   )

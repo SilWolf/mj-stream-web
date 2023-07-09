@@ -17,13 +17,9 @@ type Props = {
 export default function ObsPage({ params: { obsRoomId } }: Props) {
   const { data: obsInfo } = useFirebaseDatabaseByKey<string>(`obs/${obsRoomId}`)
 
-  console.log(obsInfo?.matchId)
-
   const { match, matchCurrentRound, matchCurrentRoundDoras } = useMatch(
     obsInfo?.matchId ?? ''
   )
-
-  console.log(match, matchCurrentRound)
 
   const players = useMemo(() => {
     if (!match || !matchCurrentRound) {
