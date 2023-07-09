@@ -7,7 +7,7 @@ import MJUIInput from '@/components/MJUI/MJUIInput'
 import MJUIInputForColor from '@/components/MJUI/MJUIInputForColor'
 import { Player, Team } from '@/models'
 import { useFirebaseDatabaseByKey } from '@/providers/firebaseDatabase.provider'
-import React, { useCallback, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { useBoolean } from 'react-use'
 
 import { Controller, useForm, useWatch } from 'react-hook-form'
@@ -22,10 +22,12 @@ function PlayersPage() {
 
   const players = useMemo(
     () =>
-      Object.entries(playersMap ?? {}).map(([key, value]) => ({
-        ...value,
-        _id: key,
-      })),
+      Object.entries(playersMap ?? {})
+        .reverse()
+        .map(([key, value]) => ({
+          ...value,
+          _id: key,
+        })),
     [playersMap]
   )
 
@@ -66,7 +68,13 @@ function PlayersPage() {
   )
 
   const handleClickAdd = useCallback(() => {
-    resetForm({ title: '', name: '新的玩家', color: '#000000', propicSrc: '' })
+    resetForm({
+      _id: '',
+      title: '',
+      name: '新的玩家',
+      color: '#000000',
+      propicSrc: '',
+    })
     toggleEditDialog(true)
   }, [resetForm, toggleEditDialog])
 

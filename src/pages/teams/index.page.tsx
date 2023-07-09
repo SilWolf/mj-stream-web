@@ -21,10 +21,12 @@ function TeamsPage() {
 
   const teams = useMemo(
     () =>
-      Object.entries(teamsMap ?? {}).map(([key, value]) => ({
-        ...value,
-        _id: key,
-      })),
+      Object.entries(teamsMap ?? {})
+        .reverse()
+        .map(([key, value]) => ({
+          ...value,
+          _id: key,
+        })),
     [teamsMap]
   )
 
@@ -53,7 +55,7 @@ function TeamsPage() {
   )
 
   const handleClickAdd = useCallback(() => {
-    resetForm({ name: '新的隊伍', color: '#000000' })
+    resetForm({ _id: '', name: '新的隊伍', color: '#000000' })
     toggleEditDialog(true)
   }, [resetForm, toggleEditDialog])
 
