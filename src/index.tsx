@@ -18,6 +18,7 @@ import CreateMatchPage from './pages/create-match/index.page'
 import TeamsPage from './pages/teams/index.page'
 import ObsPage from './pages/obs/[obsRoomId]/index.page'
 import ObsScorePage from './pages/obs/[obsRoomId]/socre.page'
+import MatchesPage from './pages/matches/index.page'
 
 // Import the functions you need from the SDKs you need
 // TODO: Add SDKs for Firebase products that you want to use
@@ -38,6 +39,7 @@ ReactDOM.render(
           <Route path="/obs/:obsRoomId/score" component={ObsScorePage} />
           <Route path="/players" component={PlayersPage} />
           <Route path="/teams" component={TeamsPage} />
+          <Route path="/matches" component={MatchesPage} />
         </Switch>
       </ConfirmDialogProvider>
     </FirebaseDatabaseProvider>

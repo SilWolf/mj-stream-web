@@ -87,6 +87,13 @@ function IndexPage() {
                 </MJUIButton>
               </a>
             </div>
+            <div className="flex-1">
+              <a href="/matches">
+                <MJUIButton className="w-full" color="secondary">
+                  對局列表
+                </MJUIButton>
+              </a>
+            </div>
             {/* <div className="flex-1">
               <button
                 type="button"

@@ -61,24 +61,30 @@ export default function MJMatchHotfixDialog({
           playerResults: {
             '0': {
               ...currentMatchRound.playerResults[0],
-              afterScore: data.player_0,
+              afterScore: parseInt(data.player_0 as unknown as string, 10),
             },
             '1': {
               ...currentMatchRound.playerResults[1],
-              afterScore: data.player_1,
+              afterScore: parseInt(data.player_1 as unknown as string, 10),
             },
             '2': {
               ...currentMatchRound.playerResults[2],
-              afterScore: data.player_2,
+              afterScore: parseInt(data.player_2 as unknown as string, 10),
             },
             '3': {
               ...currentMatchRound.playerResults[3],
-              afterScore: data.player_3,
+              afterScore: parseInt(data.player_3 as unknown as string, 10),
             },
           },
-          cumulatedThousands: data.cumulatedThousands,
-          roundCount: data.roundCount,
-          extendedRoundCount: data.extendedRoundCount,
+          cumulatedThousands: parseInt(
+            data.cumulatedThousands as unknown as string,
+            10
+          ),
+          roundCount: parseInt(data.roundCount as unknown as string, 10),
+          extendedRoundCount: parseInt(
+            data.extendedRoundCount as unknown as string,
+            10
+          ),
         }
 
         onSubmit(updatedMatchRound)
@@ -204,7 +210,7 @@ export default function MJMatchHotfixDialog({
                   本場數
                 </td>
                 <td className="text-center px-2 border border-gray-200 align-middle">
-                  {currentMatchRound.roundCount}
+                  {currentMatchRound.extendedRoundCount}
                 </td>
                 <td className="px-2 border border-gray-200 align-middle">
                   <Controller
