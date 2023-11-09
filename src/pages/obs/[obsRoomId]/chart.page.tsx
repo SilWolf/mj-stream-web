@@ -1,7 +1,7 @@
 import React from 'react'
 import useMatch from '@/hooks/useMatch'
-import MJMatchHistoryTable from '@/components/MJMatchHistoryTable'
 import { useFirebaseDatabaseByKey } from '@/providers/firebaseDatabase.provider'
+import MJMatchHistoryChart from '@/components/MJMatchHistoryChart'
 
 type Props = {
   params: { obsRoomId: string }
@@ -21,10 +21,9 @@ export default function ObsChartPage({ params: { obsRoomId } }: Props) {
   return (
     <div>
       <div className="container mx-auto my-8 px-8 space-y-6">
-        <MJMatchHistoryTable
+        <MJMatchHistoryChart
           players={match.players}
           matchRounds={matchRounds}
-          className="w-full table-auto"
         />
       </div>
     </div>

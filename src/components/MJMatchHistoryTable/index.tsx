@@ -39,17 +39,17 @@ function MJMatchHistoryTable({ players, matchRounds, ...tableProps }: Props) {
     <table {...tableProps}>
       <thead>
         <tr className="border-b border-gray-400 [&>th]:p-2">
-          <th className="w-12">局數</th>
-          <th className="w-min-[120px] w-[22%]">
+          <th>局數</th>
+          <th className="w-min-[120px]">
             <MJPlayerInfoCardDiv player={players['0']} />
           </th>
-          <th className="w-min-[120px] w-[22%]">
+          <th className="w-min-[120px]">
             <MJPlayerInfoCardDiv player={players['1']} />
           </th>
-          <th className="w-min-[120px] w-[22%]">
+          <th className="w-min-[120px]">
             <MJPlayerInfoCardDiv player={players['2']} />
           </th>
-          <th className="w-min-[120px] w-[22%]">
+          <th className="w-min-[120px]">
             <MJPlayerInfoCardDiv player={players['3']} />
           </th>
         </tr>
@@ -57,7 +57,7 @@ function MJMatchHistoryTable({ players, matchRounds, ...tableProps }: Props) {
       <tbody>
         {matchRoundsEntries[0] && (
           <tr className="even:bg-gray-200 [&>td]:p-2">
-            <td className="text-center w-36" />
+            <td className="text-center" />
             <td className="text-center">
               <MJAmountSpan
                 value={matchRoundsEntries[0][1].playerResults['0'].beforeScore}
