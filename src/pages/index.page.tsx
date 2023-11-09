@@ -6,11 +6,11 @@ function IndexPage() {
     <div className="container mx-auto max-w-screen-sm ">
       <div className="h-screen flex flex-col py-16 gap-y-12">
         <div className="shrink-0">
-          <h1 className="text-5xl text-center">日麻比賽直播系統</h1>
+          <h1 className="text-5xl text-center">日麻比賽直播系統 (牌藝攻防)</h1>
         </div>
         <div className="text-center">
           <img
-            src="/images/hkmsca-logo.png"
+            src="/images/master-logo.jpeg"
             className="w-48 mx-auto"
             alt="HKMSCA"
           />

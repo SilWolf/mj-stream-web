@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 import React from 'react'
-import ReactDOM from 'react-dom'
+import ReactDOM from 'react-dom/client'
 import { Route, Switch } from 'wouter'
 import './index.css'
 import reportWebVitals from './reportWebVitals'
@@ -26,7 +26,7 @@ import ObsCarouselPage from './pages/obs/[obsRoomId]/carousel.page'
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
-ReactDOM.render(
+ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <FirebaseDatabaseProvider>
       <ConfirmDialogProvider>
@@ -47,8 +47,7 @@ ReactDOM.render(
         </Switch>
       </ConfirmDialogProvider>
     </FirebaseDatabaseProvider>
-  </React.StrictMode>,
-  document.getElementById('root')
+  </React.StrictMode>
 )
 
 // If you want to start measuring performance in your app, pass a function
