@@ -18,7 +18,7 @@ export type DatabaseV1 = {
   teams: Record<string, Team>
 }
 
-export type MatchBase = {
+export type Match = {
   code: string
   remark: string
   createdAt: string
@@ -26,17 +26,8 @@ export type MatchBase = {
   updatedAt: string
   updatedBy: string
   setting: MatchSetting
+  players: Record<PlayerIndex, Player>
 }
-
-/**
- * Match
- * @description interface of a full match
- */
-export type Match = MatchBase &
-  Record<
-    string, // player_{id}
-    RawPlayer
-  >
 
 export type RawPlayer = {
   playerId: string
@@ -48,11 +39,10 @@ export type RawPlayer = {
 }
 
 export type Player = {
-  _id?: string
-  title?: string
+  title: string
   name: string
   propicSrc?: string
-  color?: string
+  color: string
 }
 
 export type MatchRound = {

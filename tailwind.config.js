@@ -19,8 +19,8 @@ module.exports = {
           '100%': { transform: 'translateY(1.75em)', opacity: 0.0 },
         },
         fadeIn: {
-          '0%': { opacity: 0.0 },
-          '100%': { opacity: 1.0 },
+          '0%': { opacity: 0.0, top: '-15px', position: 'relative' },
+          '100%': { opacity: 1.0, top: '0px', position: 'relative' },
         },
         riichi: {
           '0%': {

@@ -49,7 +49,7 @@ function MJPlayerSelectDialog({ players, onSelect, ...dialogProps }: Props) {
       )}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
         {myPlayers.map((player) => (
-          <button
+          <div
             type="button"
             key={player._id}
             className="text-left flex items-center gap-x-2"
@@ -57,7 +57,7 @@ function MJPlayerSelectDialog({ players, onSelect, ...dialogProps }: Props) {
             data-id={player._id}
           >
             <MJPlayerInfoCardDiv player={player} />
-          </button>
+          </div>
         ))}
       </div>
     </MJUIDialogV2>

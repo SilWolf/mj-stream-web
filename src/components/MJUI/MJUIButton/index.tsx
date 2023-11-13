@@ -24,6 +24,9 @@ const button = cva(['font-semibold'], {
     disabled: {
       true: ['cursor-not-allowed opacity-30'],
     },
+    loading: {
+      true: ['cursor-wait opacity-30'],
+    },
   },
   compoundVariants: [
     {
@@ -133,7 +136,9 @@ const button = cva(['font-semibold'], {
 })
 
 type MJUIButtonProps = ButtonHTMLAttributes<HTMLButtonElement> &
-  VariantProps<typeof button>
+  VariantProps<typeof button> & {
+    loading?: boolean
+  }
 
 export default function MJUIButton({
   color,
@@ -141,13 +146,29 @@ export default function MJUIButton({
   variant,
   className,
   type = 'button',
+  loading,
   ...props
 }: MJUIButtonProps) {
   const myClassName = useMemo(
-    () => button({ color, size, variant, disabled: props.disabled, className }),
-    [color, size, variant, props.disabled, className]
+    () =>
+      button({
+        color,
+        size,
+        variant,
+        disabled: props.disabled,
+        loading,
+        className,
+      }),
+    [color, size, variant, props.disabled, loading, className]
   )
 
-  // eslint-disable-next-line react/button-has-type
-  return <button type={type} className={myClassName} {...props} />
+  return (
+    <button
+      // eslint-disable-next-line react/button-has-type
+      type={type}
+      className={myClassName}
+      disabled={props.disabled || loading}
+      {...props}
+    />
+  )
 }

@@ -5,15 +5,7 @@ import MJAmountSpan from '../MJAmountSpan'
 import MJPlayerInfoCardDiv from '../MJPlayerInfoCardDiv'
 
 type Props = TableHTMLAttributes<HTMLTableElement> & {
-  players: Record<
-    PlayerIndex,
-    Player & {
-      position: number
-      rank: number
-      score: number
-      point: number
-    }
-  >
+  players: Record<PlayerIndex, Player>
   matchRounds: Record<string, MatchRound> | undefined
 }
 

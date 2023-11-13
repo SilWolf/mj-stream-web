@@ -42,42 +42,51 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
   return (
     <BroadcastLayout>
       <div className="flex flex-row items-stretch gap-x-4 text-white">
-        <div className="rounded-[1rem] bg-black bg-opacity-50 p-2 pr-4 flex items-stretch gap-x-6 transition-[width]">
-          <div className="text-[4rem] leading-none border-[.35rem] rounded-[.75rem] px-6 pt-[0.05em] pb-[0.2em] border-current flex items-center justify-center">
-            <MJMatchCounterSpan
-              roundCount={matchCurrentRound.roundCount}
-              max={8}
-            />
-          </div>
-
-          <div className="flex flex-col justify-around">
-            <div className="flex-1 flex flex-row items-center gap-x-3">
-              <div className="flex-1">
-                <img
-                  src="/images/score-hundred.png"
-                  alt="hundred"
-                  className="h-5"
+        <div
+          className="p-2 pl-10 pr-10 flex items-center gap-x-8 transition-[width]"
+          style={{
+            background: `linear-gradient(280deg, transparent, transparent 22px, #00000080 23px, #00000080 100%)`,
+          }}
+        >
+          <div className="text-[0.5em]">
+            <div className="text-[0.5em]">1/11/2000 第一回戰</div>
+            <div className="flex gap-x-8 items-center">
+              <div>
+                <MJMatchCounterSpan
+                  roundCount={matchCurrentRound.roundCount}
+                  max={8}
                 />
               </div>
-              <div className="text-[2.2rem] pb-1.5 leading-none">
-                {matchCurrentRound.extendedRoundCount ?? 0}
-              </div>
-            </div>
-            <div className="flex-1 flex flex-row items-center gap-x-3">
-              <div className="flex-1">
-                <img
-                  src="/images/score-thousand.png"
-                  alt="thousand"
-                  className="h-5"
-                />
-              </div>
-              <div className="text-[2.2rem] pb-1.5 leading-none">
-                {matchCurrentRound.cumulatedThousands ?? 0}
+
+              <div className="flex flex-col justify-around">
+                <div className="flex-1 flex flex-row items-center gap-x-3">
+                  <div className="flex-1">
+                    <img
+                      src="/images/score-hundred.png"
+                      alt="hundred"
+                      className="h-2"
+                    />
+                  </div>
+                  <div className="text-[0.4em] pb-1.5 leading-none">
+                    {matchCurrentRound.extendedRoundCount ?? 0}
+                  </div>
+                </div>
+                <div className="flex-1 flex flex-row items-center gap-x-3">
+                  <div className="flex-1">
+                    <img
+                      src="/images/score-thousand.png"
+                      alt="thousand"
+                      className="h-2"
+                    />
+                  </div>
+                  <div className="text-[0.4em] pb-1.5 leading-none">
+                    {matchCurrentRound.cumulatedThousands ?? 0}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-
-          <div className="flex items-center gap-x-3">
+          <div className="flex items-center gap-x-2">
             {matchCurrentRoundDoras.map((dora) => (
               <MJTileDiv
                 key={dora}
@@ -92,19 +101,16 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
       </div>
 
       <div className="flex-1 flex items-center justify-center">
-        <div className="body-hidden mx-20">
+        <div className="body-hidden mx-20 text-[16px]">
           <OBSInstructionDiv matchId={matchId} />
         </div>
       </div>
 
-      <div className="flex flex-row items-end justify-center gap-x-8 text-white text-[4.8rem]">
+      <div className="flex flex-row items-end justify-center gap-x-8 text-white px-10">
         {players.map((player) => (
           <MJPlayerCardDiv
             key={player.name}
-            name={player.name}
-            title={player.title}
-            propicSrc={player.propicSrc}
-            color={player.color}
+            player={player}
             score={player.currentStatus.afterScore}
             scoreChanges={player.currentStatus.scoreChanges}
             isEast={player.currentStatus.isEast}

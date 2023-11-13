@@ -249,7 +249,7 @@ function MJPlayerInfoCardDiv({
                 </MJUIButton>
               </div>
               <div className="text-[4rem] px-4 pt-6 pb-1 bg-gray-800 text-white relative">
-                <MJPlayerCardDiv {...modifiedPlayer} score={25000} />
+                <MJPlayerCardDiv player={modifiedPlayer} score={25000} />
               </div>
             </div>
 

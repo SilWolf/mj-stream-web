@@ -1,34 +1,36 @@
 import MJPositionSpan from '@/components/MJPositionSpan'
 import { MatchRound, Player, PlayerIndex } from '@/models'
 import React, { useCallback, useState } from 'react'
-import {
-  useFirebaseDatabase,
-  useFirebaseDatabaseByKey,
-} from '@/providers/firebaseDatabase.provider'
+import { useFirebaseDatabase } from '@/providers/firebaseDatabase.provider'
 import {
   generateMatchCode,
   generateMatchRoundCode,
 } from '@/helpers/mahjong.helper'
 import { useLocation } from 'wouter'
-import MJPlayerSelectDialog from '@/components/MJPlayerSelectDialog'
 import { useBoolean } from 'react-use'
-import MJPlayerInfoCardEditableDiv from '@/components/MJPlayerInfoCardEditableDiv'
 import MJUIButton from '@/components/MJUI/MJUIButton'
+import MJPlayerCardDiv from '@/components/MJPlayerCardDiv'
+import MJUIDialogV2 from '@/components/MJUI/MJUIDialogV2'
+import MJPlayerForm from '@/components/MJPlayerForm'
 
-const DEFAULT_PLAYER: Record<PlayerIndex, Player> = {
+const DEFAULT_PLAYER_MAP: Record<PlayerIndex, Player> = {
   '0': {
+    title: '',
     name: '玩家A',
     color: '#6700cf',
   },
   '1': {
+    title: '',
     name: '玩家B',
     color: '#00b5de',
   },
   '2': {
+    title: '',
     name: '玩家C',
     color: '#e3277b',
   },
   '3': {
+    title: '',
     name: '玩家D',
     color: '#03ada5',
   },
@@ -38,27 +40,56 @@ function CreateMatchPage() {
   const fb = useFirebaseDatabase()
   const [, setLocation] = useLocation()
 
-  const { data: databasePlayers = {} } =
-    useFirebaseDatabaseByKey<Player>('players')
+  const [players, setPlayers] =
+    useState<Record<PlayerIndex, Player>>(DEFAULT_PLAYER_MAP)
+  const [activePlayerData, setActivePlayerData] = useState<{
+    player: Player
+    index: PlayerIndex
+  }>()
 
-  const { data: databaseTeams = {} } = useFirebaseDatabaseByKey<Player>('teams')
+  const [isShowEditDialog, toggleEditDialog] = useBoolean(false)
+  const handleClickEditPlayer = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      const chosenPlayerIndex = e.currentTarget.getAttribute(
+        'data-player-index'
+      ) as PlayerIndex
 
-  const [players, setPlayers] = useState<
-    Record<PlayerIndex, (Player & { _id?: string }) | undefined>
-  >({
-    '0': undefined,
-    '1': undefined,
-    '2': undefined,
-    '3': undefined,
-  })
+      if (!chosenPlayerIndex) {
+        return
+      }
 
-  const handleEditPlayer = useCallback(
-    (playerIndex: PlayerIndex, newPlayer: Player) => {
-      setPlayers((prev) => ({ ...prev, [playerIndex]: newPlayer }))
-      return Promise.resolve()
+      const chosenPlayer = players[chosenPlayerIndex]
+
+      setActivePlayerData({
+        index: chosenPlayerIndex,
+        player: chosenPlayer,
+      })
+      toggleEditDialog(true)
     },
-    []
+    [players, toggleEditDialog]
   )
+
+  const handleSubmitPlayerForm = useCallback(
+    async (newPlayer: Player) => {
+      if (!activePlayerData) {
+        return
+      }
+
+      setPlayers((prev) => ({
+        ...prev,
+        [activePlayerData.index]: {
+          ...prev[activePlayerData.index],
+          ...newPlayer,
+        },
+      }))
+      toggleEditDialog(false)
+    },
+    [activePlayerData, toggleEditDialog]
+  )
+
+  const handleCloseEditDialog = useCallback(() => {
+    toggleEditDialog(false)
+  }, [toggleEditDialog])
 
   const handleClickSwap = useCallback((e: React.MouseEvent) => {
     const ele = e.currentTarget as HTMLButtonElement
@@ -82,135 +113,7 @@ function CreateMatchPage() {
     }))
   }, [])
 
-  const [selectedPlayerIndex, setSelectedPlayerIndex] = useState<
-    PlayerIndex | undefined
-  >()
-  const [showPlayerSelectDialog, togglePlayerSelectDialog] = useBoolean(false)
-
-  const handleClickAddPlayer = useCallback((e: React.MouseEvent) => {
-    if (!e.currentTarget) {
-      return
-    }
-
-    const playerIndex = e.currentTarget.getAttribute(
-      'data-player-index'
-    ) as PlayerIndex
-
-    setPlayers((prev) => ({
-      ...prev,
-      [playerIndex]: {
-        ...DEFAULT_PLAYER[playerIndex],
-      },
-    }))
-  }, [])
-
-  const handleClickSelectPlayer = useCallback(
-    (e: React.MouseEvent) => {
-      if (!e.currentTarget) {
-        return
-      }
-
-      const playerIndex = e.currentTarget.getAttribute(
-        'data-player-index'
-      ) as PlayerIndex
-
-      setSelectedPlayerIndex(playerIndex)
-      togglePlayerSelectDialog(true)
-    },
-    [togglePlayerSelectDialog]
-  )
-
-  const handleSelectPlayer = useCallback(
-    (_id: string, player: Player) => {
-      if (!selectedPlayerIndex) {
-        return
-      }
-
-      setPlayers((prev) => ({
-        ...prev,
-        [selectedPlayerIndex]: {
-          ...players[selectedPlayerIndex],
-          ...player,
-          _id,
-        },
-      }))
-      togglePlayerSelectDialog(false)
-    },
-    [players, selectedPlayerIndex, togglePlayerSelectDialog]
-  )
-
-  const handleCloseSelectPlayerDialog = useCallback(() => {
-    togglePlayerSelectDialog(false)
-  }, [togglePlayerSelectDialog])
-
-  const handleClickRemovePlayer = useCallback((e: React.MouseEvent) => {
-    const ele = e.currentTarget as HTMLButtonElement
-    if (!ele) {
-      return
-    }
-
-    const playerIndex = ele.getAttribute('data-player-index') as PlayerIndex
-    if (!playerIndex) {
-      return
-    }
-
-    setPlayers((prev) => ({ ...prev, [playerIndex]: undefined }))
-  }, [])
-
   const handleClickStart = useCallback(async () => {
-    const playerIds: string[] = []
-    const playerValues = Object.values(players)
-
-    if (
-      !playerValues[0] ||
-      !playerValues[1] ||
-      !playerValues[2] ||
-      !playerValues[3]
-    ) {
-      return
-    }
-
-    if (playerValues[0]._id) {
-      playerIds.push(playerValues[0]._id)
-    } else {
-      playerIds.push(
-        await fb
-          .push('players', playerValues[0])
-          .then((ref) => ref.key as string)
-      )
-    }
-
-    if (playerValues[1]._id) {
-      playerIds.push(playerValues[1]._id)
-    } else {
-      playerIds.push(
-        await fb
-          .push('players', playerValues[1])
-          .then((ref) => ref.key as string)
-      )
-    }
-
-    if (playerValues[2]._id) {
-      playerIds.push(playerValues[2]._id)
-    } else {
-      playerIds.push(
-        await fb
-          .push('players', playerValues[2])
-          .then((ref) => ref.key as string)
-      )
-    }
-
-    if (playerValues[3]._id) {
-      playerIds.push(playerValues[3]._id)
-    } else {
-      playerIds.push(
-        await fb
-          .push('players', playerValues[3])
-          .then((ref) => ref.key as string)
-      )
-    }
-
-    // const matchId = getRandomId()
     const match = {
       code: generateMatchCode(),
       remark: '',
@@ -221,34 +124,7 @@ function CreateMatchPage() {
       setting: {
         template: 'mleague',
       },
-      [`player_${playerIds[0]}`]: {
-        playerId: playerIds[0],
-        position: 0,
-        score: 25000,
-        rank: 1,
-        point: 0,
-      },
-      [`player_${playerIds[1]}`]: {
-        playerId: playerIds[1],
-        position: 1,
-        score: 25000,
-        rank: 1,
-        point: 0,
-      },
-      [`player_${playerIds[2]}`]: {
-        playerId: playerIds[2],
-        position: 2,
-        score: 25000,
-        rank: 1,
-        point: 0,
-      },
-      [`player_${playerIds[3]}`]: {
-        playerId: playerIds[3],
-        position: 3,
-        score: 25000,
-        rank: 1,
-        point: 0,
-      },
+      players,
     }
 
     const matchRef = await fb.push(`matches`, match)
@@ -324,26 +200,12 @@ function CreateMatchPage() {
                         </div>
                       </div>
 
-                      {players[playerIndex] ? (
-                        <MJPlayerInfoCardEditableDiv
-                          playerIndex={playerIndex}
-                          player={players[playerIndex]!}
-                          onEdit={handleEditPlayer}
+                      <div className="flex-1 text-[2.5em]">
+                        <MJPlayerCardDiv
+                          player={players[playerIndex]}
+                          score={25000}
                         />
-                      ) : (
-                        <div className="w-full h-16 p-4 flex items-center justify-center gap-x-2 border-2 border-gray-800 border-dashed rounded">
-                          <MJUIButton
-                            variant="text"
-                            onClick={handleClickSelectPlayer}
-                            data-player-index={playerIndex}
-                          >
-                            <span className="text-sm leading-none material-symbols-outlined">
-                              expand_circle_down
-                            </span>
-                            選擇玩家
-                          </MJUIButton>
-                        </div>
-                      )}
+                      </div>
 
                       <div className="shrink-0 space-x-2">
                         {/* <MJUIButton
@@ -377,7 +239,7 @@ function CreateMatchPage() {
                             arrow_drop_down_circle
                           </span>
                         </MJUIButton> */}
-                        <MJUIButton
+                        {/* <MJUIButton
                           variant="icon"
                           color="danger"
                           type="button"
@@ -388,6 +250,14 @@ function CreateMatchPage() {
                           <span className="material-symbols-outlined">
                             delete
                           </span>
+                        </MJUIButton> */}
+                        <MJUIButton
+                          type="button"
+                          data-player-index={playerIndex}
+                          onClick={handleClickEditPlayer}
+                          disabled={!players[playerIndex]}
+                        >
+                          修改
                         </MJUIButton>
                       </div>
                     </div>
@@ -423,12 +293,18 @@ function CreateMatchPage() {
         </div>
       </div>
 
-      <MJPlayerSelectDialog
-        open={showPlayerSelectDialog}
-        players={databasePlayers}
-        onSelect={handleSelectPlayer}
-        onClose={handleCloseSelectPlayerDialog}
-      />
+      <MJUIDialogV2
+        title="修改玩家"
+        open={isShowEditDialog}
+        onClose={handleCloseEditDialog}
+      >
+        <div className="container space-y-6">
+          <MJPlayerForm
+            onSubmit={handleSubmitPlayerForm}
+            defaultValue={activePlayerData?.player}
+          />
+        </div>
+      </MJUIDialogV2>
     </>
   )
 }
