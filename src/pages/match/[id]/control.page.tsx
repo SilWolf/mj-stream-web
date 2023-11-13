@@ -152,8 +152,13 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
   )
 
   const handleSubmitDoraKeyboard = useCallback(
-    (tileKey: MJTileKey) => {
+    (tileKeys: MJTileKey[]) => {
       if (typeof clickedDoraIndex !== 'undefined') {
+        const tileKey = tileKeys[0]
+        if (!tileKey) {
+          return
+        }
+
         const newDoras = [...matchCurrentRoundDoras]
 
         if (clickedDoraIndex === -1) {
@@ -358,6 +363,85 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
     })
   }, [matchId, setObsInfo])
 
+  const [activeWaitingTilesData, setActiveWaitingTilesData] = useState<{
+    index: PlayerIndex
+    tiles: string[]
+  } | null>(null)
+  const handleClickWaitingTiles = useCallback(
+    (e: React.MouseEvent) => {
+      const playerIndex = e.currentTarget.getAttribute(
+        'data-player-index'
+      ) as PlayerIndex
+      if (
+        typeof playerIndex === 'undefined' ||
+        !matchCurrentRound?.playerResults[playerIndex]
+      ) {
+        return
+      }
+
+      setActiveWaitingTilesData({
+        index: playerIndex,
+        tiles: matchCurrentRound?.playerResults[playerIndex].waitingTiles ?? [],
+      })
+    },
+    [matchCurrentRound?.playerResults]
+  )
+
+  const handleCloseWaitingTileDoraKeyboard = useCallback(() => {
+    setActiveWaitingTilesData(null)
+  }, [])
+
+  const handleSubmitWaitingTileDoraKeyboard = useCallback(
+    (newTiles: string[]) => {
+      if (!activeWaitingTilesData) {
+        return
+      }
+
+      updateCurrentMatchRound({
+        playerResults: {
+          ...(matchCurrentRound?.playerResults as Record<
+            PlayerIndex,
+            PlayerResult
+          >),
+          [activeWaitingTilesData.index]: {
+            ...matchCurrentRound?.playerResults[activeWaitingTilesData.index],
+            waitingTiles: newTiles,
+          },
+        },
+      })
+      setActiveWaitingTilesData(null)
+    },
+    [
+      activeWaitingTilesData,
+      matchCurrentRound?.playerResults,
+      updateCurrentMatchRound,
+    ]
+  )
+
+  const handleRemoveWaitingTileDoraKeyboard = useCallback(() => {
+    if (!activeWaitingTilesData) {
+      return
+    }
+
+    updateCurrentMatchRound({
+      playerResults: {
+        ...(matchCurrentRound?.playerResults as Record<
+          PlayerIndex,
+          PlayerResult
+        >),
+        [activeWaitingTilesData.index]: {
+          ...matchCurrentRound?.playerResults[activeWaitingTilesData.index],
+          waitingTiles: [],
+        },
+      },
+    })
+    setActiveWaitingTilesData(null)
+  }, [
+    activeWaitingTilesData,
+    matchCurrentRound?.playerResults,
+    updateCurrentMatchRound,
+  ])
+
   if (!match || !matchCurrentRound) {
     return <div>對局讀取失敗。</div>
   }
@@ -366,62 +450,82 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
     <div>
       <div className="container mx-auto my-8 px-8 space-y-6">
         <div className="flex flex-row items-center gap-x-4 text-white">
-          <div className="shrink-0 rounded-[1rem] bg-black bg-opacity-50 p-2 flex items-stretch gap-x-4">
-            <div className="text-[2.5rem] leading-none border-[.25rem] rounded-[.75rem] px-6 pb-[0.15em] border-current flex items-center justify-center">
-              <MJMatchCounterSpan
-                roundCount={matchCurrentRound.roundCount}
-                max={8}
-              />
-            </div>
-            <div className="flex flex-col justify-around">
-              <div className="flex-1 flex flex-row items-center gap-x-2">
-                <div className="flex-1">
-                  <img
-                    src="/images/score-hundred.png"
-                    alt="hundred"
-                    className="h-4"
+          <div
+            className="p-2 pl-4 pr-10 flex items-center gap-x-8 transition-[width] text-[4rem]"
+            style={{
+              background: `linear-gradient(280deg, transparent, transparent 22px, #00000080 23px, #00000080 100%)`,
+            }}
+          >
+            <div className="text-[0.5em]">
+              <div className="text-[0.5em]">
+                1/11/2000 第一回戰{' '}
+                <span className="material-symbols-outlined text-sm underline decoration-dotted">
+                  edit
+                </span>
+              </div>
+              <div className="flex gap-x-8 items-center">
+                <div>
+                  <MJMatchCounterSpan
+                    roundCount={matchCurrentRound.roundCount}
+                    max={8}
                   />
                 </div>
-                <div>{matchCurrentRound.extendedRoundCount ?? 0}</div>
-              </div>
-              <div className="flex-1 flex flex-row items-center gap-x-2">
-                <div className="flex-1">
-                  <img
-                    src="/images/score-thousand.png"
-                    alt="thousand"
-                    className="h-4"
-                  />
+
+                <div className="flex flex-col justify-around">
+                  <div className="flex-1 flex flex-row items-center gap-x-3">
+                    <div className="flex-1">
+                      <img
+                        src="/images/score-hundred.png"
+                        alt="hundred"
+                        className="h-2"
+                      />
+                    </div>
+                    <div className="text-[0.4em] pb-1.5 leading-none">
+                      {matchCurrentRound.extendedRoundCount ?? 0}
+                    </div>
+                  </div>
+                  <div className="flex-1 flex flex-row items-center gap-x-3">
+                    <div className="flex-1">
+                      <img
+                        src="/images/score-thousand.png"
+                        alt="thousand"
+                        className="h-2"
+                      />
+                    </div>
+                    <div className="text-[0.4em] pb-1.5 leading-none">
+                      {matchCurrentRound.cumulatedThousands ?? 0}
+                    </div>
+                  </div>
                 </div>
-                <div>{matchCurrentRound.cumulatedThousands ?? 0}</div>
               </div>
             </div>
+
             <div className="flex items-center gap-x-2">
-              {matchCurrentRoundDoras.map((dora, index) => (
+              {matchCurrentRoundDoras.map((dora) => (
                 <MJTileDiv
                   key={dora}
-                  className="w-9 cursor-pointer"
-                  data-index={index}
-                  onClick={handleClickDora}
+                  className="w-12 animate-[fadeIn_0.5s_ease-in-out]"
                 >
                   {dora}
                 </MJTileDiv>
               ))}
-              <div>
-                <MJUIButton
-                  type="button"
-                  color="secondary"
-                  className={`${
-                    matchCurrentRoundDoras.length === 0 && 'animate-bounce'
-                  }`}
-                  data-index="-1"
-                  onClick={handleClickDora}
-                >
-                  +懸賞
-                </MJUIButton>
-              </div>
+
+              <MJUIButton
+                type="button"
+                color="secondary"
+                className={`${
+                  matchCurrentRoundDoras.length === 0 && 'animate-bounce'
+                }`}
+                data-index="-1"
+                onClick={handleClickDora}
+              >
+                +懸賞
+              </MJUIButton>
             </div>
           </div>
+
           <div className="flex-1" />
+
           <div className="shrink-0">
             {obsInfo?.matchId !== matchId && (
               <MJUIButton
@@ -482,12 +586,17 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
               <div className="flex-1 text-[2.5rem]">
                 <MJPlayerCardDiv
                   player={match.players[index]}
+                  playerIndex={index}
                   score={matchCurrentRound.playerResults[index].afterScore}
                   scoreChanges={
                     matchCurrentRound.playerResults[index].scoreChanges
                   }
                   isEast={getIsPlayerEast(index, matchCurrentRound.roundCount)}
                   isRiichi={matchCurrentRound.playerResults[index].isRiichi}
+                  waitingTiles={
+                    matchCurrentRound.playerResults[index].waitingTiles
+                  }
+                  onClickWaitingTiles={handleClickWaitingTiles}
                 />
               </div>
               <div>
@@ -565,6 +674,21 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
           canRemove={
             typeof clickedDoraIndex !== 'undefined' && clickedDoraIndex > 0
           }
+        />
+      </MJUIDialogV2>
+
+      <MJUIDialogV2
+        open={!!activeWaitingTilesData}
+        title="選擇待牌"
+        onClose={handleCloseWaitingTileDoraKeyboard}
+      >
+        <MJTileKeyboardDiv
+          hideRedTiles
+          onSubmit={handleSubmitWaitingTileDoraKeyboard}
+          onRemove={handleRemoveWaitingTileDoraKeyboard}
+          defaultValue={activeWaitingTilesData?.tiles}
+          multiple
+          canRemove
         />
       </MJUIDialogV2>
 

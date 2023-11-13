@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import MJTileDiv, { MJTileKey } from '../MJTileDiv'
 import MJUIButton from '../MJUI/MJUIButton'
 
@@ -9,11 +9,31 @@ const tileGroups: MJTileKey[][] = [
   ['1z', '2z', '3z', '4z', '5z', '6z', '7z'],
 ]
 
+const SUIT_ORDER_MAP: Record<string, number> = {
+  m: 0,
+  p: 1,
+  s: 2,
+  z: 3,
+}
+
+const sortFn = (a: MJTileKey, b: MJTileKey) => {
+  const [aNum, aSuit] = [a[0], a[1]]
+  const [bNum, bSuit] = [b[0], b[1]]
+
+  if (aSuit !== bSuit) {
+    return SUIT_ORDER_MAP[aSuit] - SUIT_ORDER_MAP[bSuit]
+  }
+
+  return parseInt(aNum, 10) - parseInt(bNum, 10)
+}
+
 type Props = {
-  onSubmit?: (tileKey: MJTileKey) => void
+  onSubmit?: (tileKeys: MJTileKey[]) => void
   onRemove?: () => void
   canRemove?: boolean
   hideRedTiles?: boolean
+  multiple?: boolean
+  defaultValue?: string[] | undefined
 }
 
 function MJTileKeyboardDiv({
@@ -21,35 +41,52 @@ function MJTileKeyboardDiv({
   onRemove,
   canRemove,
   hideRedTiles,
+  multiple,
+  defaultValue,
 }: Props) {
-  const [selectedTileKey, setSelectedTileKey] = useState<
-    MJTileKey | undefined
-  >()
+  const [selectedTileKeys, setSelectedTileKeys] = useState<MJTileKey[]>([])
 
   const handleClickTile = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
       const tileKey = e.currentTarget?.getAttribute('data-key') as MJTileKey
 
       if (tileKey) {
-        setSelectedTileKey(tileKey)
+        if (multiple) {
+          setSelectedTileKeys((prev) => {
+            const index = prev.indexOf(tileKey)
+            if (index === -1) {
+              return [...prev, tileKey].sort(sortFn)
+            }
+
+            const newPrev = [...prev]
+            newPrev.splice(index, 1)
+            return newPrev
+          })
+        } else {
+          setSelectedTileKeys([tileKey])
+        }
       }
     },
-    []
+    [multiple]
   )
 
   const handleClickSubmit = useCallback(() => {
-    if (selectedTileKey && onSubmit) {
-      onSubmit?.(selectedTileKey)
-      setSelectedTileKey(undefined)
+    if (selectedTileKeys && onSubmit) {
+      onSubmit?.(selectedTileKeys)
+      setSelectedTileKeys([])
     }
-  }, [onSubmit, selectedTileKey])
+  }, [onSubmit, selectedTileKeys])
 
   const handleClickRemove = useCallback(() => {
     if (canRemove) {
       onRemove?.()
-      setSelectedTileKey(undefined)
+      setSelectedTileKeys([])
     }
   }, [canRemove, onRemove])
+
+  useEffect(() => {
+    setSelectedTileKeys((defaultValue as MJTileKey[]) ?? [])
+  }, [defaultValue])
 
   return (
     <div>
@@ -60,14 +97,14 @@ function MJTileKeyboardDiv({
       >
         {tileGroups.map((tileGroup) =>
           tileGroup.map(
-            (tileKey: string) =>
+            (tileKey: MJTileKey) =>
               (!tileKey.startsWith('0') || !hideRedTiles) && (
                 <button
                   type="button"
                   onClick={handleClickTile}
                   data-key={tileKey}
                   className={`${
-                    selectedTileKey === tileKey
+                    selectedTileKeys.indexOf(tileKey) !== -1
                       ? 'bg-blue-400'
                       : 'bg-black bg-opacity-20'
                   } rounded p-1 lg:p-2`}
@@ -97,7 +134,7 @@ function MJTileKeyboardDiv({
             type="button"
             color="primary"
             onClick={handleClickSubmit}
-            disabled={!selectedTileKey}
+            disabled={selectedTileKeys.length === 0}
           >
             確定
           </MJUIButton>

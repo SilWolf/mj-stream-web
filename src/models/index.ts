@@ -95,6 +95,7 @@ export type PlayerResult = {
   type: PlayerResultWinnerOrLoserEnum
   isRiichi?: boolean
   isRevealed?: boolean
+  waitingTiles?: string[]
 }
 
 export type MatchSetting = Record<string, string>

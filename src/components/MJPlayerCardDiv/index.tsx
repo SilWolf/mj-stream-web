@@ -2,27 +2,32 @@
 import MJAmountSpan from '@/components/MJAmountSpan'
 import React, { HTMLAttributes, useEffect, useMemo, useState } from 'react'
 import { getLightColorOfColor } from '@/utils/string.util'
-import { Player } from '@/models'
+import { Player, PlayerIndex } from '@/models'
 import MJRiichiBgDiv from '../MJRiichiBgDiv'
 import MJTileDiv from '../MJTileDiv'
+import MJUIButton from '../MJUI/MJUIButton'
 
 type Props = HTMLAttributes<HTMLDivElement> & {
   player: Player
+  playerIndex?: PlayerIndex
   score: number
   scoreChanges?: number[]
   isEast?: boolean
   isRiichi?: boolean
   onAnimationEnd?: () => void
   waitingTiles?: string[]
+  onClickWaitingTiles?: (e: React.MouseEvent) => unknown
 }
 
 export default function MJPlayerCardDiv({
   player,
+  playerIndex,
   score,
   scoreChanges = [],
   isEast,
   isRiichi,
   waitingTiles,
+  onClickWaitingTiles,
   className,
   ...props
 }: Props) {
@@ -88,6 +93,8 @@ export default function MJPlayerCardDiv({
             data-has-waiting-tiles={
               waitingTiles && waitingTiles.length > 0 ? '1' : '0'
             }
+            onClick={onClickWaitingTiles}
+            data-player-index={playerIndex}
           >
             <div className="flex-1 space-x-[0.15em] leading-none min-h-[1.19em]">
               {waitingTiles?.map((tile) => (
@@ -104,6 +111,18 @@ export default function MJPlayerCardDiv({
               待<br />牌
             </div>
           </div>
+          {onClickWaitingTiles &&
+            (!waitingTiles || waitingTiles.length === 0) && (
+              <MJUIButton
+                className="text-xs"
+                size="small"
+                color="secondary"
+                onClick={onClickWaitingTiles}
+                data-player-index={playerIndex}
+              >
+                +待牌
+              </MJUIButton>
+            )}
           <div
             className={`relative w-full text-left bg-white px-[0.05em] py-[0.1em] ${className}`}
             {...props}
