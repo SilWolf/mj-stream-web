@@ -1,3 +1,8 @@
 20:29:52.690 [NamespaceSystem-akka.actor.default-dispatcher-5] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started
 20:29:52.764 [main] INFO com.firebase.server.forge.App$ - Listening at 127.0.0.1:9000
 20:30:26.500 [NamespaceSystem-akka.actor.default-dispatcher-5] INFO com.firebase.core.namespace.NamespaceActor - hk-m-league-default-rtdb successfully activated FBKV (SurveyIdle(0)) wait: 77ms, init: 0ms
+12:58:29.077 [FirebaseWorkerPool-1-2] WARN com.firebase.core.persistence.backend.dummy.EmulatorMetadataPersistence - Multiple projectIds are not recommended in single project mode. Requested 
+namespace hk-m-league, but the emulator is configured for hk-m-league-default-rtdb. To 
+opt-out of single project mode add/set the singleProjectMode: false property in 
+the firebase.json emulators config. 
+12:58:29.117 [NamespaceSystem-akka.actor.default-dispatcher-376] INFO com.firebase.core.namespace.NamespaceActor - hk-m-league successfully activated FBKV (SurveyIdle(0)) wait: 10ms, init: 0ms

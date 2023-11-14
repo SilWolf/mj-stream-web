@@ -16,7 +16,7 @@ import PlayersPage from './pages/players/index.page'
 import ConfirmDialogProvider from './components/ConfirmDialog/provider'
 import CreateMatchPage from './pages/create-match/index.page'
 import TeamsPage from './pages/teams/index.page'
-import ObsPage from './pages/obs/[obsRoomId]/index.page'
+import ObsRoomPage from './pages/obs/[obsRoomId]/index.page'
 import ObsScorePage from './pages/obs/[obsRoomId]/socre.page'
 import MatchesPage from './pages/matches/index.page'
 import ObsChartPage from './pages/obs/[obsRoomId]/chart.page'
@@ -37,7 +37,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <Route path="/match/:matchId" component={MatchDetailPage} />
           <Route path="/match/:matchId/obs" component={MatchOBSPage} />
           <Route path="/match/:matchId/control" component={MatchControlPage} />
-          <Route path="/obs/:obsRoomId" component={ObsPage} />
+          <Route path="/obs/:obsRoomId" component={ObsRoomPage} />
           <Route path="/obs/:obsRoomId/score" component={ObsScorePage} />
           <Route path="/obs/:obsRoomId/chart" component={ObsChartPage} />
           <Route path="/obs/:obsRoomId/carousel" component={ObsCarouselPage} />

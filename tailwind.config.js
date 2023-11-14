@@ -6,8 +6,13 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['lansui', ...defaultTheme.fontFamily.sans],
-        numeric: ['YuPearl', 'lansui', ...defaultTheme.fontFamily.sans],
+        sans: ['AdobeZh', 'lansui', ...defaultTheme.fontFamily.sans],
+        numeric: [
+          'ArialNumber',
+          'YuPearl',
+          'lansui',
+          ...defaultTheme.fontFamily.sans,
+        ],
         kurewa: ['KurewaGothicCjkTc'],
         ud: ['UDDigiKyokashoN'],
       },

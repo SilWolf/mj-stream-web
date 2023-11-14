@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import React, { useCallback, useState } from 'react'
+import React, { MouseEvent, useCallback, useState } from 'react'
 import useMatch from '@/hooks/useMatch'
 import {
   MatchRound,
@@ -47,6 +47,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
     updateCurrentMatchRound,
     pushMatchRound,
     setCurrentRoundDoras,
+    setMatchName,
   } = useMatch(matchId)
 
   const [clickedDoraIndex, setClickedDoraIndex] = useState<number | undefined>(
@@ -442,6 +443,22 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
     updateCurrentMatchRound,
   ])
 
+  const handleClickEditMatchName = useCallback(
+    (e: MouseEvent) => {
+      e.preventDefault()
+
+      if (!match) {
+        return
+      }
+
+      const newName = prompt('對局名稱', match.name)
+      if (newName) {
+        setMatchName(newName)
+      }
+    },
+    [match, setMatchName]
+  )
+
   if (!match || !matchCurrentRound) {
     return <div>對局讀取失敗。</div>
   }
@@ -458,10 +475,12 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
           >
             <div className="text-[0.5em]">
               <div className="text-[0.5em]">
-                1/11/2000 第一回戰{' '}
-                <span className="material-symbols-outlined text-sm underline decoration-dotted">
-                  edit
-                </span>
+                {match.name}{' '}
+                <button type="button" onClick={handleClickEditMatchName}>
+                  <span className="material-symbols-outlined text-sm underline decoration-dotted">
+                    edit
+                  </span>
+                </button>
               </div>
               <div className="flex gap-x-8 items-center">
                 <div>

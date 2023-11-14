@@ -19,6 +19,7 @@ export type DatabaseV1 = {
 }
 
 export type Match = {
+  name: string
   code: string
   remark: string
   createdAt: string

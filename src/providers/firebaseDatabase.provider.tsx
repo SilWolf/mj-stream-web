@@ -130,7 +130,9 @@ export type UseFirebaseDatabaseByKeyOptions = fbListenOptions & {
 }
 
 export const useFirebaseDatabaseByKey = <
-  T extends Record<string, unknown> | string
+  T extends Record<string, unknown> | string,
+  UData extends Record<string, unknown> = Record<string, T>,
+  U extends Record<string, unknown> = Record<string, Partial<T>>,
 >(
   key: string,
   options?: UseFirebaseDatabaseByKeyOptions
@@ -140,20 +142,20 @@ export const useFirebaseDatabaseByKey = <
     return fbRef(database, key)
   }, [database, key])
 
-  const [rawData, setRawData] = useState<Record<string, T>>()
+  const [rawData, setRawData] = useState<UData>()
   const [lastOptions, setLastOptions] = useState<
     UseFirebaseDatabaseByKeyOptions | undefined
   >(options)
 
   const set = useCallback(
-    (payload: Record<string, Partial<T>>) => {
+    (payload: U) => {
       return fbSet(ref, payload)
     },
     [ref]
   )
 
   const update = useCallback(
-    (payload: Record<string, Partial<T>>) => {
+    (payload: U) => {
       return fbUpdate(ref, payload)
     },
     [ref]

@@ -12,6 +12,8 @@ import MJUIButton from '@/components/MJUI/MJUIButton'
 import MJPlayerCardDiv from '@/components/MJPlayerCardDiv'
 import MJUIDialogV2 from '@/components/MJUI/MJUIDialogV2'
 import MJPlayerForm from '@/components/MJPlayerForm'
+import MJUIFormGroup from '@/components/MJUI/MJUIFormGroup'
+import MJUIInput from '@/components/MJUI/MJUIInput'
 
 const DEFAULT_PLAYER_MAP: Record<PlayerIndex, Player> = {
   '0': {
@@ -36,6 +38,10 @@ const DEFAULT_PLAYER_MAP: Record<PlayerIndex, Player> = {
   },
 }
 
+export const DEFAULT_MATCH_NAME = `${new Date()
+  .toISOString()
+  .substring(0, 10)} 對局`
+
 function CreateMatchPage() {
   const fb = useFirebaseDatabase()
   const [, setLocation] = useLocation()
@@ -46,6 +52,8 @@ function CreateMatchPage() {
     player: Player
     index: PlayerIndex
   }>()
+
+  const [matchName, setMatchName] = useState<string>(DEFAULT_MATCH_NAME)
 
   const [isShowEditDialog, toggleEditDialog] = useBoolean(false)
   const handleClickEditPlayer = useCallback(
@@ -116,6 +124,7 @@ function CreateMatchPage() {
   const handleClickStart = useCallback(async () => {
     const match = {
       code: generateMatchCode(),
+      name: matchName,
       remark: '',
       createdAt: new Date().toISOString(),
       createdBy: 'Dicky',
@@ -173,7 +182,7 @@ function CreateMatchPage() {
     await fb.push(`matchRounds`, matchRound)
 
     setLocation(`/match/${matchRound.matchId}/obs`)
-  }, [fb, players, setLocation])
+  }, [fb, matchName, players, setLocation])
 
   return (
     <>
@@ -185,30 +194,43 @@ function CreateMatchPage() {
             </a>
           </div>
           <div className="flex-1">
-            <div className="space-y-4">
-              <h1 className="text-4xl">玩家</h1>
-              <div className="space-y-2">
-                {(['0', '1', '2', '3'] as PlayerIndex[]).map((playerIndex) => (
-                  <>
-                    <div
-                      key={playerIndex}
-                      className="flex items-center gap-x-2"
-                    >
-                      <div className="shrink-0">
-                        <div className="h-14 w-14 border-4 rounded border-black text-[2.5rem] flex items-center justify-center">
-                          <MJPositionSpan playerIndex={playerIndex} />
-                        </div>
-                      </div>
+            <div className="space-y-12">
+              <div className="space-y-4">
+                <h1 className="text-4xl">對局</h1>
+                <MJUIFormGroup label="對局名稱">
+                  <MJUIInput
+                    name="name"
+                    value={matchName}
+                    onChange={(e) => setMatchName(e.currentTarget.value)}
+                  />
+                </MJUIFormGroup>
+              </div>
 
-                      <div className="flex-1 text-[2.5em]">
-                        <MJPlayerCardDiv
-                          player={players[playerIndex]}
-                          score={25000}
-                        />
-                      </div>
+              <div className="space-y-4">
+                <h1 className="text-4xl">玩家</h1>
+                <div className="space-y-2">
+                  {(['0', '1', '2', '3'] as PlayerIndex[]).map(
+                    (playerIndex) => (
+                      <>
+                        <div
+                          key={playerIndex}
+                          className="flex items-center gap-x-2"
+                        >
+                          <div className="shrink-0">
+                            <div className="h-14 w-14 border-4 rounded border-black text-[2.5rem] flex items-center justify-center">
+                              <MJPositionSpan playerIndex={playerIndex} />
+                            </div>
+                          </div>
 
-                      <div className="shrink-0 space-x-2">
-                        {/* <MJUIButton
+                          <div className="flex-1 text-[2.5em]">
+                            <MJPlayerCardDiv
+                              player={players[playerIndex]}
+                              score={25000}
+                            />
+                          </div>
+
+                          <div className="shrink-0 space-x-2">
+                            {/* <MJUIButton
                           variant="icon"
                           color="secondary"
                           type="button"
@@ -239,7 +261,7 @@ function CreateMatchPage() {
                             arrow_drop_down_circle
                           </span>
                         </MJUIButton> */}
-                        {/* <MJUIButton
+                            {/* <MJUIButton
                           variant="icon"
                           color="danger"
                           type="button"
@@ -251,33 +273,35 @@ function CreateMatchPage() {
                             delete
                           </span>
                         </MJUIButton> */}
-                        <MJUIButton
-                          type="button"
-                          data-player-index={playerIndex}
-                          onClick={handleClickEditPlayer}
-                          disabled={!players[playerIndex]}
-                        >
-                          修改
-                        </MJUIButton>
-                      </div>
-                    </div>
-                    {playerIndex !== '3' && (
-                      <div className="text-center">
-                        <MJUIButton
-                          variant="icon"
-                          color="secondary"
-                          type="button"
-                          data-player-index={playerIndex}
-                          onClick={handleClickSwap}
-                        >
-                          <span className="material-symbols-outlined">
-                            swap_vert
-                          </span>
-                        </MJUIButton>
-                      </div>
-                    )}
-                  </>
-                ))}
+                            <MJUIButton
+                              type="button"
+                              data-player-index={playerIndex}
+                              onClick={handleClickEditPlayer}
+                              disabled={!players[playerIndex]}
+                            >
+                              修改
+                            </MJUIButton>
+                          </div>
+                        </div>
+                        {playerIndex !== '3' && (
+                          <div className="text-center">
+                            <MJUIButton
+                              variant="icon"
+                              color="secondary"
+                              type="button"
+                              data-player-index={playerIndex}
+                              onClick={handleClickSwap}
+                            >
+                              <span className="material-symbols-outlined">
+                                swap_vert
+                              </span>
+                            </MJUIButton>
+                          </div>
+                        )}
+                      </>
+                    )
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -286,6 +310,7 @@ function CreateMatchPage() {
               size="xlarge"
               className="w-full"
               onClick={handleClickStart}
+              type="submit"
             >
               開始對局
             </MJUIButton>

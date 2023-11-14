@@ -89,7 +89,7 @@ export default function MJPlayerCardDiv({
         </div>
         <div className="flex-1 flex flex-col gap-y-[0.075em] items-start justify-end">
           <div
-            className="bg-black bg-opacity-60 rounded text-[0.5em] flex gap-x-[0.2em] p-[0.1em] opacity-0 transition-opacity data-[has-waiting-tiles='1']:opacity-100 hide-if-changing"
+            className="bg-black bg-opacity-60 rounded text-[0.5em] flex gap-x-[0.2em] p-[0.1em] pr-[0.2em] opacity-0 transition-opacity data-[has-waiting-tiles='1']:opacity-100 hide-if-changing"
             data-has-waiting-tiles={
               waitingTiles && waitingTiles.length > 0 ? '1' : '0'
             }
@@ -140,7 +140,7 @@ export default function MJPlayerCardDiv({
             </div>
 
             {storedScoreChanges && (
-              <div className="absolute bottom-[1.8em] pr-[0.125em] left-0 text-[0.8em] leading-none animate-[drop_3s_ease-in-out]">
+              <div className="absolute bottom-[1.8em] pr-[0.125em] left-0 text-[0.77em] leading-none animate-[drop_3s_ease-in-out] font-numeric">
                 {storedScoreChanges.map((scoreChange) => (
                   <div>
                     <MJAmountSpan
@@ -154,7 +154,7 @@ export default function MJPlayerCardDiv({
               </div>
             )}
 
-            <div className="text-[0.8em] flex-1 leading-none text-white">
+            <div className="text-[0.77em] flex-1 leading-none text-white font-numeric">
               <MJAmountSpan animated value={storedScore} />
             </div>
           </div>

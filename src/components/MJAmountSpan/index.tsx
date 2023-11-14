@@ -29,14 +29,16 @@ function MJAmountSpan({
           return ''
         }
 
-        return newValue.toString()
+        return newValue.toLocaleString('en-US')
       }
 
       if (newValue > 0) {
-        return `${signed ? '+' : ''}${Math.floor(newValue)}`
+        return `${signed ? '+' : ''}${Math.floor(newValue).toLocaleString(
+          'en-US'
+        )}`
       }
 
-      return Math.floor(newValue).toString()
+      return Math.floor(newValue).toLocaleString('en-US')
     },
     [hideZero, signed]
   )
@@ -68,7 +70,7 @@ function MJAmountSpan({
             if (ref.current) {
               ref.current.innerText = Math.floor(
                 storedValue - (storedValue - value) * (i / animationMs)
-              ).toString()
+              ).toLocaleString('en-US')
             }
           }, i)
         }

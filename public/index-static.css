@@ -18,6 +18,16 @@
   src: url('fonts/YuPearl-Regular.ttf');
 }
 
+@font-face {
+  font-family: 'ArialNumber';
+  src: url('arial-number.ttf');
+}
+
+@font-face {
+  font-family: 'AdobeZh';
+  src: url('fonts/adobe-zh.otf') format("opentype");;
+}
+
 .mahjong-tile {
   background-image: url('images/mahjong-tiles.png');
   background-origin: padding-box;

@@ -1,14 +1,14 @@
 import { convertArrayToObject, getLastItemOfArray } from '@/utils/array.util'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo } from 'react'
 import { Match, MatchRound } from '../../models'
-import {
-  useFirebaseDatabase,
-  useFirebaseDatabaseByKey,
-} from '../../providers/firebaseDatabase.provider'
+import { useFirebaseDatabaseByKey } from '../../providers/firebaseDatabase.provider'
 
 const useMatch = (matchId: string) => {
-  const fb = useFirebaseDatabase()
-  const [match, setMatch] = useState<Match | undefined>()
+  const { data: match, update: updateMatch } = useFirebaseDatabaseByKey<
+    Match,
+    Match,
+    Partial<Match>
+  >(`/matches/${matchId}`)
 
   const {
     data: matchRounds,
@@ -47,32 +47,11 @@ const useMatch = (matchId: string) => {
         [currentMatchRoundId]: {
           ...matchCurrentRound,
           ...payload,
-        },
+        } as MatchRound,
       })
     },
     [matchCurrentRound, matchRounds, updateMatchRounds]
   )
-
-  useEffect(() => {
-    const asyncFn = async () => {
-      if (!matchId) {
-        setMatch(undefined)
-        return
-      }
-
-      const retrievedMatch = await fb.get<Match>(`/matches/${matchId}`)
-      if (!retrievedMatch) {
-        setMatch(undefined)
-        return
-      }
-
-      setMatch({
-        ...retrievedMatch,
-      })
-    }
-
-    asyncFn()
-  }, [fb, matchId])
 
   const setCurrentRoundDoras = useCallback(
     (doraTileKeys: string[]) => {
@@ -81,11 +60,19 @@ const useMatch = (matchId: string) => {
     [updateCurrentMatchRound]
   )
 
+  const setMatchName = useCallback(
+    (newMatchName: string) => {
+      updateMatch({ name: newMatchName })
+    },
+    [updateMatch]
+  )
+
   return {
     match,
     matchRounds,
     matchCurrentRound,
     matchCurrentRoundDoras,
+    setMatchName,
     setCurrentRoundDoras,
     updateCurrentMatchRound,
     pushMatchRound,

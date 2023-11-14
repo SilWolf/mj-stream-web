@@ -49,25 +49,25 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
           }}
         >
           <div className="text-[0.5em]">
-            <div className="text-[0.5em]">1/11/2000 第一回戰</div>
+            <div className="text-[0.5em]">{match.name}</div>
             <div className="flex gap-x-8 items-center">
-              <div>
+              <div className="min-w-[3.5em]">
                 <MJMatchCounterSpan
                   roundCount={matchCurrentRound.roundCount}
                   max={8}
                 />
               </div>
 
-              <div className="flex flex-col justify-around">
+              <div className="flex flex-col justify-around gap-2">
                 <div className="flex-1 flex flex-row items-center gap-x-3">
                   <div className="flex-1">
                     <img
                       src="/images/score-hundred.png"
                       alt="hundred"
-                      className="h-2"
+                      className="h-2.5"
                     />
                   </div>
-                  <div className="text-[0.4em] pb-1.5 leading-none">
+                  <div className="text-[0.4em] leading-none">
                     {matchCurrentRound.extendedRoundCount ?? 0}
                   </div>
                 </div>
@@ -76,10 +76,10 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
                     <img
                       src="/images/score-thousand.png"
                       alt="thousand"
-                      className="h-2"
+                      className="h-2.5"
                     />
                   </div>
-                  <div className="text-[0.4em] pb-1.5 leading-none">
+                  <div className="text-[0.4em] leading-none">
                     {matchCurrentRound.cumulatedThousands ?? 0}
                   </div>
                 </div>
@@ -115,6 +115,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
             scoreChanges={player.currentStatus.scoreChanges}
             isEast={player.currentStatus.isEast}
             isRiichi={player.currentStatus.isRiichi}
+            waitingTiles={player.currentStatus.waitingTiles}
           />
         ))}
       </div>

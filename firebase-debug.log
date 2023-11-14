@@ -240,3 +240,10 @@ Issues? Report them at https://github.com/firebase/firebase-tools/issues and att
  
 [debug] [2023-11-13T12:30:26.500Z] 20:30:26.500 [NamespaceSystem-akka.actor.default-dispatcher-5] INFO com.firebase.core.namespace.NamespaceActor - hk-m-league-default-rtdb successfully activated FBKV (SurveyIdle(0)) wait: 77ms, init: 0ms
  {"metadata":{"emulator":{"name":"database"},"message":"20:30:26.500 [NamespaceSystem-akka.actor.default-dispatcher-5] INFO com.firebase.core.namespace.NamespaceActor - hk-m-league-default-rtdb successfully activated FBKV (SurveyIdle(0)) wait: 77ms, init: 0ms\n"}}
+[debug] [2023-11-14T04:58:29.085Z] 12:58:29.077 [FirebaseWorkerPool-1-2] WARN com.firebase.core.persistence.backend.dummy.EmulatorMetadataPersistence - Multiple projectIds are not recommended in single project mode. Requested 
+namespace hk-m-league, but the emulator is configured for hk-m-league-default-rtdb. To 
+opt-out of single project mode add/set the singleProjectMode: false property in 
+the firebase.json emulators config. 
+ {"metadata":{"emulator":{"name":"database"},"message":"12:58:29.077 [FirebaseWorkerPool-1-2] WARN com.firebase.core.persistence.backend.dummy.EmulatorMetadataPersistence - Multiple projectIds are not recommended in single project mode. Requested \nnamespace hk-m-league, but the emulator is configured for hk-m-league-default-rtdb. To \nopt-out of single project mode add/set the singleProjectMode: false property in \nthe firebase.json emulators config. \n"}}
+[debug] [2023-11-14T04:58:29.118Z] 12:58:29.117 [NamespaceSystem-akka.actor.default-dispatcher-376] INFO com.firebase.core.namespace.NamespaceActor - hk-m-league successfully activated FBKV (SurveyIdle(0)) wait: 10ms, init: 0ms
+ {"metadata":{"emulator":{"name":"database"},"message":"12:58:29.117 [NamespaceSystem-akka.actor.default-dispatcher-376] INFO com.firebase.core.namespace.NamespaceActor - hk-m-league successfully activated FBKV (SurveyIdle(0)) wait: 10ms, init: 0ms\n"}}

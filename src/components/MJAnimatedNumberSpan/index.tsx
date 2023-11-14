@@ -17,7 +17,7 @@ function MJAnimatedNumberSpan({ value }: Props) {
         if (ref.current) {
           ref.current.innerText = Math.floor(
             storedValue - (storedValue - value) * (i / animationMs)
-          ).toString()
+          ).toLocaleString('en-US')
         }
       }, i)
     }
@@ -29,7 +29,7 @@ function MJAnimatedNumberSpan({ value }: Props) {
 
   useEffect(() => {
     if (ref.current) {
-      ref.current.innerText = storedValue.toString()
+      ref.current.innerText = storedValue.toLocaleString('en-US')
     }
   }, [storedValue])
 
