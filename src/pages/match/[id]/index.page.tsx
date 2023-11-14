@@ -72,16 +72,13 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
             <div className="flex gap-x-2 items-center">
               <div className="flex-1 text-[2.5rem]">
                 <MJPlayerCardDiv
-                  name={match.players[index].name}
-                  title={match.players[index].title}
-                  propicSrc={match.players[index].propicSrc}
+                  player={match.players[index]}
                   score={matchCurrentRound.playerResults[index].beforeScore}
                   scoreChanges={
                     matchCurrentRound.playerResults[index].prevScoreChanges
                   }
                   isEast={getIsPlayerEast(index, matchCurrentRound.roundCount)}
                   isRiichi={matchCurrentRound.playerResults[index].isRiichi}
-                  color={match.players[index].color}
                 />
               </div>
             </div>

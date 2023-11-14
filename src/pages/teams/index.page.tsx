@@ -46,6 +46,14 @@ function TeamsPage() {
   })
 
   const watchedTeam = useWatch({ control: formControl })
+  const previewPlayer = useMemo(
+    () => ({
+      name: '隊員名字',
+      title: watchedTeam.name ?? '',
+      color: watchedTeam.color ?? '#000000',
+    }),
+    [watchedTeam.color, watchedTeam.name]
+  )
 
   const formRef = useRef<HTMLFormElement | null>(null)
 
@@ -70,7 +78,6 @@ function TeamsPage() {
   const handleSubmitEditForm = useMemo(
     () =>
       handleSubmit((newTeam: Team) => {
-        console.log(newTeam)
         if (!newTeam._id) {
           pushTeamMap(newTeam)
         } else {
@@ -144,12 +151,7 @@ function TeamsPage() {
             <div className="mb-6">
               <div className="mb-2">預覽</div>
               <div className="text-[4rem] px-4 pt-6 pb-1 bg-gray-800 text-white relative">
-                <MJPlayerCardDiv
-                  name="隊員名字"
-                  title={watchedTeam.name}
-                  color={watchedTeam.color}
-                  score={25000}
-                />
+                <MJPlayerCardDiv player={previewPlayer} score={25000} />
               </div>
             </div>
 

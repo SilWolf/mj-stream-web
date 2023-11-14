@@ -74,25 +74,25 @@ function App({ params: { matchId } }: Props) {
 
       <div className="flex flex-row items-end justify-center gap-x-2 text-white">
         <MJPlayerCardDiv
-          name={match.players[0].name}
+          player={match.players[0]}
           score={matchCurrentRound.playerResults[0].beforeScore}
           scoreChanges={matchCurrentRound.playerResults[0].prevScoreChanges}
           className="!bg-blue-400 !bg-opacity-60"
         />
         <MJPlayerCardDiv
-          name={match.players[1].name}
+          player={match.players[1]}
           score={matchCurrentRound.playerResults[1].beforeScore}
           scoreChanges={matchCurrentRound.playerResults[1].prevScoreChanges}
           className="!bg-red-400 !bg-opacity-60"
         />
         <MJPlayerCardDiv
-          name={match.players[2].name}
+          player={match.players[2]}
           score={matchCurrentRound.playerResults[2].beforeScore}
           scoreChanges={matchCurrentRound.playerResults[2].prevScoreChanges}
           className="!bg-green-400 !bg-opacity-60"
         />
         <MJPlayerCardDiv
-          name={match.players[3].name}
+          player={match.players[3]}
           score={matchCurrentRound.playerResults[3].beforeScore}
           scoreChanges={matchCurrentRound.playerResults[3].prevScoreChanges}
           className="!bg-yellow-400 !bg-opacity-60"

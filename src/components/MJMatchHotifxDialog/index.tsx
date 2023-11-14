@@ -1,15 +1,15 @@
+/* eslint-disable jsx-a11y/control-has-associated-label */
 import React, { useEffect, useMemo } from 'react'
 import MJUIDialogV2, { MJUIDialogV2Props } from '@/components/MJUI/MJUIDialogV2'
 import MJUIButton from '@/components/MJUI/MJUIButton'
-import { MatchRound, PlayerIndex, RoundResultTypeEnum } from '@/models'
-import { MatchDTO } from '@/hooks/useMatch'
+import { Match, MatchRound, PlayerIndex, RoundResultTypeEnum } from '@/models'
 import { getPlayerPosition } from '@/helpers/mahjong.helper'
 import { Controller, useForm } from 'react-hook-form'
 import MJPlayerInfoCardDiv from '../MJPlayerInfoCardDiv'
 import MJUIInput from '../MJUI/MJUIInput'
 
 export type MJMatchRonProps = Pick<MJUIDialogV2Props, 'open' | 'onClose'> & {
-  match: MatchDTO
+  match: Match
   currentMatchRound: MatchRound
   onSubmit?: (resultMatchRound: MatchRound) => unknown
 }

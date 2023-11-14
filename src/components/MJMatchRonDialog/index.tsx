@@ -1,13 +1,14 @@
+/* eslint-disable jsx-a11y/control-has-associated-label */
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import MJUIDialogV2, { MJUIDialogV2Props } from '@/components/MJUI/MJUIDialogV2'
 import MJUIButton from '@/components/MJUI/MJUIButton'
 import {
+  Match,
   MatchRound,
   PlayerIndex,
   PlayerPositionEnum,
   PlayerResultWinnerOrLoserEnum,
 } from '@/models'
-import { MatchDTO } from '@/hooks/useMatch'
 import {
   getIsPlayerEast,
   getPlayerPosition,
@@ -21,7 +22,7 @@ import MJHanFuScoreSpan from '../MJHanFuScoreSpan'
 import MJAmountSpan from '../MJAmountSpan'
 
 export type MJMatchRonProps = Pick<MJUIDialogV2Props, 'open' | 'onClose'> & {
-  match: MatchDTO
+  match: Match
   currentMatchRound: MatchRound
   initialActivePlayerIndex?: PlayerIndex
   initialTargetPlayerIndex?: PlayerIndex | '-1'
@@ -67,13 +68,6 @@ export default function MJMatchRonDialog({
   const [targetPlayerIndex, setTargetPlayerIndex] = useState<
     string | undefined
   >(initialTargetPlayerIndex)
-  const targetPlayer = useMemo(
-    () =>
-      typeof targetPlayerIndex !== 'undefined'
-        ? players?.find(({ index }) => index === targetPlayerIndex)
-        : undefined,
-    [targetPlayerIndex, players]
-  )
 
   const handleChangeHanFuScoreSelect = useCallback(
     (newScore: MJCompiledScore) => {

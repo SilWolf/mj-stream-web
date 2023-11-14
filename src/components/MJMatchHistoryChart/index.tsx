@@ -14,15 +14,7 @@ import {
 import { generateMatchRoundText } from '@/helpers/mahjong.helper'
 
 type Props = {
-  players: Record<
-    PlayerIndex,
-    Player & {
-      position: number
-      rank: number
-      score: number
-      point: number
-    }
-  >
+  players: Record<PlayerIndex, Player>
   matchRounds: Record<string, MatchRound> | undefined
 }
 

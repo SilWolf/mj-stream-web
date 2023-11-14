@@ -50,7 +50,6 @@ function MJPlayerSelectDialog({ players, onSelect, ...dialogProps }: Props) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
         {myPlayers.map((player) => (
           <div
-            type="button"
             key={player._id}
             className="text-left flex items-center gap-x-2"
             onClick={handleClickPlayer}
