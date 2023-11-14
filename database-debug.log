@@ -1,13 +1,8 @@
-20:29:52.690 [NamespaceSystem-akka.actor.default-dispatcher-5] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started
-20:29:52.764 [main] INFO com.firebase.server.forge.App$ - Listening at 127.0.0.1:9000
-20:30:26.500 [NamespaceSystem-akka.actor.default-dispatcher-5] INFO com.firebase.core.namespace.NamespaceActor - hk-m-league-default-rtdb successfully activated FBKV (SurveyIdle(0)) wait: 77ms, init: 0ms
-12:58:29.077 [FirebaseWorkerPool-1-2] WARN com.firebase.core.persistence.backend.dummy.EmulatorMetadataPersistence - Multiple projectIds are not recommended in single project mode. Requested 
-namespace hk-m-league, but the emulator is configured for hk-m-league-default-rtdb. To 
-opt-out of single project mode add/set the singleProjectMode: false property in 
-the firebase.json emulators config. 
-12:58:29.117 [NamespaceSystem-akka.actor.default-dispatcher-376] INFO com.firebase.core.namespace.NamespaceActor - hk-m-league successfully activated FBKV (SurveyIdle(0)) wait: 10ms, init: 0ms
-13:29:56.165 [Thread-0] INFO com.firebase.server.forge.App$ - Attempting graceful shutdown.
-13:29:56.179 [NamespaceSystem-akka.actor.default-dispatcher-402] INFO com.firebase.core.namespace.Terminator$Terminator - 2 actors left to terminate: hk-m-league-default-rtdb, hk-m-league
-13:29:56.183 [NamespaceSystem-akka.actor.default-dispatcher-402] INFO com.firebase.core.namespace.NamespaceActor - stopped namespace actor for hk-m-league-default-rtdb
-13:29:56.183 [NamespaceSystem-akka.actor.default-dispatcher-438] INFO com.firebase.core.namespace.NamespaceActor - stopped namespace actor for hk-m-league
-13:29:56.185 [Thread-0] INFO com.firebase.server.forge.App$ - Graceful shutdown complete.
+14:00:36.268 [NamespaceSystem-akka.actor.default-dispatcher-4] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started
+14:00:36.370 [main] INFO com.firebase.server.forge.App$ - Listening at 127.0.0.1:9000
+14:00:38.591 [NamespaceSystem-akka.actor.default-dispatcher-6] INFO com.firebase.core.namespace.NamespaceActor - hkmjbs-streaming-default-rtdb successfully activated FBKV (SurveyIdle(0)) wait: 76ms, init: 0ms
+14:00:38.640 [NamespaceSystem-blocking-namespace-operation-dispatcher-7] INFO com.firebase.core.namespace.StateManager - Namespace hkmjbs-streaming-default-rtdb status Active to Active
+14:33:26.045 [Thread-0] INFO com.firebase.server.forge.App$ - Attempting graceful shutdown.
+14:33:26.063 [NamespaceSystem-akka.actor.default-dispatcher-14] INFO com.firebase.core.namespace.Terminator$Terminator - 1 actors left to terminate: hkmjbs-streaming-default-rtdb
+14:33:26.070 [NamespaceSystem-akka.actor.default-dispatcher-14] INFO com.firebase.core.namespace.NamespaceActor - stopped namespace actor for hkmjbs-streaming-default-rtdb
+14:33:26.073 [Thread-0] INFO com.firebase.server.forge.App$ - Graceful shutdown complete.

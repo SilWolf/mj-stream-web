@@ -33,14 +33,14 @@ import { isObjectEqual } from '@/utils/object.util'
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: 'AIzaSyDiuniOaBkqF63lLXun7yFpMTx7VryQOs4',
-  authDomain: 'hk-m-league.firebaseapp.com',
-  projectId: 'hk-m-league',
-  storageBucket: 'hk-m-league.appspot.com',
-  messagingSenderId: '624803752404',
-  appId: '1:624803752404:web:59c7b94c6655e5fb2a8e41',
+  apiKey: 'AIzaSyCa4jaiAOgH5H8B6hSo4DU49WnkpGPeavA',
+  authDomain: 'hkmjbs-streaming.firebaseapp.com',
   databaseURL:
-    'https://hk-m-league-default-rtdb.asia-southeast1.firebasedatabase.app',
+    'https://hkmjbs-streaming-default-rtdb.asia-southeast1.firebasedatabase.app',
+  projectId: 'hkmjbs-streaming',
+  storageBucket: 'hkmjbs-streaming.appspot.com',
+  messagingSenderId: '537815456325',
+  appId: '1:537815456325:web:c387796326f9db2726a12c',
 }
 
 // Initialize Firebase

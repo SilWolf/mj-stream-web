@@ -1,15 +1,15 @@
 import React, { useMemo } from 'react'
 import { MatchRound, Player, PlayerIndex, RoundResultTypeEnum } from '@/models'
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from 'recharts'
+// import {
+//   LineChart,
+//   Line,
+//   XAxis,
+//   YAxis,
+//   CartesianGrid,
+//   Tooltip,
+//   Legend,
+//   ResponsiveContainer,
+// } from 'recharts'
 
 import { generateMatchRoundText } from '@/helpers/mahjong.helper'
 
@@ -50,7 +50,7 @@ function MJMatchHistoryTable({ players, matchRounds }: Props) {
 
   return (
     <div className="bg-white">
-      <ResponsiveContainer width="100%" height={800}>
+      {/* <ResponsiveContainer width="100%" height={800}>
         <LineChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" tick={{ fill: 'black' }} />
@@ -86,7 +86,7 @@ function MJMatchHistoryTable({ players, matchRounds }: Props) {
             name={`[${players['3'].title}] ${players['3'].name}`}
           />
         </LineChart>
-      </ResponsiveContainer>
+      </ResponsiveContainer> */}
     </div>
   )
 }
