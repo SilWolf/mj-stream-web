@@ -45,9 +45,10 @@ export default function OBSInstructionDiv({ matchId }: Props) {
               </button>
             </div>
           </div>
-          <br />
-          其餘默認即可。
         </p>
+      </div>
+      <div>
+        <p>3. 在管理後台點擊右上角的 "開始OBS" </p>
         <p>4. 確定</p>
       </div>
       <div className="shrink-0">

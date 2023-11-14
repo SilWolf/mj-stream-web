@@ -15,7 +15,7 @@ function IndexPage() {
             alt="HKMSCA"
           />
         </div>
-        <div className="flex-1 bg-gray-100 bg-opacity-50 rounded p-8 min-h-0 overflow-scroll">
+        {/* <div className="flex-1 bg-gray-100 bg-opacity-50 rounded p-8 min-h-0 overflow-scroll">
           <ul>
             <li className="font-bold">2022-07-08</li>
             <ul className="list-disc pl-4 mb-4">
@@ -46,7 +46,7 @@ function IndexPage() {
               </li>
             </ul>
           </ul>
-        </div>
+        </div> */}
         <div className="shrink-0 space-y-4">
           <div>
             <a href="/create-match">
@@ -57,11 +57,11 @@ function IndexPage() {
           </div>
           <div>
             <div className="text-center">
-              {/* <a href="/players">
+              <a href="/obs/1" target="_blank">
                 <MJUIButton color="secondary" size="large">
-                  玩家列表
+                  直播頁面
                 </MJUIButton>
-              </a> */}
+              </a>
             </div>
           </div>
           <div className="flex gap-x-4">
@@ -73,7 +73,7 @@ function IndexPage() {
                 對局列表
               </button>
             </div> */}
-            <div className="flex-1">
+            {/* <div className="flex-1">
               <a href="/players">
                 <MJUIButton className="w-full" color="secondary">
                   玩家列表
@@ -93,7 +93,7 @@ function IndexPage() {
                   對局列表
                 </MJUIButton>
               </a>
-            </div>
+            </div> */}
             {/* <div className="flex-1">
               <button
                 type="button"

@@ -5,7 +5,6 @@ import { getLightColorOfColor } from '@/utils/string.util'
 import { Player, PlayerIndex } from '@/models'
 import MJRiichiBgDiv from '../MJRiichiBgDiv'
 import MJTileDiv from '../MJTileDiv'
-import MJUIButton from '../MJUI/MJUIButton'
 
 type Props = HTMLAttributes<HTMLDivElement> & {
   player: Player
@@ -89,9 +88,11 @@ export default function MJPlayerCardDiv({
         </div>
         <div className="flex-1 flex flex-col gap-y-[0.075em] items-start justify-end">
           <div
-            className="bg-black bg-opacity-60 rounded text-[0.5em] flex gap-x-[0.2em] p-[0.1em] pr-[0.2em] opacity-0 transition-opacity data-[has-waiting-tiles='1']:opacity-100 hide-if-changing"
+            className="bg-black bg-opacity-60 rounded text-[0.5em] flex gap-x-[0.2em] p-[0.1em] pr-[0.2em] opacity-0 transition-opacity data-[has-waiting-tiles='1']:opacity-100 hide-if-changing cursor-pointer"
             data-has-waiting-tiles={
-              waitingTiles && waitingTiles.length > 0 ? '1' : '0'
+              (waitingTiles && waitingTiles.length > 0) || !!onClickWaitingTiles
+                ? '1'
+                : '0'
             }
             onClick={onClickWaitingTiles}
             data-player-index={playerIndex}
@@ -111,27 +112,16 @@ export default function MJPlayerCardDiv({
               待<br />牌
             </div>
           </div>
-          {onClickWaitingTiles &&
-            (!waitingTiles || waitingTiles.length === 0) && (
-              <MJUIButton
-                className="text-xs"
-                size="small"
-                color="secondary"
-                onClick={onClickWaitingTiles}
-                data-player-index={playerIndex}
-              >
-                +待牌
-              </MJUIButton>
-            )}
+
           <div
-            className={`relative w-full text-left bg-white px-[0.05em] py-[0.1em] ${className}`}
+            className={`relative w-full text-left bg-white px-[0.1em] py-[0.1em] pt-[0.15em] ${className}`}
             {...props}
             style={{
               background: `linear-gradient(260deg, transparent, transparent 22px, ${lightenedColor} 23px, ${player.color} 100%`,
             }}
           >
-            <div className="flex flex-col justify-center h-[0.55em] gap-y-[0.125em]">
-              <div className="text-[0.19em] ml-[0.2em] leading-none text-white hide-if-changing">
+            <div className="flex flex-col justify-center h-[0.55em] gap-y-[0.1em]">
+              <div className="text-[0.225em] ml-[0.2em] leading-none text-white hide-if-changing">
                 {player.title || '　'}
               </div>
               <div className="text-[0.225em] ml-[0.2em] leading-none text-white hide-if-changing">
@@ -140,7 +130,7 @@ export default function MJPlayerCardDiv({
             </div>
 
             {storedScoreChanges && (
-              <div className="absolute bottom-[1.8em] pr-[0.125em] left-0 text-[0.77em] leading-none animate-[drop_3s_ease-in-out] font-numeric">
+              <div className="absolute bottom-[2.25em] pr-[0.125em] left-0 text-[0.70em] leading-none animate-[drop_3s_ease-in-out] font-numeric">
                 {storedScoreChanges.map((scoreChange) => (
                   <div>
                     <MJAmountSpan
@@ -154,7 +144,7 @@ export default function MJPlayerCardDiv({
               </div>
             )}
 
-            <div className="text-[0.77em] flex-1 leading-none text-white font-numeric">
+            <div className="text-[0.70em] flex-1 leading-none text-white font-numeric mt-[0.025em]">
               <MJAmountSpan animated value={storedScore} />
             </div>
           </div>
