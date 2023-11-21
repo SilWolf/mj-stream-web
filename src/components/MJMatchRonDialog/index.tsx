@@ -20,6 +20,7 @@ import MJMatchCounterSpan from '../MJMatchCounterSpan'
 import MJUISelect from '../MJUI/MJUISelect'
 import MJHanFuScoreSpan from '../MJHanFuScoreSpan'
 import MJAmountSpan from '../MJAmountSpan'
+import MJYakuKeyboardDiv from '../MJYakuKeyboardDiv'
 
 export type MJMatchRonProps = Pick<MJUIDialogV2Props, 'open' | 'onClose'> & {
   match: Match
@@ -297,14 +298,25 @@ export default function MJMatchRonDialog({
           </div>
         </div>
 
-        <MJHanFuScoreSelect
-          isEast={activePlayer?.position === PlayerPositionEnum.East}
-          isRon={targetPlayerIndex !== '-1'}
-          onChangeScore={handleChangeHanFuScoreSelect}
-        />
+        <div className="space-y-2">
+          <h5 className="font-bold">役種</h5>
+          <MJYakuKeyboardDiv
+            round={currentMatchRound.roundCount}
+            activePlayerIndex={initialActivePlayerIndex}
+          />
+        </div>
 
-        <div className="text-2xl font-bold text-center bg-gray-600 text-white py-2">
-          <MJHanFuScoreSpan score={compiledScore} />
+        <div className="space-y-2">
+          <h5 className="font-bold">番數／符數</h5>
+          <MJHanFuScoreSelect
+            isEast={activePlayer?.position === PlayerPositionEnum.East}
+            isRon={targetPlayerIndex !== '-1'}
+            onChangeScore={handleChangeHanFuScoreSelect}
+          />
+
+          <div className="text-2xl font-bold text-center bg-gray-600 text-white py-2">
+            <MJHanFuScoreSpan score={compiledScore} />
+          </div>
         </div>
 
         <div className="space-y-2">
