@@ -138,7 +138,7 @@ export const getScoreByHanAndFu = (
   }
 
   if (!expectedScore) {
-    throw new Error(`unrecongized han ${han} and fu ${fu}`)
+    return HAN_FU_MODE_SCORE_MAP['1h30f']
   }
 
   return expectedScore

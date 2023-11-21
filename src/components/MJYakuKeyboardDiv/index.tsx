@@ -2,6 +2,7 @@ import {
   ButtonHTMLAttributes,
   MouseEvent,
   useCallback,
+  useEffect,
   useMemo,
   useState,
 } from 'react'
@@ -10,6 +11,7 @@ import MJUISwitch from '../MJUI/MJUISwitch'
 import { PlayerIndex } from '@/models'
 import { getWindByRoundWithOffset } from '@/utils/string.util'
 import MJHanFuTextSpan from '../MJHanFuTextSpan'
+import { MJCompiledScore, getScoreByHanAndFu } from '@/helpers/mahjong.helper'
 
 type Yaku = {
   id: string
@@ -209,16 +211,6 @@ const YAKUS: Yaku[] = [
     han: 6,
     hanIfOpened: 5,
   },
-]
-
-const YAKUS_GROUPS_BY_HAN = {
-  1: YAKUS.filter(({ han, hidden }) => han === 1 && !hidden),
-  2: YAKUS.filter(({ han, hidden }) => han === 2 && !hidden),
-  3: YAKUS.filter(({ han, hidden }) => han === 3 && !hidden),
-  6: YAKUS.filter(({ han, hidden }) => han === 6 && !hidden),
-} as const
-
-const YAKUMANS: Yaku[] = [
   {
     id: 'kazoe-yakuman',
     label: '累計役滿',
@@ -299,6 +291,14 @@ const YAKUMANS: Yaku[] = [
   },
 ]
 
+const YAKUS_GROUPS_BY_HAN = {
+  1: YAKUS.filter(({ han, hidden }) => han === 1 && !hidden),
+  2: YAKUS.filter(({ han, hidden }) => han === 2 && !hidden),
+  3: YAKUS.filter(({ han, hidden }) => han === 3 && !hidden),
+  6: YAKUS.filter(({ han, hidden }) => han === 6 && !hidden),
+  13: YAKUS.filter(({ han, hidden }) => han === 13 && !hidden),
+} as const
+
 const MJYakuButton = ({
   yaku,
   active,
@@ -328,18 +328,26 @@ const MJYakuButton = ({
 export type MJYakuKeyboardDivProps = {
   round: number
   activePlayerIndex: PlayerIndex
+  isEast: boolean
+  isRon: boolean
+  onChangeScore?: (newScore: MJCompiledScore) => unknown
 }
 
 const MJYakuKeyboardDiv = ({
   round,
   activePlayerIndex,
+  isEast,
+  isRon,
+  onChangeScore,
 }: MJYakuKeyboardDivProps) => {
   const [yakuChecks, setYakuChecks] = useState<Record<string, boolean>>({})
   const [isOpened, toggleOpened] = useToggle(false)
+  const [isShowYakuman, toggleShowYakuman] = useToggle(false)
 
   const [dora, setDora] = useState('0')
   const [redDora, setRedDora] = useState('0')
   const [innerDora, setInnerDora] = useState('0')
+  const [fu, setFu] = useState('20')
 
   const handleClickYaku = useCallback((e: MouseEvent<HTMLButtonElement>) => {
     const yakuId = e.currentTarget.getAttribute('data-id')
@@ -358,9 +366,19 @@ const MJYakuKeyboardDiv = ({
     }))
   }, [])
 
+  const handleClickReset = useCallback(() => {
+    setYakuChecks({})
+    toggleOpened(false)
+    setDora('0')
+    setRedDora('0')
+    setInnerDora('0')
+    setFu('20')
+  }, [])
+
   const result = useMemo(() => {
-    let han = 0
-    let fu = undefined
+    let finalHan = 0
+    let finalFu = parseInt(fu)
+    let isFuOverrided = false
     const texts: string[] = []
 
     const myYakuChecks = { ...yakuChecks }
@@ -381,9 +399,17 @@ const MJYakuKeyboardDiv = ({
         continue
       }
 
-      han += hanPlus
+      if (
+        (isShowYakuman && hanPlus < 13) ||
+        (!isShowYakuman && hanPlus >= 13)
+      ) {
+        continue
+      }
+
+      finalHan += hanPlus
       if (typeof yaku.overrideFu !== 'undefined') {
-        fu = yaku.overrideFu
+        finalFu = yaku.overrideFu
+        isFuOverrided = true
       }
 
       if (yaku.id === 'yakuhai-match-kazehai') {
@@ -400,231 +426,350 @@ const MJYakuKeyboardDiv = ({
     }
 
     if (dora !== '0') {
-      han += parseInt(dora)
+      finalHan += parseInt(dora)
       texts.push(`寶牌${dora}`)
     }
 
     if (redDora !== '0') {
-      han += parseInt(redDora)
+      finalHan += parseInt(redDora)
       texts.push(`赤寶牌${redDora}`)
     }
 
     if (innerDora !== '0') {
-      han += parseInt(innerDora)
+      finalHan += parseInt(innerDora)
       texts.push(`裡寶牌${innerDora}`)
     }
 
-    return { texts, han, fu }
-  }, [isOpened, round, activePlayerIndex, yakuChecks, dora, redDora, innerDora])
+    return { texts, han: finalHan, fu: finalFu, isFuOverrided }
+  }, [
+    isOpened,
+    round,
+    activePlayerIndex,
+    yakuChecks,
+    dora,
+    redDora,
+    innerDora,
+    fu,
+    isShowYakuman,
+  ])
+
+  useEffect(() => {
+    if (!onChangeScore) {
+      return
+    }
+
+    const score = getScoreByHanAndFu(
+      Math.min(result.han, isShowYakuman ? 13 : 12),
+      result.fu,
+      { roundUp: true }
+    )
+    if (!score) {
+      return
+    }
+
+    if (isEast) {
+      if (isRon) {
+        onChangeScore({ win: score.er, target: score.er })
+      } else {
+        onChangeScore({ win: score.e * 3, all: score.e })
+      }
+    } else if (isRon) {
+      onChangeScore({ win: score.ner, target: score.ner })
+    } else {
+      onChangeScore({
+        win: score.e + 2 * score.ne,
+        east: score.e,
+        others: score.ne,
+      })
+    }
+  }, [result, onChangeScore, isEast, isRon])
 
   return (
     <div>
-      <div>
-        <MJUISwitch checked={isOpened} onChangeChecked={toggleOpened} />{' '}
-        有副露？
+      <div className="flex justify-between">
+        <div>
+          <MJUISwitch checked={isOpened} onChangeChecked={toggleOpened} />{' '}
+          有副露？
+        </div>
+        <div className="space-x-4">
+          <button
+            className="text-sm text-teal-700 underline"
+            onClick={toggleShowYakuman}
+          >
+            {isShowYakuman ? '一般役' : '役滿役'}
+          </button>
+          <button
+            className="text-sm text-teal-700 underline"
+            onClick={handleClickReset}
+          >
+            重置
+          </button>
+        </div>
       </div>
-      <table>
-        <tbody>
-          <tr>
-            <th className="bg-neutral-100 px-1 border-neutral-100 border-t border-b">
-              1番
-            </th>
-            <td
-              className="py-1 pl-2 border-neutral-100 border-t border-b"
-              colSpan={3}
-            >
-              <div className="flex flex-wrap gap-1">
-                {YAKUS_GROUPS_BY_HAN[1].map((yaku) => (
-                  <MJYakuButton
-                    key={yaku.id}
-                    yaku={yaku}
-                    isOpened={isOpened}
-                    active={yakuChecks[yaku.id]}
-                    disabled={isOpened && yaku.hanIfOpened === 0}
-                    onClick={handleClickYaku}
-                  >
-                    {yaku.label}
-                  </MJYakuButton>
-                ))}
-              </div>
-            </td>
-          </tr>
 
-          <tr>
-            <th className="bg-neutral-100 px-1 border-neutral-100 border-t border-b">
-              2番
-            </th>
-            <td
-              className="py-1 pl-2 border-neutral-100 border-t border-b"
-              colSpan={3}
-            >
-              <div className="flex flex-wrap gap-1">
-                {YAKUS_GROUPS_BY_HAN[2].map((yaku) => (
-                  <MJYakuButton
-                    key={yaku.id}
-                    yaku={yaku}
-                    isOpened={isOpened}
-                    active={yakuChecks[yaku.id]}
-                    disabled={isOpened && yaku.hanIfOpened === 0}
-                    onClick={handleClickYaku}
-                  >
-                    {yaku.label}
-                  </MJYakuButton>
-                ))}
-              </div>
-            </td>
-          </tr>
+      {!isShowYakuman && (
+        <div>
+          <table>
+            <tbody>
+              <tr>
+                <th className="bg-neutral-100 px-1 border-neutral-100 border-t border-b">
+                  1番
+                </th>
+                <td
+                  className="py-1 pl-2 border-neutral-100 border-t border-b"
+                  colSpan={3}
+                >
+                  <div className="flex flex-wrap gap-1">
+                    {YAKUS_GROUPS_BY_HAN[1].map((yaku) => (
+                      <MJYakuButton
+                        key={yaku.id}
+                        yaku={yaku}
+                        isOpened={isOpened}
+                        active={yakuChecks[yaku.id]}
+                        disabled={isOpened && yaku.hanIfOpened === 0}
+                        onClick={handleClickYaku}
+                      >
+                        {yaku.label}
+                      </MJYakuButton>
+                    ))}
+                  </div>
+                </td>
+              </tr>
 
-          <tr>
-            <th className="bg-neutral-100 px-1 border-neutral-100 border-t border-b">
-              3番
-            </th>
-            <td className="py-1 pl-2 border-neutral-100 border-t border-b w-1/2">
-              <div className="flex flex-wrap gap-1">
-                {YAKUS_GROUPS_BY_HAN[3].map((yaku) => (
-                  <MJYakuButton
-                    key={yaku.id}
-                    yaku={yaku}
-                    isOpened={isOpened}
-                    active={yakuChecks[yaku.id]}
-                    disabled={isOpened && yaku.hanIfOpened === 0}
-                    onClick={handleClickYaku}
-                  >
-                    {yaku.label}
-                  </MJYakuButton>
-                ))}
-              </div>
-            </td>
-            <th className="bg-neutral-100 px-1 border-neutral-100 border-t border-b">
-              6番
-            </th>
-            <td className="py-1 pl-2 border-neutral-100 border-t border-b w-1/2">
-              <div className="flex flex-wrap gap-1">
-                {YAKUS_GROUPS_BY_HAN[6].map((yaku) => (
-                  <MJYakuButton
-                    key={yaku.id}
-                    yaku={yaku}
-                    isOpened={isOpened}
-                    active={yakuChecks[yaku.id]}
-                    disabled={isOpened && yaku.hanIfOpened === 0}
-                    onClick={handleClickYaku}
-                  >
-                    {yaku.label}
-                  </MJYakuButton>
-                ))}
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+              <tr>
+                <th className="bg-neutral-100 px-1 border-neutral-100 border-t border-b">
+                  2番
+                </th>
+                <td
+                  className="py-1 pl-2 border-neutral-100 border-t border-b"
+                  colSpan={3}
+                >
+                  <div className="flex flex-wrap gap-1">
+                    {YAKUS_GROUPS_BY_HAN[2].map((yaku) => (
+                      <MJYakuButton
+                        key={yaku.id}
+                        yaku={yaku}
+                        isOpened={isOpened}
+                        active={yakuChecks[yaku.id]}
+                        disabled={isOpened && yaku.hanIfOpened === 0}
+                        onClick={handleClickYaku}
+                      >
+                        {yaku.label}
+                      </MJYakuButton>
+                    ))}
+                  </div>
+                </td>
+              </tr>
 
-      <table className="w-full mt-2">
-        <tbody>
-          <th className="w-16 bg-neutral-100 px-1 border-neutral-100 border-t border-b">
-            寶牌
-          </th>
-          <td className="w-auto pr-4">
-            <select
-              className="w-full py-2 border border-neutral-100"
-              value={dora}
-              onChange={(e) => setDora(e.currentTarget.value)}
-            >
-              <option>0</option>
-              <option>1</option>
-              <option>2</option>
-              <option>3</option>
-              <option>4</option>
-              <option>5</option>
-              <option>6</option>
-              <option>7</option>
-              <option>8</option>
-              <option>9</option>
-              <option>10</option>
-              <option>11</option>
-              <option>12</option>
-              <option>13</option>
-              <option>14</option>
-              <option>15</option>
-              <option>16</option>
-              <option>17</option>
-              <option>18</option>
-            </select>
-          </td>
-          <th className="w-16 bg-neutral-100 px-1 border-neutral-100 border-t border-b">
-            赤寶牌
-          </th>
-          <td className="w-auto pr-4">
-            <select
-              className="w-full py-2 border border-neutral-100"
-              value={redDora}
-              onChange={(e) => setRedDora(e.currentTarget.value)}
-            >
-              <option>0</option>
-              <option>1</option>
-              <option>2</option>
-              <option>3</option>
-              <option>4</option>
-              <option>5</option>
-              <option>6</option>
-              <option>7</option>
-              <option>8</option>
-              <option>9</option>
-              <option>10</option>
-              <option>11</option>
-              <option>12</option>
-              <option>13</option>
-              <option>14</option>
-              <option>15</option>
-              <option>16</option>
-              <option>17</option>
-              <option>18</option>
-            </select>
-          </td>
-          <th className="w-16 bg-neutral-100 px-1 border-neutral-100 border-t border-b">
-            裡寶牌
-          </th>
-          <td className="w-auto pr-4">
-            <select
-              className="w-full py-2 border border-neutral-100"
-              value={innerDora}
-              onChange={(e) => setInnerDora(e.currentTarget.value)}
-            >
-              <option>0</option>
-              <option>1</option>
-              <option>2</option>
-              <option>3</option>
-              <option>4</option>
-              <option>5</option>
-              <option>6</option>
-              <option>7</option>
-              <option>8</option>
-              <option>9</option>
-              <option>10</option>
-              <option>11</option>
-              <option>12</option>
-              <option>13</option>
-              <option>14</option>
-              <option>15</option>
-              <option>16</option>
-              <option>17</option>
-              <option>18</option>
-            </select>
-          </td>
-        </tbody>
-      </table>
+              <tr>
+                <th className="bg-neutral-100 px-1 border-neutral-100 border-t border-b">
+                  3番
+                </th>
+                <td className="py-1 pl-2 border-neutral-100 border-t border-b w-1/2">
+                  <div className="flex flex-wrap gap-1">
+                    {YAKUS_GROUPS_BY_HAN[3].map((yaku) => (
+                      <MJYakuButton
+                        key={yaku.id}
+                        yaku={yaku}
+                        isOpened={isOpened}
+                        active={yakuChecks[yaku.id]}
+                        disabled={isOpened && yaku.hanIfOpened === 0}
+                        onClick={handleClickYaku}
+                      >
+                        {yaku.label}
+                      </MJYakuButton>
+                    ))}
+                  </div>
+                </td>
+                <th className="bg-neutral-100 px-1 border-neutral-100 border-t border-b">
+                  6番
+                </th>
+                <td className="py-1 pl-2 border-neutral-100 border-t border-b w-1/2">
+                  <div className="flex flex-wrap gap-1">
+                    {YAKUS_GROUPS_BY_HAN[6].map((yaku) => (
+                      <MJYakuButton
+                        key={yaku.id}
+                        yaku={yaku}
+                        isOpened={isOpened}
+                        active={yakuChecks[yaku.id]}
+                        disabled={isOpened && yaku.hanIfOpened === 0}
+                        onClick={handleClickYaku}
+                      >
+                        {yaku.label}
+                      </MJYakuButton>
+                    ))}
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <table className="w-full mt-2">
+            <tbody>
+              <th className="w-16 bg-neutral-200 px-1 border-neutral-100 border-t border-b">
+                寶牌
+              </th>
+              <td className="w-auto pr-4">
+                <select
+                  className="w-full py-2 border border-neutral-100"
+                  value={dora}
+                  onChange={(e) => setDora(e.currentTarget.value)}
+                >
+                  <option>0</option>
+                  <option>1</option>
+                  <option>2</option>
+                  <option>3</option>
+                  <option>4</option>
+                  <option>5</option>
+                  <option>6</option>
+                  <option>7</option>
+                  <option>8</option>
+                  <option>9</option>
+                  <option>10</option>
+                  <option>11</option>
+                  <option>12</option>
+                  <option>13</option>
+                  <option>14</option>
+                  <option>15</option>
+                  <option>16</option>
+                  <option>17</option>
+                  <option>18</option>
+                </select>
+              </td>
+              <th className="w-16 bg-neutral-200 px-1 border-neutral-100 border-t border-b">
+                赤寶牌
+              </th>
+              <td className="w-auto pr-4">
+                <select
+                  className="w-full py-2 border border-neutral-100"
+                  value={redDora}
+                  onChange={(e) => setRedDora(e.currentTarget.value)}
+                >
+                  <option>0</option>
+                  <option>1</option>
+                  <option>2</option>
+                  <option>3</option>
+                  <option>4</option>
+                  <option>5</option>
+                  <option>6</option>
+                  <option>7</option>
+                  <option>8</option>
+                  <option>9</option>
+                  <option>10</option>
+                  <option>11</option>
+                  <option>12</option>
+                  <option>13</option>
+                  <option>14</option>
+                  <option>15</option>
+                  <option>16</option>
+                  <option>17</option>
+                  <option>18</option>
+                </select>
+              </td>
+              <th className="w-16 bg-neutral-200 px-1 border-neutral-100 border-t border-b">
+                裡寶牌
+              </th>
+              <td className="w-auto pr-4">
+                <select
+                  className="w-full py-2 border border-neutral-100"
+                  value={innerDora}
+                  onChange={(e) => setInnerDora(e.currentTarget.value)}
+                >
+                  <option>0</option>
+                  <option>1</option>
+                  <option>2</option>
+                  <option>3</option>
+                  <option>4</option>
+                  <option>5</option>
+                  <option>6</option>
+                  <option>7</option>
+                  <option>8</option>
+                  <option>9</option>
+                  <option>10</option>
+                  <option>11</option>
+                  <option>12</option>
+                  <option>13</option>
+                  <option>14</option>
+                  <option>15</option>
+                  <option>16</option>
+                  <option>17</option>
+                  <option>18</option>
+                </select>
+              </td>
+              <th className="w-16 bg-neutral-200 px-1 border-neutral-100 border-t border-b">
+                符數
+              </th>
+              <td className="w-auto pr-4">
+                <select
+                  className="w-full py-2 border border-neutral-100"
+                  value={result.isFuOverrided ? result.fu : fu}
+                  onChange={(e) => setFu(e.currentTarget.value)}
+                  disabled={result.isFuOverrided}
+                >
+                  <option value="20">20符</option>
+                  <option value="25">25符</option>
+                  <option value="30">30符</option>
+                  <option value="40">40符</option>
+                  <option value="50">50符</option>
+                  <option value="60">60符</option>
+                  <option value="70">70符</option>
+                  <option value="80">80符</option>
+                  <option value="90">90符</option>
+                  <option value="100">100符</option>
+                  <option value="110">110符</option>
+                </select>
+              </td>
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {isShowYakuman && (
+        <div>
+          <table>
+            <tbody>
+              <tr>
+                <th className="bg-neutral-100 px-1 border-neutral-100 border-t border-b">
+                  役滿
+                </th>
+                <td
+                  className="py-1 pl-2 border-neutral-100 border-t border-b"
+                  colSpan={3}
+                >
+                  <div className="flex flex-wrap gap-1">
+                    {YAKUS_GROUPS_BY_HAN[13].map((yaku) => (
+                      <MJYakuButton
+                        key={yaku.id}
+                        yaku={yaku}
+                        isOpened={isOpened}
+                        active={yakuChecks[yaku.id]}
+                        disabled={isOpened && yaku.hanIfOpened === 0}
+                        onClick={handleClickYaku}
+                      >
+                        {yaku.label}
+                      </MJYakuButton>
+                    ))}
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      )}
 
       <table className="w-full mt-2 bg-teal-100">
         <tbody>
-          <th className="w-16 bg-teal-400 py-2 px-1 border-teal-100 border-t border-b">
-            結算
-          </th>
+          <th className="w-16 bg-teal-400 py-2 px-1">結算</th>
           <td className="flex flex-wrap gap-2 p-2">
             {result.texts.map((text) => (
               <span key={text}>{text}</span>
             ))}
           </td>
           <td className="w-32 bg-teal-400 text-center">
-            <MJHanFuTextSpan han={result.han} fu={result.fu} />
+            <MJHanFuTextSpan
+              han={Math.min(isShowYakuman ? 13 : 12, result.han)}
+              fu={result.fu}
+            />
             <MJHanFuTextSpan
               className="text-xs text-neutral-600"
               han={result.han}

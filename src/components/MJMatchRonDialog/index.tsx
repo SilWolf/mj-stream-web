@@ -300,35 +300,38 @@ export default function MJMatchRonDialog({
 
         <div className="space-y-2">
           <h5 className="font-bold">役種</h5>
-          <MJYakuKeyboardDiv
-            round={currentMatchRound.roundCount}
-            activePlayerIndex={initialActivePlayerIndex}
-          />
-        </div>
+          <div>
+            <MJYakuKeyboardDiv
+              round={currentMatchRound.roundCount}
+              activePlayerIndex={initialActivePlayerIndex}
+              isEast={activePlayer?.position === PlayerPositionEnum.East}
+              isRon={targetPlayerIndex !== '-1'}
+              onChangeScore={handleChangeHanFuScoreSelect}
+            />
 
-        <div className="space-y-2">
-          <h5 className="font-bold">番數／符數</h5>
-          <MJHanFuScoreSelect
-            isEast={activePlayer?.position === PlayerPositionEnum.East}
-            isRon={targetPlayerIndex !== '-1'}
-            onChangeScore={handleChangeHanFuScoreSelect}
-          />
-
-          <div className="text-2xl font-bold text-center bg-gray-600 text-white py-2">
-            <MJHanFuScoreSpan score={compiledScore} />
+            <div className="text-3xl font-bold text-center bg-teal-400 py-2">
+              <MJHanFuScoreSpan score={compiledScore} />
+            </div>
           </div>
         </div>
 
         <div className="space-y-2">
           <h5 className="font-bold">分數變動</h5>
 
-          <table className="text-sm w-full">
+          <table className="w-full">
             <tbody>
               {(Object.keys(match.players) as unknown as PlayerIndex[]).map(
                 (index) => (
                   <tr key={index}>
-                    <th>{match.players[index].name}</th>
-                    <td>{previewPlayerResults[index].beforeScore}</td>
+                    <th
+                      className="text-white py-1"
+                      style={{ background: match.players[index].color }}
+                    >
+                      {match.players[index].name}
+                    </th>
+                    <td className="px-2">
+                      {previewPlayerResults[index].beforeScore}
+                    </td>
                     <td>
                       <MJAmountSpan
                         signed
