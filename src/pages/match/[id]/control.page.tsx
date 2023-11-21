@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import React, { MouseEvent, useCallback, useState } from 'react'
+import React, { MouseEvent, useCallback, useMemo, useState } from 'react'
 import useMatch from '@/hooks/useMatch'
 import {
   MatchRound,
@@ -30,6 +30,7 @@ import MJUIDialogV2 from '@/components/MJUI/MJUIDialogV2'
 import MJUIButton from '@/components/MJUI/MJUIButton'
 import MJMatchHotfixDialog from '@/components/MJMatchHotifxDialog'
 import { useFirebaseDatabaseByKey } from '@/providers/firebaseDatabase.provider'
+import MJHanFuTextSpan from '@/components/MJHanFuTextSpan'
 
 type Props = {
   params: { matchId: string }
@@ -48,7 +49,20 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
     pushMatchRound,
     setCurrentRoundDoras,
     setMatchName,
+    setMatchActiveResultDetail,
+    setMatchRoundHasBroadcastedToTrue,
   } = useMatch(matchId)
+
+  const matchRoundsWithDetail = useMemo(
+    () =>
+      Object.entries(matchRounds ?? {})
+        .filter(([_, matchRound]) => !!matchRound.resultDetail)
+        .map(([matchRoundId, matchRound]) => ({
+          id: matchRoundId,
+          ...matchRound,
+        })) ?? [],
+    [matchRounds]
+  )
 
   const [clickedDoraIndex, setClickedDoraIndex] = useState<number | undefined>(
     undefined
@@ -465,6 +479,36 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
     [match, setMatchName]
   )
 
+  const handleClickBroadcastRonDetail = useCallback(
+    (e: React.MouseEvent) => {
+      if (!matchRounds) {
+        return
+      }
+
+      const matchRoundId = e.currentTarget.getAttribute('data-match-round-id')
+      if (!matchRoundId) {
+        return
+      }
+
+      const newResultDetail = matchRounds[matchRoundId].resultDetail
+      if (!newResultDetail) {
+        return
+      }
+
+      setMatchActiveResultDetail(newResultDetail)
+      setMatchRoundHasBroadcastedToTrue(matchRoundId)
+
+      setTimeout(() => {
+        setMatchActiveResultDetail(null)
+      }, 20000)
+    },
+    [matchRounds]
+  )
+
+  const handleClickClearActiveResult = useCallback(() => {
+    setMatchActiveResultDetail(null)
+  }, [])
+
   if (!match || !matchCurrentRound) {
     return <div>對局讀取失敗。</div>
   }
@@ -572,6 +616,17 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         </div>
 
         <div className="text-right space-x-4">
+          {match.activeResultDetail && (
+            <MJUIButton
+              color="secondary"
+              type="button"
+              onClick={handleClickClearActiveResult}
+            >
+              結束播放中的和牌詳情
+              <br />
+              <span className="text-xs">(或最多20秒後自動結束)</span>
+            </MJUIButton>
+          )}
           {matchCurrentRound.nextRoundType !== NextRoundTypeEnum.Unknown &&
             matchCurrentRound.nextRoundType !== NextRoundTypeEnum.End && (
               <MJUIButton
@@ -675,6 +730,71 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
             </div>
           ))}
         </div>
+
+        <h4 className="text-3xl">和牌記錄</h4>
+
+        <table className="w-full">
+          <thead>
+            <tr>
+              <th>局數</th>
+              <th>玩家</th>
+              <th>分數＆細節</th>
+              <th className="text-right px-2">操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            {matchRoundsWithDetail.map((matchRound) => (
+              <tr className="odd:bg-neutral-200" key={matchRound.id}>
+                <td className="text-center py-1">
+                  <MJMatchCounterSpan
+                    roundCount={matchRound.roundCount}
+                    extendedRoundCount={matchRound.extendedRoundCount}
+                  />
+                </td>
+                <td
+                  className="text-center py-1"
+                  style={{
+                    background:
+                      match.players[matchRound.resultDetail!.winnerPlayerIndex]
+                        .color,
+                  }}
+                >
+                  {
+                    match.players[matchRound.resultDetail!.winnerPlayerIndex]
+                      .name
+                  }
+                </td>
+                <td className="text-center py-1">
+                  <p>{matchRound.resultDetail!.yakusInText.join(' ')}</p>
+                  <p>
+                    <MJHanFuTextSpan
+                      han={Math.min(
+                        matchRound.resultDetail!.isYakuman ? 13 : 12,
+                        matchRound.resultDetail!.han
+                      )}
+                      fu={matchRound.resultDetail!.fu}
+                    />
+                  </p>
+                </td>
+                <td className="text-right py-1 px-2">
+                  <MJUIButton
+                    color={matchRound.hasBroadcasted ? 'secondary' : 'success'}
+                    type="button"
+                    className={
+                      matchRound.hasBroadcasted ? 'opacity-50' : 'animate-pulse'
+                    }
+                    onClick={handleClickBroadcastRonDetail}
+                    data-match-round-id={matchRound.id}
+                  >
+                    {matchRound.hasBroadcasted ? '已播放過' : '播放和牌詳情'}
+                  </MJUIButton>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <h4 className="text-3xl">分數</h4>
 
         <MJMatchHistoryTable
           players={match.players}

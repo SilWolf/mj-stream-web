@@ -27,6 +27,10 @@ module.exports = {
           '0%': { opacity: 0.0, top: '-15px', position: 'relative' },
           '100%': { opacity: 1.0, top: '0px', position: 'relative' },
         },
+        fadeInFromBottom: {
+          '0%': { opacity: 0.0, bottom: '-32px' },
+          '100%': { opacity: 1.0, bottom: '0px' },
+        },
         riichi: {
           '0%': {
             transform: 'translateX(-25%) translateY(-50%) rotate(-25deg)',

@@ -8,6 +8,7 @@ type Props = {
   value: number
   animated?: boolean
   hideZero?: boolean
+  title?: string
 }
 
 function MJAmountSpan({
@@ -18,6 +19,7 @@ function MJAmountSpan({
   value,
   animated,
   hideZero,
+  title,
 }: Props) {
   const [storedValue, setStoredValue] = useState<number>(value)
   const ref = useRef<HTMLSpanElement>(null)
@@ -90,7 +92,7 @@ function MJAmountSpan({
     }
   }, [storedValueDisplay])
 
-  return <span ref={ref} className={myClassName} />
+  return <span title={title} ref={ref} className={myClassName} />
 }
 
 export default MJAmountSpan

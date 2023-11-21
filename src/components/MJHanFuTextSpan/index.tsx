@@ -4,16 +4,17 @@ type Props = React.HTMLAttributes<HTMLDivElement> & {
   han: number
   fu: number | undefined
   raw?: boolean
+  twoRows?: boolean
 }
 
 export default function MJHanFuTextSpan({ han, fu, raw, ...props }: Props) {
   const hanFuDisplay = useMemo(() => {
     if (raw) {
       if (typeof fu !== 'undefined' && han <= 4) {
-        return `${fu}符${han}番`
+        return `${han}飜${fu}符`
       }
 
-      return `${han}番`
+      return `${han}飜`
     }
 
     if (han >= 13) {
@@ -28,11 +29,13 @@ export default function MJHanFuTextSpan({ han, fu, raw, ...props }: Props) {
       return '滿貫'
     } else if (han >= 4 && typeof fu !== 'undefined' && fu >= 40) {
       return '滿貫'
+    } else if (han >= 3 && typeof fu !== 'undefined' && fu >= 30) {
+      return '滿貫'
     } else if (typeof fu !== 'undefined') {
-      return `${fu}符${han}番`
+      return `${han}飜${fu}符`
     }
 
-    return `${han}番`
+    return `${han}飜`
   }, [han, fu, raw])
 
   return <div {...props}>{hanFuDisplay}</div>

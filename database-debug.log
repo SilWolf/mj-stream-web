@@ -2,3 +2,8 @@
 11:10:40.483 [main] INFO com.firebase.server.forge.App$ - Listening at 127.0.0.1:9000
 11:10:43.826 [NamespaceSystem-akka.actor.default-dispatcher-4] INFO com.firebase.core.namespace.NamespaceActor - hkmjbs-streaming-default-rtdb successfully activated FBKV (SurveyIdle(0)) wait: 79ms, init: 0ms
 11:10:43.869 [NamespaceSystem-blocking-namespace-operation-dispatcher-6] INFO com.firebase.core.namespace.StateManager - Namespace hkmjbs-streaming-default-rtdb status Active to Active
+03:05:08.918 [FirebaseWorkerPool-1-2] WARN com.firebase.core.persistence.backend.dummy.EmulatorMetadataPersistence - Multiple projectIds are not recommended in single project mode. Requested 
+namespace hkmjbs-streaming, but the emulator is configured for hkmjbs-streaming-default-rtdb. To 
+opt-out of single project mode add/set the singleProjectMode: false property in 
+the firebase.json emulators config. 
+03:05:08.945 [NamespaceSystem-akka.actor.default-dispatcher-99] INFO com.firebase.core.namespace.NamespaceActor - hkmjbs-streaming successfully activated FBKV (SurveyIdle(0)) wait: 3ms, init: 0ms

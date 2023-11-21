@@ -13,9 +13,9 @@ import {
   getIsPlayerEast,
   getPlayerPosition,
   getRoundResultTypeByCompiledScore,
+  getScoreInFullDetail,
   MJCompiledScore,
 } from '@/helpers/mahjong.helper'
-import MJHanFuScoreSelect from '@/components/MJHanFuScoreSelect'
 import MJMatchCounterSpan from '../MJMatchCounterSpan'
 import MJUISelect from '../MJUI/MJUISelect'
 import MJHanFuScoreSpan from '../MJHanFuScoreSpan'
@@ -38,6 +38,12 @@ export default function MJMatchRonDialog({
   onSubmit,
   ...dialogProps
 }: MJMatchRonProps) {
+  const [yakuResult, setYakuResult] = useState<{
+    han: number
+    fu: number
+    yakusInText: string[]
+    isYakuman: boolean
+  }>()
   const [compiledScore, setCompiledScore] = useState<MJCompiledScore>({
     win: 1000,
     target: 1000,
@@ -70,9 +76,21 @@ export default function MJMatchRonDialog({
     string | undefined
   >(initialTargetPlayerIndex)
 
-  const handleChangeHanFuScoreSelect = useCallback(
-    (newScore: MJCompiledScore) => {
-      const newCompiledScore = { ...newScore }
+  const handleChangeYaku = useCallback(
+    (result: {
+      han: number
+      fu: number
+      yakusInText: string[]
+      isYakuman: boolean
+    }) => {
+      const newCompiledScore = getScoreInFullDetail(
+        Math.min(result.han, result.isYakuman ? 13 : 12),
+        result.fu,
+        activePlayer?.position === PlayerPositionEnum.East,
+        targetPlayerIndex !== '-1',
+        { roundUp: true }
+      )
+
       if (currentMatchRound.extendedRoundCount > 0) {
         newCompiledScore.win += currentMatchRound.extendedRoundCount * 300
 
@@ -94,9 +112,15 @@ export default function MJMatchRonDialog({
         newCompiledScore.win += currentMatchRound.cumulatedThousands * 1000
       }
 
+      setYakuResult(result)
       setCompiledScore(newCompiledScore)
     },
-    [currentMatchRound.cumulatedThousands, currentMatchRound.extendedRoundCount]
+    [
+      currentMatchRound.cumulatedThousands,
+      currentMatchRound.extendedRoundCount,
+      activePlayer?.position,
+      targetPlayerIndex,
+    ]
   )
 
   const title = useMemo(() => {
@@ -231,6 +255,9 @@ export default function MJMatchRonDialog({
       ].scoreChanges.unshift(activePlayerBonus)
     }
 
+    newPreviewPlayerResults[activePlayerIndex as PlayerIndex].detail =
+      yakuResult
+
     return newPreviewPlayerResults
   }, [
     activePlayerIndex,
@@ -241,10 +268,11 @@ export default function MJMatchRonDialog({
     compiledScore.win,
     currentMatchRound,
     targetPlayerIndex,
+    yakuResult,
   ])
 
   const handleSubmit = useCallback(() => {
-    if (!onSubmit) {
+    if (!onSubmit || !yakuResult) {
       return
     }
 
@@ -253,10 +281,20 @@ export default function MJMatchRonDialog({
       resultType: getRoundResultTypeByCompiledScore(compiledScore),
       playerResults: previewPlayerResults,
       cumulatedThousands: 0,
+      resultDetail: {
+        winnerPlayerIndex: activePlayerIndex as PlayerIndex,
+        ...yakuResult,
+      },
     }
 
     onSubmit(updatedMatchRound)
-  }, [compiledScore, currentMatchRound, onSubmit, previewPlayerResults])
+  }, [
+    compiledScore,
+    currentMatchRound,
+    onSubmit,
+    previewPlayerResults,
+    yakuResult,
+  ])
 
   useEffect(() => {
     if (dialogProps.open) {
@@ -306,7 +344,7 @@ export default function MJMatchRonDialog({
               activePlayerIndex={initialActivePlayerIndex}
               isEast={activePlayer?.position === PlayerPositionEnum.East}
               isRon={targetPlayerIndex !== '-1'}
-              onChangeScore={handleChangeHanFuScoreSelect}
+              onChange={handleChangeYaku}
             />
 
             <div className="text-3xl font-bold text-center bg-teal-400 py-2">
@@ -354,7 +392,11 @@ export default function MJMatchRonDialog({
         </div>
 
         <div className="space-y-2">
-          <MJUIButton onClick={handleSubmit} className="w-full">
+          <MJUIButton
+            onClick={handleSubmit}
+            className="w-full"
+            disabled={!yakuResult || yakuResult.yakusInText.length <= 0}
+          >
             提交並播出分數變動動畫
           </MJUIButton>
         </div>

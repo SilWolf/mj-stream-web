@@ -11,7 +11,6 @@ import MJUISwitch from '../MJUI/MJUISwitch'
 import { PlayerIndex } from '@/models'
 import { getWindByRoundWithOffset } from '@/utils/string.util'
 import MJHanFuTextSpan from '../MJHanFuTextSpan'
-import { MJCompiledScore, getScoreByHanAndFu } from '@/helpers/mahjong.helper'
 
 type Yaku = {
   id: string
@@ -330,7 +329,12 @@ export type MJYakuKeyboardDivProps = {
   activePlayerIndex: PlayerIndex
   isEast: boolean
   isRon: boolean
-  onChangeScore?: (newScore: MJCompiledScore) => unknown
+  onChange?: (result: {
+    han: number
+    fu: number
+    yakusInText: string[]
+    isYakuman: boolean
+  }) => unknown
 }
 
 const MJYakuKeyboardDiv = ({
@@ -338,7 +342,7 @@ const MJYakuKeyboardDiv = ({
   activePlayerIndex,
   isEast,
   isRon,
-  onChangeScore,
+  onChange,
 }: MJYakuKeyboardDivProps) => {
   const [yakuChecks, setYakuChecks] = useState<Record<string, boolean>>({})
   const [isOpened, toggleOpened] = useToggle(false)
@@ -347,7 +351,7 @@ const MJYakuKeyboardDiv = ({
   const [dora, setDora] = useState('0')
   const [redDora, setRedDora] = useState('0')
   const [innerDora, setInnerDora] = useState('0')
-  const [fu, setFu] = useState('20')
+  const [fu, setFu] = useState('30')
 
   const handleClickYaku = useCallback((e: MouseEvent<HTMLButtonElement>) => {
     const yakuId = e.currentTarget.getAttribute('data-id')
@@ -372,14 +376,14 @@ const MJYakuKeyboardDiv = ({
     setDora('0')
     setRedDora('0')
     setInnerDora('0')
-    setFu('20')
+    setFu('30')
   }, [])
 
   const result = useMemo(() => {
     let finalHan = 0
     let finalFu = parseInt(fu)
     let isFuOverrided = false
-    const texts: string[] = []
+    const yakusInText: string[] = []
 
     const myYakuChecks = { ...yakuChecks }
 
@@ -413,34 +417,44 @@ const MJYakuKeyboardDiv = ({
       }
 
       if (yaku.id === 'yakuhai-match-kazehai') {
-        texts.push(getWindByRoundWithOffset(Math.floor((round - 1) / 4) + 1, 0))
+        yakusInText.push(
+          getWindByRoundWithOffset(Math.floor((round - 1) / 4) + 1, 0)
+        )
       } else if (yaku.id === 'yakuhai-self-kazehai') {
-        texts.push(getWindByRoundWithOffset(round, parseInt(activePlayerIndex)))
+        yakusInText.push(
+          getWindByRoundWithOffset(round, parseInt(activePlayerIndex))
+        )
       } else if (yaku.id === 'yakuhai-double-kazehai') {
-        texts.push(
+        yakusInText.push(
           `雙${getWindByRoundWithOffset(round, parseInt(activePlayerIndex))}`
         )
       } else {
-        texts.push(yaku.label)
+        yakusInText.push(yaku.label)
       }
     }
 
     if (dora !== '0') {
       finalHan += parseInt(dora)
-      texts.push(`寶牌${dora}`)
+      yakusInText.push(`寶牌${dora}`)
     }
 
     if (redDora !== '0') {
       finalHan += parseInt(redDora)
-      texts.push(`赤寶牌${redDora}`)
+      yakusInText.push(`赤寶牌${redDora}`)
     }
 
     if (innerDora !== '0') {
       finalHan += parseInt(innerDora)
-      texts.push(`裡寶牌${innerDora}`)
+      yakusInText.push(`裡寶牌${innerDora}`)
     }
 
-    return { texts, han: finalHan, fu: finalFu, isFuOverrided }
+    return {
+      yakusInText,
+      han: finalHan,
+      fu: finalFu,
+      isFuOverrided,
+      isYakuman: isShowYakuman,
+    }
   }, [
     isOpened,
     round,
@@ -454,35 +468,12 @@ const MJYakuKeyboardDiv = ({
   ])
 
   useEffect(() => {
-    if (!onChangeScore) {
+    if (!onChange) {
       return
     }
 
-    const score = getScoreByHanAndFu(
-      Math.min(result.han, isShowYakuman ? 13 : 12),
-      result.fu,
-      { roundUp: true }
-    )
-    if (!score) {
-      return
-    }
-
-    if (isEast) {
-      if (isRon) {
-        onChangeScore({ win: score.er, target: score.er })
-      } else {
-        onChangeScore({ win: score.e * 3, all: score.e })
-      }
-    } else if (isRon) {
-      onChangeScore({ win: score.ner, target: score.ner })
-    } else {
-      onChangeScore({
-        win: score.e + 2 * score.ne,
-        east: score.e,
-        others: score.ne,
-      })
-    }
-  }, [result, onChangeScore, isEast, isRon])
+    onChange(result)
+  }, [result, onChange, isEast, isRon])
 
   return (
     <div>
@@ -761,7 +752,7 @@ const MJYakuKeyboardDiv = ({
         <tbody>
           <th className="w-16 bg-teal-400 py-2 px-1">結算</th>
           <td className="flex flex-wrap gap-2 p-2">
-            {result.texts.map((text) => (
+            {result.yakusInText.map((text) => (
               <span key={text}>{text}</span>
             ))}
           </td>

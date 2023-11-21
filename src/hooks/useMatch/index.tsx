@@ -67,12 +67,33 @@ const useMatch = (matchId: string) => {
     [updateMatch]
   )
 
+  const setMatchActiveResultDetail = useCallback(
+    (newResultDetail: Match['activeResultDetail'] | null) => {
+      updateMatch({ activeResultDetail: newResultDetail })
+    },
+    [updateMatch]
+  )
+
+  const setMatchRoundHasBroadcastedToTrue = useCallback(
+    (matchRoundId: string) => {
+      updateMatchRounds({
+        [matchRoundId]: {
+          ...matchRounds?.[matchRoundId],
+          hasBroadcasted: true,
+        },
+      })
+    },
+    [matchRounds, updateMatchRounds]
+  )
+
   return {
     match,
     matchRounds,
     matchCurrentRound,
     matchCurrentRoundDoras,
     setMatchName,
+    setMatchActiveResultDetail,
+    setMatchRoundHasBroadcastedToTrue,
     setCurrentRoundDoras,
     updateCurrentMatchRound,
     pushMatchRound,

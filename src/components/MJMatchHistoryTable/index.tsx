@@ -59,16 +59,25 @@ function MJMatchHistoryTable({ players, matchRounds, ...tableProps }: Props) {
               <MJAmountSpan
                 value={matchRoundsEntries[0][1].playerResults['1'].beforeScore}
               />
+              {matchRoundsEntries[0][1].playerResults['1'].detail && (
+                <span>(i)</span>
+              )}
             </td>
             <td className="text-center">
               <MJAmountSpan
                 value={matchRoundsEntries[0][1].playerResults['2'].beforeScore}
               />
+              {matchRoundsEntries[0][1].playerResults['2'].detail && (
+                <span>(i)</span>
+              )}
             </td>
             <td className="text-center">
               <MJAmountSpan
                 value={matchRoundsEntries[0][1].playerResults['3'].beforeScore}
               />
+              {matchRoundsEntries[0][1].playerResults['3'].detail && (
+                <span>(i)</span>
+              )}
             </td>
           </tr>
         )}
