@@ -6,8 +6,14 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['AdobeZh', 'lansui', ...defaultTheme.fontFamily.sans],
+        sans: [
+          'Noto Sans TC',
+          'AdobeZh',
+          'lansui',
+          ...defaultTheme.fontFamily.sans,
+        ],
         numeric: [
+          'Noto Sans TC',
           'KdamThmorPro',
           'YuPearl',
           'lansui',
