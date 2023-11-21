@@ -60,7 +60,8 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         .map(([matchRoundId, matchRound]) => ({
           id: matchRoundId,
           ...matchRound,
-        })) ?? [],
+        }))
+        .reverse() ?? [],
     [matchRounds]
   )
 

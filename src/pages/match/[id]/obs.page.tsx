@@ -109,34 +109,37 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
       </div>
 
       <div
-        className="fixed bottom-0 left-0 right-0 px-10 pb-6 grid grid-cols-4 gap-x-8 text-white transition-opacity animate-[fadeInFromBottom_1s_ease-in-out]"
+        className="fixed bottom-0 left-0 right-0 px-10 pb-6 grid grid-cols-4 items-end gap-x-8 text-white transition-opacity animate-[fadeInFromBottom_1s_ease-in-out]"
         style={{
           opacity: match.activeResultDetail ? 0 : 'inherit',
         }}
       >
         {players.map((player) => (
-          <MJPlayerCardDiv
-            key={player.name}
-            player={player}
-            score={player.currentStatus.afterScore}
-            scoreChanges={player.currentStatus.scoreChanges}
-            isEast={player.currentStatus.isEast}
-            isRiichi={player.currentStatus.isRiichi}
-            waitingTiles={player.currentStatus.waitingTiles}
-          />
+          <div className="w-[5.35em]" key={player.name}>
+            <MJPlayerCardDiv
+              player={player}
+              score={player.currentStatus.afterScore}
+              scoreChanges={player.currentStatus.scoreChanges}
+              isEast={player.currentStatus.isEast}
+              isRiichi={player.currentStatus.isRiichi}
+              waitingTiles={player.currentStatus.waitingTiles}
+            />
+          </div>
         ))}
       </div>
 
       {match.activeResultDetail && (
         <div className="fixed bottom-0 left-0 right-0 px-10 pb-6 grid grid-cols-4 gap-x-8 text-white transition-opacity animate-[fadeInFromBottom_1s_ease-in-out]">
-          <MJPlayerCardDiv
-            player={match.players[match.activeResultDetail.winnerPlayerIndex]}
-            score={
-              matchCurrentRound.playerResults[
-                match.activeResultDetail.winnerPlayerIndex
-              ].afterScore
-            }
-          />
+          <div className="w-[5.35em]">
+            <MJPlayerCardDiv
+              player={match.players[match.activeResultDetail.winnerPlayerIndex]}
+              score={
+                matchCurrentRound.playerResults[
+                  match.activeResultDetail.winnerPlayerIndex
+                ].afterScore
+              }
+            />
+          </div>
           <div className="col-span-3 bg-black bg-opacity-50 py-6 px-8 text-[0.5em] flex items-stretch gap-x-4">
             <div
               className={`flex-1 flex flex-wrap gap-x-[0.75em] ${
