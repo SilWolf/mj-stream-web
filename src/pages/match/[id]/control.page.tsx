@@ -108,9 +108,14 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         return
       }
 
+      const isDoingRiichi =
+        !matchCurrentRound?.playerResults[playerIndex].isRiichi
+
       confirmDialog.showConfirmDialog({
-        title: '確定要立直嗎？',
-        content: `一旦點擊確定，就會播出立直動畫，請確定立直的是 ${player.name}！`,
+        title: isDoingRiichi ? '確定要立直嗎？' : '取消立直？',
+        content: isDoingRiichi
+          ? `一旦點擊確定，就會播出立直動畫，請確定立直的是 ${player.name}！`
+          : `你是否想取消 ${player.name} 的立直？`,
         onClickOk: async () => {
           updateCurrentMatchRound({
             playerResults: {
@@ -120,12 +125,13 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
               >),
               [playerIndex]: {
                 ...matchCurrentRound?.playerResults[playerIndex],
-                isRiichi: true,
+                isRiichi:
+                  !matchCurrentRound?.playerResults[playerIndex].isRiichi,
               },
             },
           })
           return new Promise((res) => {
-            setTimeout(res, 3000)
+            setTimeout(res, isDoingRiichi ? 3000 : 10)
           })
         },
       })
@@ -520,13 +526,19 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
             </div>
 
             <div className="flex items-center gap-x-2">
-              {matchCurrentRoundDoras.map((dora) => (
-                <MJTileDiv
-                  key={dora}
-                  className="w-12 animate-[fadeIn_0.5s_ease-in-out]"
+              {matchCurrentRoundDoras.map((dora, index) => (
+                <button
+                  data-index={index}
+                  onClick={handleClickDora}
+                  className="hover:opacity-80"
                 >
-                  {dora}
-                </MJTileDiv>
+                  <MJTileDiv
+                    key={dora}
+                    className="w-12 animate-[fadeIn_0.5s_ease-in-out]"
+                  >
+                    {dora}
+                  </MJTileDiv>
+                </button>
               ))}
 
               <MJUIButton
@@ -618,7 +630,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                   onClickWaitingTiles={handleClickWaitingTiles}
                 />
               </div>
-              <div>
+              {/* <div>
                 <button
                   type="button"
                   className={`${
@@ -633,7 +645,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                     ? '已副露'
                     : '副露?'}
                 </button>
-              </div>
+              </div> */}
               <div>
                 <button
                   type="button"
@@ -692,6 +704,11 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
           onRemove={handleRemoveDoraKeyboard}
           canRemove={
             typeof clickedDoraIndex !== 'undefined' && clickedDoraIndex > 0
+          }
+          defaultValue={
+            typeof clickedDoraIndex !== 'undefined'
+              ? [matchCurrentRoundDoras[clickedDoraIndex]]
+              : undefined
           }
         />
       </MJUIDialogV2>

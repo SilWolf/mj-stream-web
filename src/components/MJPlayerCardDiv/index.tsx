@@ -97,7 +97,7 @@ export default function MJPlayerCardDiv({
             onClick={onClickWaitingTiles}
             data-player-index={playerIndex}
           >
-            <div className="flex-1 space-x-[0.15em] leading-none min-h-[1.19em]">
+            <div className="flex-1 leading-none min-h-[1.19em] flex flex-wrap gap-[0.15em]">
               {waitingTiles?.map((tile) => (
                 <MJTileDiv
                   key={tile}

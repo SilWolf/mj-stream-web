@@ -8,7 +8,7 @@ module.exports = {
       fontFamily: {
         sans: ['AdobeZh', 'lansui', ...defaultTheme.fontFamily.sans],
         numeric: [
-          'ArialNumber',
+          'KdamThmorPro',
           'YuPearl',
           'lansui',
           ...defaultTheme.fontFamily.sans,
