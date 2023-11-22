@@ -13,7 +13,6 @@ module.exports = {
           ...defaultTheme.fontFamily.sans,
         ],
         numeric: [
-          'Noto Sans TC',
           'KdamThmorPro',
           'YuPearl',
           'lansui',
