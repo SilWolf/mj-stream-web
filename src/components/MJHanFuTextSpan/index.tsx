@@ -29,7 +29,7 @@ export default function MJHanFuTextSpan({ han, fu, raw, ...props }: Props) {
       return '滿貫'
     } else if (han >= 4 && typeof fu !== 'undefined' && fu >= 40) {
       return '滿貫'
-    } else if (han >= 3 && typeof fu !== 'undefined' && fu >= 30) {
+    } else if (han >= 3 && typeof fu !== 'undefined' && fu >= 70) {
       return '滿貫'
     } else if (typeof fu !== 'undefined') {
       return `${han}飜${fu}符`
