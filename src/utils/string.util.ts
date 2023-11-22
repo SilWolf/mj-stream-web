@@ -50,3 +50,36 @@ export const getWindByRoundWithOffset = (round: number, offset: number) => {
 
   return '東'
 }
+
+export const getWindByRound = (round: number) => {
+  switch (Math.floor((round - 1) / 4)) {
+    case 0:
+      return '東'
+    case 1:
+      return '南'
+    case 2:
+      return '西'
+    case 3:
+      return '北'
+  }
+
+  return '東'
+}
+
+export const getWindByRoundAndPlayerIndex = (
+  round: number,
+  playerIndex: PlayerIndex
+) => {
+  switch ((parseInt(playerIndex) - ((round - 1) % 4) + 4) % 4) {
+    case 0:
+      return '東'
+    case 1:
+      return '南'
+    case 2:
+      return '西'
+    case 3:
+      return '北'
+  }
+
+  return '東'
+}

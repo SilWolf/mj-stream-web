@@ -45,12 +45,12 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
     <BroadcastLayout>
       <div className="flex flex-row items-stretch gap-x-4 text-white">
         <div
-          className="p-2 pl-10 pr-10 flex items-center gap-x-8 transition-[width]"
+          className="text-[0.6em] p-2 pl-10 pr-[1em] flex items-center gap-x-8 transition-[width]"
           style={{
-            background: `linear-gradient(280deg, transparent, transparent 22px, #00000080 23px, #00000080 100%)`,
+            background: `linear-gradient(280deg, transparent, transparent 0.5em, #00000080 0.5em, #00000080 100%)`,
           }}
         >
-          <div className="text-[0.5em]">
+          <div className="">
             <div className="text-[0.5em]">{match.name}</div>
             <div className="flex gap-x-8 items-center">
               <div className="min-w-[3.5em]">
@@ -66,10 +66,10 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
                     <img
                       src="/images/score-hundred.png"
                       alt="hundred"
-                      className="h-2.5"
+                      className="h-[0.25em] mt-[0.1em]"
                     />
                   </div>
-                  <div className="text-[0.4em] leading-none">
+                  <div className="text-[0.45em] leading-none">
                     {matchCurrentRound.extendedRoundCount ?? 0}
                   </div>
                 </div>
@@ -78,10 +78,10 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
                     <img
                       src="/images/score-thousand.png"
                       alt="thousand"
-                      className="h-2.5"
+                      className="h-[0.25em] mt-[0.1em]"
                     />
                   </div>
-                  <div className="text-[0.4em] leading-none">
+                  <div className="text-[0.45em] leading-none">
                     {matchCurrentRound.cumulatedThousands ?? 0}
                   </div>
                 </div>
@@ -92,7 +92,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
             {matchCurrentRoundDoras.map((dora) => (
               <MJTileDiv
                 key={dora}
-                className="w-14 animate-[fadeIn_0.5s_ease-in-out]"
+                className="w-[1.4em] animate-[fadeIn_0.5s_ease-in-out]"
               >
                 {dora}
               </MJTileDiv>

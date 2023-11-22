@@ -9,7 +9,10 @@ import {
 import { useToggle } from 'react-use'
 import MJUISwitch from '../MJUI/MJUISwitch'
 import { PlayerIndex } from '@/models'
-import { getWindByRoundWithOffset } from '@/utils/string.util'
+import {
+  getWindByRound,
+  getWindByRoundAndPlayerIndex,
+} from '@/utils/string.util'
 import MJHanFuTextSpan from '../MJHanFuTextSpan'
 
 type Yaku = {
@@ -389,7 +392,9 @@ const MJYakuKeyboardDiv = ({
 
     if (
       myYakuChecks['yakuhai-match-kazehai'] &&
-      myYakuChecks['yakuhai-self-kazehai']
+      myYakuChecks['yakuhai-self-kazehai'] &&
+      getWindByRound(round) ===
+        getWindByRoundAndPlayerIndex(round, activePlayerIndex)
     ) {
       myYakuChecks['yakuhai-double-kazehai'] = true
       myYakuChecks['yakuhai-match-kazehai'] = false
@@ -417,17 +422,11 @@ const MJYakuKeyboardDiv = ({
       }
 
       if (yaku.id === 'yakuhai-match-kazehai') {
-        yakusInText.push(
-          getWindByRoundWithOffset(Math.floor((round - 1) / 4) + 1, 0)
-        )
+        yakusInText.push(getWindByRound(round))
       } else if (yaku.id === 'yakuhai-self-kazehai') {
-        yakusInText.push(
-          getWindByRoundWithOffset(round, parseInt(activePlayerIndex))
-        )
+        yakusInText.push(getWindByRoundAndPlayerIndex(round, activePlayerIndex))
       } else if (yaku.id === 'yakuhai-double-kazehai') {
-        yakusInText.push(
-          `雙${getWindByRoundWithOffset(round, parseInt(activePlayerIndex))}`
-        )
+        yakusInText.push(`雙${getWindByRound(round)}`)
       } else {
         yakusInText.push(yaku.label)
       }
