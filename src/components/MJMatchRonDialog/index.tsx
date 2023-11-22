@@ -280,7 +280,7 @@ export default function MJMatchRonDialog({
       ...currentMatchRound,
       resultType: getRoundResultTypeByCompiledScore(compiledScore),
       playerResults: previewPlayerResults,
-      cumulatedThousands: 0,
+      nextRoundCumulatedThousands: 0,
       resultDetail: {
         winnerPlayerIndex: activePlayerIndex as PlayerIndex,
         ...yakuResult,

@@ -59,6 +59,7 @@ export type MatchRound = {
   roundCount: number
   extendedRoundCount: number
   cumulatedThousands: number
+  nextRoundCumulatedThousands: number
   resultType: RoundResultTypeEnum
   resultDetail?: {
     winnerPlayerIndex: PlayerIndex

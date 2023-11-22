@@ -144,6 +144,7 @@ function CreateMatchPage() {
       roundCount: 1,
       extendedRoundCount: 0,
       cumulatedThousands: 0,
+      nextRoundCumulatedThousands: 0,
       resultType: 0,
       nextRoundType: 0,
       playerResults: {

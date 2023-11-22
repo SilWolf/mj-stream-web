@@ -322,6 +322,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
           roundCount: updatedMatchRound.roundCount,
           extendedRoundCount: updatedMatchRound.extendedRoundCount,
           cumulatedThousands: updatedMatchRound.cumulatedThousands,
+          nextRoundCumulatedThousands: 0,
           resultType: RoundResultTypeEnum.Unknown,
           nextRoundType: NextRoundTypeEnum.Unknown,
           playerResults: formatPlayerResultsByPreviousPlayerResults(
@@ -366,7 +367,8 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
       ),
       roundCount: newRoundCount,
       extendedRoundCount: newExtendedRoundCount,
-      cumulatedThousands: matchCurrentRound.cumulatedThousands,
+      cumulatedThousands: matchCurrentRound.nextRoundCumulatedThousands,
+      nextRoundCumulatedThousands: 0,
       resultType: RoundResultTypeEnum.Unknown,
       nextRoundType: NextRoundTypeEnum.Unknown,
       playerResults: formatPlayerResultsByPreviousPlayerResults(
