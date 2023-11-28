@@ -1,13 +1,13 @@
 import MJPositionSpan from '@/components/MJPositionSpan'
 import { Match, MatchRound, MatchSetting, Player, PlayerIndex } from '@/models'
-import React, { useCallback, useState } from 'react'
+import React, { MouseEvent, useCallback, useState } from 'react'
 import { useFirebaseDatabase } from '@/providers/firebaseDatabase.provider'
 import {
   generateMatchCode,
   generateMatchRoundCode,
 } from '@/helpers/mahjong.helper'
 import { useLocation } from 'wouter'
-import { useBoolean } from 'react-use'
+import { useAsyncFn, useBoolean } from 'react-use'
 import MJUIButton from '@/components/MJUI/MJUIButton'
 import MJPlayerCardDiv from '@/components/MJPlayerCardDiv'
 import MJUIDialogV2 from '@/components/MJUI/MJUIDialogV2'
@@ -16,6 +16,8 @@ import MJUIFormGroup from '@/components/MJUI/MJUIFormGroup'
 import MJUIInput from '@/components/MJUI/MJUIInput'
 import { Controller, useForm, useWatch } from 'react-hook-form'
 import MJUISelect from '@/components/MJUI/MJUISelect'
+import MJPlayerSelectDialog from '@/components/MJPlayerSelectDialog'
+import { createPlayerToDatabase } from '@/helpers/database.helper'
 
 const DEFAULT_PLAYER_MAP: Record<PlayerIndex, Player> = {
   '0': {
@@ -118,6 +120,33 @@ function CreateMatchPage() {
     toggleEditDialog(false)
   }, [toggleEditDialog])
 
+  const [searchPlayerAction, setSearchPlayerAction] = useState<string | null>()
+  const handleClickSearchPlayer = useCallback((e: MouseEvent) => {
+    e.preventDefault()
+    setSearchPlayerAction('choose')
+  }, [])
+
+  const handleClosePlayerSelectDialog = useCallback(() => {
+    setSearchPlayerAction(null)
+  }, [])
+
+  const handleSelectPlayer = useCallback(
+    (_: unknown, selectedPlayer: Player) => {
+      if (searchPlayerAction === 'choose') {
+        setActivePlayerData((prev) =>
+          prev
+            ? {
+                ...prev,
+                player: selectedPlayer,
+              }
+            : undefined
+        )
+        setSearchPlayerAction(null)
+      }
+    },
+    [searchPlayerAction]
+  )
+
   const handleClickSwap = useCallback((e: React.MouseEvent) => {
     const ele = e.currentTarget as HTMLButtonElement
     if (!ele) {
@@ -140,8 +169,24 @@ function CreateMatchPage() {
     }))
   }, [])
 
-  const handleClickStart = useCallback(async () => {
+  const [{ loading: isStarting }, handleClickStart] = useAsyncFn(async () => {
     const { name, ...matchSetting } = getMatchSettingValues()
+
+    const finalizedPlayers = await Promise.all(
+      Object.values(players).map((oldPlayer) => {
+        if (
+          !!oldPlayer.id ||
+          oldPlayer.name === '玩家A' ||
+          oldPlayer.name === '玩家B' ||
+          oldPlayer.name === '玩家C' ||
+          oldPlayer.name === '玩家D'
+        ) {
+          return Promise.resolve(oldPlayer)
+        }
+
+        return createPlayerToDatabase(oldPlayer)
+      })
+    )
 
     const match: Match = {
       code: generateMatchCode(),
@@ -152,7 +197,12 @@ function CreateMatchPage() {
       updatedAt: new Date().toISOString(),
       updatedBy: 'Dicky',
       setting: matchSetting,
-      players,
+      players: {
+        '0': finalizedPlayers[0],
+        '1': finalizedPlayers[1],
+        '2': finalizedPlayers[2],
+        '3': finalizedPlayers[3],
+      },
       activeResultDetail: null,
     }
 
@@ -363,6 +413,7 @@ function CreateMatchPage() {
               size="xlarge"
               className="w-full"
               onClick={handleClickStart}
+              loading={isStarting}
               type="submit"
             >
               開始對局
@@ -372,7 +423,19 @@ function CreateMatchPage() {
       </div>
 
       <MJUIDialogV2
-        title="修改玩家"
+        title={
+          <div className="space-x-4">
+            <span>修改玩家</span>
+            <a
+              href="#"
+              className="text-xs underline font-normal text-teal-600 hover:text-teal-500 align-middle"
+              onClick={handleClickSearchPlayer}
+            >
+              <span className="material-symbols-outlined text-xs">search</span>{' '}
+              搜尋玩家
+            </a>
+          </div>
+        }
         open={isShowEditDialog}
         onClose={handleCloseEditDialog}
       >
@@ -383,6 +446,12 @@ function CreateMatchPage() {
           />
         </div>
       </MJUIDialogV2>
+
+      <MJPlayerSelectDialog
+        open={searchPlayerAction === 'choose'}
+        onSelect={handleSelectPlayer}
+        onClose={handleClosePlayerSelectDialog}
+      />
     </>
   )
 }

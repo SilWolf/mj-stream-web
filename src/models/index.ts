@@ -53,6 +53,8 @@ export type Player = {
   proPicUrl?: string | null
   teamPicUrl?: string | null
   color: string
+  createdAt?: number
+  updatedAt?: number
 }
 
 export type MatchRound = {
