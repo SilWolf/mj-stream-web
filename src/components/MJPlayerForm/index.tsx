@@ -1,15 +1,16 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo } from 'react'
 
 import MJPlayerCardDiv from '@/components/MJPlayerCardDiv'
 import MJUIFormGroup from '@/components/MJUI/MJUIFormGroup'
 import MJUIInput from '@/components/MJUI/MJUIInput'
 import MJUIInputForColor from '@/components/MJUI/MJUIInputForColor'
 
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, useForm, useWatch } from 'react-hook-form'
 import { Player } from '@/models'
 import { useAsyncFn } from 'react-use'
 import MJUIButton from '../MJUI/MJUIButton'
 import MJUIFileDropzone from '../MJUI/MJUIFileDropzone'
+import { uploadImage } from '@/helpers/upload.helper'
 
 export type MJPlayerFormProps = {
   defaultValue?: Player
@@ -20,14 +21,13 @@ const DEFAULT_PLAYER = {
   title: '',
   name: '新的玩家',
   color: '#FF0000',
-  propicSrc: '',
+  proPicUrl: '',
 }
 
 function MJPlayerForm({ defaultValue, onSubmit }: MJPlayerFormProps) {
-  const [previewPlayer, setPreviewPlayer] = useState<Player>(DEFAULT_PLAYER)
   const {
     reset,
-    getValues,
+    setValue,
     control: formControl,
     handleSubmit: rhfHandleSubmit,
   } = useForm<Player>({
@@ -45,17 +45,40 @@ function MJPlayerForm({ defaultValue, onSubmit }: MJPlayerFormProps) {
     [onSubmitAsyncFn, rhfHandleSubmit]
   )
 
-  const handleBlurForm = useCallback(() => {
-    setPreviewPlayer(getValues())
-  }, [getValues])
+  const previewPlayer = useWatch({ control: formControl })
+
+  const handleChangeFileProPic = useCallback(
+    (newFile: File) => {
+      return uploadImage(newFile).then(({ url }) => {
+        setValue('proPicUrl', url)
+      })
+    },
+    [setValue]
+  )
+
+  const handleClickRemoveProPic = useCallback(() => {
+    setValue('proPicUrl', null)
+  }, [setValue])
+
+  const handleChangeFileTeamPic = useCallback(
+    (newFile: File) => {
+      return uploadImage(newFile).then(({ url }) => {
+        setValue('teamPicUrl', url)
+      })
+    },
+    [setValue]
+  )
+
+  const handleClickRemoveTeamPic = useCallback(() => {
+    setValue('teamPicUrl', null)
+  }, [setValue])
 
   useEffect(() => {
     reset(defaultValue ?? DEFAULT_PLAYER)
-    setPreviewPlayer(defaultValue ?? DEFAULT_PLAYER)
   }, [defaultValue, reset])
 
   return (
-    <form onSubmit={handleSubmit} onBlur={handleBlurForm} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6">
       <div className="flex gap-x-6">
         <div className="shrink-0">
           <MJUIFormGroup label="顏色">
@@ -93,31 +116,61 @@ function MJPlayerForm({ defaultValue, onSubmit }: MJPlayerFormProps) {
             />
           </MJUIFormGroup>
 
-          <MJUIFormGroup className="mb-6" label="圖片URL (https://...)">
-            <Controller
-              name="propicSrc"
-              control={formControl}
-              render={({ field }) => (
-                <MJUIInput
-                  type="url"
-                  placeholder="https://"
-                  {...field}
-                  disabled={isSubmitting}
-                />
-              )}
-            />
-            <p className="text-sm">
-              建議大小 360px * 500px (18:25)、使用去背的 .png
-            </p>
-          </MJUIFormGroup>
-
           <div className="grid grid-cols-2 gap-x-6">
-            <MJUIFormGroup className="mb-6" label="玩家圖片">
-              <MJUIFileDropzone helperText="建議大小 360px * 500px (18:25)"></MJUIFileDropzone>
+            <MJUIFormGroup
+              className="mb-6"
+              label="玩家圖片"
+              action={
+                previewPlayer.proPicUrl && (
+                  <a
+                    href="#"
+                    className="text-xs underline text-teal-800"
+                    onClick={handleClickRemoveProPic}
+                  >
+                    移除
+                  </a>
+                )
+              }
+            >
+              <MJUIFileDropzone
+                helperText="建議大小 360px * 500px (18:25)"
+                onChangeFile={handleChangeFileProPic}
+              >
+                {previewPlayer.proPicUrl && (
+                  <img
+                    className="aspect-[18/25]"
+                    src={previewPlayer.proPicUrl}
+                  />
+                )}
+              </MJUIFileDropzone>
             </MJUIFormGroup>
 
-            <MJUIFormGroup className="mb-6" label="隊伍圖片">
-              <MJUIFileDropzone helperText="建議大小 500px * 500px (1:1)"></MJUIFileDropzone>
+            <MJUIFormGroup
+              className="mb-6"
+              label="隊伍圖片"
+              action={
+                previewPlayer.teamPicUrl && (
+                  <a
+                    href="#"
+                    className="text-xs underline text-teal-800"
+                    onClick={handleClickRemoveTeamPic}
+                  >
+                    移除
+                  </a>
+                )
+              }
+            >
+              <MJUIFileDropzone
+                helperText="建議大小 500px * 500px (1:1)"
+                onChangeFile={handleChangeFileTeamPic}
+              >
+                {previewPlayer.teamPicUrl && (
+                  <img
+                    className="aspect-square"
+                    src={previewPlayer.teamPicUrl}
+                  />
+                )}
+              </MJUIFileDropzone>
             </MJUIFormGroup>
           </div>
         </div>

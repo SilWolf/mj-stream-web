@@ -1,10 +1,5 @@
-import {
-  ChangeEvent,
-  HTMLAttributes,
-  useCallback,
-  useMemo,
-  useRef,
-} from 'react'
+import { pickImage } from '@/utils/file.util'
+import { HTMLAttributes, useCallback, useMemo } from 'react'
 import { useAsyncFn, useDropArea } from 'react-use'
 
 type Props = HTMLAttributes<HTMLDivElement> & {
@@ -18,7 +13,6 @@ const MJUIFileDropzone = ({
   onChangeFile = async () => {},
   ...props
 }: Props) => {
-  const inputRef = useRef<HTMLInputElement>(null)
   const myChildren = useMemo(
     () =>
       children || (
@@ -32,25 +26,12 @@ const MJUIFileDropzone = ({
       ),
     [children, helperText]
   )
-  const [, onChangeFileAsyncFn] = useAsyncFn(onChangeFile)
+  const [{ loading: isChanging }, onChangeFileAsyncFn] =
+    useAsyncFn(onChangeFile)
 
   const handleClickDropArea = useCallback(() => {
-    inputRef.current?.click()
-  }, [])
-
-  const handleFileInputBlur = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      const newFile = [...(e.currentTarget.files ?? [])].find(
-        (thisFile) => !!thisFile
-      )
-      if (!newFile) {
-        return
-      }
-
-      onChangeFileAsyncFn(newFile)
-    },
-    [onChangeFileAsyncFn]
-  )
+    pickImage().then(onChangeFileAsyncFn)
+  }, [onChangeFileAsyncFn])
 
   const useDropAreaProps = useMemo(
     () => ({
@@ -69,20 +50,22 @@ const MJUIFileDropzone = ({
   const [dropBind] = useDropArea(useDropAreaProps)
 
   return (
-    <div
-      {...props}
-      className="bg-neutral-50 border border-neutral-200 border-dashed p-4 cursor-pointer hover:border-neutral-400 text-neutral-400"
-      onClick={handleClickDropArea}
-      {...dropBind}
-    >
-      {myChildren}
-      <input
-        type="file"
-        ref={inputRef}
-        className="hidden"
-        onChange={handleFileInputBlur}
-        accept="image/*"
-      />
+    <div className="relative">
+      <div
+        {...props}
+        className="bg-neutral-50 border border-neutral-200 border-dashed p-1 cursor-pointer hover:border-neutral-400 text-neutral-400"
+        onClick={handleClickDropArea}
+        {...dropBind}
+      >
+        {myChildren}
+      </div>
+      {isChanging && (
+        <div className="absolute z-10 cursor-not-allowed inset-0 bg-neutral-300 text-white flex gap-x-1 items-center justify-center">
+          <span className="material-symbols-outlined animate-spin">
+            progress_activity
+          </span>
+        </div>
+      )}
     </div>
   )
 }

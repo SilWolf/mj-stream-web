@@ -6,7 +6,7 @@ import MJRiichiBgDiv from '../MJRiichiBgDiv'
 import MJTileDiv from '../MJTileDiv'
 
 type Props = HTMLAttributes<HTMLDivElement> & {
-  player: Player
+  player: Partial<Player>
   playerIndex?: PlayerIndex
   score: number
   scoreChanges?: number[]
@@ -36,7 +36,7 @@ export default function MJPlayerCardDiv({
   >(undefined)
 
   const lightenedColor = useMemo(
-    () => getLightColorOfColor(player.color),
+    () => getLightColorOfColor(player.color ?? '#000000'),
     [player.color]
   )
 
@@ -76,10 +76,10 @@ export default function MJPlayerCardDiv({
               {isRiichi && (
                 <MJRiichiBgDiv className="absolute -z-10 w-full h-full top-0 left-0 rounded-[0.08em] overflow-hidden" />
               )}
-              {player.propicSrc && (
+              {player.proPicUrl && (
                 <img
                   className="w-full h-full rounded-[0.08em]"
-                  src={player.propicSrc}
+                  src={player.proPicUrl}
                   alt={player.name}
                 />
               )}

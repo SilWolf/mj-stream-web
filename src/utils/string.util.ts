@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 import { PlayerIndex } from '@/models'
 import { nanoid } from 'nanoid'
 

@@ -30,7 +30,7 @@ function MJPlayerInfoCardDiv({
           className="w-14 h-14 bg-center bg-contain bg-no-repeat rounded"
           style={{
             backgroundImage: `url(${
-              player.propicSrc || '/images/portrait-placeholder.jpeg'
+              player.proPicUrl || '/images/portrait-placeholder.jpeg'
             })`,
           }}
         />
