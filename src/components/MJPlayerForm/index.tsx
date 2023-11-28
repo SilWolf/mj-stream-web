@@ -55,57 +55,62 @@ function MJPlayerForm({ defaultValue, onSubmit }: MJPlayerFormProps) {
 
   return (
     <form onSubmit={handleSubmit} onBlur={handleBlurForm} className="space-y-6">
-      <MJUIFormGroup label="顏色（務必選能看清楚白字的深色）">
-        <Controller
-          name="color"
-          control={formControl}
-          render={({ field }) => <MJUIInputForColor {...field} />}
-          disabled={isSubmitting}
-        />
-      </MJUIFormGroup>
-
-      <MJUIFormGroup label="稱號">
-        <Controller
-          name="title"
-          control={formControl}
-          render={({ field }) => (
-            <MJUIInput
-              type="text"
-              {...field}
-              placeholder="例：天鳳鳳位、雀魂x段"
+      <div className="flex gap-x-6">
+        <div className="shrink-0">
+          <MJUIFormGroup label="顏色（務必選能看清楚白字的深色）">
+            <Controller
+              name="color"
+              control={formControl}
+              render={({ field }) => <MJUIInputForColor {...field} />}
               disabled={isSubmitting}
             />
-          )}
-        />
-      </MJUIFormGroup>
+          </MJUIFormGroup>
+        </div>
+        <div className="flex-1 space-y-6">
+          <MJUIFormGroup label="稱號">
+            <Controller
+              name="title"
+              control={formControl}
+              render={({ field }) => (
+                <MJUIInput
+                  type="text"
+                  {...field}
+                  placeholder="例：天鳳鳳位、雀魂x段"
+                  disabled={isSubmitting}
+                />
+              )}
+            />
+          </MJUIFormGroup>
 
-      <MJUIFormGroup className="mb-6" label="名字">
-        <Controller
-          name="name"
-          control={formControl}
-          rules={{ required: true }}
-          render={({ field }) => <MJUIInput {...field} />}
-          disabled={isSubmitting}
-        />
-      </MJUIFormGroup>
-
-      <MJUIFormGroup className="mb-6" label="圖片URL (https://...)">
-        <Controller
-          name="propicSrc"
-          control={formControl}
-          render={({ field }) => (
-            <MJUIInput
-              type="url"
-              placeholder="https://"
-              {...field}
+          <MJUIFormGroup className="mb-6" label="名字">
+            <Controller
+              name="name"
+              control={formControl}
+              rules={{ required: true }}
+              render={({ field }) => <MJUIInput {...field} />}
               disabled={isSubmitting}
             />
-          )}
-        />
-        <p className="text-sm">
-          建議大小 360px * 500px (18:25)、使用去背的 .png
-        </p>
-      </MJUIFormGroup>
+          </MJUIFormGroup>
+
+          <MJUIFormGroup className="mb-6" label="圖片URL (https://...)">
+            <Controller
+              name="propicSrc"
+              control={formControl}
+              render={({ field }) => (
+                <MJUIInput
+                  type="url"
+                  placeholder="https://"
+                  {...field}
+                  disabled={isSubmitting}
+                />
+              )}
+            />
+            <p className="text-sm">
+              建議大小 360px * 500px (18:25)、使用去背的 .png
+            </p>
+          </MJUIFormGroup>
+        </div>
+      </div>
 
       <div>
         <div className="mb-2">預覽</div>
