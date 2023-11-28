@@ -6,9 +6,14 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['AdobeZh', 'lansui', ...defaultTheme.fontFamily.sans],
+        sans: [
+          'Noto Sans TC',
+          'AdobeZh',
+          'lansui',
+          ...defaultTheme.fontFamily.sans,
+        ],
         numeric: [
-          'ArialNumber',
+          'KdamThmorPro',
           'YuPearl',
           'lansui',
           ...defaultTheme.fontFamily.sans,
@@ -26,6 +31,10 @@ module.exports = {
         fadeIn: {
           '0%': { opacity: 0.0, top: '-15px', position: 'relative' },
           '100%': { opacity: 1.0, top: '0px', position: 'relative' },
+        },
+        fadeInFromBottom: {
+          '0%': { opacity: 0.0, bottom: '-32px' },
+          '100%': { opacity: 1.0, bottom: '0px' },
         },
         riichi: {
           '0%': {

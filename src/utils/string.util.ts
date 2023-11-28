@@ -1,4 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
+import { PlayerIndex } from '@/models'
 import { nanoid } from 'nanoid'
 
 export const getRandomId = (length = 12) => nanoid(length)
@@ -33,4 +34,52 @@ export const getLightColorOfColor = (color: string) => {
   const BB = B.toString(16).length === 1 ? `0${B.toString(16)}` : B.toString(16)
 
   return `#${RR}${GG}${BB}`
+}
+
+export const getWindByRoundWithOffset = (round: number, offset: number) => {
+  switch ((round + offset - 1) % 4) {
+    case 0:
+      return '東'
+    case 1:
+      return '南'
+    case 2:
+      return '西'
+    case 3:
+      return '北'
+  }
+
+  return '東'
+}
+
+export const getWindByRound = (round: number) => {
+  switch (Math.floor((round - 1) / 4)) {
+    case 0:
+      return '東'
+    case 1:
+      return '南'
+    case 2:
+      return '西'
+    case 3:
+      return '北'
+  }
+
+  return '東'
+}
+
+export const getWindByRoundAndPlayerIndex = (
+  round: number,
+  playerIndex: PlayerIndex
+) => {
+  switch ((parseInt(playerIndex) - ((round - 1) % 4) + 4) % 4) {
+    case 0:
+      return '東'
+    case 1:
+      return '南'
+    case 2:
+      return '西'
+    case 3:
+      return '北'
+  }
+
+  return '東'
 }

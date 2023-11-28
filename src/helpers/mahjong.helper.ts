@@ -138,10 +138,36 @@ export const getScoreByHanAndFu = (
   }
 
   if (!expectedScore) {
-    throw new Error(`unrecongized han ${han} and fu ${fu}`)
+    return HAN_FU_MODE_SCORE_MAP['1h30f']
   }
 
   return expectedScore
+}
+
+export const getScoreInFullDetail = (
+  han: number | string,
+  fu: number | string,
+  isEast: boolean,
+  isRon: boolean,
+  options?: { roundUp?: boolean }
+) => {
+  const score = getScoreByHanAndFu(han, fu, options)
+
+  if (isEast) {
+    if (isRon) {
+      return { win: score.er, target: score.er }
+    } else {
+      return { win: score.e * 3, all: score.e }
+    }
+  } else if (isRon) {
+    return { win: score.ner, target: score.ner }
+  } else {
+    return {
+      win: score.e + 2 * score.ne,
+      east: score.e,
+      others: score.ne,
+    }
+  }
 }
 
 export const getRoundResultTypeByCompiledScore = (

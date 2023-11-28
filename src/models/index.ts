@@ -28,6 +28,13 @@ export type Match = {
   updatedBy: string
   setting: MatchSetting
   players: Record<PlayerIndex, Player>
+  activeResultDetail: {
+    winnerPlayerIndex: PlayerIndex
+    han: number
+    fu: number
+    yakusInText: string[]
+    isYakuman: boolean
+  } | null
 }
 
 export type RawPlayer = {
@@ -52,7 +59,16 @@ export type MatchRound = {
   roundCount: number
   extendedRoundCount: number
   cumulatedThousands: number
+  nextRoundCumulatedThousands: number
   resultType: RoundResultTypeEnum
+  resultDetail?: {
+    winnerPlayerIndex: PlayerIndex
+    han: number
+    fu: number
+    yakusInText: string[]
+    isYakuman: boolean
+  }
+  hasBroadcasted?: boolean
   nextRoundType: NextRoundTypeEnum
   playerResults: Record<PlayerIndex, PlayerResult>
   doras: Record<number, string>
@@ -97,6 +113,12 @@ export type PlayerResult = {
   isRiichi?: boolean
   isRevealed?: boolean
   waitingTiles?: string[]
+  detail?: {
+    han: number
+    fu: number
+    yakusInText: string[]
+    isYakuman: boolean
+  }
 }
 
 export type MatchSetting = Record<string, string>

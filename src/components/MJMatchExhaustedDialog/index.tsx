@@ -176,7 +176,7 @@ export default function MJMatchExhaustedDialog({
       ...currentMatchRound,
       resultType: RoundResultTypeEnum.Exhausted,
       playerResults: previewPlayerResults,
-      cumulatedThousands:
+      nextRoundCumulatedThousands:
         currentMatchRound.cumulatedThousands +
         Object.values(previewPlayerResults).filter(({ isRiichi }) => !!isRiichi)
           .length,
