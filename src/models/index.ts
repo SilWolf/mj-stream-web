@@ -121,7 +121,12 @@ export type PlayerResult = {
   }
 }
 
-export type MatchSetting = Record<string, string>
+export type MatchSetting = {
+  startingScore: '25000' | '30000' | '35000' | '50000' | '100000'
+  isManganRoundUp: '0' | '1'
+  yakuMax: '12' | '13'
+  yakumanMax: '13' | '26' | '39' | '130'
+}
 
 export type Team = {
   _id?: string

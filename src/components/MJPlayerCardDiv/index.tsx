@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import MJAmountSpan from '@/components/MJAmountSpan'
 import React, { HTMLAttributes, useEffect, useMemo, useState } from 'react'
 import { getLightColorOfColor } from '@/utils/string.util'
@@ -13,6 +12,7 @@ type Props = HTMLAttributes<HTMLDivElement> & {
   scoreChanges?: number[]
   isEast?: boolean
   isRiichi?: boolean
+  animated?: boolean
   onAnimationEnd?: () => void
   waitingTiles?: string[]
   onClickWaitingTiles?: (e: React.MouseEvent) => unknown
