@@ -9,6 +9,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { Player } from '@/models'
 import { useAsyncFn } from 'react-use'
 import MJUIButton from '../MJUI/MJUIButton'
+import MJUIFileDropzone from '../MJUI/MJUIFileDropzone'
 
 export type MJPlayerFormProps = {
   defaultValue?: Player
@@ -57,7 +58,7 @@ function MJPlayerForm({ defaultValue, onSubmit }: MJPlayerFormProps) {
     <form onSubmit={handleSubmit} onBlur={handleBlurForm} className="space-y-6">
       <div className="flex gap-x-6">
         <div className="shrink-0">
-          <MJUIFormGroup label="顏色（務必選能看清楚白字的深色）">
+          <MJUIFormGroup label="顏色">
             <Controller
               name="color"
               control={formControl}
@@ -109,6 +110,16 @@ function MJPlayerForm({ defaultValue, onSubmit }: MJPlayerFormProps) {
               建議大小 360px * 500px (18:25)、使用去背的 .png
             </p>
           </MJUIFormGroup>
+
+          <div className="grid grid-cols-2 gap-x-6">
+            <MJUIFormGroup className="mb-6" label="玩家圖片">
+              <MJUIFileDropzone helperText="建議大小 360px * 500px (18:25)"></MJUIFileDropzone>
+            </MJUIFormGroup>
+
+            <MJUIFormGroup className="mb-6" label="隊伍圖片">
+              <MJUIFileDropzone helperText="建議大小 500px * 500px (1:1)"></MJUIFileDropzone>
+            </MJUIFormGroup>
+          </div>
         </div>
       </div>
 
