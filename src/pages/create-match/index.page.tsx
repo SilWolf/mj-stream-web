@@ -440,6 +440,22 @@ function CreateMatchPage() {
         onClose={handleCloseEditDialog}
       >
         <div className="container space-y-6">
+          {!!activePlayerData?.player.id && (
+            <div className="py-2 px-3 bg-yellow-200 text-yellow-800 rounded">
+              注意：在這裡的修改不會儲存到玩家列表的資料庫。假如你想保留這些修改，請在{' '}
+              <a
+                href="/players"
+                target="_blank"
+                className="text-teal-600 underline"
+              >
+                玩家列表
+                <span className="material-symbols-outlined text-xs">
+                  open_in_new
+                </span>{' '}
+              </a>{' '}
+              中修改。
+            </div>
+          )}
           <MJPlayerForm
             onSubmit={handleSubmitPlayerForm}
             defaultValue={activePlayerData?.player}

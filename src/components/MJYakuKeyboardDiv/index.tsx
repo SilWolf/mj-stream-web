@@ -8,7 +8,7 @@ import {
 } from 'react'
 import { useToggle } from 'react-use'
 import MJUISwitch from '../MJUI/MJUISwitch'
-import { PlayerIndex } from '@/models'
+import { MatchSetting, PlayerIndex } from '@/models'
 import {
   getWindByRound,
   getWindByRoundAndPlayerIndex,
@@ -332,6 +332,7 @@ export type MJYakuKeyboardDivProps = {
   activePlayerIndex: PlayerIndex
   isEast: boolean
   isRon: boolean
+  setting: MatchSetting
   onChange?: (result: {
     han: number
     fu: number
@@ -345,6 +346,7 @@ const MJYakuKeyboardDiv = ({
   activePlayerIndex,
   isEast,
   isRon,
+  setting,
   onChange,
 }: MJYakuKeyboardDivProps) => {
   const [yakuChecks, setYakuChecks] = useState<Record<string, boolean>>({})
@@ -380,7 +382,7 @@ const MJYakuKeyboardDiv = ({
     setRedDora('0')
     setInnerDora('0')
     setFu('30')
-  }, [])
+  }, [toggleOpened])
 
   const result = useMemo(() => {
     let finalHan = 0
@@ -759,11 +761,13 @@ const MJYakuKeyboardDiv = ({
             <MJHanFuTextSpan
               han={Math.min(isShowYakuman ? 13 : 12, result.han)}
               fu={result.fu}
+              isManganRoundUp={setting.isManganRoundUp === '1'}
             />
             <MJHanFuTextSpan
               className="text-xs text-neutral-600"
               han={result.han}
               fu={result.fu}
+              isManganRoundUp={setting.isManganRoundUp === '1'}
               raw
             />
           </td>

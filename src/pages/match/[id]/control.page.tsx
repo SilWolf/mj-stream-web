@@ -56,7 +56,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
   const matchRoundsWithDetail = useMemo(
     () =>
       Object.entries(matchRounds ?? {})
-        .filter(([_, matchRound]) => !!matchRound.resultDetail)
+        .filter(([, matchRound]) => !!matchRound.resultDetail)
         .map(([matchRoundId, matchRound]) => ({
           id: matchRoundId,
           ...matchRound,
@@ -505,12 +505,12 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         setMatchActiveResultDetail(null)
       }, 20000)
     },
-    [matchRounds]
+    [matchRounds, setMatchActiveResultDetail, setMatchRoundHasBroadcastedToTrue]
   )
 
   const handleClickClearActiveResult = useCallback(() => {
     setMatchActiveResultDetail(null)
-  }, [])
+  }, [setMatchActiveResultDetail])
 
   if (!match || !matchCurrentRound) {
     return <div>對局讀取失敗。</div>
@@ -776,6 +776,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                         matchRound.resultDetail!.han
                       )}
                       fu={matchRound.resultDetail!.fu}
+                      isManganRoundUp={match.setting.isManganRoundUp === '1'}
                     />
                   </p>
                 </td>

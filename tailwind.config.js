@@ -36,6 +36,10 @@ module.exports = {
           '0%': { opacity: 0.0, bottom: '-32px' },
           '100%': { opacity: 1.0, bottom: '0px' },
         },
+        scrollFromRightToLeft: {
+          '0%': { transform: 'translateX(150%)' },
+          '100%': { transform: 'translateX(-150%)' },
+        },
         riichi: {
           '0%': {
             transform: 'translateX(-25%) translateY(-50%) rotate(-25deg)',

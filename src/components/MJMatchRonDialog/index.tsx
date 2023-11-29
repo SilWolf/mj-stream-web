@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/control-has-associated-label */
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import MJUIDialogV2, { MJUIDialogV2Props } from '@/components/MJUI/MJUIDialogV2'
 import MJUIButton from '@/components/MJUI/MJUIButton'
@@ -88,7 +87,7 @@ export default function MJMatchRonDialog({
         result.fu,
         activePlayer?.position === PlayerPositionEnum.East,
         targetPlayerIndex !== '-1',
-        { roundUp: true }
+        { roundUp: match.setting.isManganRoundUp === '1' }
       )
 
       if (currentMatchRound.extendedRoundCount > 0) {
@@ -116,10 +115,11 @@ export default function MJMatchRonDialog({
       setCompiledScore(newCompiledScore)
     },
     [
-      currentMatchRound.cumulatedThousands,
-      currentMatchRound.extendedRoundCount,
       activePlayer?.position,
       targetPlayerIndex,
+      match.setting.isManganRoundUp,
+      currentMatchRound.extendedRoundCount,
+      currentMatchRound.cumulatedThousands,
     ]
   )
 
@@ -289,6 +289,7 @@ export default function MJMatchRonDialog({
 
     onSubmit(updatedMatchRound)
   }, [
+    activePlayerIndex,
     compiledScore,
     currentMatchRound,
     onSubmit,
@@ -345,6 +346,7 @@ export default function MJMatchRonDialog({
               isEast={activePlayer?.position === PlayerPositionEnum.East}
               isRon={targetPlayerIndex !== '-1'}
               onChange={handleChangeYaku}
+              setting={match.setting}
             />
 
             <div className="text-3xl font-bold text-center bg-teal-400 py-2">

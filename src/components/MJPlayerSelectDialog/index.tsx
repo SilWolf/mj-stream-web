@@ -1,19 +1,48 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import { Player } from '@/models'
 import MJUIDialogV2, { MJUIDialogV2Props } from '../MJUI/MJUIDialogV2'
 import MJPlayerInfoCardDiv from '../MJPlayerInfoCardDiv'
 import { getPlayersFromDatabase } from '@/helpers/database.helper'
 import { useAsync } from 'react-use'
+import MJUIButton from '../MJUI/MJUIButton'
+import { getRandomId } from '@/utils/string.util'
 
 type Props = {
   onSelect: (id: string, player: Player) => unknown
 } & Omit<MJUIDialogV2Props, 'children'>
 
 function MJPlayerSelectDialog({ onSelect, ...dialogProps }: Props) {
+  const [refreshKey, sekRefreshKey] = useState<string>('')
+  const handleClickRefresh = useCallback(() => {
+    sekRefreshKey(getRandomId())
+  }, [])
+  return (
+    <MJUIDialogV2 title="選擇玩家" {...dialogProps}>
+      <MJUIButton onClick={handleClickRefresh} color="secondary">
+        刷新列表
+      </MJUIButton>
+      <div className="mt-4">
+        <MJPlayerList key={refreshKey} onClickPlayer={onSelect} />
+      </div>
+    </MJUIDialogV2>
+  )
+}
+
+export default MJPlayerSelectDialog
+
+type MJPlayerListProps = {
+  onClickPlayer?: (id: string, player: Player) => unknown
+}
+
+export const MJPlayerList = ({ onClickPlayer }: MJPlayerListProps) => {
   const { value: players, loading } = useAsync(getPlayersFromDatabase)
 
   const handleClickPlayer = useCallback(
     (e: React.MouseEvent) => {
+      if (!onClickPlayer) {
+        return
+      }
+
       if (!players) {
         return
       }
@@ -27,15 +56,15 @@ function MJPlayerSelectDialog({ onSelect, ...dialogProps }: Props) {
         return
       }
 
-      onSelect(id, player)
+      onClickPlayer(id, player)
     },
-    [onSelect, players]
+    [onClickPlayer, players]
   )
 
   return (
-    <MJUIDialogV2 title="選擇玩家" {...dialogProps}>
+    <>
       {loading && (
-        <div className="w-32 text-center mx-auto my-24">
+        <div className="w-32 text-center mx-auto my-8">
           <span className="material-symbols-outlined animate-spin text-4xl">
             progress_activity
           </span>
@@ -56,7 +85,7 @@ function MJPlayerSelectDialog({ onSelect, ...dialogProps }: Props) {
           players?.map((player) => (
             <div
               key={player.id}
-              className="text-left flex items-center gap-x-2"
+              className="text-left flex items-center gap-x-2 cursor-pointer"
               onClick={handleClickPlayer}
               data-id={player.id}
             >
@@ -64,8 +93,6 @@ function MJPlayerSelectDialog({ onSelect, ...dialogProps }: Props) {
             </div>
           ))}
       </div>
-    </MJUIDialogV2>
+    </>
   )
 }
-
-export default MJPlayerSelectDialog

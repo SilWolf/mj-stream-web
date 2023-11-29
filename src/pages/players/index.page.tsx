@@ -1,16 +1,20 @@
-import MJPlayerInfoCardDiv from '@/components/MJPlayerInfoCardDiv'
 import MJUIButton from '@/components/MJUI/MJUIButton'
 import MJUIDialogV2 from '@/components/MJUI/MJUIDialogV2'
 import { Player } from '@/models'
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { useBoolean } from 'react-use'
 
 import MJPlayerForm from '@/components/MJPlayerForm'
+import { MJPlayerList } from '@/components/MJPlayerSelectDialog'
+import {
+  createPlayerToDatabase,
+  updatePlayerToDatabase,
+} from '@/helpers/database.helper'
+import { getRandomId } from '@/utils/string.util'
 
 function PlayersPage() {
   const [activePlayer, setActivePlayer] = useState<Player>()
-
-  const players = useMemo(() => [], [])
+  const [refreshKey, setRefreshKey] = useState<string>('1')
 
   const [isShowEditDialog, toggleEditDialog] = useBoolean(false)
 
@@ -25,14 +29,31 @@ function PlayersPage() {
   }, [toggleEditDialog])
 
   const handleClickEdit = useCallback(
-    (player: Player) => {
+    (_: unknown, player: Player) => {
       setActivePlayer(player)
       toggleEditDialog(true)
     },
     [toggleEditDialog]
   )
 
-  const handleSubmitPlayerForm = useCallback(() => Promise.resolve(), [])
+  const handleSubmitPlayerForm = useCallback(
+    (newOrOldPlayer: Player) => {
+      if (newOrOldPlayer.id) {
+        return updatePlayerToDatabase(newOrOldPlayer.id, newOrOldPlayer).then(
+          () => {
+            setRefreshKey(getRandomId())
+            toggleEditDialog(false)
+          }
+        )
+      } else {
+        return createPlayerToDatabase(newOrOldPlayer).then(() => {
+          setRefreshKey(getRandomId())
+          toggleEditDialog(false)
+        })
+      }
+    },
+    [toggleEditDialog]
+  )
 
   return (
     <>
@@ -50,14 +71,8 @@ function PlayersPage() {
             <MJUIButton onClick={handleClickAdd}>新增</MJUIButton>
           </div>
         </div>
-        <div className="space-y-2">
-          {players.map((player) => (
-            <MJPlayerInfoCardDiv
-              player={player}
-              onClickEdit={handleClickEdit}
-            />
-          ))}
-        </div>
+
+        <MJPlayerList key={refreshKey} onClickPlayer={handleClickEdit} />
       </div>
 
       <MJUIDialogV2

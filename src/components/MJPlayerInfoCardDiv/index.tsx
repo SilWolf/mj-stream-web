@@ -19,13 +19,21 @@ function MJPlayerInfoCardDiv({
 
   return (
     <div
-      className="flex-1 flex items-center gap-x-2 rounded p-2 text-white"
+      className="relative flex-1 flex items-center gap-x-2 rounded p-2 text-white"
       style={{
-        background: player.color ?? '#115e59',
+        backgroundColor: player.color ?? '#115e59',
       }}
       {...divProps}
     >
-      <div className="shrink-0">
+      {player.teamPicUrl && (
+        <div
+          className="absolute inset-0 opacity-10 bg-center bg-no-repeat bg-cover"
+          style={{
+            backgroundImage: `url(${player.teamPicUrl})`,
+          }}
+        ></div>
+      )}
+      <div className="relative z-10 shrink-0">
         <div
           className="w-14 h-14 bg-center bg-contain bg-no-repeat rounded"
           style={{
@@ -35,7 +43,7 @@ function MJPlayerInfoCardDiv({
           }}
         />
       </div>
-      <div className="flex-1">
+      <div className="flex-1 relative z-10 ">
         <div>{player.title ?? '(無頭銜)'}</div>
         <div className="text-2xl">{player.name ?? '(無名稱)'}</div>
       </div>

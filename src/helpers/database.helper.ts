@@ -35,3 +35,17 @@ export const createPlayerToDatabase = async (player: Player) => {
 
   return completedPlayer
 }
+
+export const updatePlayerToDatabase = async (id: string, player: Player) => {
+  const completedPlayer: Player = {
+    ...player,
+    updatedAt: new Date().getTime(),
+  }
+
+  await setDoc(
+    doc(db, 'players', completedPlayer.id as string),
+    completedPlayer
+  )
+
+  return completedPlayer
+}
