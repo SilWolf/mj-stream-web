@@ -8,6 +8,8 @@ import MJPlayerForm from '@/components/MJPlayerForm'
 import { MJPlayerList } from '@/components/MJPlayerSelectDialog'
 import {
   createPlayerToDatabase,
+  deletePlayerFromDatabase,
+  deletePlayerToDatabase,
   updatePlayerToDatabase,
 } from '@/helpers/database.helper'
 import { getRandomId } from '@/utils/string.util'
@@ -35,6 +37,23 @@ function PlayersPage() {
     },
     [toggleEditDialog]
   )
+
+  const handleClickClone = useCallback((clonedPlayer: Player) => {
+    createPlayerToDatabase({
+      ...clonedPlayer,
+      name: clonedPlayer.name + '(複製)',
+    }).then(() => {
+      setRefreshKey(getRandomId())
+    })
+  }, [])
+
+  const handleClickDelete = useCallback((clickedId: string) => {
+    if (confirm('確定要刪除玩家嗎？')) {
+      deletePlayerFromDatabase(clickedId).then(() => {
+        setRefreshKey(getRandomId())
+      })
+    }
+  }, [])
 
   const handleSubmitPlayerForm = useCallback(
     (newOrOldPlayer: Player) => {
@@ -72,7 +91,12 @@ function PlayersPage() {
           </div>
         </div>
 
-        <MJPlayerList key={refreshKey} onClickPlayer={handleClickEdit} />
+        <MJPlayerList
+          key={refreshKey}
+          onClickPlayer={handleClickEdit}
+          onClickClone={handleClickClone}
+          onClickDelete={handleClickDelete}
+        />
       </div>
 
       <MJUIDialogV2

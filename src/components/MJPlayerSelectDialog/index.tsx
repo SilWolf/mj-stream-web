@@ -32,9 +32,15 @@ export default MJPlayerSelectDialog
 
 type MJPlayerListProps = {
   onClickPlayer?: (id: string, player: Player) => unknown
+  onClickClone?: (player: Player) => unknown
+  onClickDelete?: (id: string) => unknown
 }
 
-export const MJPlayerList = ({ onClickPlayer }: MJPlayerListProps) => {
+export const MJPlayerList = ({
+  onClickPlayer,
+  onClickClone,
+  onClickDelete,
+}: MJPlayerListProps) => {
   const { value: players, loading } = useAsync(getPlayersFromDatabase)
 
   const handleClickPlayer = useCallback(
@@ -61,6 +67,48 @@ export const MJPlayerList = ({ onClickPlayer }: MJPlayerListProps) => {
     [onClickPlayer, players]
   )
 
+  const handleClickClone = useCallback(
+    (e: React.MouseEvent) => {
+      if (!onClickClone) {
+        return
+      }
+
+      if (!players) {
+        return
+      }
+      const clickedId = e.currentTarget.getAttribute('data-id')
+      if (!clickedId) {
+        return
+      }
+
+      const player = players.find((player) => player.id === clickedId)
+      if (!player) {
+        return
+      }
+
+      const { id, ...clonedPlayer } = player
+
+      onClickClone(clonedPlayer)
+    },
+    [onClickClone, players]
+  )
+
+  const handleClickDelete = useCallback(
+    (e: React.MouseEvent) => {
+      if (!onClickDelete) {
+        return
+      }
+
+      const clickedId = e.currentTarget.getAttribute('data-id')
+      if (!clickedId) {
+        return
+      }
+
+      onClickDelete(clickedId)
+    },
+    [onClickDelete]
+  )
+
   return (
     <>
       {loading && (
@@ -80,16 +128,48 @@ export const MJPlayerList = ({ onClickPlayer }: MJPlayerListProps) => {
           <span>沒有已儲存的玩家</span>
         </div>
       )}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+      <div
+        className={`grid grid-cols-1 gap-2 ${
+          onClickClone || onClickDelete ? '' : 'md:grid-cols-2'
+        }`}
+      >
         {!loading &&
           players?.map((player) => (
             <div
               key={player.id}
-              className="text-left flex items-center gap-x-2 cursor-pointer"
-              onClick={handleClickPlayer}
-              data-id={player.id}
+              className="text-left flex items-center gap-x-2"
             >
-              <MJPlayerInfoCardDiv player={player} />
+              <div
+                className="flex-1 cursor-pointer"
+                onClick={handleClickPlayer}
+                data-id={player.id}
+              >
+                <MJPlayerInfoCardDiv player={player} />
+              </div>
+              {onClickClone && (
+                <div className="shrink-0">
+                  <MJUIButton
+                    color="primary"
+                    variant="text"
+                    onClick={handleClickClone}
+                    data-id={player.id}
+                  >
+                    複製
+                  </MJUIButton>
+                </div>
+              )}
+              {onClickDelete && (
+                <div className="shrink-0">
+                  <MJUIButton
+                    color="danger"
+                    variant="text"
+                    onClick={handleClickDelete}
+                    data-id={player.id}
+                  >
+                    刪除
+                  </MJUIButton>
+                </div>
+              )}
             </div>
           ))}
       </div>

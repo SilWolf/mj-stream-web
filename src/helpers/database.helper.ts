@@ -4,6 +4,7 @@ import { getRandomId } from '@/utils/string.util'
 
 import {
   collection,
+  deleteDoc,
   doc,
   getDocs,
   getFirestore,
@@ -48,4 +49,9 @@ export const updatePlayerToDatabase = async (id: string, player: Player) => {
   )
 
   return completedPlayer
+}
+export const deletePlayerFromDatabase = async (id: string) => {
+  await deleteDoc(doc(db, 'players', id))
+
+  return true
 }
