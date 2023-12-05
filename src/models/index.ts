@@ -47,10 +47,14 @@ export type RawPlayer = {
 }
 
 export type Player = {
+  id?: string
   title: string
   name: string
-  propicSrc?: string
+  proPicUrl?: string | null
+  teamPicUrl?: string | null
   color: string
+  createdAt?: number
+  updatedAt?: number
 }
 
 export type MatchRound = {
@@ -121,7 +125,12 @@ export type PlayerResult = {
   }
 }
 
-export type MatchSetting = Record<string, string>
+export type MatchSetting = {
+  startingScore: '25000' | '30000' | '35000' | '50000' | '100000'
+  isManganRoundUp: '0' | '1'
+  yakuMax: '12' | '13'
+  yakumanMax: '13' | '26' | '39' | '130'
+}
 
 export type Team = {
   _id?: string

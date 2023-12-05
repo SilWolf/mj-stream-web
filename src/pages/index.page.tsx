@@ -56,15 +56,25 @@ function IndexPage() {
             </a>
           </div>
           <div>
-            <div className="text-center">
+            <div className="text-center space-x-4">
               <a href="/obs/1" target="_blank">
                 <MJUIButton color="secondary" size="large">
                   直播頁面
                 </MJUIButton>
               </a>
+              <a href="/players">
+                <MJUIButton color="secondary">玩家列表</MJUIButton>
+              </a>
             </div>
           </div>
           <div className="flex gap-x-4">
+            {/* <div className="flex-1">
+              <a href="/players">
+                <MJUIButton className="w-full" color="secondary">
+                  玩家列表
+                </MJUIButton>
+              </a>
+            </div> */}
             {/* <div className="flex-1">
               <button
                 type="button"

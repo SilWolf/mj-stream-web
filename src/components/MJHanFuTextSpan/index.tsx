@@ -5,9 +5,16 @@ type Props = React.HTMLAttributes<HTMLDivElement> & {
   fu: number | undefined
   raw?: boolean
   twoRows?: boolean
+  isManganRoundUp?: boolean
 }
 
-export default function MJHanFuTextSpan({ han, fu, raw, ...props }: Props) {
+export default function MJHanFuTextSpan({
+  han,
+  fu,
+  raw,
+  isManganRoundUp,
+  ...props
+}: Props) {
   const hanFuDisplay = useMemo(() => {
     if (raw) {
       if (typeof fu !== 'undefined' && han <= 4) {
@@ -27,16 +34,24 @@ export default function MJHanFuTextSpan({ han, fu, raw, ...props }: Props) {
       return '跳滿'
     } else if (han >= 5) {
       return '滿貫'
-    } else if (han >= 4 && typeof fu !== 'undefined' && fu >= 40) {
+    } else if (
+      han >= 4 &&
+      typeof fu !== 'undefined' &&
+      (fu >= 40 || (isManganRoundUp && fu >= 30))
+    ) {
       return '滿貫'
-    } else if (han >= 3 && typeof fu !== 'undefined' && fu >= 70) {
+    } else if (
+      han >= 3 &&
+      typeof fu !== 'undefined' &&
+      (fu >= 70 || (isManganRoundUp && fu >= 60))
+    ) {
       return '滿貫'
     } else if (typeof fu !== 'undefined') {
       return `${han}飜${fu}符`
     }
 
     return `${han}飜`
-  }, [han, fu, raw])
+  }, [raw, han, fu, isManganRoundUp])
 
   return <div {...props}>{hanFuDisplay}</div>
 }

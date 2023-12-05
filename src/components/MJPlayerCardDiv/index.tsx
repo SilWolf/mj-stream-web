@@ -1,18 +1,17 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import MJAmountSpan from '@/components/MJAmountSpan'
 import React, { HTMLAttributes, useEffect, useMemo, useState } from 'react'
 import { getLightColorOfColor } from '@/utils/string.util'
 import { Player, PlayerIndex } from '@/models'
-import MJRiichiBgDiv from '../MJRiichiBgDiv'
 import MJTileDiv from '../MJTileDiv'
 
 type Props = HTMLAttributes<HTMLDivElement> & {
-  player: Player
+  player: Partial<Player>
   playerIndex?: PlayerIndex
   score: number
   scoreChanges?: number[]
   isEast?: boolean
   isRiichi?: boolean
+  animated?: boolean
   onAnimationEnd?: () => void
   waitingTiles?: string[]
   onClickWaitingTiles?: (e: React.MouseEvent) => unknown
@@ -36,7 +35,7 @@ export default function MJPlayerCardDiv({
   >(undefined)
 
   const lightenedColor = useMemo(
-    () => getLightColorOfColor(player.color),
+    () => getLightColorOfColor(player.color ?? '#000000'),
     [player.color]
   )
 
@@ -65,21 +64,34 @@ export default function MJPlayerCardDiv({
       data-score-changing={isScoreChanging ? '1' : '0'}
     >
       <div className="flex items-end gap-x-[0.1em]">
-        <div className="shrink-0 w-[1.75em] h-full relative -bottom-[0.075em] -left-[0.075em] z-10">
-          <div className="w-full aspect-[90/125] p-[0.075em]">
+        <div className="shrink-0 w-[1.75em] h-full relative -bottom-[0.075em] -left-[0.075em]">
+          <div
+            className="absolute w-full h-full bg-[#d1b571] overflow-hidden rounded-[0.08em]"
+            style={{ opacity: isRiichi ? 1 : 0 }}
+          >
+            <div className="origin-bottom w-[200%] h-[100%] bg-[#d1291d] animate-[riichi_8s_ease-in-out_infinite]" />
+          </div>
+
+          <div className="relative z-10 w-full aspect-[90/125] p-[0.075em]">
             <div
-              className="w-full h-full bg-white rounded-[0.08em]"
+              className="w-full h-full bg-white rounded-[0.08em] overflow-hidden"
               style={{
                 background: `linear-gradient(180deg, ${player.color}, ${lightenedColor})`,
               }}
             >
-              {isRiichi && (
-                <MJRiichiBgDiv className="absolute -z-10 w-full h-full top-0 left-0 rounded-[0.08em] overflow-hidden" />
+              {player.teamPicUrl && (
+                <div className="absolute inset-[0.075em] overflow-hidden">
+                  <img
+                    className="absolute max-w-[none] h-[2.2em] w-[2.2em] opacity-30 animate-[scrollFromRightToLeft_12s_linear_infinite]"
+                    src={player.teamPicUrl}
+                    alt={player.name}
+                  />
+                </div>
               )}
-              {player.propicSrc && (
+              {player.proPicUrl && (
                 <img
-                  className="w-full h-full rounded-[0.08em]"
-                  src={player.propicSrc}
+                  className="relative z-10 w-full h-full rounded-[0.08em]"
+                  src={player.proPicUrl}
                   alt={player.name}
                 />
               )}

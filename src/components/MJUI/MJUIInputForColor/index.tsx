@@ -1,19 +1,33 @@
-import React, { useMemo, InputHTMLAttributes } from 'react'
-import { cva } from 'cva'
+import Sketch from '@uiw/react-color-sketch'
+import { ColorResult } from '@uiw/color-convert'
+import { useCallback } from 'react'
 
-type MJUIInputForColorProps = InputHTMLAttributes<HTMLInputElement>
-
-const input = cva([
-  'block w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6',
-])
+type MJUIInputForColorProps = {
+  value: string
+  onChange?: (newColor: string) => void
+  onBlur?: () => void
+}
 
 function MJUIInputForColor({
-  className,
-  ...baseProps
+  value,
+  onChange,
+  onBlur,
 }: MJUIInputForColorProps) {
-  const myClassName = useMemo(() => input({ className }), [className])
+  const handleChange = useCallback(
+    (newColorResult: ColorResult) => {
+      onChange?.(newColorResult.hex)
+    },
+    [onChange]
+  )
 
-  return <input type="color" className={myClassName} {...baseProps} />
+  return (
+    <Sketch
+      disableAlpha
+      onChange={handleChange}
+      onBlur={onBlur}
+      color={value}
+    />
+  )
 }
 
 export default MJUIInputForColor

@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 import React, {
   createContext,
   useContext,
@@ -9,7 +8,6 @@ import React, {
   useEffect,
 } from 'react'
 
-import { initializeApp } from 'firebase/app'
 import {
   Database as FirebaseDatabase,
   getDatabase,
@@ -30,21 +28,8 @@ import {
   equalTo,
 } from 'firebase/database'
 import { isObjectEqual } from '@/utils/object.util'
+import firebaseApp from '@/firebaseApp'
 
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: 'AIzaSyCa4jaiAOgH5H8B6hSo4DU49WnkpGPeavA',
-  authDomain: 'hkmjbs-streaming.firebaseapp.com',
-  databaseURL:
-    'https://hkmjbs-streaming-default-rtdb.asia-southeast1.firebasedatabase.app',
-  projectId: 'hkmjbs-streaming',
-  storageBucket: 'hkmjbs-streaming.appspot.com',
-  messagingSenderId: '537815456325',
-  appId: '1:537815456325:web:c387796326f9db2726a12c',
-}
-
-// Initialize Firebase
-const firebaseApp = initializeApp(firebaseConfig)
 const firebaseDatabase = getDatabase(firebaseApp)
 if (window.location.hostname === 'localhost') {
   // Point to the RTDB emulator running on localhost.
