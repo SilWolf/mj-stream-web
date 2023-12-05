@@ -9,7 +9,6 @@ import { MJPlayerList } from '@/components/MJPlayerSelectDialog'
 import {
   createPlayerToDatabase,
   deletePlayerFromDatabase,
-  deletePlayerToDatabase,
   updatePlayerToDatabase,
 } from '@/helpers/database.helper'
 import { getRandomId } from '@/utils/string.util'
