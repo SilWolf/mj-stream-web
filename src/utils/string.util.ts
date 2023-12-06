@@ -82,3 +82,29 @@ export const getWindByRoundAndPlayerIndex = (
 
   return '東'
 }
+
+export const getYakuMaxLabel = (value: '12' | '13') => {
+  switch (value) {
+    case '12':
+      return '三倍滿 (12翻)'
+    case '13':
+      return '累計役滿 (13翻)'
+  }
+
+  return '(未知)'
+}
+
+export const getYakumanMaxLabel = (value: '13' | '26' | '39' | '130') => {
+  switch (value) {
+    case '13':
+      return '單倍役滿'
+    case '26':
+      return '雙倍役滿'
+    case '39':
+      return '三倍役滿'
+    case '130':
+      return '無上限'
+  }
+
+  return '(未知)'
+}

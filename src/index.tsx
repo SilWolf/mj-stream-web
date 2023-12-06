@@ -1,11 +1,11 @@
-/* eslint-disable import/no-extraneous-dependencies */
-
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { Route, Switch } from 'wouter'
 import './index.css'
 import reportWebVitals from './reportWebVitals'
 import FirebaseDatabaseProvider from './providers/firebaseDatabase.provider'
+
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 import IndexPage from './pages/index.page'
 import MatchDetailPage from './pages/match/[id]/index.page'
@@ -20,31 +20,57 @@ import ObsScorePage from './pages/obs/[obsRoomId]/socre.page'
 import MatchesPage from './pages/matches/index.page'
 import ObsChartPage from './pages/obs/[obsRoomId]/chart.page'
 import ObsCarouselPage from './pages/obs/[obsRoomId]/carousel.page'
+import ObsRoomControlPage from './pages/obs/[obsRoomId]/control.page'
 
 // Import the functions you need from the SDKs you need
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 2,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+      refetchIntervalInBackground: false,
+      staleTime: Infinity,
+    },
+  },
+})
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <FirebaseDatabaseProvider>
-      <ConfirmDialogProvider>
-        <Switch>
-          <Route path="/" component={IndexPage} />
-          <Route path="/create-match" component={CreateMatchPage} />
-          <Route path="/match/:matchId" component={MatchDetailPage} />
-          <Route path="/match/:matchId/obs" component={MatchOBSPage} />
-          <Route path="/match/:matchId/control" component={MatchControlPage} />
-          <Route path="/obs/:obsRoomId" component={ObsRoomPage} />
-          <Route path="/obs/:obsRoomId/score" component={ObsScorePage} />
-          <Route path="/obs/:obsRoomId/chart" component={ObsChartPage} />
-          <Route path="/obs/:obsRoomId/carousel" component={ObsCarouselPage} />
-          <Route path="/players" component={PlayersPage} />
-          <Route path="/teams" component={TeamsPage} />
-          <Route path="/matches" component={MatchesPage} />
-        </Switch>
-      </ConfirmDialogProvider>
-    </FirebaseDatabaseProvider>
+    <QueryClientProvider client={queryClient}>
+      <FirebaseDatabaseProvider>
+        <ConfirmDialogProvider>
+          <Switch>
+            <Route path="/" component={IndexPage} />
+            <Route path="/create-match" component={CreateMatchPage} />
+            <Route path="/match/:matchId" component={MatchDetailPage} />
+            <Route path="/match/:matchId/obs" component={MatchOBSPage} />
+            <Route
+              path="/match/:matchId/control"
+              component={MatchControlPage}
+            />
+            <Route path="/obs/:obsRoomId" component={ObsRoomPage} />
+            <Route
+              path="/obs/:obsRoomId/control"
+              component={ObsRoomControlPage}
+            />
+            <Route path="/obs/:obsRoomId/score" component={ObsScorePage} />
+            <Route path="/obs/:obsRoomId/chart" component={ObsChartPage} />
+            <Route
+              path="/obs/:obsRoomId/carousel"
+              component={ObsCarouselPage}
+            />
+            <Route path="/players" component={PlayersPage} />
+            <Route path="/teams" component={TeamsPage} />
+            <Route path="/matches" component={MatchesPage} />
+          </Switch>
+        </ConfirmDialogProvider>
+      </FirebaseDatabaseProvider>
+    </QueryClientProvider>
   </React.StrictMode>
 )
 

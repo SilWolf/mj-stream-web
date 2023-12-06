@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 export const isSameArray = (
   a: unknown[] | undefined,
   b: unknown[] | undefined

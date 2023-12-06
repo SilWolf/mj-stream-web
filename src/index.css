@@ -7,7 +7,30 @@
     @apply bg-gray-300;
   }
 
+  a {
+    @apply text-teal-600 hover:text-teal-500 underline underline-offset-2;
+  }
+
   dialog {
     @apply w-full max-w-3xl;
+  }
+}
+
+@layer components {
+  table {
+    & thead th, & thead td {
+      @apply px-2 py-1 whitespace-nowrap bg-neutral-400;
+    }
+    & tbody th, & tbody td {
+      @apply px-2 py-1 whitespace-nowrap;
+    }
+
+    & tr {
+      @apply border-neutral-400 border-b;
+    }
+
+    & td {
+      @apply px-6 py-4 whitespace-nowrap;
+    }
   }
 }

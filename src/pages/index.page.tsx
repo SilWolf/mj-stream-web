@@ -1,19 +1,83 @@
 import MJUIButton from '@/components/MJUI/MJUIButton'
-import React from 'react'
+import { DB_TeamPlayer, apiGetMatches } from '@/helpers/sanity.helper'
+import { useQuery } from '@tanstack/react-query'
+import React, { useCallback, useMemo } from 'react'
+import OBSInstructionDivV2 from './obs/components/OBSInstructionDivV2'
+import { getQrCodeImgSrc } from '@/utils/string.util'
+import { useFirebaseDatabaseByKey } from '@/providers/firebaseDatabase.provider'
+
+const DBTeamPlayerDiv = ({ teamPlayer }: { teamPlayer: DB_TeamPlayer }) => {
+  const portraitImage =
+    teamPlayer.overridedPortraitImage || teamPlayer.player.portraitImage
+      ? `${
+          teamPlayer.overridedPortraitImage ?? teamPlayer.player.portraitImage
+        }?w=32&h=32`
+      : null
+  const squareLogoImage = `${teamPlayer.team.squareLogoImage}?w=32&h=32`
+  const designation =
+    teamPlayer.overridedDesignation ??
+    teamPlayer.team.name ??
+    teamPlayer.player.designation
+  const name = teamPlayer.overridedName ?? teamPlayer.player.name
+  const color = teamPlayer.overridedColor ?? teamPlayer.team.color
+
+  return (
+    <div
+      className="flex justify-start items-center gap-x-1 border-l-4 pl-2"
+      style={{ borderColor: color }}
+    >
+      <div className="w-8 h-8">
+        {squareLogoImage && <img src={squareLogoImage} alt={designation} />}
+      </div>
+      <div className="w-8 h-8">
+        {portraitImage && <img src={portraitImage} alt={name} />}
+      </div>
+      <div className="flex-1">
+        <p className="text-sm text-neutral-600">{designation}</p>
+        <p className="font-bold">{name}</p>
+      </div>
+    </div>
+  )
+}
 
 function IndexPage() {
+  const { data: matches } = useQuery({
+    queryKey: ['matches'],
+    queryFn: apiGetMatches,
+  })
+
+  const { data: obsInfo, set: setObsInfo } =
+    useFirebaseDatabaseByKey<string>(`obs/1`)
+
+  const handleClickStartBroadcast = useCallback((e: React.MouseEvent) => {
+    const newMatchId = e.currentTarget.getAttribute('data-id')
+    if (!newMatchId) {
+      return
+    }
+
+    if (
+      confirm(
+        '請確定上一局對局已經結束才開始新的直播！！\n確定要開始直播新的對局嗎？'
+      )
+    ) {
+      setObsInfo({
+        matchId: newMatchId,
+      })
+    }
+  }, [])
+
   return (
-    <div className="container mx-auto max-w-screen-sm ">
+    <div className="container mx-auto">
       <div className="h-screen flex flex-col py-16 gap-y-12">
         <div className="shrink-0">
-          <h1 className="text-5xl text-center">日麻比賽直播系統 (牌藝攻防)</h1>
-        </div>
-        <div className="text-center">
-          <img
-            src="/images/master-logo.jpeg"
-            className="w-48 mx-auto"
-            alt="HKMSCA"
-          />
+          <h1 className="text-4xl font-bold text-center">
+            <img
+              src="/images/master-logo.jpeg"
+              className="inline-block w-16"
+              alt="HKMSCA"
+            />{' '}
+            <span>日麻比賽直播系統 (牌藝攻防)</span>
+          </h1>
         </div>
         {/* <div className="flex-1 bg-gray-100 bg-opacity-50 rounded p-8 min-h-0 overflow-scroll">
           <ul>
@@ -48,22 +112,118 @@ function IndexPage() {
           </ul>
         </div> */}
         <div className="shrink-0 space-y-4">
-          <div>
+          {/* <div>
             <a href="/create-match">
               <MJUIButton className="w-full" size="xlarge">
                 開新對局
               </MJUIButton>
             </a>
+          </div> */}
+          <div className="grid grid-cols-2 gap-x-4">
+            <div className="px-8 py-4 bg-green-300 border-2 border-green-600 text-center space-y-4">
+              <p className="text-3xl font-bold text-green-900">OBS設定</p>
+              <p className="text-2xl">
+                固定的直播頁面：{' '}
+                <a
+                  href={`${location.origin}/obs/1`}
+                  target="_blank"
+                  className="text-black"
+                >
+                  {location.origin}/obs/1
+                </a>
+              </p>
+              <div className="text-left">
+                <OBSInstructionDivV2 />
+              </div>
+            </div>
+
+            <div className="px-8 py-4 bg-yellow-300 border-2 border-yellow-600 text-center space-y-4">
+              <p className="text-3xl font-bold text-yellow-900">控制台</p>
+              <p className="text-2xl">
+                固定的控制台頁面：
+                <a
+                  href={`${location.origin}/obs/1/control`}
+                  target="_blank"
+                  className="text-black"
+                >
+                  {location.origin}/obs/1/control
+                </a>
+              </p>
+              <div className="pt-16">
+                <img
+                  className="mx-auto block w-64 h-64"
+                  src={getQrCodeImgSrc(`${location.origin}/obs/1/control`)}
+                  alt=""
+                />
+              </div>
+            </div>
           </div>
+
+          <div>
+            {
+              <table className="w-full text-left">
+                <thead>
+                  <tr>
+                    <th>對局</th>
+                    <th>東</th>
+                    <th>南</th>
+                    <th>西</th>
+                    <th>北</th>
+                    <th className="text-right">操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {matches?.map((match) => (
+                    <tr key={match._id}>
+                      <th>
+                        <p>{match.name}</p>
+                        <p className="font-normal text-sm text-neutral-600">
+                          {match.rule.name}
+                        </p>
+                      </th>
+                      <td>
+                        <DBTeamPlayerDiv teamPlayer={match.playerEast} />
+                      </td>
+                      <td>
+                        <DBTeamPlayerDiv teamPlayer={match.playerSouth} />
+                      </td>
+                      <td>
+                        <DBTeamPlayerDiv teamPlayer={match.playerWest} />
+                      </td>
+                      <td>
+                        <DBTeamPlayerDiv teamPlayer={match.playerNorth} />
+                      </td>
+                      <td className="space-x-2 text-right">
+                        {match._id === obsInfo?.matchId ? (
+                          <span className="bg-red-600 px-2 py-1 rounded text-white">
+                            LIVE 直播中
+                          </span>
+                        ) : (
+                          <MJUIButton
+                            variant="text"
+                            onClick={handleClickStartBroadcast}
+                            data-id={match._id}
+                          >
+                            直播此對局
+                          </MJUIButton>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            }
+          </div>
+
           <div>
             <div className="text-center space-x-4">
-              <a href="/obs/1" target="_blank">
-                <MJUIButton color="secondary" size="large">
-                  直播頁面
+              <a href="https://hkmjbs.sanity.studio/" target="_blank">
+                <MJUIButton color="secondary">
+                  資料庫{' '}
+                  <span className="material-symbols-outlined text-xs">
+                    open_in_new
+                  </span>
                 </MJUIButton>
-              </a>
-              <a href="/players">
-                <MJUIButton color="secondary">玩家列表</MJUIButton>
               </a>
             </div>
           </div>

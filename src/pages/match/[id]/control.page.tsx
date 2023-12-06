@@ -31,6 +31,9 @@ import MJUIButton from '@/components/MJUI/MJUIButton'
 import MJMatchHotfixDialog from '@/components/MJMatchHotifxDialog'
 import { useFirebaseDatabaseByKey } from '@/providers/firebaseDatabase.provider'
 import MJHanFuTextSpan from '@/components/MJHanFuTextSpan'
+import { useQuery } from '@tanstack/react-query'
+import { apiGetMatchById } from '@/helpers/sanity.helper'
+import ControlNewMatch from './ControlNewMatch'
 
 type Props = {
   params: { matchId: string }
@@ -39,6 +42,11 @@ type Props = {
 export default function MatchControlPage({ params: { matchId } }: Props) {
   const { data: obsInfo, set: setObsInfo } =
     useFirebaseDatabaseByKey<string>('obs/1')
+
+  const { data: dbMatch } = useQuery({
+    queryKey: ['matches', matchId],
+    queryFn: ({ queryKey }) => apiGetMatchById(queryKey[1]),
+  })
 
   const {
     match,
@@ -511,6 +519,10 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
   const handleClickClearActiveResult = useCallback(() => {
     setMatchActiveResultDetail(null)
   }, [setMatchActiveResultDetail])
+
+  if ((!match || !matchCurrentRound) && dbMatch) {
+    return <ControlNewMatch dbMatch={dbMatch} />
+  }
 
   if (!match || !matchCurrentRound) {
     return <div>對局讀取失敗。</div>
