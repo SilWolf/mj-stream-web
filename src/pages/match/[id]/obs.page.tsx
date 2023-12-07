@@ -2,14 +2,13 @@ import React, { useMemo } from 'react'
 import MJMatchCounterSpan from '@/components/MJMatchCounterSpan'
 import MJTileDiv from '@/components/MJTileDiv'
 import useMatch from '@/hooks/useMatch'
-import BroadcastLayout from '@/layouts/Broadcast.layout'
 
 import { PlayerIndex } from '@/models'
 import { getIsPlayerEast } from '@/helpers/mahjong.helper'
 import MJPlayerCardDiv from '@/components/MJPlayerCardDiv'
 import OBSInstructionDiv from './components/OBSInstructionDiv'
-import MJHanFuTextSpan from '@/components/MJHanFuTextSpan'
 import MJHanFuTextSpecialSpan from '@/components/MJHanFuTextSpecialSpan'
+import MJReactAnimationDiv from '@/components/MJReachAnimationDiv'
 
 type Props = {
   params: { matchId: string }
@@ -34,137 +33,157 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
   }, [match, matchCurrentRound])
 
   if (!match || !matchCurrentRound) {
-    return (
-      <BroadcastLayout>
-        <div className="text-current">對局讀取失敗。</div>
-      </BroadcastLayout>
-    )
+    return <div className="text-current">對局讀取失敗。</div>
   }
 
   return (
-    <BroadcastLayout>
-      <div className="flex flex-row items-stretch gap-x-4 text-white">
-        <div
-          className="text-[0.6em] p-2 pl-10 pr-[1em] flex items-center gap-x-8 transition-[width]"
-          style={{
-            background: `linear-gradient(280deg, transparent, transparent 0.5em, #00000080 0.5em, #00000080 100%)`,
-          }}
-        >
-          <div className="">
-            <div className="text-[0.5em]">{match.name}</div>
-            <div className="flex gap-x-8 items-center">
-              <div className="min-w-[3.5em]">
-                <MJMatchCounterSpan
-                  roundCount={matchCurrentRound.roundCount}
-                  max={8}
-                />
-              </div>
-
-              <div className="flex flex-col justify-around gap-2">
-                <div className="flex-1 flex flex-row items-center gap-x-3">
-                  <div className="flex-1">
-                    <img
-                      src="/images/score-hundred.png"
-                      alt="hundred"
-                      className="h-[0.25em] mt-[0.1em]"
-                    />
-                  </div>
-                  <div className="text-[0.45em] leading-none">
-                    {matchCurrentRound.extendedRoundCount ?? 0}
-                  </div>
-                </div>
-                <div className="flex-1 flex flex-row items-center gap-x-3">
-                  <div className="flex-1">
-                    <img
-                      src="/images/score-thousand.png"
-                      alt="thousand"
-                      className="h-[0.25em] mt-[0.1em]"
-                    />
-                  </div>
-                  <div className="text-[0.45em] leading-none">
-                    {matchCurrentRound.cumulatedThousands ?? 0}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center gap-x-2">
-            {matchCurrentRoundDoras.map((dora) => (
-              <MJTileDiv
-                key={dora}
-                className="w-[1.4em] animate-[fadeIn_0.5s_ease-in-out]"
-              >
-                {dora}
-              </MJTileDiv>
-            ))}
-          </div>
-        </div>
-        <div className="flex-1" />
-      </div>
-
-      <div className="flex items-center justify-center mt-20">
-        <div className="body-hidden mx-20 text-[16px]">
-          <OBSInstructionDiv matchId={matchId} />
-        </div>
-      </div>
-
+    <>
       <div
-        className="fixed bottom-0 left-0 right-0 px-10 pb-6 grid grid-cols-4 items-end gap-x-8 text-white transition-opacity animate-[fadeInFromBottom_1s_ease-in-out]"
+        className={
+          'w-screen h-screen mx-auto py-8 overflow-hidden text-[4.8rem]'
+        }
         style={{
-          opacity: match.activeResultDetail ? 0 : 'inherit',
+          background:
+            'linear-gradient(transparent, transparent 73%, rgba(0, 0, 0, 0.25))',
+          opacity: 0,
         }}
       >
-        {players.map((player) => (
-          <div className="w-[5.35em]" key={player.name}>
-            <MJPlayerCardDiv
-              player={player}
-              score={player.currentStatus.afterScore}
-              scoreChanges={player.currentStatus.scoreChanges}
-              isEast={player.currentStatus.isEast}
-              isRiichi={player.currentStatus.isRiichi}
-              waitingTiles={player.currentStatus.waitingTiles}
-            />
-          </div>
-        ))}
-      </div>
+        <div className="flex flex-row items-stretch gap-x-4 text-white">
+          <div
+            className="text-[0.6em] p-2 pl-10 pr-[1em] flex items-center gap-x-8 transition-[width]"
+            style={{
+              background: `linear-gradient(280deg, transparent, transparent 0.5em, #00000080 0.5em, #00000080 100%)`,
+            }}
+          >
+            <div className="">
+              <div className="text-[0.5em]">{match.name}</div>
+              <div className="flex gap-x-8 items-center">
+                <div className="min-w-[3.5em]">
+                  <MJMatchCounterSpan
+                    roundCount={matchCurrentRound.roundCount}
+                    max={8}
+                  />
+                </div>
 
-      {match.activeResultDetail && (
-        <div className="fixed bottom-0 left-0 right-0 px-10 pb-6 grid grid-cols-4 gap-x-8 text-white transition-opacity animate-[fadeInFromBottom_1s_ease-in-out]">
-          <div className="w-[5.35em]">
-            <MJPlayerCardDiv
-              player={match.players[match.activeResultDetail.winnerPlayerIndex]}
-              score={
-                matchCurrentRound.playerResults[
-                  match.activeResultDetail.winnerPlayerIndex
-                ].afterScore
-              }
-            />
-          </div>
-          <div className="col-span-3 bg-black bg-opacity-50 py-6 px-8 text-[0.5em] flex items-stretch gap-x-4">
-            <div
-              className={`flex-1 flex flex-wrap gap-x-[0.75em] ${
-                match.activeResultDetail.isYakuman
-                  ? 'self-center justify-center'
-                  : ''
-              }`}
-            >
-              {match.activeResultDetail.yakusInText.map((text) => (
-                <span key={text}>{text}</span>
+                <div className="flex flex-col justify-around gap-2">
+                  <div className="flex-1 flex flex-row items-center gap-x-3">
+                    <div className="flex-1">
+                      <img
+                        src="/images/score-hundred.png"
+                        alt="hundred"
+                        className="h-[0.25em] mt-[0.1em]"
+                      />
+                    </div>
+                    <div className="text-[0.45em] leading-none">
+                      {matchCurrentRound.extendedRoundCount ?? 0}
+                    </div>
+                  </div>
+                  <div className="flex-1 flex flex-row items-center gap-x-3">
+                    <div className="flex-1">
+                      <img
+                        src="/images/score-thousand.png"
+                        alt="thousand"
+                        className="h-[0.25em] mt-[0.1em]"
+                      />
+                    </div>
+                    <div className="text-[0.45em] leading-none">
+                      {matchCurrentRound.cumulatedThousands ?? 0}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-x-2">
+              {matchCurrentRoundDoras.map((dora) => (
+                <MJTileDiv
+                  key={dora}
+                  className="w-[1.4em] animate-[fadeIn_0.5s_ease-in-out]"
+                >
+                  {dora}
+                </MJTileDiv>
               ))}
             </div>
-            <div className="shrink-0 w-px bg-neutral-200"></div>
-            <div className="shrink-0 min-w-[3em] self-center text-green-400 text-[1.4em] text-center">
-              <MJHanFuTextSpecialSpan
-                han={Math.min(
-                  match.activeResultDetail.isYakuman ? 13 : 12,
-                  match.activeResultDetail.han
-                )}
-                fu={match.activeResultDetail.fu}
-              />
-            </div>
+          </div>
+          <div className="flex-1" />
+        </div>
+
+        <div className="flex items-center justify-center mt-20">
+          <div className="body-hidden mx-20 text-[16px]">
+            <OBSInstructionDiv matchId={matchId} />
           </div>
         </div>
-      )}
-    </BroadcastLayout>
+
+        <div
+          className="fixed bottom-0 left-0 right-0 px-10 pb-6 grid grid-cols-4 items-end gap-x-8 text-white transition-opacity animate-[fadeInFromBottom_1s_ease-in-out]"
+          style={{
+            opacity: match.activeResultDetail ? 0 : 'inherit',
+          }}
+        >
+          {players.map((player) => (
+            <div className="w-[5.35em]" key={player.name}>
+              <MJPlayerCardDiv
+                player={player}
+                score={player.currentStatus.afterScore}
+                scoreChanges={player.currentStatus.scoreChanges}
+                isEast={player.currentStatus.isEast}
+                isRiichi={player.currentStatus.isRiichi}
+                waitingTiles={player.currentStatus.waitingTiles}
+              />
+            </div>
+          ))}
+        </div>
+
+        {match.activeResultDetail && (
+          <div className="fixed bottom-0 left-0 right-0 px-10 pb-6 grid grid-cols-4 gap-x-8 text-white transition-opacity animate-[fadeInFromBottom_1s_ease-in-out]">
+            <div className="w-[5.35em]">
+              <MJPlayerCardDiv
+                player={
+                  match.players[match.activeResultDetail.winnerPlayerIndex]
+                }
+                score={
+                  matchCurrentRound.playerResults[
+                    match.activeResultDetail.winnerPlayerIndex
+                  ].afterScore
+                }
+              />
+            </div>
+            <div className="col-span-3 bg-black bg-opacity-50 py-6 px-8 text-[0.5em] flex items-stretch gap-x-4">
+              <div
+                className={`flex-1 flex flex-wrap gap-x-[0.75em] ${
+                  match.activeResultDetail.isYakuman
+                    ? 'self-center justify-center'
+                    : ''
+                }`}
+              >
+                {match.activeResultDetail.yakusInText.map((text) => (
+                  <span key={text}>{text}</span>
+                ))}
+              </div>
+              <div className="shrink-0 w-px bg-neutral-200"></div>
+              <div className="shrink-0 min-w-[3em] self-center text-green-400 text-[1.4em] text-center">
+                <MJHanFuTextSpecialSpan
+                  han={Math.min(
+                    match.activeResultDetail.isYakuman ? 13 : 12,
+                    match.activeResultDetail.han
+                  )}
+                  fu={match.activeResultDetail.fu}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+      <div
+        className="fixed inset-0"
+        style={{
+          backgroundImage:
+            'url("https://mleaguewatch.files.wordpress.com/2021/12/2021-12-28-g1-e4-1-matsugase-win.jpg?w=1376")',
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat',
+        }}
+      >
+        <MJReactAnimationDiv teamPicUrl={players[0].teamPicUrl} />
+      </div>
+    </>
   )
 }
