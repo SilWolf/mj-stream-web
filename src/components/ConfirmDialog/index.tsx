@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react'
 import MJUIDialogV2, { MJUIDialogV2Props } from '../MJUI/MJUIDialogV2'
 import MJUIButton from '../MJUI/MJUIButton'
+import MJUILoading from '../MJUI/MJUILoading'
 
 export type ConfirmDialogOptions = {
   title: string
@@ -61,13 +62,7 @@ export default function ConfirmDialog({
             onClick={handleClickOk}
             disabled={loadingForOk}
           >
-            {loadingForOk ? (
-              <span className="material-symbols-outlined animate-spin leading-none">
-                horizontal_rule
-              </span>
-            ) : (
-              okButtonText
-            )}
+            {loadingForOk ? <MJUILoading /> : okButtonText}
           </MJUIButton>
         </div>
       </div>

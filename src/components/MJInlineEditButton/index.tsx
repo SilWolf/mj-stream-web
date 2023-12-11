@@ -46,9 +46,7 @@ function MJInlineEditDiv({
       </div>
       <div>
         <button type="button" onClick={handleClickEdit} {...buttonProps}>
-          <span className="material-symbols-outlined text-sm text-gray-600 underline decoration-dotted">
-            edit
-          </span>
+          <i className="bi bi-pencil"></i>
         </button>
       </div>
     </div>

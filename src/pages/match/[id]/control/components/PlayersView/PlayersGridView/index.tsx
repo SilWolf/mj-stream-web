@@ -22,8 +22,7 @@ const PlayersGridView = ({ players, currentRound }: PlayersViewProps) => {
     <div>
       <div className="text-center mb-4">
         <MJUIButton size="small" onClick={handleClickRotate}>
-          逆時針旋轉{' '}
-          <span className="material-symbols-outlined text-sm">rotate_left</span>
+          逆時針旋轉 <i className="bi bi-arrow-counterclockwise"></i>
         </MJUIButton>
       </div>
       <div className="grid grid-cols-2 gap-2">

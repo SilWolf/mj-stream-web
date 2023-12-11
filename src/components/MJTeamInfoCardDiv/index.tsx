@@ -37,7 +37,7 @@ function MJTeamInfoCardDiv({
             type="button"
             onClick={handleClickEdit}
           >
-            <span className="material-symbols-outlined">edit</span>
+            <i className="bi bi-pencil"></i>
           </MJUIButton>
         </div>
       )}

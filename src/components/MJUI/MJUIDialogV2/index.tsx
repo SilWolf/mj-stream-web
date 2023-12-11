@@ -48,7 +48,7 @@ function MJUIDialogV2({
                 className="absolute top-4 right-4"
                 onClick={handleDialogClose}
               >
-                <span className="material-symbols-outlined">close</span>
+                <i className="bi bi-x"></i>
               </button>
             </div>
           )}

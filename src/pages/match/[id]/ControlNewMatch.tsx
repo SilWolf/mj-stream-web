@@ -131,9 +131,7 @@ const ControlNewMatch = ({ dbMatch }: Props) => {
       <div className="space-y-6">
         <div className="bg-red-500 p-4 text-white space-y-2">
           <div className="text-center">
-            <span className="material-symbols-outlined text-[64px]">
-              report
-            </span>
+            <i className="bi bi-exclamation-triangle"></i>
           </div>
           <p className="text-center text-xl">
             這是開始直播前的最後機會，請檢查以下內容是否完全正確。

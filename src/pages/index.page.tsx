@@ -219,10 +219,7 @@ function IndexPage() {
             <div className="text-center space-x-4">
               <a href="https://hkmjbs.sanity.studio/" target="_blank">
                 <MJUIButton color="secondary">
-                  資料庫{' '}
-                  <span className="material-symbols-outlined text-xs">
-                    open_in_new
-                  </span>
+                  資料庫 <i className="bi bi-box-arrow-up-right"></i>
                 </MJUIButton>
               </a>
             </div>

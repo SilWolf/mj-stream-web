@@ -40,15 +40,27 @@ import MJUITabs from '@/components/MJUI/MJUITabs'
 
 const VIEW_TABS = [
   {
-    label: '列表（舊版）',
+    label: (
+      <span>
+        <i className="bi bi-hdd-stack-fill"></i> 列表(舊版)
+      </span>
+    ),
     value: 'listView-old',
   },
   {
-    label: '列表（新版）',
+    label: (
+      <span>
+        <i className="bi bi-hdd-stack-fill"></i> 列表(新版)
+      </span>
+    ),
     value: 'listView-new',
   },
   {
-    label: '2x2',
+    label: (
+      <span>
+        <i className="bi-grid-fill"></i> 2x2
+      </span>
+    ),
     value: 'gridView',
   },
 ]
@@ -560,11 +572,8 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
           >
             <div className="text-[0.5em]">
               <div className="text-[0.5em]">
-                {match.name}{' '}
                 <button type="button" onClick={handleClickEditMatchName}>
-                  <span className="material-symbols-outlined text-sm underline decoration-dotted">
-                    edit
-                  </span>
+                  {match.name} <i className="bi bi-pencil"></i>
                 </button>
               </div>
               <div className="flex gap-x-8 items-center">

@@ -41,7 +41,7 @@ export default function OBSInstructionDiv({ matchId }: Props) {
             <pre>{cssText}</pre>
             <div className="absolute top-2 right-2">
               <button type="button" onClick={handleClickCopy}>
-                <span className="material-symbols-outlined">content_copy</span>
+                <i className="bi bi-copy"></i>
               </button>
             </div>
           </div>

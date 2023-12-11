@@ -395,9 +395,7 @@ function CreateMatchPage() {
                               data-player-index={playerIndex}
                               onClick={handleClickSwap}
                             >
-                              <span className="material-symbols-outlined">
-                                swap_vert
-                              </span>
+                              <i className="bi bi-arrow-down-up"></i>
                             </MJUIButton>
                           </div>
                         )}
@@ -431,7 +429,7 @@ function CreateMatchPage() {
               className="text-xs underline font-normal text-teal-600 hover:text-teal-500 align-middle"
               onClick={handleClickSearchPlayer}
             >
-              <span className="material-symbols-outlined text-xs">search</span>{' '}
+              <i className="bi bi-search"></i>
               搜尋玩家
             </a>
           </div>
@@ -448,10 +446,7 @@ function CreateMatchPage() {
                 target="_blank"
                 className="text-teal-600 underline"
               >
-                玩家列表
-                <span className="material-symbols-outlined text-xs">
-                  open_in_new
-                </span>{' '}
+                玩家列表 <i className="bi bi-box-arrow-up-right"></i>
               </a>{' '}
               中修改。
             </div>

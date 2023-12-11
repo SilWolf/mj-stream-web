@@ -1,6 +1,7 @@
 import { pickImage } from '@/utils/file.util'
 import { HTMLAttributes, useCallback, useMemo } from 'react'
 import { useAsyncFn, useDropArea } from 'react-use'
+import MJUILoading from '../MJUILoading'
 
 type Props = HTMLAttributes<HTMLDivElement> & {
   helperText?: React.ReactNode
@@ -18,7 +19,7 @@ const MJUIFileDropzone = ({
       children || (
         <div className="space-y-2 text-center text-xs">
           <p>
-            <span className="material-symbols-outlined">upload</span>
+            <i className="bi bi-upload"></i>
           </p>
           <p>拖拉檔案上傳 ／ 點擊上傳</p>
           <p>{helperText}</p>
@@ -61,9 +62,7 @@ const MJUIFileDropzone = ({
       </div>
       {isChanging && (
         <div className="absolute z-10 cursor-not-allowed inset-0 bg-neutral-300 text-white flex gap-x-1 items-center justify-center">
-          <span className="material-symbols-outlined animate-spin">
-            progress_activity
-          </span>
+          <MJUILoading />
         </div>
       )}
     </div>

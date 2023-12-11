@@ -6,6 +6,7 @@ import { getPlayersFromDatabase } from '@/helpers/database.helper'
 import { useAsync } from 'react-use'
 import MJUIButton from '../MJUI/MJUIButton'
 import { getRandomId } from '@/utils/string.util'
+import MJUILoading from '../MJUI/MJUILoading'
 
 type Props = {
   onSelect: (id: string, player: Player) => unknown
@@ -113,18 +114,11 @@ export const MJPlayerList = ({
     <>
       {loading && (
         <div className="w-32 text-center mx-auto my-8">
-          <span className="material-symbols-outlined animate-spin text-4xl">
-            progress_activity
-          </span>
+          <MJUILoading />
         </div>
       )}
       {!loading && players?.length === 0 && (
         <div className="text-gray-500 text-center py-4">
-          <p>
-            <span className="material-symbols-outlined text-[56px]">
-              search_off
-            </span>
-          </p>
           <span>沒有已儲存的玩家</span>
         </div>
       )}
