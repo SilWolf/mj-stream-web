@@ -161,7 +161,7 @@ function IndexPage() {
 
           <div>
             {
-              <table className="w-full text-left">
+              <table className="data-table w-full text-left">
                 <thead>
                   <tr>
                     <th>對局</th>

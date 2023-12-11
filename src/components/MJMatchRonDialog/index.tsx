@@ -358,7 +358,7 @@ export default function MJMatchRonDialog({
         <div className="space-y-2">
           <h5 className="font-bold">分數變動</h5>
 
-          <table className="w-full">
+          <table className="data-table w-full">
             <tbody>
               {(Object.keys(match.players) as unknown as PlayerIndex[]).map(
                 (index) => (

@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import { useFirebaseDatabaseByKey } from '@/providers/firebaseDatabase.provider'
-import ControlPage from '@/pages/match/[id]/control.page'
+import ControlPage from '@/pages/match/[id]/control/index.page'
 
 type Props = {
   params: { obsRoomId: string }

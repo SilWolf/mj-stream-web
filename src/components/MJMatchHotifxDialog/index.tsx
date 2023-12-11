@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/control-has-associated-label */
 import React, { useEffect, useMemo } from 'react'
 import MJUIDialogV2, { MJUIDialogV2Props } from '@/components/MJUI/MJUIDialogV2'
 import MJUIButton from '@/components/MJUI/MJUIButton'
@@ -118,7 +117,7 @@ export default function MJMatchHotfixDialog({
     <MJUIDialogV2 title="手動調整分數" {...dialogProps}>
       <div className="space-y-8">
         <div className="space-y-2">
-          <table className="w-full">
+          <table className="data-table w-full">
             <thead>
               <tr>
                 <th className="w-1/2">玩家</th>

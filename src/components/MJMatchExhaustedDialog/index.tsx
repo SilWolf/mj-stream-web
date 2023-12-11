@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/control-has-associated-label */
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import MJUIDialogV2, { MJUIDialogV2Props } from '@/components/MJUI/MJUIDialogV2'
 import MJUIButton from '@/components/MJUI/MJUIButton'
@@ -219,7 +218,7 @@ export default function MJMatchExhaustedDialog({
         <div className="space-y-2">
           <h5 className="font-bold">分數變動</h5>
 
-          <table className="text-sm w-full">
+          <table className="data-table text-sm w-full">
             <tbody>
               {(Object.keys(match.players) as unknown as PlayerIndex[]).map(
                 (index) => (

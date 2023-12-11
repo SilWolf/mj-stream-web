@@ -33,7 +33,25 @@ import { useFirebaseDatabaseByKey } from '@/providers/firebaseDatabase.provider'
 import MJHanFuTextSpan from '@/components/MJHanFuTextSpan'
 import { useQuery } from '@tanstack/react-query'
 import { apiGetMatchById } from '@/helpers/sanity.helper'
-import ControlNewMatch from './ControlNewMatch'
+import ControlNewMatch from '../ControlNewMatch'
+import PlayersListView from './components/PlayersView/PlayersListView'
+import PlayersGridView from './components/PlayersView/PlayersGridView'
+import MJUITabs from '@/components/MJUI/MJUITabs'
+
+const VIEW_TABS = [
+  {
+    label: '列表（舊版）',
+    value: 'listView-old',
+  },
+  {
+    label: '列表（新版）',
+    value: 'listView-new',
+  },
+  {
+    label: '2x2',
+    value: 'gridView',
+  },
+]
 
 type Props = {
   params: { matchId: string }
@@ -76,6 +94,8 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
   const [clickedDoraIndex, setClickedDoraIndex] = useState<number | undefined>(
     undefined
   )
+
+  const [viewTabValue, setViewTabValue] = useState<string>(VIEW_TABS[0].value)
 
   const [isShowingRonDialog, toggleRonDialog] = useBoolean(false)
   const [ronDialogProps, setRonDialogProps] = useState<
@@ -681,74 +701,99 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
           </MJUIButton>
         </div>
 
-        <div className="space-y-4">
-          {(['0', '1', '2', '3'] as PlayerIndex[]).map((index) => (
-            <div className="flex gap-x-2 items-center">
-              <div className="flex-1 text-[2.5rem]">
-                <MJPlayerCardDiv
-                  player={match.players[index]}
-                  playerIndex={index}
-                  score={matchCurrentRound.playerResults[index].afterScore}
-                  scoreChanges={
-                    matchCurrentRound.playerResults[index].scoreChanges
-                  }
-                  isEast={getIsPlayerEast(index, matchCurrentRound.roundCount)}
-                  isRiichi={matchCurrentRound.playerResults[index].isRiichi}
-                  waitingTiles={
-                    matchCurrentRound.playerResults[index].waitingTiles
-                  }
-                  onClickWaitingTiles={handleClickWaitingTiles}
-                />
+        <MJUITabs
+          tabs={VIEW_TABS}
+          defaultValue={VIEW_TABS[0].value}
+          onChangeValue={setViewTabValue}
+        />
+
+        {viewTabValue === 'listView-old' && (
+          <div className="space-y-4">
+            {(['0', '1', '2', '3'] as PlayerIndex[]).map((index) => (
+              <div className="flex gap-x-2 items-center">
+                <div className="flex-1 text-[2.5rem]">
+                  <MJPlayerCardDiv
+                    player={match.players[index]}
+                    playerIndex={index}
+                    score={matchCurrentRound.playerResults[index].afterScore}
+                    scoreChanges={
+                      matchCurrentRound.playerResults[index].scoreChanges
+                    }
+                    isEast={getIsPlayerEast(
+                      index,
+                      matchCurrentRound.roundCount
+                    )}
+                    isRiichi={matchCurrentRound.playerResults[index].isRiichi}
+                    waitingTiles={
+                      matchCurrentRound.playerResults[index].waitingTiles
+                    }
+                    onClickWaitingTiles={handleClickWaitingTiles}
+                  />
+                </div>
+                {/* <div>
+            <button
+              type="button"
+              className={`${
+                matchCurrentRound.playerResults[index].isRevealed
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-white text-blue-600 opacity-30'
+              } h-16 w-16 border-2 border-blue-600  rounded-full text-lg`}
+              onClick={handleClickReveal}
+              data-player-index={index}
+            >
+              {matchCurrentRound.playerResults[index].isRevealed
+                ? '已副露'
+                : '副露?'}
+            </button>
+          </div> */}
+                <div>
+                  <button
+                    type="button"
+                    className={`${
+                      matchCurrentRound.playerResults[index].isRiichi
+                        ? 'bg-orange-600 text-white'
+                        : 'bg-white text-orange-600 opacity-30'
+                    } h-16 w-16 border-2 border-orange-600  rounded-full text-lg`}
+                    onClick={handleClickRiichi}
+                    data-player-index={index}
+                  >
+                    {matchCurrentRound.playerResults[index].isRiichi
+                      ? '已立直'
+                      : '立直?'}
+                  </button>
+                </div>
+                <div className="pl-6">
+                  <MJUIButton
+                    color="danger"
+                    type="button"
+                    onClick={handleClickRon}
+                    data-player-index={index}
+                  >
+                    和了
+                  </MJUIButton>
+                </div>
               </div>
-              {/* <div>
-                <button
-                  type="button"
-                  className={`${
-                    matchCurrentRound.playerResults[index].isRevealed
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-white text-blue-600 opacity-30'
-                  } h-16 w-16 border-2 border-blue-600  rounded-full text-lg`}
-                  onClick={handleClickReveal}
-                  data-player-index={index}
-                >
-                  {matchCurrentRound.playerResults[index].isRevealed
-                    ? '已副露'
-                    : '副露?'}
-                </button>
-              </div> */}
-              <div>
-                <button
-                  type="button"
-                  className={`${
-                    matchCurrentRound.playerResults[index].isRiichi
-                      ? 'bg-orange-600 text-white'
-                      : 'bg-white text-orange-600 opacity-30'
-                  } h-16 w-16 border-2 border-orange-600  rounded-full text-lg`}
-                  onClick={handleClickRiichi}
-                  data-player-index={index}
-                >
-                  {matchCurrentRound.playerResults[index].isRiichi
-                    ? '已立直'
-                    : '立直?'}
-                </button>
-              </div>
-              <div className="pl-6">
-                <MJUIButton
-                  color="danger"
-                  type="button"
-                  onClick={handleClickRon}
-                  data-player-index={index}
-                >
-                  和了
-                </MJUIButton>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
+
+        {viewTabValue === 'listView-new' && (
+          <PlayersListView
+            players={match.players}
+            currentRound={matchCurrentRound}
+          />
+        )}
+
+        {viewTabValue === 'gridView' && (
+          <PlayersGridView
+            players={match.players}
+            currentRound={matchCurrentRound}
+          />
+        )}
 
         <h4 className="text-3xl">和牌記錄</h4>
 
-        <table className="w-full">
+        <table className="data-table w-full">
           <thead>
             <tr>
               <th>局數</th>

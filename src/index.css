@@ -17,7 +17,7 @@
 }
 
 @layer components {
-  table {
+  table.data-table {
     & thead th, & thead td {
       @apply px-2 py-1 whitespace-nowrap bg-neutral-400;
     }

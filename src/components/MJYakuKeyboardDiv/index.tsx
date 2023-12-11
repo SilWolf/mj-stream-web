@@ -501,7 +501,7 @@ const MJYakuKeyboardDiv = ({
 
       {!isShowYakuman && (
         <div>
-          <table>
+          <table className="data-table">
             <tbody>
               <tr>
                 <th className="bg-neutral-100 px-1 border-neutral-100 border-t border-b">
@@ -596,7 +596,7 @@ const MJYakuKeyboardDiv = ({
             </tbody>
           </table>
 
-          <table className="w-full mt-2">
+          <table className="data-table w-full mt-2">
             <tbody>
               <th className="w-16 bg-neutral-200 px-1 border-neutral-100 border-t border-b">
                 寶牌
@@ -718,7 +718,7 @@ const MJYakuKeyboardDiv = ({
 
       {isShowYakuman && (
         <div>
-          <table>
+          <table className="data-table">
             <tbody>
               <tr>
                 <th className="bg-neutral-100 px-1 border-neutral-100 border-t border-b">
@@ -749,7 +749,7 @@ const MJYakuKeyboardDiv = ({
         </div>
       )}
 
-      <table className="w-full mt-2 bg-teal-100">
+      <table className="data-table w-full mt-2 bg-teal-100">
         <tbody>
           <th className="w-16 bg-teal-400 py-2 px-1">結算</th>
           <td className="flex flex-wrap gap-2 p-2">
