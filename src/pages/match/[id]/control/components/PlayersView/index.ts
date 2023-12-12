@@ -1,10 +1,22 @@
 import { MatchRound, Player, PlayerIndex } from '@/models'
 
+export type PlayersViewAction =
+  | 'waitingTile'
+  | 'yaku'
+  | 'dora-normal-plus'
+  | 'dora-normal-minus'
+  | 'dora-red-plus'
+  | 'dora-red-minus'
+  | 'reveal'
+  | 'riichi'
+  | 'ron-self'
+  | 'ron-before'
+  | 'ron-after'
+  | 'ron-opposite'
+
 export type PlayersViewProps = {
   players: Record<PlayerIndex, Player>
   currentRound: MatchRound
-}
 
-export type PlayersViewSingletonProps = {
-  player: Player
+  onAction: (playerIndex: PlayerIndex, action: PlayersViewAction) => unknown
 }

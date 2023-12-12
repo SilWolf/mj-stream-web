@@ -286,3 +286,42 @@ export const generateMatchRoundText = (
     return `${round}.${extendedRound ?? 0}`
   }
 }
+
+export const getBeforeOfPlayerIndex = (playerIndex: PlayerIndex) => {
+  switch (playerIndex) {
+    case '0':
+      return '3'
+    case '1':
+      return '0'
+    case '2':
+      return '1'
+    case '3':
+      return '2'
+  }
+}
+
+export const getAfterOfPlayerIndex = (playerIndex: PlayerIndex) => {
+  switch (playerIndex) {
+    case '0':
+      return '1'
+    case '1':
+      return '2'
+    case '2':
+      return '3'
+    case '3':
+      return '0'
+  }
+}
+
+export const getOppositeOfPlayerIndex = (playerIndex: PlayerIndex) => {
+  switch (playerIndex) {
+    case '0':
+      return '2'
+    case '1':
+      return '3'
+    case '2':
+      return '0'
+    case '3':
+      return '1'
+  }
+}

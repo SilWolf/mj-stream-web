@@ -16,7 +16,10 @@ import MJMatchRonDialog, {
 import {
   formatPlayerResultsByPreviousPlayerResults,
   generateMatchRoundCode,
+  getAfterOfPlayerIndex,
+  getBeforeOfPlayerIndex,
   getIsPlayerEast,
+  getOppositeOfPlayerIndex,
   getPlayerIndexOfEastByRound,
 } from '@/helpers/mahjong.helper'
 import { useBoolean } from 'react-use'
@@ -37,6 +40,7 @@ import ControlNewMatch from '../ControlNewMatch'
 import PlayersListView from './components/PlayersView/PlayersListView'
 import PlayersGridView from './components/PlayersView/PlayersGridView'
 import MJUITabs from '@/components/MJUI/MJUITabs'
+import { PlayersViewAction } from './components/PlayersView'
 
 const VIEW_TABS = [
   {
@@ -111,8 +115,11 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
 
   const [isShowingRonDialog, toggleRonDialog] = useBoolean(false)
   const [ronDialogProps, setRonDialogProps] = useState<
-    Pick<MJMatchRonProps, 'initialActivePlayerIndex'>
-  >({ initialActivePlayerIndex: '0' })
+    Pick<
+      MJMatchRonProps,
+      'initialActivePlayerIndex' | 'initialTargetPlayerIndex'
+    >
+  >({ initialActivePlayerIndex: '0', initialTargetPlayerIndex: '-1' })
   const confirmDialog = useConfirmDialog()
 
   const [isShowingExhaustedDialog, toggleExhaustedDialog] = useBoolean(false)
@@ -277,6 +284,160 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
   const handleClickHotfix = useCallback(() => {
     toggleHotfixDialog(true)
   }, [toggleHotfixDialog])
+
+  const handlePlayerListViewAction = useCallback(
+    (playerIndex: PlayerIndex, action: PlayersViewAction) => {
+      console.log(playerIndex, action)
+      if (!match || !matchCurrentRound) {
+        return
+      }
+
+      const player = match.players[playerIndex]
+      const playerResult = matchCurrentRound.playerResults[playerIndex]
+
+      switch (action) {
+        case 'reveal':
+          return updateCurrentMatchRound({
+            playerResults: {
+              ...matchCurrentRound.playerResults,
+              [playerIndex]: {
+                ...matchCurrentRound.playerResults[playerIndex],
+                isRevealed:
+                  !matchCurrentRound.playerResults[playerIndex].isRevealed,
+              },
+            },
+          })
+
+        case 'riichi':
+          return confirmDialog.showConfirmDialog({
+            title: !playerResult.isRiichi ? '確定要立直嗎？' : '取消立直？',
+            content: !playerResult.isRiichi
+              ? `一旦點擊確定，就會播出立直動畫，請確定立直的是 ${player.name}！`
+              : `你是否想取消 ${player.name} 的立直？`,
+            onClickOk: async () => {
+              updateCurrentMatchRound({
+                playerResults: {
+                  ...(matchCurrentRound?.playerResults as Record<
+                    PlayerIndex,
+                    PlayerResult
+                  >),
+                  [playerIndex]: {
+                    ...matchCurrentRound?.playerResults[playerIndex],
+                    isRiichi:
+                      !matchCurrentRound?.playerResults[playerIndex].isRiichi,
+                  },
+                },
+              })
+              return new Promise((res) => {
+                setTimeout(res, !playerResult.isRiichi ? 3000 : 10)
+              })
+            },
+          })
+
+        case 'ron-self':
+          setRonDialogProps({
+            initialActivePlayerIndex: playerIndex,
+            initialTargetPlayerIndex: '-1',
+          })
+          toggleRonDialog()
+          return
+
+        case 'ron-before':
+          setRonDialogProps({
+            initialActivePlayerIndex: playerIndex,
+            initialTargetPlayerIndex: getBeforeOfPlayerIndex(playerIndex),
+          })
+          toggleRonDialog()
+          return
+
+        case 'ron-after':
+          setRonDialogProps({
+            initialActivePlayerIndex: playerIndex,
+            initialTargetPlayerIndex: getAfterOfPlayerIndex(playerIndex),
+          })
+          toggleRonDialog()
+          return
+
+        case 'ron-opposite':
+          setRonDialogProps({
+            initialActivePlayerIndex: playerIndex,
+            initialTargetPlayerIndex: getOppositeOfPlayerIndex(playerIndex),
+          })
+          toggleRonDialog()
+          return
+
+        case 'dora-normal-plus':
+          return updateCurrentMatchRound({
+            playerResults: {
+              ...matchCurrentRound.playerResults,
+              [playerIndex]: {
+                ...matchCurrentRound.playerResults[playerIndex],
+                normalDora:
+                  (matchCurrentRound.playerResults[playerIndex].normalDora ??
+                    0) + 1,
+              },
+            },
+          })
+
+        case 'dora-normal-minus':
+          return updateCurrentMatchRound({
+            playerResults: {
+              ...matchCurrentRound.playerResults,
+              [playerIndex]: {
+                ...matchCurrentRound.playerResults[playerIndex],
+                normalDora: Math.max(
+                  (matchCurrentRound.playerResults[playerIndex].normalDora ??
+                    0) - 1,
+                  0
+                ),
+              },
+            },
+          })
+
+        case 'dora-red-plus':
+          return updateCurrentMatchRound({
+            playerResults: {
+              ...matchCurrentRound.playerResults,
+              [playerIndex]: {
+                ...matchCurrentRound.playerResults[playerIndex],
+                redDora:
+                  (matchCurrentRound.playerResults[playerIndex].redDora ?? 0) +
+                  1,
+              },
+            },
+          })
+
+        case 'dora-red-minus':
+          return updateCurrentMatchRound({
+            playerResults: {
+              ...matchCurrentRound.playerResults,
+              [playerIndex]: {
+                ...matchCurrentRound.playerResults[playerIndex],
+                redDora: Math.max(
+                  (matchCurrentRound.playerResults[playerIndex].redDora ?? 0) -
+                    1,
+                  0
+                ),
+              },
+            },
+          })
+
+        case 'waitingTile':
+          return setActiveWaitingTilesData({
+            index: playerIndex,
+            tiles:
+              matchCurrentRound?.playerResults[playerIndex].waitingTiles ?? [],
+          })
+      }
+    },
+    [
+      confirmDialog,
+      match,
+      matchCurrentRound,
+      toggleRonDialog,
+      updateCurrentMatchRound,
+    ]
+  )
 
   const handleSubmitMatchRonDialog = useCallback(
     (updatedMatchRound: MatchRound) => {
@@ -562,184 +723,189 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
 
   return (
     <div>
-      <div className="container mx-auto my-8 px-8 space-y-6">
-        <div className="flex flex-row items-center gap-x-4 text-white">
-          <div
-            className="p-2 pl-4 pr-10 flex items-center gap-x-8 transition-[width] text-[4rem]"
-            style={{
-              background: `linear-gradient(280deg, transparent, transparent 22px, #00000080 23px, #00000080 100%)`,
-            }}
-          >
-            <div className="text-[0.5em]">
-              <div className="text-[0.5em]">
-                <button type="button" onClick={handleClickEditMatchName}>
-                  {match.name} <i className="bi bi-pencil"></i>
-                </button>
-              </div>
-              <div className="flex gap-x-8 items-center">
-                <div>
-                  <MJMatchCounterSpan
-                    roundCount={matchCurrentRound.roundCount}
-                    max={8}
-                  />
-                </div>
-
-                <div className="flex flex-col justify-around">
-                  <div className="flex-1 flex flex-row items-center gap-x-3">
-                    <div className="flex-1">
-                      <img
-                        src="/images/score-hundred.png"
-                        alt="hundred"
-                        className="h-2"
-                      />
-                    </div>
-                    <div className="text-[0.4em] pb-1.5 leading-none">
-                      {matchCurrentRound.extendedRoundCount ?? 0}
-                    </div>
-                  </div>
-                  <div className="flex-1 flex flex-row items-center gap-x-3">
-                    <div className="flex-1">
-                      <img
-                        src="/images/score-thousand.png"
-                        alt="thousand"
-                        className="h-2"
-                      />
-                    </div>
-                    <div className="text-[0.4em] pb-1.5 leading-none">
-                      {matchCurrentRound.cumulatedThousands ?? 0}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-x-2">
-              {matchCurrentRoundDoras.map((dora, index) => (
-                <button
-                  data-index={index}
-                  onClick={handleClickDora}
-                  className="hover:opacity-80"
-                >
-                  <MJTileDiv
-                    key={dora}
-                    className="w-12 animate-[fadeIn_0.5s_ease-in-out]"
-                  >
-                    {dora}
-                  </MJTileDiv>
-                </button>
-              ))}
-
-              <MJUIButton
-                type="button"
-                color="secondary"
-                className={`${
-                  matchCurrentRoundDoras.length === 0 && 'animate-bounce'
-                }`}
-                data-index="-1"
-                onClick={handleClickDora}
-              >
-                +懸賞
-              </MJUIButton>
-            </div>
-          </div>
-
-          <div className="flex-1" />
-
-          <div className="shrink-0">
-            {obsInfo?.matchId !== matchId && (
-              <MJUIButton
-                color="success"
-                type="button"
-                className="animate-pulse"
-                onClick={handleClickStartOBS}
-              >
-                開始OBS
-              </MJUIButton>
-            )}
-          </div>
-        </div>
-
-        <div className="text-right space-x-4">
-          {match.activeResultDetail && (
-            <MJUIButton
-              color="secondary"
-              type="button"
-              onClick={handleClickClearActiveResult}
+      <div className="container mx-auto my-8 px-8 space-y-24">
+        <div className="space-y-6">
+          <div className="flex flex-row items-center gap-x-4 text-white">
+            <div
+              className="p-2 pl-4 pr-10 flex items-center gap-x-8 transition-[width] text-[4rem]"
+              style={{
+                background: `linear-gradient(280deg, transparent, transparent 22px, #00000080 23px, #00000080 100%)`,
+              }}
             >
-              結束播放中的和牌詳情
-              <br />
-              <span className="text-xs">(或最多20秒後自動結束)</span>
-            </MJUIButton>
-          )}
-          {matchCurrentRound.nextRoundType !== NextRoundTypeEnum.Unknown &&
-            matchCurrentRound.nextRoundType !== NextRoundTypeEnum.End && (
-              <MJUIButton
-                color="success"
-                type="button"
-                className="animate-pulse"
-                onClick={handleClickGoNextRound}
-              >
-                進入
-                <MJMatchCounterSpan
-                  roundCount={
-                    matchCurrentRound.nextRoundType ===
-                      NextRoundTypeEnum.NextRound ||
-                    matchCurrentRound.nextRoundType ===
-                      NextRoundTypeEnum.NextRoundAndExtended
-                      ? matchCurrentRound.roundCount + 1
-                      : matchCurrentRound.roundCount
-                  }
-                  extendedRoundCount={
-                    matchCurrentRound.nextRoundType ===
-                      NextRoundTypeEnum.Extended ||
-                    matchCurrentRound.nextRoundType ===
-                      NextRoundTypeEnum.NextRoundAndExtended
-                      ? matchCurrentRound.extendedRoundCount + 1
-                      : 0
-                  }
-                />
-              </MJUIButton>
-            )}
-
-          <MJUIButton
-            color="secondary"
-            type="button"
-            onClick={handleClickExhausted}
-          >
-            流局
-          </MJUIButton>
-        </div>
-
-        <MJUITabs
-          tabs={VIEW_TABS}
-          defaultValue={VIEW_TABS[0].value}
-          onChangeValue={setViewTabValue}
-        />
-
-        {viewTabValue === 'listView-old' && (
-          <div className="space-y-4">
-            {(['0', '1', '2', '3'] as PlayerIndex[]).map((index) => (
-              <div className="flex gap-x-2 items-center">
-                <div className="flex-1 text-[2.5rem]">
-                  <MJPlayerCardDiv
-                    player={match.players[index]}
-                    playerIndex={index}
-                    score={matchCurrentRound.playerResults[index].afterScore}
-                    scoreChanges={
-                      matchCurrentRound.playerResults[index].scoreChanges
-                    }
-                    isEast={getIsPlayerEast(
-                      index,
-                      matchCurrentRound.roundCount
-                    )}
-                    isRiichi={matchCurrentRound.playerResults[index].isRiichi}
-                    waitingTiles={
-                      matchCurrentRound.playerResults[index].waitingTiles
-                    }
-                    onClickWaitingTiles={handleClickWaitingTiles}
-                  />
+              <div className="text-[0.5em]">
+                <div className="text-[0.5em]">
+                  <button type="button" onClick={handleClickEditMatchName}>
+                    {match.name} <i className="bi bi-pencil"></i>
+                  </button>
                 </div>
-                {/* <div>
+                <div className="flex gap-x-8 items-center">
+                  <div>
+                    <MJMatchCounterSpan
+                      roundCount={matchCurrentRound.roundCount}
+                      max={8}
+                    />
+                  </div>
+
+                  <div className="flex flex-col justify-around">
+                    <div className="flex-1 flex flex-row items-center gap-x-3">
+                      <div className="flex-1">
+                        <img
+                          src="/images/score-hundred.png"
+                          alt="hundred"
+                          className="h-2"
+                        />
+                      </div>
+                      <div className="text-[0.4em] pb-1.5 leading-none">
+                        {matchCurrentRound.extendedRoundCount ?? 0}
+                      </div>
+                    </div>
+                    <div className="flex-1 flex flex-row items-center gap-x-3">
+                      <div className="flex-1">
+                        <img
+                          src="/images/score-thousand.png"
+                          alt="thousand"
+                          className="h-2"
+                        />
+                      </div>
+                      <div className="text-[0.4em] pb-1.5 leading-none">
+                        {matchCurrentRound.cumulatedThousands ?? 0}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-x-2">
+                {matchCurrentRoundDoras.map((dora, index) => (
+                  <button
+                    data-index={index}
+                    onClick={handleClickDora}
+                    className="hover:opacity-80"
+                  >
+                    <MJTileDiv
+                      key={dora}
+                      className="w-12 animate-[fadeIn_0.5s_ease-in-out]"
+                    >
+                      {dora}
+                    </MJTileDiv>
+                  </button>
+                ))}
+
+                <MJUIButton
+                  type="button"
+                  color="secondary"
+                  className={`${
+                    matchCurrentRoundDoras.length === 0 && 'animate-bounce'
+                  }`}
+                  data-index="-1"
+                  onClick={handleClickDora}
+                >
+                  +懸賞
+                </MJUIButton>
+              </div>
+            </div>
+
+            <div className="flex-1" />
+
+            <div className="shrink-0">
+              {obsInfo?.matchId !== matchId && (
+                <MJUIButton
+                  color="success"
+                  type="button"
+                  className="animate-pulse"
+                  onClick={handleClickStartOBS}
+                >
+                  開始OBS
+                </MJUIButton>
+              )}
+            </div>
+          </div>
+
+          <div className="flex justify-between gap-x-8 ">
+            <div className="flex-1">
+              <MJUITabs
+                tabs={VIEW_TABS}
+                defaultValue={VIEW_TABS[0].value}
+                onChangeValue={setViewTabValue}
+              />
+            </div>
+
+            <div className="text-right space-x-4">
+              {match.activeResultDetail && (
+                <MJUIButton
+                  color="secondary"
+                  type="button"
+                  onClick={handleClickClearActiveResult}
+                >
+                  結束播放中的和牌詳情
+                  <br />
+                  <span className="text-xs">(或最多20秒後自動結束)</span>
+                </MJUIButton>
+              )}
+              {matchCurrentRound.nextRoundType !== NextRoundTypeEnum.Unknown &&
+                matchCurrentRound.nextRoundType !== NextRoundTypeEnum.End && (
+                  <MJUIButton
+                    color="success"
+                    type="button"
+                    className="animate-pulse"
+                    onClick={handleClickGoNextRound}
+                  >
+                    進入
+                    <MJMatchCounterSpan
+                      roundCount={
+                        matchCurrentRound.nextRoundType ===
+                          NextRoundTypeEnum.NextRound ||
+                        matchCurrentRound.nextRoundType ===
+                          NextRoundTypeEnum.NextRoundAndExtended
+                          ? matchCurrentRound.roundCount + 1
+                          : matchCurrentRound.roundCount
+                      }
+                      extendedRoundCount={
+                        matchCurrentRound.nextRoundType ===
+                          NextRoundTypeEnum.Extended ||
+                        matchCurrentRound.nextRoundType ===
+                          NextRoundTypeEnum.NextRoundAndExtended
+                          ? matchCurrentRound.extendedRoundCount + 1
+                          : 0
+                      }
+                    />
+                  </MJUIButton>
+                )}
+
+              <MJUIButton
+                color="secondary"
+                type="button"
+                onClick={handleClickExhausted}
+              >
+                流局
+              </MJUIButton>
+            </div>
+          </div>
+
+          {viewTabValue === 'listView-old' && (
+            <div className="space-y-4">
+              {(['0', '1', '2', '3'] as PlayerIndex[]).map((index) => (
+                <div className="flex gap-x-2 items-center">
+                  <div className="flex-1 text-[2.5rem]">
+                    <MJPlayerCardDiv
+                      player={match.players[index]}
+                      playerIndex={index}
+                      score={matchCurrentRound.playerResults[index].afterScore}
+                      scoreChanges={
+                        matchCurrentRound.playerResults[index].scoreChanges
+                      }
+                      isEast={getIsPlayerEast(
+                        index,
+                        matchCurrentRound.roundCount
+                      )}
+                      isRiichi={matchCurrentRound.playerResults[index].isRiichi}
+                      waitingTiles={
+                        matchCurrentRound.playerResults[index].waitingTiles
+                      }
+                      onClickWaitingTiles={handleClickWaitingTiles}
+                    />
+                  </div>
+                  {/* <div>
             <button
               type="button"
               className={`${
@@ -755,131 +921,143 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                 : '副露?'}
             </button>
           </div> */}
-                <div>
-                  <button
-                    type="button"
-                    className={`${
-                      matchCurrentRound.playerResults[index].isRiichi
-                        ? 'bg-orange-600 text-white'
-                        : 'bg-white text-orange-600 opacity-30'
-                    } h-16 w-16 border-2 border-orange-600  rounded-full text-lg`}
-                    onClick={handleClickRiichi}
-                    data-player-index={index}
-                  >
-                    {matchCurrentRound.playerResults[index].isRiichi
-                      ? '已立直'
-                      : '立直?'}
-                  </button>
+                  <div>
+                    <button
+                      type="button"
+                      className={`${
+                        matchCurrentRound.playerResults[index].isRiichi
+                          ? 'bg-orange-600 text-white'
+                          : 'bg-white text-orange-600 opacity-30'
+                      } h-16 w-16 border-2 border-orange-600  rounded-full text-lg`}
+                      onClick={handleClickRiichi}
+                      data-player-index={index}
+                    >
+                      {matchCurrentRound.playerResults[index].isRiichi
+                        ? '已立直'
+                        : '立直?'}
+                    </button>
+                  </div>
+                  <div className="pl-6">
+                    <MJUIButton
+                      color="danger"
+                      type="button"
+                      onClick={handleClickRon}
+                      data-player-index={index}
+                    >
+                      和了
+                    </MJUIButton>
+                  </div>
                 </div>
-                <div className="pl-6">
-                  <MJUIButton
-                    color="danger"
-                    type="button"
-                    onClick={handleClickRon}
-                    data-player-index={index}
-                  >
-                    和了
-                  </MJUIButton>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
 
-        {viewTabValue === 'listView-new' && (
-          <PlayersListView
-            players={match.players}
-            currentRound={matchCurrentRound}
-          />
-        )}
+          {viewTabValue === 'listView-new' && (
+            <PlayersListView
+              players={match.players}
+              currentRound={matchCurrentRound}
+              onAction={handlePlayerListViewAction}
+            />
+          )}
 
-        {viewTabValue === 'gridView' && (
-          <PlayersGridView
-            players={match.players}
-            currentRound={matchCurrentRound}
-          />
-        )}
+          {viewTabValue === 'gridView' && (
+            <PlayersGridView
+              players={match.players}
+              currentRound={matchCurrentRound}
+              onAction={handlePlayerListViewAction}
+            />
+          )}
+        </div>
 
-        <h4 className="text-3xl">和牌記錄</h4>
+        <div className="space-y-6">
+          <h4 className="text-3xl">和牌記錄</h4>
 
-        <table className="data-table w-full">
-          <thead>
-            <tr>
-              <th>局數</th>
-              <th>玩家</th>
-              <th>分數＆細節</th>
-              <th className="text-right px-2">操作</th>
-            </tr>
-          </thead>
-          <tbody>
-            {matchRoundsWithDetail.map((matchRound) => (
-              <tr className="odd:bg-neutral-200" key={matchRound.id}>
-                <td className="text-center py-1">
-                  <MJMatchCounterSpan
-                    roundCount={matchRound.roundCount}
-                    extendedRoundCount={matchRound.extendedRoundCount}
-                  />
-                </td>
-                <td
-                  className="text-center py-1"
-                  style={{
-                    background:
-                      match.players[matchRound.resultDetail!.winnerPlayerIndex]
-                        .color,
-                  }}
-                >
-                  {
-                    match.players[matchRound.resultDetail!.winnerPlayerIndex]
-                      .name
-                  }
-                </td>
-                <td className="text-center py-1">
-                  <p>{matchRound.resultDetail!.yakusInText.join(' ')}</p>
-                  <p>
-                    <MJHanFuTextSpan
-                      han={Math.min(
-                        matchRound.resultDetail!.isYakuman ? 13 : 12,
-                        matchRound.resultDetail!.han
-                      )}
-                      fu={matchRound.resultDetail!.fu}
-                      isManganRoundUp={match.setting.isManganRoundUp === '1'}
-                    />
-                  </p>
-                </td>
-                <td className="text-right py-1 px-2">
-                  <MJUIButton
-                    color={matchRound.hasBroadcasted ? 'secondary' : 'success'}
-                    type="button"
-                    className={
-                      matchRound.hasBroadcasted ? 'opacity-50' : 'animate-pulse'
-                    }
-                    onClick={handleClickBroadcastRonDetail}
-                    data-match-round-id={matchRound.id}
-                  >
-                    {matchRound.hasBroadcasted ? '已播放過' : '播放和牌詳情'}
-                  </MJUIButton>
-                </td>
+          <table className="data-table w-full">
+            <thead>
+              <tr>
+                <th>局數</th>
+                <th>玩家</th>
+                <th>分數＆細節</th>
+                <th className="text-right px-2">操作</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {matchRoundsWithDetail.map((matchRound) => (
+                <tr className="odd:bg-neutral-200" key={matchRound.id}>
+                  <td className="text-center py-1">
+                    <MJMatchCounterSpan
+                      roundCount={matchRound.roundCount}
+                      extendedRoundCount={matchRound.extendedRoundCount}
+                    />
+                  </td>
+                  <td
+                    className="text-center py-1"
+                    style={{
+                      background:
+                        match.players[
+                          matchRound.resultDetail!.winnerPlayerIndex
+                        ].color,
+                    }}
+                  >
+                    {
+                      match.players[matchRound.resultDetail!.winnerPlayerIndex]
+                        .name
+                    }
+                  </td>
+                  <td className="text-center py-1">
+                    <p>{matchRound.resultDetail!.yakusInText.join(' ')}</p>
+                    <p>
+                      <MJHanFuTextSpan
+                        han={Math.min(
+                          matchRound.resultDetail!.isYakuman ? 13 : 12,
+                          matchRound.resultDetail!.han
+                        )}
+                        fu={matchRound.resultDetail!.fu}
+                        isManganRoundUp={match.setting.isManganRoundUp === '1'}
+                      />
+                    </p>
+                  </td>
+                  <td className="text-right py-1 px-2">
+                    <MJUIButton
+                      color={
+                        matchRound.hasBroadcasted ? 'secondary' : 'success'
+                      }
+                      type="button"
+                      className={
+                        matchRound.hasBroadcasted
+                          ? 'opacity-50'
+                          : 'animate-pulse'
+                      }
+                      onClick={handleClickBroadcastRonDetail}
+                      data-match-round-id={matchRound.id}
+                    >
+                      {matchRound.hasBroadcasted ? '已播放過' : '播放和牌詳情'}
+                    </MJUIButton>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
-        <h4 className="text-3xl">分數</h4>
+        <div className="space-y-6">
+          <h4 className="text-3xl">分數</h4>
 
-        <MJMatchHistoryTable
-          players={match.players}
-          matchRounds={matchRounds ?? {}}
-          className="w-full table-auto"
-        />
+          <MJMatchHistoryTable
+            players={match.players}
+            matchRounds={matchRounds ?? {}}
+            className="w-full table-auto"
+          />
 
-        <div>
-          <MJUIButton
-            color="secondary"
-            type="button"
-            onClick={handleClickHotfix}
-          >
-            手動調整分數
-          </MJUIButton>
+          <div>
+            <MJUIButton
+              color="secondary"
+              type="button"
+              onClick={handleClickHotfix}
+            >
+              手動調整分數
+            </MJUIButton>
+          </div>
         </div>
       </div>
 

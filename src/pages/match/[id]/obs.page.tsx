@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import MJMatchCounterSpan from '@/components/MJMatchCounterSpan'
 import MJTileDiv from '@/components/MJTileDiv'
 import useMatch from '@/hooks/useMatch'
@@ -32,6 +32,50 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
     }))
   }, [match, matchCurrentRound])
 
+  const [currentRiichiPlayerIndex, setCurrentRiichiPlayerIndex] =
+    useState<PlayerIndex | null>(null)
+  const [storedRoundCode, setStoredRoundCode] = useState<string>()
+  const [riichiMap, setRiichiMap] = useState<Record<PlayerIndex, boolean>>({
+    '0': false,
+    '1': false,
+    '2': false,
+    '3': false,
+  })
+
+  useEffect(() => {
+    // eslint-disable-next-line no-extra-semi
+    ;(['0', '1', '2', '3'] as PlayerIndex[]).forEach((index) => {
+      if (
+        typeof matchCurrentRound?.playerResults[index].isRiichi !==
+          'undefined' &&
+        matchCurrentRound.playerResults[index].isRiichi !== riichiMap[index]
+      ) {
+        if (matchCurrentRound.playerResults[index].isRiichi === true) {
+          setCurrentRiichiPlayerIndex(index)
+          setTimeout(() => {
+            setCurrentRiichiPlayerIndex(null)
+          }, 2500)
+        }
+        setRiichiMap((prev) => ({
+          ...prev,
+          [index]: matchCurrentRound.playerResults[index].isRiichi,
+        }))
+      }
+    })
+  }, [matchCurrentRound?.playerResults, riichiMap])
+
+  useEffect(() => {
+    if (storedRoundCode !== matchCurrentRound?.code) {
+      setStoredRoundCode(matchCurrentRound?.code)
+      setRiichiMap({
+        '0': false,
+        '1': false,
+        '2': false,
+        '3': false,
+      })
+    }
+  }, [matchCurrentRound?.code, storedRoundCode])
+
   if (!match || !matchCurrentRound) {
     return <div className="text-current">對局讀取失敗。</div>
   }
@@ -40,12 +84,12 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
     <>
       <div
         className={
-          'w-screen h-screen mx-auto py-8 overflow-hidden text-[4.8rem]'
+          'w-screen h-screen mx-auto py-8 overflow-hidden text-[4.8rem] transition-opacity'
         }
         style={{
           background:
             'linear-gradient(transparent, transparent 73%, rgba(0, 0, 0, 0.25))',
-          opacity: 0,
+          opacity: currentRiichiPlayerIndex !== null ? 0 : 1,
         }}
       >
         <div className="flex flex-row items-stretch gap-x-4 text-white">
@@ -129,6 +173,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
                 isRiichi={player.currentStatus.isRiichi}
                 waitingTiles={player.currentStatus.waitingTiles}
               />
+              <img src={player.largeTeamPicUrl as string} className="w-0 h-0" />
             </div>
           ))}
         </div>
@@ -173,16 +218,15 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
           </div>
         )}
       </div>
-      <div
-        className="fixed inset-0"
-        style={{
-          backgroundImage:
-            'url("https://mleaguewatch.files.wordpress.com/2021/12/2021-12-28-g1-e4-1-matsugase-win.jpg?w=1376")',
-          backgroundSize: 'cover',
-          backgroundRepeat: 'no-repeat',
-        }}
-      >
-        <MJReactAnimationDiv teamPicUrl={players[0].teamPicUrl} />
+
+      <div className="fixed inset-0 pointer-events-none">
+        <MJReactAnimationDiv
+          active={currentRiichiPlayerIndex !== null}
+          largeTeamPicUrl={
+            currentRiichiPlayerIndex &&
+            players[currentRiichiPlayerIndex].largeTeamPicUrl
+          }
+        />
       </div>
     </>
   )

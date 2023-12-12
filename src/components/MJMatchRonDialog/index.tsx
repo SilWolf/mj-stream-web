@@ -300,10 +300,20 @@ export default function MJMatchRonDialog({
   useEffect(() => {
     if (dialogProps.open) {
       // reset form
-
       setActivePlayerIndex(initialActivePlayerIndex)
+      setTargetPlayerIndex(initialTargetPlayerIndex)
+      // setYakuResult({
+      //   han: 1,
+      //   fu: 30,
+      //   yakusInText: [],
+      //   isYakuman: false,
+      // })
+      // setCompiledScore({
+      //   win: 1000,
+      //   target: 1000,
+      // })
     }
-  }, [dialogProps.open, initialActivePlayerIndex])
+  }, [dialogProps.open, initialActivePlayerIndex, initialTargetPlayerIndex])
 
   return (
     <MJUIDialogV2 title={title} {...dialogProps}>

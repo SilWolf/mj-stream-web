@@ -20,6 +20,7 @@ const convertDbTeamPlayerToPlayer = (teamPlayer: DB_TeamPlayer): Player => {
         }?w=360&h=500`
       : null
   const squareLogoImage = `${teamPlayer.team.squareLogoImage}?w=500&h=500`
+  const largeSquareLogoImage = `${teamPlayer.team.squareLogoImage}?w=1000&h=1000`
   const designation =
     teamPlayer.overridedDesignation ??
     teamPlayer.team.name ??
@@ -32,6 +33,7 @@ const convertDbTeamPlayerToPlayer = (teamPlayer: DB_TeamPlayer): Player => {
     color,
     title: designation,
     teamPicUrl: squareLogoImage,
+    largeTeamPicUrl: largeSquareLogoImage,
     proPicUrl: portraitImage,
   }
 }

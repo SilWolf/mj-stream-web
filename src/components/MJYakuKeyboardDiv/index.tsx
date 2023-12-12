@@ -50,50 +50,26 @@ const YAKUS: Yaku[] = [
     hanIfOpened: 0,
   },
   {
-    id: 'iipeikou',
-    label: '一盃口',
-    han: 1,
-    hanIfOpened: 0,
-  },
-  {
-    id: 'haitei-raoyue',
-    label: '海底撈月',
-    han: 1,
-    hanIfOpened: 1,
-  },
-  {
-    id: 'houtei-raoyui',
-    label: '河底撈魚',
-    han: 1,
-    hanIfOpened: 1,
-  },
-  {
-    id: 'rinshan-kaihou',
-    label: '嶺上開花',
-    han: 1,
-    hanIfOpened: 1,
-  },
-  {
-    id: 'chankan',
-    label: '搶槓',
-    han: 1,
-    hanIfOpened: 1,
-  },
-  {
     id: 'tanyao',
     label: '斷么九',
     han: 1,
     hanIfOpened: 1,
   },
   {
-    id: 'yakuhai-match-kazehai',
-    label: '場風',
+    id: 'iipeikou',
+    label: '一盃口',
     han: 1,
-    hanIfOpened: 1,
+    hanIfOpened: 0,
   },
   {
     id: 'yakuhai-self-kazehai',
     label: '自風',
+    han: 1,
+    hanIfOpened: 1,
+  },
+  {
+    id: 'yakuhai-match-kazehai',
+    label: '場風',
     han: 1,
     hanIfOpened: 1,
   },
@@ -123,16 +99,41 @@ const YAKUS: Yaku[] = [
     hanIfOpened: 1,
   },
   {
+    id: 'haitei-raoyue',
+    label: '海底撈月',
+    han: 1,
+    hanIfOpened: 1,
+  },
+  {
+    id: 'houtei-raoyui',
+    label: '河底撈魚',
+    han: 1,
+    hanIfOpened: 1,
+  },
+  {
+    id: 'rinshan-kaihou',
+    label: '嶺上開花',
+    han: 1,
+    hanIfOpened: 1,
+  },
+  {
+    id: 'chankan',
+    label: '搶槓',
+    han: 1,
+    hanIfOpened: 1,
+  },
+  {
     id: 'double-riichi',
     label: '雙立直',
     han: 2,
     hanIfOpened: 0,
   },
   {
-    id: 'chantaiyao',
-    label: '全帶么九',
+    id: 'chiitoitsu',
+    label: '七對子',
     han: 2,
-    hanIfOpened: 1,
+    hanIfOpened: 0,
+    overrideFu: 25,
   },
   {
     id: 'sanshoku-doujun',
@@ -159,6 +160,12 @@ const YAKUS: Yaku[] = [
     hanIfOpened: 2,
   },
   {
+    id: 'chantaiyao',
+    label: '混全帶么九',
+    han: 2,
+    hanIfOpened: 1,
+  },
+  {
     id: 'sanshku-doukou',
     label: '三色同刻',
     han: 2,
@@ -169,13 +176,6 @@ const YAKUS: Yaku[] = [
     label: '三槓子',
     han: 2,
     hanIfOpened: 2,
-  },
-  {
-    id: 'chiitoitsu',
-    label: '七對子',
-    han: 2,
-    hanIfOpened: 0,
-    overrideFu: 25,
   },
   {
     id: 'honroutou',
@@ -197,7 +197,7 @@ const YAKUS: Yaku[] = [
   },
   {
     id: 'junchan-taiyao',
-    label: '純全帶么',
+    label: '純全帶么九',
     han: 3,
     hanIfOpened: 2,
   },
@@ -318,7 +318,7 @@ const MJYakuButton = ({
       data-han={isOpened ? yaku.hanIfOpened : yaku.han}
       data-active={active ? '1' : '0'}
       disabled={disabled}
-      className="text-center px-3 rounded-full border border-neutral-200 text-neutral-400 cursor-pointer hover:opacity-80 data-[han='0']:cursor-not-allowed disabled:opacity-30 disabled:hover:opacity-30 data-[active='1']:enabled:border-teal-500 data-[active='1']:enabled:text-teal-600 data-[active='1']:enabled:bg-teal-100"
+      className="text-xl text-center px-3 border border-neutral-300 text-neutral-800 cursor-pointer hover:opacity-80 data-[han='0']:cursor-not-allowed disabled:opacity-20 disabled:hover:opacity-20 data-[active='1']:enabled:border-teal-800 data-[active='1']:enabled:text-white data-[active='1']:enabled:bg-teal-800"
       key={yaku.id}
       onClick={onClick}
     >
@@ -511,7 +511,7 @@ const MJYakuKeyboardDiv = ({
                   className="py-1 pl-2 border-neutral-100 border-t border-b"
                   colSpan={3}
                 >
-                  <div className="flex flex-wrap gap-1">
+                  <div className="flex flex-wrap gap-2">
                     {YAKUS_GROUPS_BY_HAN[1].map((yaku) => (
                       <MJYakuButton
                         key={yaku.id}
@@ -536,7 +536,7 @@ const MJYakuKeyboardDiv = ({
                   className="py-1 pl-2 border-neutral-100 border-t border-b"
                   colSpan={3}
                 >
-                  <div className="flex flex-wrap gap-1">
+                  <div className="flex flex-wrap gap-2">
                     {YAKUS_GROUPS_BY_HAN[2].map((yaku) => (
                       <MJYakuButton
                         key={yaku.id}
@@ -557,8 +557,8 @@ const MJYakuKeyboardDiv = ({
                 <th className="bg-neutral-100 px-1 border-neutral-100 border-t border-b">
                   3番
                 </th>
-                <td className="py-1 pl-2 border-neutral-100 border-t border-b w-1/2">
-                  <div className="flex flex-wrap gap-1">
+                <td className="py-1 pl-2 border-neutral-100 border-t border-b w-2/3">
+                  <div className="flex flex-wrap gap-2">
                     {YAKUS_GROUPS_BY_HAN[3].map((yaku) => (
                       <MJYakuButton
                         key={yaku.id}
@@ -576,8 +576,8 @@ const MJYakuKeyboardDiv = ({
                 <th className="bg-neutral-100 px-1 border-neutral-100 border-t border-b">
                   6番
                 </th>
-                <td className="py-1 pl-2 border-neutral-100 border-t border-b w-1/2">
-                  <div className="flex flex-wrap gap-1">
+                <td className="py-1 pl-2 border-neutral-100 border-t border-b w-1/3 ">
+                  <div className="flex flex-wrap gap-2">
                     {YAKUS_GROUPS_BY_HAN[6].map((yaku) => (
                       <MJYakuButton
                         key={yaku.id}
@@ -728,7 +728,7 @@ const MJYakuKeyboardDiv = ({
                   className="py-1 pl-2 border-neutral-100 border-t border-b"
                   colSpan={3}
                 >
-                  <div className="flex flex-wrap gap-1">
+                  <div className="flex flex-wrap gap-2">
                     {YAKUS_GROUPS_BY_HAN[13].map((yaku) => (
                       <MJYakuButton
                         key={yaku.id}
@@ -778,3 +778,8 @@ const MJYakuKeyboardDiv = ({
 }
 
 export default MJYakuKeyboardDiv
+
+type MJYakuPredictSimpleKeyboardProps = {
+  value?: Record<string, boolean>
+  onChange?: (newValue: Record<string, boolean>) => unknown
+}

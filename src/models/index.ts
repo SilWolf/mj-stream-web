@@ -52,6 +52,7 @@ export type Player = {
   name: string
   proPicUrl?: string | null
   teamPicUrl?: string | null
+  largeTeamPicUrl?: string | null
   color: string
   createdAt?: number
   updatedAt?: number
@@ -117,6 +118,9 @@ export type PlayerResult = {
   isRiichi?: boolean
   isRevealed?: boolean
   waitingTiles?: string[]
+  predictedYakus: string[]
+  normalDora?: number
+  redDora?: number
   detail?: {
     han: number
     fu: number
