@@ -226,6 +226,7 @@ function CreateMatchPage() {
           type: 0,
           scoreChanges: [],
           prevScoreChanges: [],
+          predictedYakus: [],
         },
         '1': {
           beforeScore: startingScore,
@@ -233,6 +234,7 @@ function CreateMatchPage() {
           type: 0,
           scoreChanges: [],
           prevScoreChanges: [],
+          predictedYakus: [],
         },
         '2': {
           beforeScore: startingScore,
@@ -240,6 +242,7 @@ function CreateMatchPage() {
           type: 0,
           scoreChanges: [],
           prevScoreChanges: [],
+          predictedYakus: [],
         },
         '3': {
           beforeScore: startingScore,
@@ -247,6 +250,7 @@ function CreateMatchPage() {
           type: 0,
           scoreChanges: [],
           prevScoreChanges: [],
+          predictedYakus: [],
         },
       },
       doras: [],

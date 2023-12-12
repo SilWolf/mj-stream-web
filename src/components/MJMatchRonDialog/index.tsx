@@ -368,7 +368,15 @@ export default function MJMatchRonDialog({
         <div className="space-y-2">
           <h5 className="font-bold">分數變動</h5>
 
-          <table className="data-table w-full">
+          <table className="data-table w-full text-lg">
+            <thead>
+              <tr>
+                <th>玩家</th>
+                <th>目前分數</th>
+                <th>變動</th>
+                <th>最新分數</th>
+              </tr>
+            </thead>
             <tbody>
               {(Object.keys(match.players) as unknown as PlayerIndex[]).map(
                 (index) => (
@@ -379,10 +387,10 @@ export default function MJMatchRonDialog({
                     >
                       {match.players[index].name}
                     </th>
-                    <td className="px-2">
+                    <td className="px-2 text-center w-32">
                       {previewPlayerResults[index].beforeScore}
                     </td>
-                    <td>
+                    <td className="text-center w-32">
                       <MJAmountSpan
                         signed
                         value={
@@ -393,7 +401,7 @@ export default function MJMatchRonDialog({
                         negativeClassName="text-red-400"
                       />
                     </td>
-                    <td className="text-right">
+                    <td className="text-center w-32">
                       {previewPlayerResults[index].afterScore}
                     </td>
                   </tr>
@@ -409,7 +417,7 @@ export default function MJMatchRonDialog({
             className="w-full"
             disabled={!yakuResult || yakuResult.yakusInText.length <= 0}
           >
-            提交並播出分數變動動畫
+            <i className="bi bi-camera-reels-fill"></i> 提交並播出分數變動動畫
           </MJUIButton>
         </div>
       </div>

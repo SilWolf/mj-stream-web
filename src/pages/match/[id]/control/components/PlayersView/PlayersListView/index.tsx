@@ -54,7 +54,7 @@ const PlayersListView = ({
                   data-action="waitingTile"
                   onClick={handleAction}
                 >
-                  <span className="mr-2">待牌</span>
+                  <span className="mr-2 text-xl">待牌</span>
                   <div className="inline-block space-x-1">
                     {currentRound.playerResults[index].waitingTiles?.map(
                       (tile) => (
@@ -143,7 +143,7 @@ const PlayersListView = ({
               </td>
               <td className="px-2">
                 <button
-                  className="py-2 text-left block"
+                  className="py-2 text-left text-xl"
                   data-player-index={index}
                   data-action="yaku"
                   onClick={handleAction}

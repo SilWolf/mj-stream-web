@@ -1,3 +1,4 @@
+import { Player } from '@/models'
 import { createClient } from '@sanity/client'
 
 export const client = createClient({
@@ -15,7 +16,7 @@ export type DB_Match = {
   playerSouth: DB_TeamPlayer
   playerWest: DB_TeamPlayer
   playerNorth: DB_TeamPlayer
-  rule: DB_MatchRule
+  tournament: DB_MatchTournament
 }
 
 export type DB_TeamPlayer = {
@@ -39,7 +40,7 @@ export type DB_Player = {
   portraitImage: string | null
 }
 
-export type DB_MatchRule = {
+export type DB_MatchTournament = {
   name: string
   startingScore: '25000' | '30000' | '35000' | '50000' | '100000'
   isManganRoundUp: boolean
@@ -53,7 +54,7 @@ export const apiGetPlayers = (): Promise<DB_Player[]> => {
 
 export const apiGetMatches = () => {
   return client.fetch<DB_Match[]>(
-    '*[_type == "match" && !(_id in path("drafts.**")) && (status == "initialized" || status == "streaming")]{ _id, name, playerEast->{team->{name, "squareLogoImage": squareLogoImage.asset->url, "color": color.hex}, player->{name, designation, "portraitImage": portraitImage.asset->url}, overridedDesignation, overridedName, "overridedColor": overridedColor.hex, "overridedPortraitImage": overridedPortraitImage.asset->url}, playerSouth->{team->{name, "squareLogoImage": squareLogoImage.asset->url, "color": color.hex}, player->{name, designation, "portraitImage": portraitImage.asset->url}, overridedDesignation, overridedName, overridedColor, "overridedPortraitImage": overridedPortraitImage.asset->url}, playerWest->{team->{name, "squareLogoImage": squareLogoImage.asset->url, "color": color.hex}, player->{name, designation, "portraitImage": portraitImage.asset->url}, overridedDesignation, overridedName, overridedColor, "overridedPortraitImage": overridedPortraitImage.asset->url}, playerNorth->{team->{name, "squareLogoImage": squareLogoImage.asset->url, "color": color.hex}, player->{name, designation, "portraitImage": portraitImage.asset->url}, overridedDesignation, overridedName, overridedColor, "overridedPortraitImage": overridedPortraitImage.asset->url},rule->}'
+    '*[_type == "match" && !(_id in path("drafts.**")) && (status == "initialized" || status == "streaming")]{ _id, name, playerEast->{team->{name, "squareLogoImage": squareLogoImage.asset->url, "color": color.hex}, player->{name, designation, "portraitImage": portraitImage.asset->url}, overridedDesignation, overridedName, "overridedColor": overridedColor.hex, "overridedPortraitImage": overridedPortraitImage.asset->url}, playerSouth->{team->{name, "squareLogoImage": squareLogoImage.asset->url, "color": color.hex}, player->{name, designation, "portraitImage": portraitImage.asset->url}, overridedDesignation, overridedName, overridedColor, "overridedPortraitImage": overridedPortraitImage.asset->url}, playerWest->{team->{name, "squareLogoImage": squareLogoImage.asset->url, "color": color.hex}, player->{name, designation, "portraitImage": portraitImage.asset->url}, overridedDesignation, overridedName, overridedColor, "overridedPortraitImage": overridedPortraitImage.asset->url}, playerNorth->{team->{name, "squareLogoImage": squareLogoImage.asset->url, "color": color.hex}, player->{name, designation, "portraitImage": portraitImage.asset->url}, overridedDesignation, overridedName, overridedColor, "overridedPortraitImage": overridedPortraitImage.asset->url},tournament->}'
   )
 }
 
@@ -62,7 +63,39 @@ export const apiGetMatchById = (
 ): Promise<DB_Match | undefined> => {
   return client
     .fetch<DB_Match[]>(
-      `*[_type == "match" && _id == "${matchId}" && (status == "initialized" || status == "streaming")]{ _id, name, playerEast->{team->{name, "squareLogoImage": squareLogoImage.asset->url, "color": color.hex}, player->{name, designation, "portraitImage": portraitImage.asset->url}, overridedDesignation, overridedName, "overridedColor": overridedColor.hex, "overridedPortraitImage": overridedPortraitImage.asset->url}, playerSouth->{team->{name, "squareLogoImage": squareLogoImage.asset->url, "color": color.hex}, player->{name, designation, "portraitImage": portraitImage.asset->url}, overridedDesignation, overridedName, overridedColor, "overridedPortraitImage": overridedPortraitImage.asset->url}, playerWest->{team->{name, "squareLogoImage": squareLogoImage.asset->url, "color": color.hex}, player->{name, designation, "portraitImage": portraitImage.asset->url}, overridedDesignation, overridedName, overridedColor, "overridedPortraitImage": overridedPortraitImage.asset->url}, playerNorth->{team->{name, "squareLogoImage": squareLogoImage.asset->url, "color": color.hex}, player->{name, designation, "portraitImage": portraitImage.asset->url}, overridedDesignation, overridedName, overridedColor, "overridedPortraitImage": overridedPortraitImage.asset->url},rule->}`
+      `*[_type == "match" && _id == "${matchId}" && (status == "initialized" || status == "streaming")]{ _id, name, playerEast->{team->{name, "squareLogoImage": squareLogoImage.asset->url, "color": color.hex}, player->{name, designation, "portraitImage": portraitImage.asset->url}, overridedDesignation, overridedName, "overridedColor": overridedColor.hex, "overridedPortraitImage": overridedPortraitImage.asset->url}, playerSouth->{team->{name, "squareLogoImage": squareLogoImage.asset->url, "color": color.hex}, player->{name, designation, "portraitImage": portraitImage.asset->url}, overridedDesignation, overridedName, overridedColor, "overridedPortraitImage": overridedPortraitImage.asset->url}, playerWest->{team->{name, "squareLogoImage": squareLogoImage.asset->url, "color": color.hex}, player->{name, designation, "portraitImage": portraitImage.asset->url}, overridedDesignation, overridedName, overridedColor, "overridedPortraitImage": overridedPortraitImage.asset->url}, playerNorth->{team->{name, "squareLogoImage": squareLogoImage.asset->url, "color": color.hex}, player->{name, designation, "portraitImage": portraitImage.asset->url}, overridedDesignation, overridedName, overridedColor, "overridedPortraitImage": overridedPortraitImage.asset->url},tournament->}`
     )
     .then((matches) => matches[0])
+}
+
+export const convertDbTeamPlayerToPlayer = (
+  teamPlayer: DB_TeamPlayer
+): Player => {
+  const portraitImage =
+    teamPlayer.overridedPortraitImage || teamPlayer.player.portraitImage
+      ? `${
+          teamPlayer.overridedPortraitImage ?? teamPlayer.player.portraitImage
+        }?w=360&h=500`
+      : null
+  const squareLogoImage = teamPlayer.team.squareLogoImage
+    ? `${teamPlayer.team.squareLogoImage}?w=500&h=500`
+    : ''
+  const largeSquareLogoImage = teamPlayer.team.squareLogoImage
+    ? `${teamPlayer.team.squareLogoImage}?w=1000&h=1000`
+    : ''
+  const designation =
+    teamPlayer.overridedDesignation ??
+    teamPlayer.team.name ??
+    teamPlayer.player.designation
+  const name = teamPlayer.overridedName ?? teamPlayer.player.name
+  const color = teamPlayer.overridedColor ?? teamPlayer.team.color
+
+  return {
+    name,
+    color,
+    title: designation,
+    teamPicUrl: squareLogoImage,
+    largeTeamPicUrl: largeSquareLogoImage,
+    proPicUrl: portraitImage,
+  }
 }

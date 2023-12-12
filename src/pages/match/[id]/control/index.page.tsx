@@ -1,5 +1,11 @@
 /* eslint-disable no-nested-ternary */
-import React, { MouseEvent, useCallback, useMemo, useState } from 'react'
+import React, {
+  MouseEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import useMatch from '@/hooks/useMatch'
 import {
   MatchRound,
@@ -107,6 +113,11 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
     [matchRounds]
   )
 
+  const unboardcastedMatchRounds = useMemo(
+    () => matchRoundsWithDetail.filter(({ hasBroadcasted }) => !hasBroadcasted),
+    [matchRoundsWithDetail]
+  )
+
   const [clickedDoraIndex, setClickedDoraIndex] = useState<number | undefined>(
     undefined
   )
@@ -124,6 +135,10 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
 
   const [isShowingExhaustedDialog, toggleExhaustedDialog] = useBoolean(false)
   const [isShowingHotfixDialog, toggleHotfixDialog] = useBoolean(false)
+
+  const [activeAnimationMessage, setActiveAnimationMessage] = useState<
+    string | null
+  >(null)
 
   const handleClickReveal = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -192,9 +207,13 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
               },
             },
           })
-          return new Promise((res) => {
-            setTimeout(res, isDoingRiichi ? 3000 : 10)
-          })
+
+          if (isDoingRiichi) {
+            setActiveAnimationMessage('播放立直動畫中，請稍等……')
+            setTimeout(() => {
+              setActiveAnimationMessage(null)
+            }, 3000)
+          }
         },
       })
     },
@@ -328,9 +347,13 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                   },
                 },
               })
-              return new Promise((res) => {
-                setTimeout(res, !playerResult.isRiichi ? 3000 : 10)
-              })
+
+              if (!playerResult.isRiichi) {
+                setActiveAnimationMessage('播放立直動畫中，請稍等……')
+                setTimeout(() => {
+                  setActiveAnimationMessage(null)
+                }, 3000)
+              }
             },
           })
 
@@ -579,7 +602,6 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
     }
 
     pushMatchRound(newMatchRound)
-    setClickedDoraIndex(-1)
   }, [matchCurrentRound, matchId, pushMatchRound])
 
   const handleClickStartOBS = useCallback(() => {
@@ -713,6 +735,12 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
     setMatchActiveResultDetail(null)
   }, [setMatchActiveResultDetail])
 
+  useEffect(() => {
+    if (matchCurrentRoundDoras.length === 0) {
+      setClickedDoraIndex(-1)
+    }
+  }, [matchCurrentRoundDoras.length])
+
   if ((!match || !matchCurrentRound) && dbMatch) {
     return <ControlNewMatch dbMatch={dbMatch} />
   }
@@ -793,7 +821,9 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
 
                 <MJUIButton
                   type="button"
-                  color="secondary"
+                  color={
+                    matchCurrentRoundDoras.length === 0 ? 'danger' : 'secondary'
+                  }
                   className={`${
                     matchCurrentRoundDoras.length === 0 && 'animate-bounce'
                   }`}
@@ -970,7 +1000,9 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         </div>
 
         <div className="space-y-6">
-          <h4 className="text-3xl">和牌記錄</h4>
+          <h4 className="text-3xl">
+            <i className="bi bi-clock-history"></i> 和牌記錄
+          </h4>
 
           <table className="data-table w-full">
             <thead>
@@ -1031,7 +1063,8 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                       onClick={handleClickBroadcastRonDetail}
                       data-match-round-id={matchRound.id}
                     >
-                      {matchRound.hasBroadcasted ? '已播放過' : '播放和牌詳情'}
+                      <i className="bi bi-camera-reels"></i>{' '}
+                      {matchRound.hasBroadcasted ? '再次播放' : '播放和牌詳情'}
                     </MJUIButton>
                   </td>
                 </tr>
@@ -1041,7 +1074,12 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         </div>
 
         <div className="space-y-6">
-          <h4 className="text-3xl">分數</h4>
+          <h4 className="text-3xl">
+            <i className="bi bi-bar-chart-steps"></i> 分數{' '}
+            <span className="text-sm">
+              ( 立=立直, 和=和牌, 統=出統, 摸=自摸, 聽=聽牌 )
+            </span>
+          </h4>
 
           <MJMatchHistoryTable
             players={match.players}
@@ -1096,6 +1134,60 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         />
       </MJUIDialogV2>
 
+      <MJUIDialogV2 open={!!activeAnimationMessage} onClose={() => {}}>
+        <div className="space-y-6 text-center">
+          <p className="text-6xl text-red-600 animate-bounce">
+            <i className="bi bi-camera-reels"></i>
+          </p>
+          <p>{activeAnimationMessage}</p>
+        </div>
+      </MJUIDialogV2>
+
+      <MJUIDialogV2
+        open={
+          matchCurrentRound.nextRoundType !== NextRoundTypeEnum.Unknown &&
+          matchCurrentRound.nextRoundType !== NextRoundTypeEnum.End
+        }
+        onClose={() => {}}
+      >
+        <div className="space-y-6 text-center">
+          <p>
+            當準備好時，點擊按鈕進入下一局。
+            <br />
+            如果發現分數有誤需要修改，請在下一局開始後，點擊最下方的「手動調整分數」。
+          </p>
+
+          <div>
+            <MJUIButton
+              color="success"
+              type="button"
+              className="text-xl"
+              onClick={handleClickGoNextRound}
+            >
+              進入
+              <MJMatchCounterSpan
+                roundCount={
+                  matchCurrentRound.nextRoundType ===
+                    NextRoundTypeEnum.NextRound ||
+                  matchCurrentRound.nextRoundType ===
+                    NextRoundTypeEnum.NextRoundAndExtended
+                    ? matchCurrentRound.roundCount + 1
+                    : matchCurrentRound.roundCount
+                }
+                extendedRoundCount={
+                  matchCurrentRound.nextRoundType ===
+                    NextRoundTypeEnum.Extended ||
+                  matchCurrentRound.nextRoundType ===
+                    NextRoundTypeEnum.NextRoundAndExtended
+                    ? matchCurrentRound.extendedRoundCount + 1
+                    : 0
+                }
+              />
+            </MJUIButton>
+          </div>
+        </div>
+      </MJUIDialogV2>
+
       <MJMatchRonDialog
         match={match}
         currentMatchRound={matchCurrentRound}
@@ -1122,6 +1214,88 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         onClose={() => toggleHotfixDialog(false)}
         {...ronDialogProps}
       />
+
+      {unboardcastedMatchRounds.length > 0 && (
+        <div className="fixed bottom-0 left-0 right-0 px-4 pb-4">
+          <div className="bg-red-100 rounded-lg shadow-lg border-2 border-red-200 p-4">
+            <h4 className="text-xl font-bold">
+              <i className="bi bi-camera-reels"></i> 你有未播放的動畫！
+            </h4>
+
+            <table className="data-table mt-4 w-full bg-white">
+              <thead>
+                <tr>
+                  <th>局數</th>
+                  <th>玩家</th>
+                  <th>分數＆細節</th>
+                  <th className="text-right px-2">操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                {unboardcastedMatchRounds.map((matchRound) => (
+                  <tr className="odd:bg-neutral-200" key={matchRound.id}>
+                    <td className="text-center py-1">
+                      <MJMatchCounterSpan
+                        roundCount={matchRound.roundCount}
+                        extendedRoundCount={matchRound.extendedRoundCount}
+                      />
+                    </td>
+                    <td
+                      className="text-center py-1"
+                      style={{
+                        background:
+                          match.players[
+                            matchRound.resultDetail!.winnerPlayerIndex
+                          ].color,
+                      }}
+                    >
+                      {
+                        match.players[
+                          matchRound.resultDetail!.winnerPlayerIndex
+                        ].name
+                      }
+                    </td>
+                    <td className="text-center py-1">
+                      <p>{matchRound.resultDetail!.yakusInText.join(' ')}</p>
+                      <p>
+                        <MJHanFuTextSpan
+                          han={Math.min(
+                            matchRound.resultDetail!.isYakuman ? 13 : 12,
+                            matchRound.resultDetail!.han
+                          )}
+                          fu={matchRound.resultDetail!.fu}
+                          isManganRoundUp={
+                            match.setting.isManganRoundUp === '1'
+                          }
+                        />
+                      </p>
+                    </td>
+                    <td className="text-right py-1 px-2">
+                      <MJUIButton
+                        color={
+                          matchRound.hasBroadcasted ? 'secondary' : 'success'
+                        }
+                        type="button"
+                        className={
+                          matchRound.hasBroadcasted
+                            ? 'opacity-50'
+                            : 'animate-pulse'
+                        }
+                        onClick={handleClickBroadcastRonDetail}
+                        data-match-round-id={matchRound.id}
+                      >
+                        {matchRound.hasBroadcasted
+                          ? '已播放過'
+                          : '播放和牌詳情'}
+                      </MJUIButton>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

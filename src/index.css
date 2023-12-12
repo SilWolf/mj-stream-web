@@ -3,10 +3,6 @@
 @tailwind utilities;
 
 @layer base {
-  body {
-    @apply bg-gray-300;
-  }
-
   a {
     @apply text-teal-600 hover:text-teal-500 underline underline-offset-2;
   }
@@ -19,14 +15,14 @@
 @layer components {
   table.data-table {
     & thead th, & thead td {
-      @apply px-2 py-1 whitespace-nowrap bg-neutral-400;
+      @apply px-2 py-1 whitespace-nowrap bg-neutral-300;
     }
     & tbody th, & tbody td {
       @apply px-2 py-1 whitespace-nowrap;
     }
 
     & tr {
-      @apply border-neutral-400 border-b;
+      @apply border-neutral-300 border-b;
     }
 
     & td {

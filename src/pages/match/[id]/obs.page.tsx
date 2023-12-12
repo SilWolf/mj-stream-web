@@ -54,7 +54,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
           setCurrentRiichiPlayerIndex(index)
           setTimeout(() => {
             setCurrentRiichiPlayerIndex(null)
-          }, 2500)
+          }, 2800)
         }
         setRiichiMap((prev) => ({
           ...prev,

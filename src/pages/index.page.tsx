@@ -178,7 +178,7 @@ function IndexPage() {
                       <th>
                         <p>{match.name}</p>
                         <p className="font-normal text-sm text-neutral-600">
-                          {match.rule.name}
+                          {match.tournament.name}
                         </p>
                       </th>
                       <td>
@@ -194,18 +194,25 @@ function IndexPage() {
                         <DBTeamPlayerDiv teamPlayer={match.playerNorth} />
                       </td>
                       <td className="space-x-2 text-right">
+                        <a
+                          href={`/match/${match._id}/nameplates`}
+                          target="_blank"
+                        >
+                          <i className="bi bi-person-badge"></i> 列印名牌
+                        </a>
+
                         {match._id === obsInfo?.matchId ? (
                           <span className="bg-red-600 px-2 py-1 rounded text-white">
-                            LIVE 直播中
+                            <i className="bi bi-record-circle"></i> LIVE 直播中
                           </span>
                         ) : (
-                          <MJUIButton
-                            variant="text"
-                            onClick={handleClickStartBroadcast}
-                            data-id={match._id}
+                          <a
+                            href={`/match/${match._id}/control`}
+                            target="_blank"
+                            className="text-red-600"
                           >
-                            直播此對局
-                          </MJUIButton>
+                            <i className="bi bi-record-circle"></i> 直播此對局
+                          </a>
                         )}
                       </td>
                     </tr>

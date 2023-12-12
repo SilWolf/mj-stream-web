@@ -199,6 +199,7 @@ export const formatPlayerResultsByPrev = (
       type: PlayerResultWinnerOrLoserEnum.None,
       scoreChanges: [],
       prevScoreChanges: prev['0'].scoreChanges ?? [],
+      predictedYakus: [],
     },
     '1': {
       beforeScore: prev['1'].afterScore,
@@ -208,6 +209,7 @@ export const formatPlayerResultsByPrev = (
       type: PlayerResultWinnerOrLoserEnum.None,
       scoreChanges: [],
       prevScoreChanges: prev['1'].scoreChanges ?? [],
+      predictedYakus: [],
     },
     '2': {
       beforeScore: prev['2'].afterScore,
@@ -217,6 +219,7 @@ export const formatPlayerResultsByPrev = (
       type: PlayerResultWinnerOrLoserEnum.None,
       scoreChanges: [],
       prevScoreChanges: prev['2'].scoreChanges ?? [],
+      predictedYakus: [],
     },
     '3': {
       beforeScore: prev['3'].afterScore,
@@ -226,6 +229,7 @@ export const formatPlayerResultsByPrev = (
       type: PlayerResultWinnerOrLoserEnum.None,
       scoreChanges: [],
       prevScoreChanges: prev['3'].scoreChanges ?? [],
+      predictedYakus: [],
     },
   }
 }

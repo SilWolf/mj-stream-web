@@ -14,6 +14,7 @@ import {
   getWindByRoundAndPlayerIndex,
 } from '@/utils/string.util'
 import MJHanFuTextSpan from '../MJHanFuTextSpan'
+import MJUISelectClicker from '../MJUI/MJUISelectClicker'
 
 type Yaku = {
   id: string
@@ -300,6 +301,49 @@ const YAKUS_GROUPS_BY_HAN = {
   6: YAKUS.filter(({ han, hidden }) => han === 6 && !hidden),
   13: YAKUS.filter(({ han, hidden }) => han === 13 && !hidden),
 } as const
+
+const DORA_OPTIONS = [
+  { label: '0', value: '0' },
+  { label: '1', value: '1' },
+  { label: '2', value: '2' },
+  { label: '3', value: '3' },
+  { label: '4', value: '4' },
+  { label: '5', value: '5' },
+  { label: '6', value: '6' },
+  { label: '7', value: '7' },
+  { label: '8', value: '8' },
+  { label: '9', value: '9' },
+  { label: '10', value: '10' },
+  { label: '11', value: '11' },
+  { label: '12', value: '12' },
+  { label: '13', value: '13' },
+  { label: '14', value: '14' },
+  { label: '15', value: '15' },
+  { label: '16', value: '16' },
+  { label: '17', value: '17' },
+  { label: '18', value: '18' },
+]
+
+const RED_DORA_OPTIONS = [
+  { label: '0', value: '0' },
+  { label: '1', value: '1' },
+  { label: '2', value: '2' },
+  { label: '3', value: '3' },
+]
+
+const FU_OPTIONS = [
+  { label: '20符', value: '20' },
+  { label: '30符', value: '30' },
+  { label: '40符', value: '40' },
+  { label: '50符', value: '50' },
+  { label: '60符', value: '60' },
+  { label: '70符', value: '70' },
+  { label: '80符', value: '80' },
+  { label: '90符', value: '90' },
+  { label: '100符', value: '100' },
+  { label: '110符', value: '110' },
+  { label: '25符', value: '25' },
+]
 
 const MJYakuButton = ({
   yaku,
@@ -596,121 +640,63 @@ const MJYakuKeyboardDiv = ({
             </tbody>
           </table>
 
-          <table className="data-table w-full mt-2">
+          <table className="w-full mt-2">
             <tbody>
-              <th className="w-16 bg-neutral-200 px-1 border-neutral-100 border-t border-b">
-                寶牌
-              </th>
-              <td className="w-auto pr-4">
-                <select
-                  className="w-full py-2 border border-neutral-100"
-                  value={dora}
-                  onChange={(e) => setDora(e.currentTarget.value)}
+              <tr>
+                <th className="w-20 bg-yellow-400 px-1 border-yellow-100 border-t border-b">
+                  寶牌
+                </th>
+                <td
+                  className="w-36 py-1 px-2 bg-yellow-200 data-[active='1']:text-red-600"
+                  data-active={dora !== '0' ? '1' : '0'}
                 >
-                  <option>0</option>
-                  <option>1</option>
-                  <option>2</option>
-                  <option>3</option>
-                  <option>4</option>
-                  <option>5</option>
-                  <option>6</option>
-                  <option>7</option>
-                  <option>8</option>
-                  <option>9</option>
-                  <option>10</option>
-                  <option>11</option>
-                  <option>12</option>
-                  <option>13</option>
-                  <option>14</option>
-                  <option>15</option>
-                  <option>16</option>
-                  <option>17</option>
-                  <option>18</option>
-                </select>
-              </td>
-              <th className="w-16 bg-neutral-200 px-1 border-neutral-100 border-t border-b">
-                赤寶牌
-              </th>
-              <td className="w-auto pr-4">
-                <select
-                  className="w-full py-2 border border-neutral-100"
-                  value={redDora}
-                  onChange={(e) => setRedDora(e.currentTarget.value)}
+                  <MJUISelectClicker
+                    value={dora}
+                    onChange={setDora}
+                    options={DORA_OPTIONS}
+                  />
+                </td>
+                <th className="w-20 bg-red-400 px-1 border-neutral-100 border-t border-b">
+                  赤寶牌
+                </th>
+                <td
+                  className="w-36 py-1 px-2 bg-red-200 data-[active='1']:text-red-600"
+                  data-active={redDora !== '0' ? '1' : '0'}
                 >
-                  <option>0</option>
-                  <option>1</option>
-                  <option>2</option>
-                  <option>3</option>
-                  <option>4</option>
-                  <option>5</option>
-                  <option>6</option>
-                  <option>7</option>
-                  <option>8</option>
-                  <option>9</option>
-                  <option>10</option>
-                  <option>11</option>
-                  <option>12</option>
-                  <option>13</option>
-                  <option>14</option>
-                  <option>15</option>
-                  <option>16</option>
-                  <option>17</option>
-                  <option>18</option>
-                </select>
-              </td>
-              <th className="w-16 bg-neutral-200 px-1 border-neutral-100 border-t border-b">
-                裡寶牌
-              </th>
-              <td className="w-auto pr-4">
-                <select
-                  className="w-full py-2 border border-neutral-100"
-                  value={innerDora}
-                  onChange={(e) => setInnerDora(e.currentTarget.value)}
+                  <MJUISelectClicker
+                    value={redDora}
+                    onChange={setRedDora}
+                    options={RED_DORA_OPTIONS}
+                  />
+                </td>
+                <th className="w-20 bg-blue-400 px-1 border-neutral-100 border-t border-b">
+                  裡寶牌
+                </th>
+                <td
+                  className="w-36 py-1 px-2 bg-blue-200 data-[active='1']:text-red-600"
+                  data-active={innerDora !== '0' ? '1' : '0'}
                 >
-                  <option>0</option>
-                  <option>1</option>
-                  <option>2</option>
-                  <option>3</option>
-                  <option>4</option>
-                  <option>5</option>
-                  <option>6</option>
-                  <option>7</option>
-                  <option>8</option>
-                  <option>9</option>
-                  <option>10</option>
-                  <option>11</option>
-                  <option>12</option>
-                  <option>13</option>
-                  <option>14</option>
-                  <option>15</option>
-                  <option>16</option>
-                  <option>17</option>
-                  <option>18</option>
-                </select>
-              </td>
-              <th className="w-16 bg-neutral-200 px-1 border-neutral-100 border-t border-b">
-                符數
-              </th>
-              <td className="w-auto pr-4">
-                <select
-                  className="w-full py-2 border border-neutral-100"
-                  value={result.isFuOverrided ? result.fu : fu}
-                  onChange={(e) => setFu(e.currentTarget.value)}
-                  disabled={result.isFuOverrided}
+                  <MJUISelectClicker
+                    value={innerDora}
+                    onChange={setInnerDora}
+                    options={DORA_OPTIONS}
+                  />
+                </td>
+                <th className="w-20 bg-neutral-400 px-1 border-neutral-100 border-t border-b">
+                  符數
+                </th>
+                <td
+                  className="w-36 py-1 px-2 bg-neutral-200 data-[active='1']:text-red-600"
+                  data-active={dora !== '0' ? '1' : '0'}
                 >
-                  <option value="20">20符</option>
-                  <option value="25">25符</option>
-                  <option value="30">30符</option>
-                  <option value="40">40符</option>
-                  <option value="50">50符</option>
-                  <option value="60">60符</option>
-                  <option value="70">70符</option>
-                  <option value="80">80符</option>
-                  <option value="90">90符</option>
-                  <option value="100">100符</option>
-                  <option value="110">110符</option>
-                </select>
-              </td>
+                  <MJUISelectClicker
+                    value={result.isFuOverrided ? result.fu.toString() : fu}
+                    onChange={setFu}
+                    options={FU_OPTIONS}
+                    disabled={result.isFuOverrided}
+                  />
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -749,28 +735,30 @@ const MJYakuKeyboardDiv = ({
         </div>
       )}
 
-      <table className="data-table w-full mt-2 bg-teal-100">
+      <table className="w-full mt-2 bg-teal-100">
         <tbody>
-          <th className="w-16 bg-teal-400 py-2 px-1">結算</th>
-          <td className="flex flex-wrap gap-2 p-2">
-            {result.yakusInText.map((text) => (
-              <span key={text}>{text}</span>
-            ))}
-          </td>
-          <td className="w-32 bg-teal-400 text-center">
-            <MJHanFuTextSpan
-              han={Math.min(isShowYakuman ? 13 : 12, result.han)}
-              fu={result.fu}
-              isManganRoundUp={setting.isManganRoundUp === '1'}
-            />
-            <MJHanFuTextSpan
-              className="text-xs text-neutral-600"
-              han={result.han}
-              fu={result.fu}
-              isManganRoundUp={setting.isManganRoundUp === '1'}
-              raw
-            />
-          </td>
+          <tr>
+            <th className="w-16 bg-teal-400 py-2 px-1">結算</th>
+            <td className="flex flex-wrap gap-2 p-2 align-middle">
+              {result.yakusInText.map((text) => (
+                <span key={text}>{text}</span>
+              ))}
+            </td>
+            <td className="w-32 bg-teal-400 text-center">
+              <MJHanFuTextSpan
+                han={Math.min(isShowYakuman ? 13 : 12, result.han)}
+                fu={result.fu}
+                isManganRoundUp={setting.isManganRoundUp === '1'}
+              />
+              <MJHanFuTextSpan
+                className="text-xs text-neutral-600"
+                han={result.han}
+                fu={result.fu}
+                isManganRoundUp={setting.isManganRoundUp === '1'}
+                raw
+              />
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>

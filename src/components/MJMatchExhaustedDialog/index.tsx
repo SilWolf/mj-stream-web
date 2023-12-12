@@ -200,32 +200,39 @@ export default function MJMatchExhaustedDialog({
     <MJUIDialogV2 title={title} {...dialogProps}>
       <div className="space-y-8">
         <div className="space-y-2">
-          <p className="text-right text-xs text-gray-500">聽牌？</p>
-          {players.map((player) => (
-            <div key={player.index} className="flex">
-              <div className="flex-1">{player.name}</div>
-              <div className="shrink-0">
-                <MJUISwitch
-                  checked={playersChecked[player.index as PlayerIndex]}
-                  onChange={handleChangePlayersChecked}
-                  data-player-index={player.index}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="space-y-2">
           <h5 className="font-bold">分數變動</h5>
 
-          <table className="data-table text-sm w-full">
+          <table className="data-table w-full text-lg">
+            <thead>
+              <tr>
+                <th>玩家</th>
+                <th className="!bg-yellow-200">聽牌？</th>
+                <th className="w-32">目前分數</th>
+                <th className="w-32">變動</th>
+                <th className="w-32">最新分數</th>
+              </tr>
+            </thead>
             <tbody>
               {(Object.keys(match.players) as unknown as PlayerIndex[]).map(
                 (index) => (
                   <tr key={index}>
-                    <th>{match.players[index].name}</th>
-                    <td>{previewPlayerResults[index].beforeScore}</td>
-                    <td>
+                    <th
+                      className="text-white py-1"
+                      style={{ background: match.players[index].color }}
+                    >
+                      {match.players[index].name}
+                    </th>
+                    <td className="text-center !bg-yellow-200">
+                      <MJUISwitch
+                        checked={playersChecked[index]}
+                        onChange={handleChangePlayersChecked}
+                        data-player-index={index}
+                      />
+                    </td>
+                    <td className="text-center">
+                      {previewPlayerResults[index].beforeScore}
+                    </td>
+                    <td className="text-center">
                       <MJAmountSpan
                         signed
                         value={
@@ -236,7 +243,7 @@ export default function MJMatchExhaustedDialog({
                         negativeClassName="text-red-400"
                       />
                     </td>
-                    <td className="text-right">
+                    <td className="text-center">
                       {previewPlayerResults[index].afterScore}
                     </td>
                   </tr>
@@ -248,7 +255,7 @@ export default function MJMatchExhaustedDialog({
 
         <div className="space-y-2">
           <MJUIButton onClick={handleSubmit} className="w-full">
-            提交並播出分數變動動畫
+            <i className="bi bi-camera-reels-fill"></i> 提交並播出分數變動動畫
           </MJUIButton>
         </div>
       </div>
