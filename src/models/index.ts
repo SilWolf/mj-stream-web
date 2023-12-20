@@ -118,14 +118,17 @@ export type PlayerResult = {
   isRiichi?: boolean
   isRevealed?: boolean
   waitingTiles?: string[]
-  predictedYakus: string[]
-  normalDora?: number
-  redDora?: number
-  detail?: {
+  detail: {
     han: number
     fu: number
-    yakusInText: string[]
+    yakusInText: string[] | null
     isYakuman: boolean
+    raw: Record<string, boolean> | null
+    dora: number
+    redDora: number
+    innerDora: number
+    isRevealed: boolean
+    isRiichied: boolean
   }
 }
 

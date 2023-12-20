@@ -107,7 +107,7 @@ const PlayersGridView = ({
                   <div
                     className="data-[active='1']:bg-yellow-200"
                     data-active={
-                      currentRound.playerResults[order[0]].normalDora
+                      currentRound.playerResults[order[0]].detail.dora > 0
                         ? '1'
                         : '0'
                     }
@@ -120,7 +120,7 @@ const PlayersGridView = ({
                     >
                       -
                     </button>
-                    寶{currentRound.playerResults[order[0]].normalDora ?? 0}
+                    寶{currentRound.playerResults[order[0]].detail.dora}
                     <button
                       className="px-2 text-lg leading-0"
                       data-player-index={order[0]}
@@ -133,7 +133,9 @@ const PlayersGridView = ({
                   <div
                     className="data-[active='1']:bg-red-200"
                     data-active={
-                      currentRound.playerResults[order[0]].redDora ? '1' : '0'
+                      currentRound.playerResults[order[0]].detail.redDora > 0
+                        ? '1'
+                        : '0'
                     }
                   >
                     <button
@@ -144,7 +146,7 @@ const PlayersGridView = ({
                     >
                       -
                     </button>
-                    赤{currentRound.playerResults[order[0]].redDora ?? 0}
+                    赤{currentRound.playerResults[order[0]].detail.redDora ?? 0}
                     <button
                       className="px-2 text-lg leading-0"
                       data-player-index={order[0]}
@@ -286,7 +288,7 @@ const PlayersGridView = ({
                   <div
                     className="data-[active='1']:bg-yellow-200"
                     data-active={
-                      currentRound.playerResults[order[1]].normalDora
+                      currentRound.playerResults[order[1]].detail.dora > 0
                         ? '1'
                         : '0'
                     }
@@ -299,7 +301,7 @@ const PlayersGridView = ({
                     >
                       -
                     </button>
-                    寶{currentRound.playerResults[order[1]].normalDora ?? 0}
+                    寶{currentRound.playerResults[order[1]].detail.dora}
                     <button
                       className="px-2 text-lg leading-0"
                       data-player-index={order[1]}
@@ -312,7 +314,9 @@ const PlayersGridView = ({
                   <div
                     className="data-[active='1']:bg-red-200"
                     data-active={
-                      currentRound.playerResults[order[1]].redDora ? '1' : '0'
+                      currentRound.playerResults[order[1]].detail.redDora > 0
+                        ? '1'
+                        : '0'
                     }
                   >
                     <button
@@ -323,7 +327,7 @@ const PlayersGridView = ({
                     >
                       -
                     </button>
-                    赤{currentRound.playerResults[order[1]].redDora ?? 0}
+                    赤{currentRound.playerResults[order[1]].detail.redDora ?? 0}
                     <button
                       className="px-2 text-lg leading-0"
                       data-player-index={order[1]}
@@ -478,7 +482,7 @@ const PlayersGridView = ({
                   <div
                     className="data-[active='1']:bg-yellow-200"
                     data-active={
-                      currentRound.playerResults[order[2]].normalDora
+                      currentRound.playerResults[order[2]].detail.dora > 0
                         ? '1'
                         : '0'
                     }
@@ -491,7 +495,7 @@ const PlayersGridView = ({
                     >
                       -
                     </button>
-                    寶{currentRound.playerResults[order[2]].normalDora ?? 0}
+                    寶{currentRound.playerResults[order[2]].detail.dora}
                     <button
                       className="px-2 text-lg leading-0"
                       data-player-index={order[2]}
@@ -504,7 +508,9 @@ const PlayersGridView = ({
                   <div
                     className="data-[active='1']:bg-red-200"
                     data-active={
-                      currentRound.playerResults[order[2]].redDora ? '1' : '0'
+                      currentRound.playerResults[order[2]].detail.redDora > 0
+                        ? '1'
+                        : '0'
                     }
                   >
                     <button
@@ -515,7 +521,7 @@ const PlayersGridView = ({
                     >
                       -
                     </button>
-                    赤{currentRound.playerResults[order[2]].redDora ?? 0}
+                    赤{currentRound.playerResults[order[2]].detail.redDora ?? 0}
                     <button
                       className="px-2 text-lg leading-0"
                       data-player-index={order[2]}
@@ -657,7 +663,7 @@ const PlayersGridView = ({
                   <div
                     className="data-[active='1']:bg-yellow-200"
                     data-active={
-                      currentRound.playerResults[order[3]].normalDora
+                      currentRound.playerResults[order[3]].detail.dora > 0
                         ? '1'
                         : '0'
                     }
@@ -670,7 +676,7 @@ const PlayersGridView = ({
                     >
                       -
                     </button>
-                    寶{currentRound.playerResults[order[3]].normalDora ?? 0}
+                    寶{currentRound.playerResults[order[3]].detail.dora}
                     <button
                       className="px-2 text-lg leading-0"
                       data-player-index={order[3]}
@@ -683,7 +689,9 @@ const PlayersGridView = ({
                   <div
                     className="data-[active='1']:bg-red-200"
                     data-active={
-                      currentRound.playerResults[order[3]].redDora ? '1' : '0'
+                      currentRound.playerResults[order[3]].detail.redDora > 0
+                        ? '1'
+                        : '0'
                     }
                   >
                     <button
@@ -694,7 +702,7 @@ const PlayersGridView = ({
                     >
                       -
                     </button>
-                    赤{currentRound.playerResults[order[3]].redDora ?? 0}
+                    赤{currentRound.playerResults[order[3]].detail.redDora}
                     <button
                       className="px-2 text-lg leading-0"
                       data-player-index={order[3]}

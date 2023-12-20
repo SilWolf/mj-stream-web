@@ -376,13 +376,21 @@ export type MJYakuKeyboardDivProps = {
   activePlayerIndex: PlayerIndex
   isEast: boolean
   isRon: boolean
-  setting: MatchSetting
-  onChange?: (result: {
-    han: number
-    fu: number
-    yakusInText: string[]
-    isYakuman: boolean
-  }) => unknown
+  onChange?: (result: Required<MJYakuKeyboardResult>) => unknown
+  value?: MJYakuKeyboardResult
+}
+
+export type MJYakuKeyboardResult = {
+  han: number
+  fu: number
+  yakusInText: string[] | null
+  isYakuman: boolean
+  raw: Record<string, boolean> | null
+  dora: number
+  redDora: number
+  innerDora: number
+  isRevealed: boolean
+  isRiichied: boolean
 }
 
 const MJYakuKeyboardDiv = ({
@@ -390,10 +398,12 @@ const MJYakuKeyboardDiv = ({
   activePlayerIndex,
   isEast,
   isRon,
-  setting,
   onChange,
+  value,
 }: MJYakuKeyboardDivProps) => {
-  const [yakuChecks, setYakuChecks] = useState<Record<string, boolean>>({})
+  const [yakuChecks, setYakuChecks] = useState<
+    NonNullable<MJYakuKeyboardResult['raw']>
+  >({})
   const [isOpened, toggleOpened] = useToggle(false)
   const [isShowYakuman, toggleShowYakuman] = useToggle(false)
 
@@ -499,6 +509,12 @@ const MJYakuKeyboardDiv = ({
       fu: finalFu,
       isFuOverrided,
       isYakuman: isShowYakuman,
+      raw: yakuChecks,
+      dora: parseInt(dora),
+      redDora: parseInt(redDora),
+      innerDora: parseInt(innerDora),
+      isRevealed: isOpened,
+      isRiichied: !!yakuChecks['riichi'],
     }
   }, [
     isOpened,
@@ -519,6 +535,16 @@ const MJYakuKeyboardDiv = ({
 
     onChange(result)
   }, [result, onChange, isEast, isRon])
+
+  useEffect(() => {
+    if (value) {
+      setYakuChecks(value.raw ?? {})
+      setDora(value.dora.toString())
+      setRedDora(value.redDora.toString())
+      setInnerDora('0')
+      toggleOpened(value.isRevealed)
+    }
+  }, [toggleOpened, value])
 
   return (
     <div>
@@ -734,27 +760,43 @@ const MJYakuKeyboardDiv = ({
           </table>
         </div>
       )}
+    </div>
+  )
+}
 
+export default MJYakuKeyboardDiv
+
+type MJYakuKeyboardResultDivProps = {
+  result: MJYakuKeyboardResult
+  matchSetting: MatchSetting
+}
+
+export const MJYakuKeyboardResultDiv = ({
+  result,
+  matchSetting,
+}: MJYakuKeyboardResultDivProps) => {
+  return (
+    <div>
       <table className="w-full mt-2 bg-teal-100">
         <tbody>
           <tr>
             <th className="w-16 bg-teal-400 py-2 px-1">結算</th>
             <td className="flex flex-wrap gap-2 p-2 align-middle">
-              {result.yakusInText.map((text) => (
+              {result.yakusInText?.map((text) => (
                 <span key={text}>{text}</span>
               ))}
             </td>
             <td className="w-32 bg-teal-400 text-center">
               <MJHanFuTextSpan
-                han={Math.min(isShowYakuman ? 13 : 12, result.han)}
+                han={Math.min(result.isYakuman ? 13 : 12, result.han)}
                 fu={result.fu}
-                isManganRoundUp={setting.isManganRoundUp === '1'}
+                isManganRoundUp={matchSetting.isManganRoundUp === '1'}
               />
               <MJHanFuTextSpan
                 className="text-xs text-neutral-600"
                 han={result.han}
                 fu={result.fu}
-                isManganRoundUp={setting.isManganRoundUp === '1'}
+                isManganRoundUp={matchSetting.isManganRoundUp === '1'}
                 raw
               />
             </td>
@@ -763,11 +805,4 @@ const MJYakuKeyboardDiv = ({
       </table>
     </div>
   )
-}
-
-export default MJYakuKeyboardDiv
-
-type MJYakuPredictSimpleKeyboardProps = {
-  value?: Record<string, boolean>
-  onChange?: (newValue: Record<string, boolean>) => unknown
 }

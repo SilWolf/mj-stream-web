@@ -2,6 +2,7 @@ import { PlayerIndex } from '@/models'
 import { PlayersViewAction, PlayersViewProps } from '..'
 import React, { useCallback } from 'react'
 import MJTileDiv from '@/components/MJTileDiv'
+import { getIsPlayerEast } from '@/helpers/mahjong.helper'
 
 const PlayersListView = ({
   players,
@@ -25,26 +26,38 @@ const PlayersListView = ({
   return (
     <div className="space-y-2">
       {(['0', '1', '2', '3'] as PlayerIndex[]).map((index) => (
-        <table className="w-full border border-black bg-white" key={index}>
+        <table
+          className="w-full border border-black ring-2 ring-transparent data-[east='1']:ring-red-500 bg-white"
+          key={index}
+          data-east={
+            getIsPlayerEast(index, currentRound.roundCount) ? '1' : '0'
+          }
+        >
           <tbody>
             <tr>
               <td
-                className="p-1 space-x-1 text-white w-64"
+                className="p-1 text-white w-32"
                 style={{ background: players[index].color }}
               >
-                <img
-                  className="w-8 h-8 inline-block"
-                  src={players[index].teamPicUrl as string}
-                  alt={players[index].title}
-                />
-                <img
-                  className="w-[1.44rem] h-8 inline-block"
-                  src={players[index].proPicUrl as string}
-                  alt={players[index].name}
-                />
-                <div className="inline-block align-middle">
-                  <p>{players[index].title}</p>
-                  <p>{players[index].name}</p>
+                <div className="flex gap-x-1 items-center w-32">
+                  <img
+                    className="shrink-0 w-8 h-8 inline-block"
+                    src={players[index].teamPicUrl as string}
+                    alt={players[index].title}
+                  />
+                  <img
+                    className="shrink-0 w-[1.44rem] h-8 inline-block"
+                    src={players[index].proPicUrl as string}
+                    alt={players[index].name}
+                  />
+                  <div className="flex-1 align-middle overflow-hidden">
+                    <p className="whitespace-nowrap overflow-ellipsis">
+                      {players[index].title}
+                    </p>
+                    <p className="whitespace-nowrap overflow-ellipsis">
+                      {players[index].name}
+                    </p>
+                  </div>
                 </div>
               </td>
               <td className="px-2 border-b border-black" colSpan={2}>
@@ -156,7 +169,9 @@ const PlayersListView = ({
                   <div
                     className="data-[active='1']:bg-yellow-200"
                     data-active={
-                      currentRound.playerResults[index].normalDora ? '1' : '0'
+                      currentRound.playerResults[index].detail.dora > 0
+                        ? '1'
+                        : '0'
                     }
                   >
                     <button
@@ -167,7 +182,7 @@ const PlayersListView = ({
                     >
                       -
                     </button>
-                    寶{currentRound.playerResults[index].normalDora ?? 0}
+                    寶{currentRound.playerResults[index].detail.dora}
                     <button
                       className="px-2 text-lg leading-0"
                       data-player-index={index}
@@ -180,7 +195,9 @@ const PlayersListView = ({
                   <div
                     className="data-[active='1']:bg-red-200"
                     data-active={
-                      currentRound.playerResults[index].redDora ? '1' : '0'
+                      currentRound.playerResults[index].detail.redDora > 0
+                        ? '1'
+                        : '0'
                     }
                   >
                     <button
@@ -191,7 +208,7 @@ const PlayersListView = ({
                     >
                       -
                     </button>
-                    赤{currentRound.playerResults[index].redDora ?? 0}
+                    赤{currentRound.playerResults[index].detail.redDora ?? 0}
                     <button
                       className="px-2 text-lg leading-0"
                       data-player-index={index}

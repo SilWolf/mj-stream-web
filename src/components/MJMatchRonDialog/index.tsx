@@ -19,7 +19,10 @@ import MJMatchCounterSpan from '../MJMatchCounterSpan'
 import MJUISelect from '../MJUI/MJUISelect'
 import MJHanFuScoreSpan from '../MJHanFuScoreSpan'
 import MJAmountSpan from '../MJAmountSpan'
-import MJYakuKeyboardDiv from '../MJYakuKeyboardDiv'
+import MJYakuKeyboardDiv, {
+  MJYakuKeyboardResult,
+  MJYakuKeyboardResultDiv,
+} from '../MJYakuKeyboardDiv'
 
 export type MJMatchRonProps = Pick<MJUIDialogV2Props, 'open' | 'onClose'> & {
   match: Match
@@ -37,12 +40,22 @@ export default function MJMatchRonDialog({
   onSubmit,
   ...dialogProps
 }: MJMatchRonProps) {
-  const [yakuResult, setYakuResult] = useState<{
-    han: number
-    fu: number
-    yakusInText: string[]
-    isYakuman: boolean
-  }>()
+  const [yakuResult, setYakuResult] = useState<
+    Omit<MJYakuKeyboardResult, 'raw'> & {
+      raw: MJYakuKeyboardResult['raw'] | null
+    }
+  >({
+    han: 1,
+    fu: 30,
+    yakusInText: [],
+    isYakuman: false,
+    raw: {},
+    dora: 0,
+    redDora: 0,
+    innerDora: 0,
+    isRevealed: false,
+    isRiichied: false,
+  })
   const [compiledScore, setCompiledScore] = useState<MJCompiledScore>({
     win: 1000,
     target: 1000,
@@ -60,9 +73,9 @@ export default function MJMatchRonDialog({
     return _players
   }, [match.players, currentMatchRound.roundCount])
 
-  const [activePlayerIndex, setActivePlayerIndex] = useState<
-    string | undefined
-  >(initialActivePlayerIndex)
+  const [activePlayerIndex, setActivePlayerIndex] = useState<string>(
+    initialActivePlayerIndex ?? '0'
+  )
   const activePlayer = useMemo(
     () =>
       typeof activePlayerIndex !== 'undefined'
@@ -76,12 +89,7 @@ export default function MJMatchRonDialog({
   >(initialTargetPlayerIndex)
 
   const handleChangeYaku = useCallback(
-    (result: {
-      han: number
-      fu: number
-      yakusInText: string[]
-      isYakuman: boolean
-    }) => {
+    (result: MJYakuKeyboardResult) => {
       const newCompiledScore = getScoreInFullDetail(
         Math.min(result.han, result.isYakuman ? 13 : 12),
         result.fu,
@@ -284,6 +292,7 @@ export default function MJMatchRonDialog({
       resultDetail: {
         winnerPlayerIndex: activePlayerIndex as PlayerIndex,
         ...yakuResult,
+        yakusInText: yakuResult.yakusInText ?? [],
       },
     }
 
@@ -302,18 +311,20 @@ export default function MJMatchRonDialog({
       // reset form
       setActivePlayerIndex(initialActivePlayerIndex)
       setTargetPlayerIndex(initialTargetPlayerIndex)
-      // setYakuResult({
-      //   han: 1,
-      //   fu: 30,
-      //   yakusInText: [],
-      //   isYakuman: false,
-      // })
+      setYakuResult(
+        currentMatchRound.playerResults[initialActivePlayerIndex].detail
+      )
       // setCompiledScore({
       //   win: 1000,
       //   target: 1000,
       // })
     }
-  }, [dialogProps.open, initialActivePlayerIndex, initialTargetPlayerIndex])
+  }, [
+    currentMatchRound.playerResults,
+    dialogProps.open,
+    initialActivePlayerIndex,
+    initialTargetPlayerIndex,
+  ])
 
   return (
     <MJUIDialogV2 title={title} {...dialogProps}>
@@ -356,7 +367,16 @@ export default function MJMatchRonDialog({
               isEast={activePlayer?.position === PlayerPositionEnum.East}
               isRon={targetPlayerIndex !== '-1'}
               onChange={handleChangeYaku}
-              setting={match.setting}
+              value={
+                currentMatchRound.playerResults[
+                  activePlayerIndex as PlayerIndex
+                ].detail
+              }
+            />
+
+            <MJYakuKeyboardResultDiv
+              result={yakuResult}
+              matchSetting={match.setting}
             />
 
             <div className="text-3xl font-bold text-center bg-teal-400 py-2">
@@ -415,7 +435,9 @@ export default function MJMatchRonDialog({
           <MJUIButton
             onClick={handleSubmit}
             className="w-full"
-            disabled={!yakuResult || yakuResult.yakusInText.length <= 0}
+            disabled={
+              !yakuResult?.yakusInText || yakuResult.yakusInText.length <= 0
+            }
           >
             <i className="bi bi-camera-reels-fill"></i> 提交並播出分數變動動畫
           </MJUIButton>

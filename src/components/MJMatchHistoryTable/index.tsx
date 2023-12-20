@@ -81,17 +81,17 @@ function MJMatchHistoryTable({ players, matchRounds, ...tableProps }: Props) {
     <table {...tableProps}>
       <thead>
         <tr className="border-b border-gray-400 [&>th]:p-2">
-          <th className="w-32">局數</th>
-          <th className="w-min-[120px]">
+          <th className="whitespace-nowrap px-16">局數</th>
+          <th className="w-1/4">
             <PlayerDiv player={players['0']} />
           </th>
-          <th className="w-min-[120px]">
+          <th className="w-1/4">
             <PlayerDiv player={players['1']} />
           </th>
-          <th className="w-min-[120px]">
+          <th className="w-1/4">
             <PlayerDiv player={players['2']} />
           </th>
-          <th className="w-min-[120px]">
+          <th className="w-1/4">
             <PlayerDiv player={players['3']} />
           </th>
         </tr>
@@ -126,7 +126,9 @@ function MJMatchHistoryTable({ players, matchRounds, ...tableProps }: Props) {
           if (matchRound.resultType === RoundResultTypeEnum.Hotfix) {
             return (
               <tr key={matchRoundId} className="even:bg-gray-200 [&>td]:p-2">
-                <td className="text-center">手動調整</td>
+                <td className="text-center whitespace-nowrap px-16">
+                  手動調整
+                </td>
                 <td className="text-center">
                   {matchRound.playerResults['0'].afterScore}
                 </td>
@@ -145,11 +147,12 @@ function MJMatchHistoryTable({ players, matchRounds, ...tableProps }: Props) {
 
           return (
             <tr key={matchRoundId} className="even:bg-gray-200 [&>td]:p-2">
-              <td className="text-center">
+              <td className="text-center whitespace-nowrap">
                 <MJMatchCounterSpan
                   roundCount={matchRound.roundCount}
                   extendedRoundCount={matchRound.extendedRoundCount}
                   max={8}
+                  className="px-4"
                 />
               </td>
               <td className="text-center">
@@ -193,7 +196,7 @@ function MJMatchHistoryTable({ players, matchRounds, ...tableProps }: Props) {
         })}
         {matchRoundsEntries[matchRoundsEntries.length - 1] && (
           <tr className="even:bg-gray-200 [&>td]:p-2">
-            <td className="text-center" />
+            <td className="text-center whitespace-nowrap px-16" />
             <td className="text-center font-bold text-lg">
               <MJAmountSpan
                 value={

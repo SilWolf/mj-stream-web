@@ -140,37 +140,6 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
     string | null
   >(null)
 
-  const handleClickReveal = useCallback(
-    (e: React.MouseEvent<HTMLButtonElement>) => {
-      const playerIndex = e.currentTarget.getAttribute(
-        'data-player-index'
-      ) as unknown as PlayerIndex
-      if (!playerIndex) {
-        return
-      }
-
-      const player = match?.players[playerIndex]
-      if (!player) {
-        return
-      }
-
-      updateCurrentMatchRound({
-        playerResults: {
-          ...(matchCurrentRound?.playerResults as Record<
-            PlayerIndex,
-            PlayerResult
-          >),
-          [playerIndex]: {
-            ...matchCurrentRound?.playerResults[playerIndex],
-            isRevealed:
-              !matchCurrentRound?.playerResults[playerIndex].isRevealed,
-          },
-        },
-      })
-    },
-    [match?.players, matchCurrentRound?.playerResults, updateCurrentMatchRound]
-  )
-
   const handleClickRiichi = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
       const playerIndex = e.currentTarget.getAttribute(
@@ -323,6 +292,11 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                 ...matchCurrentRound.playerResults[playerIndex],
                 isRevealed:
                   !matchCurrentRound.playerResults[playerIndex].isRevealed,
+                detail: {
+                  ...matchCurrentRound.playerResults[playerIndex].detail,
+                  isRevealed:
+                    !matchCurrentRound.playerResults[playerIndex].isRevealed,
+                },
               },
             },
           })
@@ -344,6 +318,18 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                     ...matchCurrentRound?.playerResults[playerIndex],
                     isRiichi:
                       !matchCurrentRound?.playerResults[playerIndex].isRiichi,
+                    detail: {
+                      ...matchCurrentRound.playerResults[playerIndex].detail,
+                      isRiichied:
+                        !matchCurrentRound.playerResults[playerIndex].isRiichi,
+                      raw: {
+                        ...matchCurrentRound.playerResults[playerIndex].detail
+                          .raw,
+                        riichi:
+                          !matchCurrentRound.playerResults[playerIndex]
+                            .isRiichi,
+                      },
+                    },
                   },
                 },
               })
@@ -395,9 +381,12 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
               ...matchCurrentRound.playerResults,
               [playerIndex]: {
                 ...matchCurrentRound.playerResults[playerIndex],
-                normalDora:
-                  (matchCurrentRound.playerResults[playerIndex].normalDora ??
-                    0) + 1,
+                detail: {
+                  ...matchCurrentRound.playerResults[playerIndex].detail,
+                  dora:
+                    matchCurrentRound.playerResults[playerIndex].detail.dora +
+                    1,
+                },
               },
             },
           })
@@ -408,11 +397,14 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
               ...matchCurrentRound.playerResults,
               [playerIndex]: {
                 ...matchCurrentRound.playerResults[playerIndex],
-                normalDora: Math.max(
-                  (matchCurrentRound.playerResults[playerIndex].normalDora ??
-                    0) - 1,
-                  0
-                ),
+                detail: {
+                  ...matchCurrentRound.playerResults[playerIndex].detail,
+                  dora: Math.max(
+                    matchCurrentRound.playerResults[playerIndex].detail.dora -
+                      1,
+                    0
+                  ),
+                },
               },
             },
           })
@@ -423,9 +415,12 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
               ...matchCurrentRound.playerResults,
               [playerIndex]: {
                 ...matchCurrentRound.playerResults[playerIndex],
-                redDora:
-                  (matchCurrentRound.playerResults[playerIndex].redDora ?? 0) +
-                  1,
+                detail: {
+                  ...matchCurrentRound.playerResults[playerIndex].detail,
+                  redDora:
+                    matchCurrentRound.playerResults[playerIndex].detail
+                      .redDora + 1,
+                },
               },
             },
           })
@@ -436,11 +431,14 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
               ...matchCurrentRound.playerResults,
               [playerIndex]: {
                 ...matchCurrentRound.playerResults[playerIndex],
-                redDora: Math.max(
-                  (matchCurrentRound.playerResults[playerIndex].redDora ?? 0) -
-                    1,
-                  0
-                ),
+                detail: {
+                  ...matchCurrentRound.playerResults[playerIndex].detail,
+                  redDora: Math.max(
+                    matchCurrentRound.playerResults[playerIndex].detail
+                      .redDora - 1,
+                    0
+                  ),
+                },
               },
             },
           })
