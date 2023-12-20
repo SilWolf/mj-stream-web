@@ -188,13 +188,21 @@ export default function MJMatchExhaustedDialog({
     if (dialogProps.open) {
       // reset form
       setPlayersChecked({
-        '0': false,
-        '1': false,
-        '2': false,
-        '3': false,
+        '0':
+          !!currentMatchRound.playerResults['0'].waitingTiles &&
+          currentMatchRound.playerResults['0'].waitingTiles?.length > 0,
+        '1':
+          !!currentMatchRound.playerResults['1'].waitingTiles &&
+          currentMatchRound.playerResults['1'].waitingTiles?.length > 0,
+        '2':
+          !!currentMatchRound.playerResults['2'].waitingTiles &&
+          currentMatchRound.playerResults['2'].waitingTiles?.length > 0,
+        '3':
+          !!currentMatchRound.playerResults['3'].waitingTiles &&
+          currentMatchRound.playerResults['3'].waitingTiles?.length > 0,
       })
     }
-  }, [dialogProps.open])
+  }, [currentMatchRound.playerResults, dialogProps.open])
 
   return (
     <MJUIDialogV2 title={title} {...dialogProps}>
