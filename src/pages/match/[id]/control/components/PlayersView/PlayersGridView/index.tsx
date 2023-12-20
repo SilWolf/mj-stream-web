@@ -1,7 +1,8 @@
 import { PlayerIndex } from '@/models'
-import { PlayersViewProps } from '..'
+import { PlayersViewAction, PlayersViewProps } from '..'
 import React, { useCallback, useMemo, useState } from 'react'
 import MJUIButton from '@/components/MJUI/MJUIButton'
+import MJTileDiv from '@/components/MJTileDiv'
 
 const ORDERING: PlayerIndex[][] = [
   ['0', '3', '1', '2'],
@@ -10,9 +11,27 @@ const ORDERING: PlayerIndex[][] = [
   ['1', '0', '2', '3'],
 ]
 
-const PlayersGridView = ({ players, currentRound }: PlayersViewProps) => {
+const PlayersGridView = ({
+  players,
+  currentRound,
+  onAction,
+}: PlayersViewProps) => {
   const [orderIndex, setOrderIndex] = useState<number>(0)
   const order = useMemo(() => ORDERING[orderIndex], [orderIndex])
+
+  const handleAction = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      const newPlayerIndex = e.currentTarget.getAttribute(
+        'data-player-index'
+      ) as PlayerIndex
+      const action = e.currentTarget.getAttribute(
+        'data-action'
+      ) as PlayersViewAction
+
+      onAction(newPlayerIndex, action)
+    },
+    [onAction]
+  )
 
   const handleClickRotate = useCallback(() => {
     setOrderIndex((prev) => (prev + 1) % 4)
@@ -57,22 +76,83 @@ const PlayersGridView = ({ players, currentRound }: PlayersViewProps) => {
             </tr>
             <tr>
               <td className="w-1/2 px-2 h-16" colSpan={2}>
-                待牌
+                <button
+                  className="py-2 text-left block"
+                  data-player-index={order[0]}
+                  data-action="waitingTile"
+                  onClick={handleAction}
+                >
+                  <span className="mr-2 text-xl">待牌</span>
+                  <div className="inline-block space-x-1">
+                    {currentRound.playerResults[order[0]].waitingTiles?.map(
+                      (tile) => (
+                        <MJTileDiv
+                          key={tile}
+                          className="inline-block align-middle w-8 animate-[fadeIn_1s_ease-in-out]"
+                        >
+                          {tile}
+                        </MJTileDiv>
+                      )
+                    )}
+                  </div>
+                </button>
               </td>
             </tr>
             <tr>
-              <td className="px-2">
+              <td className="w-full px-2">
                 <span>役</span>
               </td>
               <td className="w-0 text-right whitespace-nowrap px-4 pb-4">
                 <div>
-                  <div>
-                    <button className="px-2 text-lg leading-0">-</button>寶0
-                    <button className="px-2 text-lg leading-0">+</button>
+                  <div
+                    className="data-[active='1']:bg-yellow-200"
+                    data-active={
+                      currentRound.playerResults[order[0]].normalDora
+                        ? '1'
+                        : '0'
+                    }
+                  >
+                    <button
+                      className="px-2 text-lg leading-0"
+                      data-player-index={order[0]}
+                      data-action="dora-normal-minus"
+                      onClick={handleAction}
+                    >
+                      -
+                    </button>
+                    寶{currentRound.playerResults[order[0]].normalDora ?? 0}
+                    <button
+                      className="px-2 text-lg leading-0"
+                      data-player-index={order[0]}
+                      data-action="dora-normal-plus"
+                      onClick={handleAction}
+                    >
+                      +
+                    </button>
                   </div>
-                  <div>
-                    <button className="px-2 text-lg leading-0">-</button>赤0
-                    <button className="px-2 text-lg leading-0">+</button>
+                  <div
+                    className="data-[active='1']:bg-red-200"
+                    data-active={
+                      currentRound.playerResults[order[0]].redDora ? '1' : '0'
+                    }
+                  >
+                    <button
+                      className="px-2 text-lg leading-0"
+                      data-player-index={order[0]}
+                      data-action="dora-red-minus"
+                      onClick={handleAction}
+                    >
+                      -
+                    </button>
+                    赤{currentRound.playerResults[order[0]].redDora ?? 0}
+                    <button
+                      className="px-2 text-lg leading-0"
+                      data-player-index={order[0]}
+                      data-action="dora-red-plus"
+                      onClick={handleAction}
+                    >
+                      +
+                    </button>
                   </div>
                 </div>
               </td>
@@ -80,22 +160,62 @@ const PlayersGridView = ({ players, currentRound }: PlayersViewProps) => {
             <tr>
               <td className="whitespace-nowrap" colSpan={2}>
                 <div className=" grid grid-cols-3 gap-2 justify-center">
-                  <button className="px-1 bg-neutral-200 border rounded border-neutral-700 text-xl mr-4">
+                  <button
+                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl mr-4 disabled:opacity-20 disabled:cursor-not-allowed data-[active='1']:bg-teal-800 data-[active='1']:text-yellow-300"
+                    data-player-index={order[0]}
+                    data-action="reveal"
+                    onClick={handleAction}
+                    data-active={
+                      currentRound.playerResults[order[0]].isRevealed
+                        ? '1'
+                        : '0'
+                    }
+                    disabled={currentRound.playerResults[order[0]].isRiichi}
+                  >
                     副露
                   </button>
-                  <button className="px-1 bg-neutral-200 border rounded border-neutral-700 text-xl">
+                  <button
+                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl"
+                    data-player-index={order[0]}
+                    data-action="ron-self"
+                    onClick={handleAction}
+                  >
                     自摸
                   </button>
-                  <button className="px-1 bg-neutral-200 border rounded border-neutral-700 text-xl">
+                  <button
+                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl"
+                    data-player-index={order[0]}
+                    data-action="ron-before"
+                    onClick={handleAction}
+                  >
                     和上家←
                   </button>
-                  <button className="px-1 bg-neutral-200 border rounded border-neutral-700 text-xl mr-4">
+                  <button
+                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl mr-4 disabled:opacity-20 disabled:cursor-not-allowed data-[active='1']:bg-red-800 data-[active='1']:text-yellow-300"
+                    data-player-index={order[0]}
+                    data-action="riichi"
+                    onClick={handleAction}
+                    data-active={
+                      currentRound.playerResults[order[0]].isRiichi ? '1' : '0'
+                    }
+                    disabled={currentRound.playerResults[order[0]].isRevealed}
+                  >
                     立直
                   </button>
-                  <button className="px-1 bg-neutral-200 border rounded border-neutral-700 text-xl">
+                  <button
+                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl"
+                    data-player-index={order[0]}
+                    data-action="ron-after"
+                    onClick={handleAction}
+                  >
                     和下家↑
                   </button>
-                  <button className="px-1 bg-neutral-200 border rounded border-neutral-700 text-xl">
+                  <button
+                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl"
+                    data-player-index={order[0]}
+                    data-action="ron-opposite"
+                    onClick={handleAction}
+                  >
                     和對家↖
                   </button>
                 </div>
@@ -135,22 +255,83 @@ const PlayersGridView = ({ players, currentRound }: PlayersViewProps) => {
             </tr>
             <tr>
               <td className="w-1/2 px-2 h-16" colSpan={2}>
-                待牌
+                <button
+                  className="py-2 text-left block"
+                  data-player-index={order[1]}
+                  data-action="waitingTile"
+                  onClick={handleAction}
+                >
+                  <span className="mr-2 text-xl">待牌</span>
+                  <div className="inline-block space-x-1">
+                    {currentRound.playerResults[order[1]].waitingTiles?.map(
+                      (tile) => (
+                        <MJTileDiv
+                          key={tile}
+                          className="inline-block align-middle w-8 animate-[fadeIn_1s_ease-in-out]"
+                        >
+                          {tile}
+                        </MJTileDiv>
+                      )
+                    )}
+                  </div>
+                </button>
               </td>
             </tr>
             <tr>
-              <td className="px-2">
+              <td className="w-full px-2">
                 <span>役</span>
               </td>
               <td className="w-0 text-right whitespace-nowrap px-4 pb-4">
                 <div>
-                  <div>
-                    <button className="px-2 text-lg leading-0">-</button>寶0
-                    <button className="px-2 text-lg leading-0">+</button>
+                  <div
+                    className="data-[active='1']:bg-yellow-200"
+                    data-active={
+                      currentRound.playerResults[order[1]].normalDora
+                        ? '1'
+                        : '0'
+                    }
+                  >
+                    <button
+                      className="px-2 text-lg leading-0"
+                      data-player-index={order[1]}
+                      data-action="dora-normal-minus"
+                      onClick={handleAction}
+                    >
+                      -
+                    </button>
+                    寶{currentRound.playerResults[order[1]].normalDora ?? 0}
+                    <button
+                      className="px-2 text-lg leading-0"
+                      data-player-index={order[1]}
+                      data-action="dora-normal-plus"
+                      onClick={handleAction}
+                    >
+                      +
+                    </button>
                   </div>
-                  <div>
-                    <button className="px-2 text-lg leading-0">-</button>赤0
-                    <button className="px-2 text-lg leading-0">+</button>
+                  <div
+                    className="data-[active='1']:bg-red-200"
+                    data-active={
+                      currentRound.playerResults[order[1]].redDora ? '1' : '0'
+                    }
+                  >
+                    <button
+                      className="px-2 text-lg leading-0"
+                      data-player-index={order[1]}
+                      data-action="dora-red-minus"
+                      onClick={handleAction}
+                    >
+                      -
+                    </button>
+                    赤{currentRound.playerResults[order[1]].redDora ?? 0}
+                    <button
+                      className="px-2 text-lg leading-0"
+                      data-player-index={order[1]}
+                      data-action="dora-red-plus"
+                      onClick={handleAction}
+                    >
+                      +
+                    </button>
                   </div>
                 </div>
               </td>
@@ -158,22 +339,62 @@ const PlayersGridView = ({ players, currentRound }: PlayersViewProps) => {
             <tr>
               <td className="whitespace-nowrap" colSpan={2}>
                 <div className=" grid grid-cols-3 gap-2 justify-center">
-                  <button className="px-1 bg-neutral-200 border rounded border-neutral-700 text-xl">
+                  <button
+                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl"
+                    data-player-index={order[1]}
+                    data-action="ron-after"
+                    onClick={handleAction}
+                  >
                     →和下家
                   </button>
-                  <button className="px-1 bg-neutral-200 border rounded border-neutral-700 text-xl">
+                  <button
+                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl"
+                    data-player-index={order[1]}
+                    data-action="ron-self"
+                    onClick={handleAction}
+                  >
                     自摸
                   </button>
-                  <button className="px-1 bg-neutral-200 border rounded border-neutral-700 text-xl ml-4">
+                  <button
+                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl ml-4 disabled:opacity-20 disabled:cursor-not-allowed data-[active='1']:bg-teal-800 data-[active='1']:text-yellow-300"
+                    data-player-index={order[1]}
+                    data-action="reveal"
+                    onClick={handleAction}
+                    data-active={
+                      currentRound.playerResults[order[1]].isRevealed
+                        ? '1'
+                        : '0'
+                    }
+                    disabled={currentRound.playerResults[order[1]].isRiichi}
+                  >
                     副露
                   </button>
-                  <button className="px-1 bg-neutral-200 border rounded border-neutral-700 text-xl">
+                  <button
+                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl"
+                    data-player-index={order[1]}
+                    data-action="ron-opposite"
+                    onClick={handleAction}
+                  >
                     ↗和對家
                   </button>
-                  <button className="px-1 bg-neutral-200 border rounded border-neutral-700 text-xl">
+                  <button
+                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl"
+                    data-player-index={order[1]}
+                    data-action="ron-before"
+                    onClick={handleAction}
+                  >
                     ↑和上家
                   </button>
-                  <button className="px-1 bg-neutral-200 border rounded border-neutral-700 text-xl ml-4">
+                  <button
+                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl ml-4 disabled:opacity-20 disabled:cursor-not-allowed data-[active='1']:bg-red-800 data-[active='1']:text-yellow-300"
+                    data-player-index={order[1]}
+                    data-action="riichi"
+                    onClick={handleAction}
+                    data-active={
+                      currentRound.playerResults[order[1]].isRiichi ? '1' : '0'
+                    }
+                    disabled={currentRound.playerResults[order[1]].isRevealed}
+                  >
                     立直
                   </button>
                 </div>
@@ -187,47 +408,148 @@ const PlayersGridView = ({ players, currentRound }: PlayersViewProps) => {
             <tr>
               <td className="whitespace-nowrap" colSpan={2}>
                 <div className=" grid grid-cols-3 gap-2 justify-center">
-                  <button className="px-1 bg-neutral-200 border rounded border-neutral-700 text-xl mr-4">
+                  <button
+                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl mr-4 disabled:opacity-20 disabled:cursor-not-allowed data-[active='1']:bg-red-800 data-[active='1']:text-yellow-300"
+                    data-player-index={order[2]}
+                    data-action="riichi"
+                    onClick={handleAction}
+                    data-active={
+                      currentRound.playerResults[order[2]].isRiichi ? '1' : '0'
+                    }
+                    disabled={currentRound.playerResults[order[2]].isRevealed}
+                  >
                     立直
                   </button>
-                  <button className="px-1 bg-neutral-200 border rounded border-neutral-700 text-xl">
+                  <button
+                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl"
+                    data-player-index={order[2]}
+                    data-action="ron-before"
+                    onClick={handleAction}
+                  >
                     和上家↓
                   </button>
-                  <button className="px-1 bg-neutral-200 border rounded border-neutral-700 text-xl">
+                  <button
+                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl"
+                    data-player-index={order[2]}
+                    data-action="ron-opposite"
+                    onClick={handleAction}
+                  >
                     和對家↙
                   </button>
-                  <button className="px-1 bg-neutral-200 border rounded border-neutral-700 text-xl mr-4">
+                  <button
+                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl mr-4 disabled:opacity-20 disabled:cursor-not-allowed data-[active='1']:bg-teal-800 data-[active='1']:text-yellow-300"
+                    data-player-index={order[2]}
+                    data-action="reveal"
+                    onClick={handleAction}
+                    data-active={
+                      currentRound.playerResults[order[2]].isRevealed
+                        ? '1'
+                        : '0'
+                    }
+                    disabled={currentRound.playerResults[order[2]].isRiichi}
+                  >
                     副露
                   </button>
-                  <button className="px-1 bg-neutral-200 border rounded border-neutral-700 text-xl">
+                  <button
+                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl"
+                    data-player-index={order[2]}
+                    data-action="ron-self"
+                    onClick={handleAction}
+                  >
                     自摸
                   </button>
-                  <button className="px-1 bg-neutral-200 border rounded border-neutral-700 text-xl">
+                  <button
+                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl"
+                    data-player-index={order[2]}
+                    data-action="ron-after"
+                    onClick={handleAction}
+                  >
                     和下家←
                   </button>
                 </div>
               </td>
             </tr>
             <tr>
-              <td className="px-2">
+              <td className="w-full px-2">
                 <span>役</span>
               </td>
               <td className="w-0 text-right whitespace-nowrap px-4 pt-4">
                 <div>
-                  <div>
-                    <button className="px-2 text-lg leading-0">-</button>寶0
-                    <button className="px-2 text-lg leading-0">+</button>
+                  <div
+                    className="data-[active='1']:bg-yellow-200"
+                    data-active={
+                      currentRound.playerResults[order[2]].normalDora
+                        ? '1'
+                        : '0'
+                    }
+                  >
+                    <button
+                      className="px-2 text-lg leading-0"
+                      data-player-index={order[2]}
+                      data-action="dora-normal-minus"
+                      onClick={handleAction}
+                    >
+                      -
+                    </button>
+                    寶{currentRound.playerResults[order[2]].normalDora ?? 0}
+                    <button
+                      className="px-2 text-lg leading-0"
+                      data-player-index={order[2]}
+                      data-action="dora-normal-plus"
+                      onClick={handleAction}
+                    >
+                      +
+                    </button>
                   </div>
-                  <div>
-                    <button className="px-2 text-lg leading-0">-</button>赤0
-                    <button className="px-2 text-lg leading-0">+</button>
+                  <div
+                    className="data-[active='1']:bg-red-200"
+                    data-active={
+                      currentRound.playerResults[order[2]].redDora ? '1' : '0'
+                    }
+                  >
+                    <button
+                      className="px-2 text-lg leading-0"
+                      data-player-index={order[2]}
+                      data-action="dora-red-minus"
+                      onClick={handleAction}
+                    >
+                      -
+                    </button>
+                    赤{currentRound.playerResults[order[2]].redDora ?? 0}
+                    <button
+                      className="px-2 text-lg leading-0"
+                      data-player-index={order[2]}
+                      data-action="dora-red-plus"
+                      onClick={handleAction}
+                    >
+                      +
+                    </button>
                   </div>
                 </div>
               </td>
             </tr>
             <tr>
               <td className="w-1/2 px-2 h-16" colSpan={2}>
-                待牌
+                <button
+                  className="py-2 text-left block"
+                  data-player-index={order[2]}
+                  data-action="waitingTile"
+                  onClick={handleAction}
+                >
+                  <span className="mr-2 text-xl">待牌</span>
+                  <div className="inline-block space-x-1">
+                    {currentRound.playerResults[order[2]].waitingTiles?.map(
+                      (tile) => (
+                        <MJTileDiv
+                          key={tile}
+                          className="inline-block align-middle w-8 animate-[fadeIn_1s_ease-in-out]"
+                        >
+                          {tile}
+                        </MJTileDiv>
+                      )
+                    )}
+                  </div>
+                </button>
               </td>
             </tr>
             <tr>
@@ -265,47 +587,148 @@ const PlayersGridView = ({ players, currentRound }: PlayersViewProps) => {
             <tr>
               <td className="whitespace-nowrap" colSpan={2}>
                 <div className=" grid grid-cols-3 gap-2 justify-center">
-                  <button className="px-1 bg-neutral-200 border rounded border-neutral-700 text-xl">
+                  <button
+                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl"
+                    data-player-index={order[3]}
+                    data-action="ron-opposite"
+                    onClick={handleAction}
+                  >
                     ↘和對家
                   </button>
-                  <button className="px-1 bg-neutral-200 border rounded border-neutral-700 text-xl">
+                  <button
+                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl"
+                    data-player-index={order[3]}
+                    data-action="ron-after"
+                    onClick={handleAction}
+                  >
                     ↓和下家
                   </button>
-                  <button className="px-1 bg-neutral-200 border rounded border-neutral-700 text-xl ml-4">
+                  <button
+                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl ml-4 disabled:opacity-20 disabled:cursor-not-allowed data-[active='1']:bg-red-800 data-[active='1']:text-yellow-300"
+                    data-player-index={order[3]}
+                    data-action="riichi"
+                    onClick={handleAction}
+                    data-active={
+                      currentRound.playerResults[order[3]].isRiichi ? '1' : '0'
+                    }
+                    disabled={currentRound.playerResults[order[3]].isRevealed}
+                  >
                     立直
                   </button>
-                  <button className="px-1 bg-neutral-200 border rounded border-neutral-700 text-xl">
+                  <button
+                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl"
+                    data-player-index={order[3]}
+                    data-action="ron-before"
+                    onClick={handleAction}
+                  >
                     →和上家
                   </button>
-                  <button className="px-1 bg-neutral-200 border rounded border-neutral-700 text-xl">
+                  <button
+                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl"
+                    data-player-index={order[3]}
+                    data-action="ron-self"
+                    onClick={handleAction}
+                  >
                     自摸
                   </button>
-                  <button className="px-1 bg-neutral-200 border rounded border-neutral-700 text-xl ml-4">
+                  <button
+                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl ml-4 disabled:opacity-20 disabled:cursor-not-allowed data-[active='1']:bg-teal-800 data-[active='1']:text-yellow-300"
+                    data-player-index={order[3]}
+                    data-action="reveal"
+                    onClick={handleAction}
+                    data-active={
+                      currentRound.playerResults[order[3]].isRevealed
+                        ? '1'
+                        : '0'
+                    }
+                    disabled={currentRound.playerResults[order[3]].isRiichi}
+                  >
                     副露
                   </button>
                 </div>
               </td>
             </tr>
             <tr>
-              <td className="px-2">
+              <td className="w-full px-2">
                 <span>役</span>
               </td>
               <td className="w-0 text-right whitespace-nowrap px-4 pt-4">
                 <div>
-                  <div>
-                    <button className="px-2 text-lg leading-0">-</button>寶0
-                    <button className="px-2 text-lg leading-0">+</button>
+                  <div
+                    className="data-[active='1']:bg-yellow-200"
+                    data-active={
+                      currentRound.playerResults[order[3]].normalDora
+                        ? '1'
+                        : '0'
+                    }
+                  >
+                    <button
+                      className="px-2 text-lg leading-0"
+                      data-player-index={order[3]}
+                      data-action="dora-normal-minus"
+                      onClick={handleAction}
+                    >
+                      -
+                    </button>
+                    寶{currentRound.playerResults[order[3]].normalDora ?? 0}
+                    <button
+                      className="px-2 text-lg leading-0"
+                      data-player-index={order[3]}
+                      data-action="dora-normal-plus"
+                      onClick={handleAction}
+                    >
+                      +
+                    </button>
                   </div>
-                  <div>
-                    <button className="px-2 text-lg leading-0">-</button>赤0
-                    <button className="px-2 text-lg leading-0">+</button>
+                  <div
+                    className="data-[active='1']:bg-red-200"
+                    data-active={
+                      currentRound.playerResults[order[3]].redDora ? '1' : '0'
+                    }
+                  >
+                    <button
+                      className="px-2 text-lg leading-0"
+                      data-player-index={order[3]}
+                      data-action="dora-red-minus"
+                      onClick={handleAction}
+                    >
+                      -
+                    </button>
+                    赤{currentRound.playerResults[order[3]].redDora ?? 0}
+                    <button
+                      className="px-2 text-lg leading-0"
+                      data-player-index={order[3]}
+                      data-action="dora-red-plus"
+                      onClick={handleAction}
+                    >
+                      +
+                    </button>
                   </div>
                 </div>
               </td>
             </tr>
             <tr>
               <td className="w-1/2 px-2 h-16" colSpan={2}>
-                待牌
+                <button
+                  className="py-2 text-left block"
+                  data-player-index={order[3]}
+                  data-action="waitingTile"
+                  onClick={handleAction}
+                >
+                  <span className="mr-2 text-xl">待牌</span>
+                  <div className="inline-block space-x-1">
+                    {currentRound.playerResults[order[3]].waitingTiles?.map(
+                      (tile) => (
+                        <MJTileDiv
+                          key={tile}
+                          className="inline-block align-middle w-8 animate-[fadeIn_1s_ease-in-out]"
+                        >
+                          {tile}
+                        </MJTileDiv>
+                      )
+                    )}
+                  </div>
+                </button>
               </td>
             </tr>
             <tr>

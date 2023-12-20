@@ -22,6 +22,8 @@ import ObsChartPage from './pages/obs/[obsRoomId]/chart.page'
 import ObsCarouselPage from './pages/obs/[obsRoomId]/carousel.page'
 import ObsRoomControlPage from './pages/obs/[obsRoomId]/control.page'
 import MatchNameplatesPage from './pages/match/[id]/nameplates.page'
+import MatchStatPage from './pages/match/[id]/stat/index.page'
+import ObsStatPage from './pages/obs/[obsRoomId]/stat.page'
 
 // Import the functions you need from the SDKs you need
 // TODO: Add SDKs for Firebase products that you want to use
@@ -58,6 +60,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               path="/match/:matchId/nameplates"
               component={MatchNameplatesPage}
             />
+            <Route path="/match/:matchId/stat" component={MatchStatPage} />
 
             <Route path="/obs/:obsRoomId" component={ObsRoomPage} />
             <Route
@@ -70,6 +73,8 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               path="/obs/:obsRoomId/carousel"
               component={ObsCarouselPage}
             />
+            <Route path="/obs/:obsRoomId/stat" component={ObsStatPage} />
+
             <Route path="/players" component={PlayersPage} />
             <Route path="/teams" component={TeamsPage} />
             <Route path="/matches" component={MatchesPage} />

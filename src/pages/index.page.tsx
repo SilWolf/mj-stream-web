@@ -1,7 +1,7 @@
 import MJUIButton from '@/components/MJUI/MJUIButton'
 import { DB_TeamPlayer, apiGetMatches } from '@/helpers/sanity.helper'
 import { useQuery } from '@tanstack/react-query'
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback } from 'react'
 import OBSInstructionDivV2 from './obs/components/OBSInstructionDivV2'
 import { getQrCodeImgSrc } from '@/utils/string.util'
 import { useFirebaseDatabaseByKey } from '@/providers/firebaseDatabase.provider'
@@ -119,42 +119,68 @@ function IndexPage() {
               </MJUIButton>
             </a>
           </div> */}
-          <div className="grid grid-cols-2 gap-x-4">
-            <div className="px-8 py-4 bg-green-300 border-2 border-green-600 text-center space-y-4">
-              <p className="text-3xl font-bold text-green-900">OBS設定</p>
-              <p className="text-2xl">
-                固定的直播頁面：{' '}
-                <a
-                  href={`${location.origin}/obs/1`}
-                  target="_blank"
-                  className="text-black"
-                >
-                  {location.origin}/obs/1
-                </a>
-              </p>
-              <div className="text-left">
-                <OBSInstructionDivV2 />
+          <div className="grid grid-cols-3 gap-x-4">
+            <div>
+              <div className="px-8 py-4 bg-green-300 border-2 border-green-600 text-center space-y-4">
+                <p className="text-3xl font-bold text-green-900">OBS設定</p>
+                <p className="text-2xl">
+                  固定的直播頁面：{' '}
+                  <a
+                    href={`${location.origin}/obs/1`}
+                    target="_blank"
+                    className="text-black"
+                  >
+                    {location.origin}/obs/1
+                  </a>
+                </p>
+                <div className="text-left">
+                  <OBSInstructionDivV2 />
+                </div>
               </div>
             </div>
 
-            <div className="px-8 py-4 bg-yellow-300 border-2 border-yellow-600 text-center space-y-4">
-              <p className="text-3xl font-bold text-yellow-900">控制台</p>
-              <p className="text-2xl">
-                固定的控制台頁面：
-                <a
-                  href={`${location.origin}/obs/1/control`}
-                  target="_blank"
-                  className="text-black"
-                >
-                  {location.origin}/obs/1/control
-                </a>
-              </p>
-              <div className="pt-16">
-                <img
-                  className="mx-auto block w-64 h-64"
-                  src={getQrCodeImgSrc(`${location.origin}/obs/1/control`)}
-                  alt=""
-                />
+            <div>
+              <div className="px-8 py-4 bg-blue-300 border-2 border-blue-600 text-center space-y-4">
+                <p className="text-3xl font-bold text-blue-900">主播</p>
+                <p className="text-2xl">
+                  固定的紀錄頁面：
+                  <a
+                    href={`${location.origin}/obs/1/stat`}
+                    target="_blank"
+                    className="text-black"
+                  >
+                    {location.origin}/obs/1/stat
+                  </a>
+                </p>
+                <div className="pt-16">
+                  <img
+                    className="mx-auto block w-64 h-64"
+                    src={getQrCodeImgSrc(`${location.origin}/obs/1/stat`)}
+                    alt=""
+                  />
+                </div>
+              </div>
+            </div>
+            <div>
+              <div className="px-8 py-4 bg-yellow-300 border-2 border-yellow-600 text-center space-y-4">
+                <p className="text-3xl font-bold text-yellow-900">控制台</p>
+                <p className="text-2xl">
+                  固定的控制台頁面：
+                  <a
+                    href={`${location.origin}/obs/1/control`}
+                    target="_blank"
+                    className="text-black"
+                  >
+                    {location.origin}/obs/1/control
+                  </a>
+                </p>
+                <div className="pt-16">
+                  <img
+                    className="mx-auto block w-64 h-64"
+                    src={getQrCodeImgSrc(`${location.origin}/obs/1/control`)}
+                    alt=""
+                  />
+                </div>
               </div>
             </div>
           </div>

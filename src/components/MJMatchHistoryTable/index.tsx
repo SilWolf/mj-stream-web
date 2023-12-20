@@ -8,7 +8,6 @@ import {
 } from '@/models'
 import MJMatchCounterSpan from '../MJMatchCounterSpan'
 import MJAmountSpan from '../MJAmountSpan'
-import MJPlayerInfoCardDiv from '../MJPlayerInfoCardDiv'
 
 const PlayerDiv = ({ player }: { player: Player }) => {
   return (

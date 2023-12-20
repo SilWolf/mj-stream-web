@@ -1,12 +1,12 @@
 import React, { useMemo } from 'react'
 import { useFirebaseDatabaseByKey } from '@/providers/firebaseDatabase.provider'
-import ObsPage from '@/pages/match/[id]/obs.page'
+import MatchStatPage from '@/pages/match/[id]/stat/index.page'
 
 type Props = {
   params: { obsRoomId: string }
 }
 
-export default function ObsRoomPage({ params: { obsRoomId } }: Props) {
+export default function ObsStatPage({ params: { obsRoomId } }: Props) {
   const { data: obsInfo } = useFirebaseDatabaseByKey<string>(`obs/${obsRoomId}`)
   const obsPageParams = useMemo(
     () => ({ matchId: obsInfo?.matchId as string }),
@@ -17,5 +17,5 @@ export default function ObsRoomPage({ params: { obsRoomId } }: Props) {
     return <>讀取中…</>
   }
 
-  return <ObsPage params={obsPageParams} />
+  return <MatchStatPage params={obsPageParams} />
 }
