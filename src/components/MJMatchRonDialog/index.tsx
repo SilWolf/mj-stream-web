@@ -364,8 +364,6 @@ export default function MJMatchRonDialog({
             <MJYakuKeyboardDiv
               round={currentMatchRound.roundCount}
               activePlayerIndex={initialActivePlayerIndex}
-              isEast={activePlayer?.position === PlayerPositionEnum.East}
-              isRon={targetPlayerIndex !== '-1'}
               onChange={handleChangeYaku}
               value={
                 currentMatchRound.playerResults[

@@ -161,7 +161,12 @@ const PlayersListView = ({
                   data-action="yaku"
                   onClick={handleAction}
                 >
-                  役
+                  <span className="mr-2 text-xl">役</span>
+                  <div className="inline-block space-x-1">
+                    {currentRound.playerResults[index].detail.yakusInText?.map(
+                      (yakuText) => <span key={yakuText}>{yakuText}</span>
+                    )}
+                  </div>
                 </button>
               </td>
               <td className="w-0 text-right whitespace-nowrap px-4">

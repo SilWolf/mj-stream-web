@@ -15,6 +15,8 @@ import {
 } from '@/utils/string.util'
 import MJHanFuTextSpan from '../MJHanFuTextSpan'
 import MJUISelectClicker from '../MJUI/MJUISelectClicker'
+import MJUIDialogV2, { MJUIDialogV2Props } from '../MJUI/MJUIDialogV2'
+import MJUIButton from '../MJUI/MJUIButton'
 
 type Yaku = {
   id: string
@@ -374,8 +376,6 @@ const MJYakuButton = ({
 export type MJYakuKeyboardDivProps = {
   round: number
   activePlayerIndex: PlayerIndex
-  isEast: boolean
-  isRon: boolean
   onChange?: (result: Required<MJYakuKeyboardResult>) => unknown
   value?: MJYakuKeyboardResult
 }
@@ -396,8 +396,6 @@ export type MJYakuKeyboardResult = {
 const MJYakuKeyboardDiv = ({
   round,
   activePlayerIndex,
-  isEast,
-  isRon,
   onChange,
   value,
 }: MJYakuKeyboardDivProps) => {
@@ -534,7 +532,7 @@ const MJYakuKeyboardDiv = ({
     }
 
     onChange(result)
-  }, [result, onChange, isEast, isRon])
+  }, [result, onChange])
 
   useEffect(() => {
     if (value) {
@@ -804,5 +802,43 @@ export const MJYakuKeyboardResultDiv = ({
         </tbody>
       </table>
     </div>
+  )
+}
+
+type MJYakuKeyboardDialogProps = Omit<MJYakuKeyboardDivProps, 'onChange'> & {
+  onSubmit: (result: Required<MJYakuKeyboardResult>) => unknown
+  defaultValue?: MJYakuKeyboardResult
+} & Pick<MJUIDialogV2Props, 'open' | 'onClose'>
+
+export const MJYakuKeyboardDialog = ({
+  onSubmit,
+  defaultValue,
+  open,
+  onClose,
+  ...props
+}: MJYakuKeyboardDialogProps) => {
+  const [value, setValue] = useState<MJYakuKeyboardResult>()
+
+  const handleSubmit = useCallback(() => {
+    if (!value) {
+      return
+    }
+
+    onSubmit(value)
+  }, [onSubmit, value])
+
+  useEffect(() => {
+    setValue(defaultValue)
+  }, [defaultValue])
+
+  return (
+    <MJUIDialogV2 open={open} onClose={onClose}>
+      <MJYakuKeyboardDiv {...props} onChange={setValue} value={defaultValue} />
+      <div className="mt-4">
+        <MJUIButton className="w-full" onClick={handleSubmit}>
+          儲存
+        </MJUIButton>
+      </div>
+    </MJUIDialogV2>
   )
 }

@@ -47,6 +47,10 @@ import PlayersListView from './components/PlayersView/PlayersListView'
 import PlayersGridView from './components/PlayersView/PlayersGridView'
 import MJUITabs from '@/components/MJUI/MJUITabs'
 import { PlayersViewAction } from './components/PlayersView'
+import {
+  MJYakuKeyboardDialog,
+  MJYakuKeyboardResult,
+} from '@/components/MJYakuKeyboardDiv'
 
 const VIEW_TABS = [
   {
@@ -449,6 +453,11 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
             tiles:
               matchCurrentRound?.playerResults[playerIndex].waitingTiles ?? [],
           })
+
+        case 'yaku':
+          return setActivePredictYakusData({
+            index: playerIndex,
+          })
       }
     },
     [
@@ -686,6 +695,39 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
     matchCurrentRound?.playerResults,
     updateCurrentMatchRound,
   ])
+
+  const [activePredictYakusData, setActivePredictYakusData] = useState<{
+    index: PlayerIndex
+  } | null>(null)
+
+  const handleClosePredictYakusDialog = useCallback(() => {
+    setActivePredictYakusData(null)
+  }, [])
+
+  const handleSubmitPredictYakusDialog = useCallback(
+    (newDetail: MJYakuKeyboardResult) => {
+      if (!matchCurrentRound || !activePredictYakusData) {
+        return
+      }
+
+      updateCurrentMatchRound({
+        playerResults: {
+          ...matchCurrentRound.playerResults,
+          [activePredictYakusData.index]: {
+            ...matchCurrentRound.playerResults[activePredictYakusData.index],
+            detail: {
+              ...matchCurrentRound.playerResults[activePredictYakusData.index]
+                .detail,
+              ...newDetail,
+            },
+          },
+        },
+      })
+
+      setActivePredictYakusData(null)
+    },
+    [activePredictYakusData, matchCurrentRound, updateCurrentMatchRound]
+  )
 
   const handleClickEditMatchName = useCallback(
     (e: MouseEvent) => {
@@ -1131,6 +1173,18 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
           canRemove
         />
       </MJUIDialogV2>
+
+      <MJYakuKeyboardDialog
+        round={matchCurrentRound.roundCount}
+        activePlayerIndex={activePredictYakusData?.index ?? '0'}
+        open={!!activePredictYakusData}
+        onClose={handleClosePredictYakusDialog}
+        onSubmit={handleSubmitPredictYakusDialog}
+        defaultValue={
+          matchCurrentRound.playerResults[activePredictYakusData?.index ?? '0']
+            .detail
+        }
+      />
 
       <MJUIDialogV2 open={!!activeAnimationMessage} onClose={() => {}}>
         <div className="space-y-6 text-center">
