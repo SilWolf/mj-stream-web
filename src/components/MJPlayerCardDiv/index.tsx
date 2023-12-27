@@ -64,15 +64,15 @@ export default function MJPlayerCardDiv({
       data-score-changing={isScoreChanging ? '1' : '0'}
     >
       <div className="flex items-end gap-x-[0.1em]">
-        <div className="shrink-0 w-[1.75em] h-full relative -bottom-[0.075em] -left-[0.075em]">
+        <div className="shrink-0 w-[1.75em] h-full relative -bottom-[0.085em] -left-[0.085em]">
           <div
-            className="absolute w-full h-full bg-[#d1b571] overflow-hidden rounded-[0.08em]"
+            className="absolute w-full h-full bg-[#d1b571] overflow-hidden rounded-[0.1em]"
             style={{ opacity: isRiichi ? 1 : 0 }}
           >
             <div className="origin-bottom w-[200%] h-[100%] bg-[#d1291d] animate-[riichi_8s_ease-in-out_infinite]" />
           </div>
 
-          <div className="relative z-10 w-full aspect-[90/125] p-[0.075em]">
+          <div className="relative z-10 w-full aspect-[90/125] p-[0.085em]">
             <div
               className="w-full h-full bg-white rounded-[0.08em] overflow-hidden"
               style={{
@@ -80,7 +80,7 @@ export default function MJPlayerCardDiv({
               }}
             >
               {player.teamPicUrl && (
-                <div className="absolute inset-[0.075em] overflow-hidden">
+                <div className="absolute inset-[0.085em] overflow-hidden">
                   <img
                     className="absolute max-w-[none] h-[2.2em] w-[2.2em] opacity-30 animate-[scrollFromRightToLeft_12s_linear_infinite]"
                     src={player.teamPicUrl}
@@ -96,7 +96,7 @@ export default function MJPlayerCardDiv({
                 />
               )}
               {player.nickname && (
-                <div className="absolute bottom-[0.075em] left-[0.075em] right-[0.075em] rounded-b-[0.08em] bg-[linear-gradient(to_top,#00000060,#00000050_70%,transparent)] text-white z-20">
+                <div className="absolute bottom-[0.085em] left-[0.085em] right-[0.085em] rounded-b-[0.08em] bg-[linear-gradient(to_top,#00000060,#00000050_70%,transparent)] text-white z-20">
                   <p className="text-center text-[0.25em] font-semibold pb-[0.25em] pt-[0.5em]">
                     {player.nickname}
                   </p>
@@ -120,7 +120,7 @@ export default function MJPlayerCardDiv({
               {waitingTiles?.map((tile) => (
                 <MJTileDiv
                   key={tile}
-                  className="inline-block align-bottom w-[0.85em] animate-[fadeIn_1s_ease-in-out]"
+                  className="inline-block align-bottom w-[0.85em] animate-[fadeInFromLeft_1s_ease-in-out]"
                 >
                   {tile}
                 </MJTileDiv>
@@ -163,7 +163,7 @@ export default function MJPlayerCardDiv({
               </div>
             )}
 
-            <div className="mt-[0.15em]">
+            <div className="mt-[0.12em] mb-[0.03em]">
               <p className="text-[0.5625em] flex-1 leading-none text-white font-numeric">
                 <MJAmountSpan animated value={storedScore} />
               </p>

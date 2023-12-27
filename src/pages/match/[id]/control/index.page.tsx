@@ -852,7 +852,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                   >
                     <MJTileDiv
                       key={dora}
-                      className="w-12 animate-[fadeIn_0.5s_ease-in-out]"
+                      className="w-12 animate-[fadeInFromLeft_0.5s_ease-in-out]"
                     >
                       {dora}
                     </MJTileDiv>

@@ -44,7 +44,7 @@ const MatchNameplate = ({ teamPlayer }: { teamPlayer: DB_TeamPlayer }) => {
           >
             <td></td>
             <td></td>
-            <td className="w-[150mm] h-[30mm]"></td>
+            <td className="w-[150mm] h-[40mm]"></td>
             <td></td>
             <td></td>
           </tr>
@@ -65,33 +65,27 @@ const MatchNameplate = ({ teamPlayer }: { teamPlayer: DB_TeamPlayer }) => {
         </tbody>
       </table>
       <div
-        className="absolute left-[5mm] -top-[4mm] w-[60mm] h-[60mm] bg-contain -rotate-12 opacity-5"
+        className="absolute left-[0] top-[2.5mm] w-[55mm] h-[55mm] bg-contain opacity-50"
         style={{
           backgroundImage: `url(${player.largeTeamPicUrl})`,
         }}
       ></div>
-      <div
-        className="absolute left-[15mm] top-[4mm] w-[40mm] h-[40mm] bg-contain -rotate-12"
-        style={{
-          backgroundImage: `url(${player.largeTeamPicUrl})`,
-        }}
-      ></div>
-      <div className="absolute inset-6 left-[60mm] right-[15mm] flex flex-col items-center justify-center">
+      <div className="absolute top-[10mm] bottom-[10mm] left-[25mm] right-[12mm] flex flex-col items-center justify-center">
         <p
-          className="text-[6mm] text-white leading-none mb-1"
+          className="text-[13mm] text-white leading-none font-semibold mb-[3mm]"
           style={{
-            textShadow: '0px 0px 4px #333333',
-          }}
-        >
-          {player.title}
-        </p>
-        <p
-          className="text-[12mm] text-white leading-none"
-          style={{
-            textShadow: '0px 0px 4px #333333',
+            textShadow: '0px 0px 3px #33333380, 0px 0px 6px #33333380',
           }}
         >
           {player.name}
+        </p>
+        <p
+          className="text-[13mm] text-white leading-none font-semibold"
+          style={{
+            textShadow: '0px 0px 3px #33333380, 0px 0px 6px #33333380',
+          }}
+        >
+          {player.nickname}
         </p>
       </div>
     </div>
@@ -128,16 +122,16 @@ const MatchNameplatesPage = () => {
           </li>
         </ul>
       </div>
-      <div className="w-[170mm] h-[50mm] mx-auto">
+      <div className="w-[170mm] h-[60mm] mx-auto">
         <MatchNameplate teamPlayer={dbMatch?.playerEast} />
       </div>
-      <div className="w-[170mm] h-[50mm] mx-auto">
+      <div className="w-[170mm] h-[60mm] mx-auto">
         <MatchNameplate teamPlayer={dbMatch?.playerSouth} />
       </div>
-      <div className="w-[170mm] h-[50mm] mx-auto">
+      <div className="w-[170mm] h-[60mm] mx-auto">
         <MatchNameplate teamPlayer={dbMatch?.playerWest} />
       </div>
-      <div className="w-[170mm] h-[50mm] mx-auto">
+      <div className="w-[170mm] h-[60mm] mx-auto">
         <MatchNameplate teamPlayer={dbMatch?.playerNorth} />
       </div>
     </div>

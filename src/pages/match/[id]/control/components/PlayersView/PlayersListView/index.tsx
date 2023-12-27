@@ -73,7 +73,7 @@ const PlayersListView = ({
                       (tile) => (
                         <MJTileDiv
                           key={tile}
-                          className="inline-block align-middle w-8 animate-[fadeIn_1s_ease-in-out]"
+                          className="inline-block align-middle w-8 animate-[fadeInFromLeft_1s_ease-in-out]"
                         >
                           {tile}
                         </MJTileDiv>

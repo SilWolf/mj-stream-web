@@ -36,6 +36,10 @@ module.exports = {
           '0%': { opacity: 0.0, bottom: '-32px' },
           '100%': { opacity: 1.0, bottom: '0px' },
         },
+        fadeInFromLeft: {
+          '0%': { opacity: 0.0, left: '-15px', position: 'relative' },
+          '100%': { opacity: 1.0, left: '0px', position: 'relative' },
+        },
         scrollFromRightToLeft: {
           '0%': { transform: 'translateX(150%)' },
           '100%': { transform: 'translateX(-150%)' },

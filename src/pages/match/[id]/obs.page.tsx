@@ -8,7 +8,7 @@ import { getIsPlayerEast } from '@/helpers/mahjong.helper'
 import MJPlayerCardDiv from '@/components/MJPlayerCardDiv'
 import OBSInstructionDiv from './components/OBSInstructionDiv'
 import MJHanFuTextSpecialSpan from '@/components/MJHanFuTextSpecialSpan'
-import MJReactAnimationDiv from '@/components/MJReachAnimationDiv'
+import MJReachAnimationDiv from '@/components/MJReachAnimationDiv'
 
 type Props = {
   params: { matchId: string }
@@ -141,7 +141,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
               {matchCurrentRoundDoras.map((dora) => (
                 <MJTileDiv
                   key={dora}
-                  className="w-[1.4em] animate-[fadeIn_0.5s_ease-in-out]"
+                  className="w-[1.4em] animate-[fadeInFromLeft_0.5s_ease-in-out]"
                 >
                   {dora}
                 </MJTileDiv>
@@ -220,8 +220,11 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
       </div>
 
       <div className="fixed inset-0 pointer-events-none">
-        <MJReactAnimationDiv
+        <MJReachAnimationDiv
           active={currentRiichiPlayerIndex !== null}
+          color={
+            currentRiichiPlayerIndex && players[currentRiichiPlayerIndex].color
+          }
           largeTeamPicUrl={
             currentRiichiPlayerIndex &&
             players[currentRiichiPlayerIndex].largeTeamPicUrl

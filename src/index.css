@@ -39,10 +39,34 @@
     100% {transform: translate(-50%, -70%); opacity: 0}
   }
 
+  @keyframes reach-animation-background-kf {
+    0%   {transform: scaleY(0);}
+    17%  {transform: scaleY(1);}
+    92% {transform: scaleY(1);}
+    100% {transform: scaleY(0);}
+  }
+
   .reach-animation {
     position: absolute;
     inset: 0;
     text-align: center;
+
+    & > .reach-background {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      transform: scaleY(0);
+      transform-origin: center;
+
+      animation-name: reach-animation-background-kf;
+      animation-duration: 1.7s;
+      animation-delay: 0.5s;
+      animation-timing-function: ease-in-out;
+      animation-iteration-count: 1;
+
+    }
 
     & > .reach-animation-logo {
       position: absolute;

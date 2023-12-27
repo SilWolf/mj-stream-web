@@ -1,10 +1,12 @@
 import { Player } from '@/models'
 
-const MJReactAnimationDiv = ({
+const MJReachAnimationDiv = ({
   active,
+  color = '#000000',
   largeTeamPicUrl,
 }: {
   largeTeamPicUrl: Player['largeTeamPicUrl']
+  color: string | null
   active: boolean
 }) => {
   return (
@@ -18,6 +20,12 @@ const MJReactAnimationDiv = ({
 
       {active && (
         <div className="reach-animation">
+          <div
+            className="reach-background"
+            style={{
+              background: `linear-gradient(to bottom, transparent, ${color}80 40%, ${color}80 60%, transparent)`,
+            }}
+          ></div>
           <div
             className="reach-animation-logo"
             style={{ backgroundImage: `url("${largeTeamPicUrl}")` }}
@@ -54,4 +62,4 @@ const MJReactAnimationDiv = ({
   )
 }
 
-export default MJReactAnimationDiv
+export default MJReachAnimationDiv
