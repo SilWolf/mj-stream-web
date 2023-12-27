@@ -24,6 +24,7 @@ import ObsRoomControlPage from './pages/obs/[obsRoomId]/control.page'
 import MatchNameplatesPage from './pages/match/[id]/nameplates.page'
 import MatchStatPage from './pages/match/[id]/stat/index.page'
 import ObsStatPage from './pages/obs/[obsRoomId]/stat.page'
+import MatchExportPage from './pages/match/[id]/export/index.page'
 
 // Import the functions you need from the SDKs you need
 // TODO: Add SDKs for Firebase products that you want to use
@@ -56,6 +57,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               path="/match/:matchId/control"
               component={MatchControlPage}
             />
+            <Route path="/match/:matchId/export" component={MatchExportPage} />
             <Route
               path="/match/:matchId/nameplates"
               component={MatchNameplatesPage}

@@ -26,6 +26,8 @@ export type DB_TeamPlayer = {
   overridedName: string | null
   overridedColor: string | null
   overridedPortraitImage: string | null
+  overridedNickname: string | null
+  isHideNickname: boolean
 }
 
 export type DB_Team = {
@@ -36,6 +38,7 @@ export type DB_Team = {
 
 export type DB_Player = {
   name: string
+  nickname: string | null
   designation: string | null
   portraitImage: string | null
 }
@@ -92,6 +95,9 @@ export const convertDbTeamPlayerToPlayer = (
 
   return {
     name,
+    nickname: teamPlayer.isHideNickname
+      ? ''
+      : teamPlayer.overridedNickname || teamPlayer.player.nickname || '',
     color,
     title: designation,
     teamPicUrl: squareLogoImage,

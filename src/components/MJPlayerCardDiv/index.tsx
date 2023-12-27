@@ -30,9 +30,9 @@ export default function MJPlayerCardDiv({
   ...props
 }: Props) {
   const [storedScore, setStoredScore] = useState<number>(score)
-  const [storedScoreChanges, setStoredScoreChanges] = useState<
-    number[] | undefined
-  >(undefined)
+  const [storedScoreChanges, setStoredScoreChanges] = useState<number[] | null>(
+    null
+  )
 
   const lightenedColor = useMemo(
     () => getLightColorOfColor(player.color ?? '#000000'),
@@ -53,7 +53,7 @@ export default function MJPlayerCardDiv({
       }, 2550)
 
       setTimeout(() => {
-        setStoredScoreChanges(undefined)
+        setStoredScoreChanges(null)
       }, 3000)
     }
   }, [score, scoreChanges, storedScore])
@@ -95,12 +95,19 @@ export default function MJPlayerCardDiv({
                   alt={player.name}
                 />
               )}
+              {player.nickname && (
+                <div className="absolute bottom-[0.075em] left-[0.075em] right-[0.075em] rounded-b-[0.08em] bg-[linear-gradient(to_top,#00000060,#00000050_70%,transparent)] text-white z-20">
+                  <p className="text-center text-[0.25em] font-semibold pb-[0.25em] pt-[0.5em]">
+                    {player.nickname}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>
-        <div className="flex-1 flex flex-col gap-y-[0.075em] items-start justify-end">
+        <div className="flex-1 flex flex-col gap-y-[0.125em] items-start justify-end">
           <div
-            className="bg-black bg-opacity-60 rounded text-[0.5em] flex gap-x-[0.2em] p-[0.1em] pr-[0.2em] opacity-0 transition-opacity data-[has-waiting-tiles='1']:opacity-100 hide-if-changing cursor-pointer"
+            className="bg-black bg-opacity-60 rounded text-[0.5em] flex gap-x-[0.2em] p-[0.1em] pl-[0.2em] pr-[0.2em] opacity-0 transition-opacity data-[has-waiting-tiles='1']:opacity-100 hide-if-changing cursor-pointer"
             data-has-waiting-tiles={
               (waitingTiles && waitingTiles.length > 0) || !!onClickWaitingTiles
                 ? '1'
@@ -119,8 +126,8 @@ export default function MJPlayerCardDiv({
                 </MJTileDiv>
               ))}
             </div>
-            <div className="bg-[#DDDDDD] w-px" />
-            <div className="text-[#DDDDDD] text-[0.35em] leading-[1.2em] flex items-center">
+            <div className="bg-[#FFFFFF] w-[4px]" />
+            <div className="text-[#FFFFFF] text-[0.4em] leading-[1.3em] flex items-center">
               待<br />牌
             </div>
           </div>
@@ -132,32 +139,34 @@ export default function MJPlayerCardDiv({
               background: `linear-gradient(260deg, transparent, transparent 22px, ${lightenedColor} 23px, ${player.color} 100%`,
             }}
           >
-            <div className="flex flex-col justify-center h-[0.65em] gap-y-[0.075em]">
-              <div className="text-[0.24em] ml-[0.1em] leading-none text-white hide-if-changing">
+            <div className="flex flex-col justify-center gap-y-[0.075em] mt-[0.04em]">
+              <div className="text-[0.1875em] ml-[0.1em] leading-none text-white hide-if-changing font-semibold">
                 {player.title || '　'}
               </div>
-              <div className="text-[0.29em] ml-[0.1em] leading-none text-white hide-if-changing">
+              <div className="text-[0.3125em] ml-[0.1em] leading-none text-white hide-if-changing font-semibold">
                 {player.name}
               </div>
             </div>
 
             {storedScoreChanges && (
-              <div className="absolute bottom-[2.25em] pr-[0.125em] left-0 text-[0.65em] leading-none animate-[drop_3s_ease-in-out] font-numeric">
+              <div className="absolute bottom-[2.75em] pr-[0.125em] left-0 text-[0.5625em] leading-none animate-[drop_3s_ease-in-out] font-numeric">
                 {storedScoreChanges.map((scoreChange) => (
                   <div>
                     <MJAmountSpan
                       signed
                       value={scoreChange}
-                      positiveClassName="text-green-400"
-                      negativeClassName="text-red-400"
+                      positiveClassName="text-[#09eb09]"
+                      negativeClassName="text-[#eb0000]"
                     />
                   </div>
                 ))}
               </div>
             )}
 
-            <div className="text-[0.65em] flex-1 leading-none text-white font-numeric mt-[0.12em]">
-              <MJAmountSpan animated value={storedScore} />
+            <div className="mt-[0.15em]">
+              <p className="text-[0.5625em] flex-1 leading-none text-white font-numeric">
+                <MJAmountSpan animated value={storedScore} />
+              </p>
             </div>
           </div>
         </div>

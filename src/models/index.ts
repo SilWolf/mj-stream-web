@@ -50,6 +50,7 @@ export type Player = {
   id?: string
   title: string
   name: string
+  nickname?: string | null
   proPicUrl?: string | null
   teamPicUrl?: string | null
   largeTeamPicUrl?: string | null
