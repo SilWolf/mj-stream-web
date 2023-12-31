@@ -180,13 +180,6 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
               },
             },
           })
-
-          if (isDoingRiichi) {
-            setActiveAnimationMessage('播放立直動畫中，請稍等……')
-            setTimeout(() => {
-              setActiveAnimationMessage(null)
-            }, 3000)
-          }
         },
       })
     },
@@ -337,17 +330,30 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                   },
                 },
               })
-
-              if (!playerResult.isRiichi) {
-                setActiveAnimationMessage('播放立直動畫中，請稍等……')
-                setTimeout(() => {
-                  setActiveAnimationMessage(null)
-                }, 3000)
-              }
             },
           })
 
         case 'ron-self':
+          updateCurrentMatchRound({
+            playerResults: {
+              ...(matchCurrentRound?.playerResults as Record<
+                PlayerIndex,
+                PlayerResult
+              >),
+              [playerIndex]: {
+                ...matchCurrentRound?.playerResults[playerIndex],
+                detail: {
+                  ...matchCurrentRound.playerResults[playerIndex].detail,
+                  raw: {
+                    ...matchCurrentRound.playerResults[playerIndex].detail.raw,
+                    'menzenchin-tsumohou':
+                      !matchCurrentRound?.playerResults[playerIndex].detail
+                        .isRevealed,
+                  },
+                },
+              },
+            },
+          })
           setRonDialogProps({
             initialActivePlayerIndex: playerIndex,
             initialTargetPlayerIndex: '-1',
@@ -356,6 +362,24 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
           return
 
         case 'ron-before':
+          updateCurrentMatchRound({
+            playerResults: {
+              ...(matchCurrentRound?.playerResults as Record<
+                PlayerIndex,
+                PlayerResult
+              >),
+              [playerIndex]: {
+                ...matchCurrentRound?.playerResults[playerIndex],
+                detail: {
+                  ...matchCurrentRound.playerResults[playerIndex].detail,
+                  raw: {
+                    ...matchCurrentRound.playerResults[playerIndex].detail.raw,
+                    'menzenchin-tsumohou': false,
+                  },
+                },
+              },
+            },
+          })
           setRonDialogProps({
             initialActivePlayerIndex: playerIndex,
             initialTargetPlayerIndex: getBeforeOfPlayerIndex(playerIndex),
@@ -364,6 +388,24 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
           return
 
         case 'ron-after':
+          updateCurrentMatchRound({
+            playerResults: {
+              ...(matchCurrentRound?.playerResults as Record<
+                PlayerIndex,
+                PlayerResult
+              >),
+              [playerIndex]: {
+                ...matchCurrentRound?.playerResults[playerIndex],
+                detail: {
+                  ...matchCurrentRound.playerResults[playerIndex].detail,
+                  raw: {
+                    ...matchCurrentRound.playerResults[playerIndex].detail.raw,
+                    'menzenchin-tsumohou': false,
+                  },
+                },
+              },
+            },
+          })
           setRonDialogProps({
             initialActivePlayerIndex: playerIndex,
             initialTargetPlayerIndex: getAfterOfPlayerIndex(playerIndex),
@@ -372,6 +414,24 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
           return
 
         case 'ron-opposite':
+          updateCurrentMatchRound({
+            playerResults: {
+              ...(matchCurrentRound?.playerResults as Record<
+                PlayerIndex,
+                PlayerResult
+              >),
+              [playerIndex]: {
+                ...matchCurrentRound?.playerResults[playerIndex],
+                detail: {
+                  ...matchCurrentRound.playerResults[playerIndex].detail,
+                  raw: {
+                    ...matchCurrentRound.playerResults[playerIndex].detail.raw,
+                    'menzenchin-tsumohou': false,
+                  },
+                },
+              },
+            },
+          })
           setRonDialogProps({
             initialActivePlayerIndex: playerIndex,
             initialTargetPlayerIndex: getOppositeOfPlayerIndex(playerIndex),
@@ -457,6 +517,58 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         case 'yaku':
           return setActivePredictYakusData({
             index: playerIndex,
+          })
+
+        case 'yellow-card':
+          return confirmDialog.showConfirmDialog({
+            title: !playerResult.isYellowCarded
+              ? '確定要給予這名玩家黃牌嗎？'
+              : '取消黃牌？',
+            content: !playerResult.isYellowCarded
+              ? `一旦點擊確定，就會播出黃牌動畫，請確定要黃牌的是 ${player.name}！`
+              : `你是否想取消 ${player.name} 的黃牌？`,
+            onClickOk: async () => {
+              updateCurrentMatchRound({
+                playerResults: {
+                  ...(matchCurrentRound?.playerResults as Record<
+                    PlayerIndex,
+                    PlayerResult
+                  >),
+                  [playerIndex]: {
+                    ...matchCurrentRound?.playerResults[playerIndex],
+                    isYellowCarded:
+                      !matchCurrentRound?.playerResults[playerIndex]
+                        .isYellowCarded,
+                  },
+                },
+              })
+            },
+          })
+
+        case 'red-card':
+          return confirmDialog.showConfirmDialog({
+            title: !playerResult.isRedCarded
+              ? '確定要給予這名玩家紅牌嗎？'
+              : '取消紅牌？',
+            content: !playerResult.isRedCarded
+              ? `一旦點擊確定，就會播出紅牌動畫，請確定要紅牌的是 ${player.name}！`
+              : `你是否想取消 ${player.name} 的紅牌？`,
+            onClickOk: async () => {
+              updateCurrentMatchRound({
+                playerResults: {
+                  ...(matchCurrentRound?.playerResults as Record<
+                    PlayerIndex,
+                    PlayerResult
+                  >),
+                  [playerIndex]: {
+                    ...matchCurrentRound?.playerResults[playerIndex],
+                    isRedCarded:
+                      !matchCurrentRound?.playerResults[playerIndex]
+                        .isRedCarded,
+                  },
+                },
+              })
+            },
           })
       }
     },
@@ -559,7 +671,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
           playerResults: formatPlayerResultsByPreviousPlayerResults(
             updatedMatchRound.playerResults
           ),
-          doras: {},
+          doras: matchCurrentRound?.doras ?? [],
         }
 
         pushMatchRound(newMatchRound)
@@ -569,7 +681,13 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         console.error(e)
       }
     },
-    [matchId, pushMatchRound, toggleHotfixDialog, updateCurrentMatchRound]
+    [
+      matchCurrentRound?.doras,
+      matchId,
+      pushMatchRound,
+      toggleHotfixDialog,
+      updateCurrentMatchRound,
+    ]
   )
 
   const handleClickGoNextRound = useCallback(() => {
@@ -973,6 +1091,12 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                         matchCurrentRound.playerResults[index].waitingTiles
                       }
                       onClickWaitingTiles={handleClickWaitingTiles}
+                      isYellowCarded={
+                        matchCurrentRound.playerResults[index].isYellowCarded
+                      }
+                      isRedCarded={
+                        matchCurrentRound.playerResults[index].isRedCarded
+                      }
                     />
                   </div>
                   {/* <div>
@@ -1077,14 +1201,16 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                     }
                   </td>
                   <td className="text-center py-1">
-                    <p>{matchRound.resultDetail!.yakusInText.join(' ')}</p>
+                    <p>
+                      {matchRound
+                        .resultDetail!.yakus.map(({ label }) => label)
+                        .join(' ')}
+                    </p>
                     <p>
                       <MJHanFuTextSpan
-                        han={Math.min(
-                          matchRound.resultDetail!.isYakuman ? 13 : 12,
-                          matchRound.resultDetail!.han
-                        )}
+                        han={matchRound.resultDetail!.han}
                         fu={matchRound.resultDetail!.fu}
+                        yakumanCount={matchRound.resultDetail!.yakumanCount}
                         isManganRoundUp={match.setting.isManganRoundUp === '1'}
                       />
                     </p>
@@ -1177,6 +1303,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
       <MJYakuKeyboardDialog
         round={matchCurrentRound.roundCount}
         activePlayerIndex={activePredictYakusData?.index ?? '0'}
+        targetPlayerIndex={'-1'}
         open={!!activePredictYakusData}
         onClose={handleClosePredictYakusDialog}
         onSubmit={handleSubmitPredictYakusDialog}
@@ -1269,7 +1396,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
 
       {unboardcastedMatchRounds.length > 0 && (
         <div className="fixed bottom-0 left-0 right-0 px-4 pb-4">
-          <div className="bg-red-100 rounded-lg shadow-lg border-2 border-red-200 p-4">
+          <div className="bg-red-300 border-red-600 rounded-lg shadow-lg border-2 p-4">
             <h4 className="text-xl font-bold">
               <i className="bi bi-camera-reels"></i> 你有未播放的動畫！
             </h4>
@@ -1308,14 +1435,16 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                       }
                     </td>
                     <td className="text-center py-1">
-                      <p>{matchRound.resultDetail!.yakusInText.join(' ')}</p>
+                      <p>
+                        {matchRound
+                          .resultDetail!.yakus.map(({ label }) => label)
+                          .join(' ')}
+                      </p>
                       <p>
                         <MJHanFuTextSpan
-                          han={Math.min(
-                            matchRound.resultDetail!.isYakuman ? 13 : 12,
-                            matchRound.resultDetail!.han
-                          )}
+                          han={matchRound.resultDetail!.han}
                           fu={matchRound.resultDetail!.fu}
+                          yakumanCount={matchRound.resultDetail!.yakumanCount}
                           isManganRoundUp={
                             match.setting.isManganRoundUp === '1'
                           }

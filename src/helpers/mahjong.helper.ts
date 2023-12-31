@@ -32,6 +32,17 @@ export const getPlayerPosition = (
 
 export const getIsPlayerEast = (playerIndex: PlayerIndex, round: number) =>
   getPlayerPosition(playerIndex, round) === PlayerPositionEnum.East
+export const getIsPlayerSouth = (playerIndex: PlayerIndex, round: number) =>
+  getPlayerPosition(playerIndex, round) === PlayerPositionEnum.South
+export const getIsPlayerWest = (playerIndex: PlayerIndex, round: number) =>
+  getPlayerPosition(playerIndex, round) === PlayerPositionEnum.West
+export const getIsPlayerNorth = (playerIndex: PlayerIndex, round: number) =>
+  getPlayerPosition(playerIndex, round) === PlayerPositionEnum.North
+
+export const getIsRoundEast = (round: number) => round >= 1 && round <= 4
+export const getIsRoundSouth = (round: number) => round >= 5 && round <= 8
+export const getIsRoundWest = (round: number) => round >= 9 && round <= 12
+export const getIsRoundNorth = (round: number) => round >= 13 && round <= 16
 
 export type MJHanFuScore = {
   ne: number // non-east
@@ -103,9 +114,13 @@ export const HAN_FU_MODE_SCORE_MAP: Record<string, MJHanFuScore> = {
   // 11-12 han
   '11h': { ne: 6000, e: 12000, ner: 24000, er: 36000 },
   '12h': { ne: 6000, e: 12000, ner: 24000, er: 36000 },
+}
 
-  // 13+ han
-  '13h': { ne: 8000, e: 16000, ner: 32000, er: 48000 },
+export const YAKUMAN_MODE_SCORE_MAP: MJHanFuScore = {
+  ne: 8000,
+  e: 16000,
+  ner: 32000,
+  er: 48000,
 }
 
 export const getScoreByHanAndFu = (
@@ -126,7 +141,7 @@ export const getScoreByHanAndFu = (
   }
 
   if (nHan >= 13) {
-    expectedScore = HAN_FU_MODE_SCORE_MAP['13h']
+    expectedScore = HAN_FU_MODE_SCORE_MAP['12h']
   } else if (nHan >= 5) {
     expectedScore = HAN_FU_MODE_SCORE_MAP[`${nHan}h`]
   } else if (nHan >= 4 && nFu >= (options?.roundUp ? 30 : 40)) {
@@ -144,14 +159,25 @@ export const getScoreByHanAndFu = (
   return expectedScore
 }
 
+export const getScoreByYakumanCount = (yakumanCount = 1) => ({
+  ne: 8000 * yakumanCount,
+  e: 16000 * yakumanCount,
+  ner: 32000 * yakumanCount,
+  er: 48000 * yakumanCount,
+})
+
 export const getScoreInFullDetail = (
   han: number | string,
   fu: number | string,
+  yakumanCount: number,
   isEast: boolean,
   isRon: boolean,
   options?: { roundUp?: boolean }
 ) => {
-  const score = getScoreByHanAndFu(han, fu, options)
+  const score =
+    yakumanCount > 0
+      ? getScoreByYakumanCount(yakumanCount)
+      : getScoreByHanAndFu(han, fu, options)
 
   if (isEast) {
     if (isRon) {
@@ -196,18 +222,20 @@ export const formatPlayerResultsByPrev = (
       afterScore: prev['0'].afterScore,
       isRevealed: false,
       isRiichi: false,
+      isYellowCarded: prev['0'].isYellowCarded,
+      isRedCarded: prev['0'].isRedCarded,
       type: PlayerResultWinnerOrLoserEnum.None,
       scoreChanges: [],
       prevScoreChanges: prev['0'].scoreChanges ?? [],
       detail: {
         han: 1,
         fu: 30,
-        yakusInText: [],
-        isYakuman: false,
-        raw: {},
+        yakumanCount: 0,
         dora: 0,
         redDora: 0,
         innerDora: 0,
+        yakus: [],
+        raw: {},
         isRevealed: false,
         isRiichied: false,
       },
@@ -217,18 +245,20 @@ export const formatPlayerResultsByPrev = (
       afterScore: prev['1'].afterScore,
       isRevealed: false,
       isRiichi: false,
+      isYellowCarded: prev['0'].isYellowCarded,
+      isRedCarded: prev['0'].isRedCarded,
       type: PlayerResultWinnerOrLoserEnum.None,
       scoreChanges: [],
       prevScoreChanges: prev['1'].scoreChanges ?? [],
       detail: {
         han: 1,
         fu: 30,
-        yakusInText: [],
-        isYakuman: false,
-        raw: {},
+        yakumanCount: 0,
         dora: 0,
         redDora: 0,
         innerDora: 0,
+        yakus: [],
+        raw: {},
         isRevealed: false,
         isRiichied: false,
       },
@@ -238,18 +268,20 @@ export const formatPlayerResultsByPrev = (
       afterScore: prev['2'].afterScore,
       isRevealed: false,
       isRiichi: false,
+      isYellowCarded: prev['0'].isYellowCarded,
+      isRedCarded: prev['0'].isRedCarded,
       type: PlayerResultWinnerOrLoserEnum.None,
       scoreChanges: [],
       prevScoreChanges: prev['2'].scoreChanges ?? [],
       detail: {
         han: 1,
         fu: 30,
-        yakusInText: [],
-        isYakuman: false,
-        raw: {},
+        yakumanCount: 0,
         dora: 0,
         redDora: 0,
         innerDora: 0,
+        yakus: [],
+        raw: {},
         isRevealed: false,
         isRiichied: false,
       },
@@ -259,18 +291,20 @@ export const formatPlayerResultsByPrev = (
       afterScore: prev['3'].afterScore,
       isRevealed: false,
       isRiichi: false,
+      isYellowCarded: prev['0'].isYellowCarded,
+      isRedCarded: prev['0'].isRedCarded,
       type: PlayerResultWinnerOrLoserEnum.None,
       scoreChanges: [],
       prevScoreChanges: prev['3'].scoreChanges ?? [],
       detail: {
         han: 1,
         fu: 30,
-        yakusInText: [],
-        isYakuman: false,
-        raw: {},
+        yakumanCount: 0,
         dora: 0,
         redDora: 0,
         innerDora: 0,
+        yakus: [],
+        raw: {},
         isRevealed: false,
         isRiichied: false,
       },

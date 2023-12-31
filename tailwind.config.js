@@ -44,6 +44,42 @@ module.exports = {
           '0%': { transform: 'translateX(150%)' },
           '100%': { transform: 'translateX(-150%)' },
         },
+        yellowPenaltyAni: {
+          '0%': {
+            backgroundColor: '#ffe100',
+            transform: 'rotate(45deg) translateX(-130%)',
+          },
+          '20%': {
+            backgroundColor: '#ffe100',
+            transform: 'rotate(45deg) translateX(-50%)',
+          },
+          '80%': {
+            backgroundColor: '#ffe100',
+            transform: 'rotate(45deg) translateX(-50%)',
+          },
+          '100%': {
+            backgroundColor: '#ffe100',
+            transform: 'rotate(45deg) translateX(50%)',
+          },
+        },
+        redPenaltyAni: {
+          '0%': {
+            backgroundColor: '#ff1900',
+            transform: 'rotate(45deg) translateX(-130%)',
+          },
+          '20%': {
+            backgroundColor: '#ff1900',
+            transform: 'rotate(45deg) translateX(-50%)',
+          },
+          '80%': {
+            backgroundColor: '#ff1900',
+            transform: 'rotate(45deg) translateX(-50%)',
+          },
+          '100%': {
+            backgroundColor: '#ff1900',
+            transform: 'rotate(45deg) translateX(50%)',
+          },
+        },
         riichi: {
           '0%': {
             transform: 'translateX(-25%) translateY(-50%) rotate(-25deg)',

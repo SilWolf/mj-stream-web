@@ -25,17 +25,17 @@ const MatchNameplate = ({ teamPlayer }: { teamPlayer: DB_TeamPlayer }) => {
         <tbody>
           <tr style={{ background: player.color }}>
             <td className="w-[8mm] h-[8mm]"></td>
-            <td className="w-[2mm] border-r border-neutral-500"></td>
+            <td className="w-[2mm] border-r border-white"></td>
             <td></td>
-            <td className="w-[2mm] border-l border-neutral-500"></td>
+            <td className="w-[2mm] border-l border-white"></td>
             <td className="w-[8mm] h-[8mm]"></td>
           </tr>
           <tr style={{ background: player.color }}>
-            <td className="h-[2mm] border-b border-neutral-500"></td>
+            <td className="h-[2mm] border-b border-white"></td>
             <td></td>
             <td></td>
             <td></td>
-            <td className="h-[2mm] border-b border-neutral-500"></td>
+            <td className="h-[2mm] border-b border-white"></td>
           </tr>
           <tr
             style={{
@@ -49,17 +49,17 @@ const MatchNameplate = ({ teamPlayer }: { teamPlayer: DB_TeamPlayer }) => {
             <td></td>
           </tr>
           <tr style={{ background: lightenedColor }}>
-            <td className="h-[2mm] border-t border-neutral-500"></td>
+            <td className="h-[2mm] border-t border-white"></td>
             <td></td>
             <td></td>
             <td></td>
-            <td className="h-[2mm] border-t border-neutral-500"></td>
+            <td className="h-[2mm] border-t border-white"></td>
           </tr>
           <tr style={{ background: lightenedColor }}>
             <td className="w-[8mm] h-[8mm]"></td>
-            <td className="w-[2mm] border-r border-neutral-500"></td>
+            <td className="w-[2mm] border-r border-white"></td>
             <td></td>
-            <td className="w-[2mm] border-l border-neutral-500"></td>
+            <td className="w-[2mm] border-l border-white"></td>
             <td className="w-[8mm] h-[8mm]"></td>
           </tr>
         </tbody>
@@ -74,7 +74,7 @@ const MatchNameplate = ({ teamPlayer }: { teamPlayer: DB_TeamPlayer }) => {
         <p
           className="text-[13mm] text-white leading-none font-semibold mb-[3mm]"
           style={{
-            textShadow: '0px 0px 3px #33333380, 0px 0px 6px #33333380',
+            textShadow: '0px 0px 3px #333333B0, 0px 0px 6px #333333B0',
           }}
         >
           {player.name}
@@ -82,7 +82,7 @@ const MatchNameplate = ({ teamPlayer }: { teamPlayer: DB_TeamPlayer }) => {
         <p
           className="text-[13mm] text-white leading-none font-semibold"
           style={{
-            textShadow: '0px 0px 3px #33333380, 0px 0px 6px #33333380',
+            textShadow: '0px 0px 3px #333333B0, 0px 0px 6px #333333B0',
           }}
         >
           {player.nickname}

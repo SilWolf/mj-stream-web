@@ -32,8 +32,8 @@ export type Match = {
     winnerPlayerIndex: PlayerIndex
     han: number
     fu: number
-    yakusInText: string[]
-    isYakuman: boolean
+    yakumanCount: number
+    yakus: { id: string; label: string; han: number; yakumanCount: number }[]
   } | null
 }
 
@@ -71,8 +71,8 @@ export type MatchRound = {
     winnerPlayerIndex: PlayerIndex
     han: number
     fu: number
-    yakusInText: string[]
-    isYakuman: boolean
+    yakumanCount: number
+    yakus: { id: string; label: string; han: number; yakumanCount: number }[]
   }
   hasBroadcasted?: boolean
   nextRoundType: NextRoundTypeEnum
@@ -118,16 +118,20 @@ export type PlayerResult = {
   type: PlayerResultWinnerOrLoserEnum
   isRiichi?: boolean
   isRevealed?: boolean
+  isYellowCarded?: boolean
+  isRedCarded?: boolean
   waitingTiles?: string[]
   detail: {
     han: number
     fu: number
-    yakusInText: string[] | null
-    isYakuman: boolean
-    raw: Record<string, boolean> | null
+    yakumanCount: number
     dora: number
     redDora: number
     innerDora: number
+    yakus:
+      | { id: string; label: string; han: number; yakumanCount: number }[]
+      | null
+    raw: Record<string, boolean> | null
     isRevealed: boolean
     isRiichied: boolean
   }

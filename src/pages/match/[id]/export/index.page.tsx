@@ -59,7 +59,9 @@ const mapPlayerResult = (matchRound: MatchRound, playerIndex: PlayerIndex) => ({
   innerDora: matchRound.playerResults[playerIndex].detail?.innerDora,
   han: matchRound.playerResults[playerIndex].detail?.han,
   fu: matchRound.playerResults[playerIndex].detail?.fu,
-  yaku: matchRound.playerResults[playerIndex].detail?.yakusInText?.join(' '),
+  yaku: matchRound.playerResults[playerIndex].detail?.yakus
+    ?.map(({ label }) => label)
+    .join(' '),
   pureScore: 0,
 })
 

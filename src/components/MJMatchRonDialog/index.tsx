@@ -13,7 +13,6 @@ import {
   getPlayerPosition,
   getRoundResultTypeByCompiledScore,
   getScoreInFullDetail,
-  MJCompiledScore,
 } from '@/helpers/mahjong.helper'
 import MJMatchCounterSpan from '../MJMatchCounterSpan'
 import MJUISelect from '../MJUI/MJUISelect'
@@ -23,6 +22,7 @@ import MJYakuKeyboardDiv, {
   MJYakuKeyboardResult,
   MJYakuKeyboardResultDiv,
 } from '../MJYakuKeyboardDiv'
+import MJUIFormGroup from '../MJUI/MJUIFormGroup'
 
 export type MJMatchRonProps = Pick<MJUIDialogV2Props, 'open' | 'onClose'> & {
   match: Match
@@ -47,18 +47,14 @@ export default function MJMatchRonDialog({
   >({
     han: 1,
     fu: 30,
-    yakusInText: [],
-    isYakuman: false,
-    raw: {},
+    yakumanCount: 0,
     dora: 0,
     redDora: 0,
     innerDora: 0,
+    yakus: [],
+    raw: {},
     isRevealed: false,
     isRiichied: false,
-  })
-  const [compiledScore, setCompiledScore] = useState<MJCompiledScore>({
-    win: 1000,
-    target: 1000,
   })
 
   const players = useMemo(() => {
@@ -84,52 +80,52 @@ export default function MJMatchRonDialog({
     [activePlayerIndex, players]
   )
 
-  const [targetPlayerIndex, setTargetPlayerIndex] = useState<
-    string | undefined
-  >(initialTargetPlayerIndex)
-
-  const handleChangeYaku = useCallback(
-    (result: MJYakuKeyboardResult) => {
-      const newCompiledScore = getScoreInFullDetail(
-        Math.min(result.han, result.isYakuman ? 13 : 12),
-        result.fu,
-        activePlayer?.position === PlayerPositionEnum.East,
-        targetPlayerIndex !== '-1',
-        { roundUp: match.setting.isManganRoundUp === '1' }
-      )
-
-      if (currentMatchRound.extendedRoundCount > 0) {
-        newCompiledScore.win += currentMatchRound.extendedRoundCount * 300
-
-        if (newCompiledScore.target) {
-          newCompiledScore.target += currentMatchRound.extendedRoundCount * 300
-        }
-        if (newCompiledScore.all) {
-          newCompiledScore.all += currentMatchRound.extendedRoundCount * 100
-        }
-        if (newCompiledScore.east) {
-          newCompiledScore.east += currentMatchRound.extendedRoundCount * 100
-        }
-        if (newCompiledScore.others) {
-          newCompiledScore.others += currentMatchRound.extendedRoundCount * 100
-        }
-      }
-
-      if (currentMatchRound.cumulatedThousands > 0) {
-        newCompiledScore.win += currentMatchRound.cumulatedThousands * 1000
-      }
-
-      setYakuResult(result)
-      setCompiledScore(newCompiledScore)
-    },
-    [
-      activePlayer?.position,
-      targetPlayerIndex,
-      match.setting.isManganRoundUp,
-      currentMatchRound.extendedRoundCount,
-      currentMatchRound.cumulatedThousands,
-    ]
+  const [targetPlayerIndex, setTargetPlayerIndex] = useState<string | '-1'>(
+    initialTargetPlayerIndex
   )
+
+  const compiledScore = useMemo(() => {
+    const newCompiledScore = getScoreInFullDetail(
+      yakuResult.han,
+      yakuResult.fu,
+      yakuResult.yakumanCount,
+      activePlayer?.position === PlayerPositionEnum.East,
+      targetPlayerIndex !== '-1',
+      { roundUp: match.setting.isManganRoundUp === '1' }
+    )
+
+    if (currentMatchRound.extendedRoundCount > 0) {
+      newCompiledScore.win += currentMatchRound.extendedRoundCount * 300
+
+      if (newCompiledScore.target) {
+        newCompiledScore.target += currentMatchRound.extendedRoundCount * 300
+      }
+      if (newCompiledScore.all) {
+        newCompiledScore.all += currentMatchRound.extendedRoundCount * 100
+      }
+      if (newCompiledScore.east) {
+        newCompiledScore.east += currentMatchRound.extendedRoundCount * 100
+      }
+      if (newCompiledScore.others) {
+        newCompiledScore.others += currentMatchRound.extendedRoundCount * 100
+      }
+    }
+
+    if (currentMatchRound.cumulatedThousands > 0) {
+      newCompiledScore.win += currentMatchRound.cumulatedThousands * 1000
+    }
+
+    return newCompiledScore
+  }, [
+    yakuResult.han,
+    yakuResult.fu,
+    yakuResult.yakumanCount,
+    activePlayer?.position,
+    targetPlayerIndex,
+    match.setting.isManganRoundUp,
+    currentMatchRound.extendedRoundCount,
+    currentMatchRound.cumulatedThousands,
+  ])
 
   const title = useMemo(() => {
     return (
@@ -143,6 +139,42 @@ export default function MJMatchRonDialog({
       </div>
     )
   }, [currentMatchRound.roundCount, currentMatchRound.extendedRoundCount])
+
+  const isDaisangenTriggered = useMemo(
+    () =>
+      yakuResult.isRevealed &&
+      yakuResult.yakus &&
+      yakuResult.yakus.findIndex(({ id }) => id === 'daisangen') !== -1,
+    [yakuResult.isRevealed, yakuResult.yakus]
+  )
+  const [
+    yakumanDaisangenTriggerPlayerIndex,
+    setYakumanDaisangenTriggerPlayerIndex,
+  ] = useState<string | undefined>('-1')
+
+  const isDaisuushiiTriggered = useMemo(
+    () =>
+      yakuResult.isRevealed &&
+      yakuResult.yakus &&
+      yakuResult.yakus.findIndex(({ id }) => id === 'daisuushii') !== -1,
+    [yakuResult.isRevealed, yakuResult.yakus]
+  )
+  const [
+    yakumanDaisuushiiTriggerPlayerIndex,
+    setYakumanDaisuushiiTriggerPlayerIndex,
+  ] = useState<string | undefined>('-1')
+
+  const isSuukantsuTriggered = useMemo(
+    () =>
+      yakuResult.isRevealed &&
+      yakuResult.yakus &&
+      yakuResult.yakus.findIndex(({ id }) => id === 'suukantsu') !== -1,
+    [yakuResult.isRevealed, yakuResult.yakus]
+  )
+  const [
+    yakumanSuukantsuTriggerPlayerIndex,
+    setYakumanSuukantsuTriggerPlayerIndex,
+  ] = useState<string | undefined>('-1')
 
   const previewPlayerResults = useMemo(() => {
     const playerIndexes = Object.keys(
@@ -191,8 +223,6 @@ export default function MJMatchRonDialog({
     if (activePlayerIndex === targetPlayerIndex) {
       return newPreviewPlayerResults
     }
-
-    let activePlayerBonus = 0
 
     for (let i = 0; i < playerIndexes.length; i += 1) {
       const currentPlayerIndex = playerIndexes[i]
@@ -243,7 +273,173 @@ export default function MJMatchRonDialog({
           ]
         }
       }
+    }
 
+    // eslint-disable-next-line no-extra-semi
+    ;[
+      {
+        bool: isDaisangenTriggered,
+        triggeredPlayerIndex: yakumanDaisangenTriggerPlayerIndex,
+        yakuId: 'daisangen',
+      },
+      {
+        bool: isDaisuushiiTriggered,
+        triggeredPlayerIndex: yakumanDaisuushiiTriggerPlayerIndex,
+        yakuId: 'daisuushii',
+      },
+      {
+        bool: isSuukantsuTriggered,
+        triggeredPlayerIndex: yakumanSuukantsuTriggerPlayerIndex,
+        yakuId: 'suukantsu',
+      },
+    ].forEach(({ bool, triggeredPlayerIndex, yakuId }) => {
+      if (
+        bool &&
+        triggeredPlayerIndex !== '-1' &&
+        triggeredPlayerIndex !== activePlayerIndex &&
+        triggeredPlayerIndex !== targetPlayerIndex
+      ) {
+        const yaku = yakuResult.yakus?.find(({ id }) => yakuId === id)
+        if (yaku) {
+          const yakuCompiledScore = getScoreInFullDetail(
+            1,
+            30,
+            yaku.yakumanCount,
+            getIsPlayerEast(
+              activePlayerIndex as PlayerIndex,
+              currentMatchRound.roundCount
+            ),
+            targetPlayerIndex !== '-1'
+          )
+
+          if (yakuCompiledScore.target) {
+            const targetScore = Math.round(yakuCompiledScore.target / 2)
+
+            newPreviewPlayerResults[
+              targetPlayerIndex as PlayerIndex
+            ].afterScore += targetScore
+            newPreviewPlayerResults[
+              targetPlayerIndex as PlayerIndex
+            ].scoreChanges[0] += targetScore
+            if (
+              newPreviewPlayerResults[targetPlayerIndex as PlayerIndex]
+                .scoreChanges[0] === 0
+            ) {
+              newPreviewPlayerResults[
+                targetPlayerIndex as PlayerIndex
+              ].scoreChanges.splice(0, 1)
+            }
+
+            newPreviewPlayerResults[
+              triggeredPlayerIndex as PlayerIndex
+            ].afterScore -= targetScore
+            if (
+              typeof newPreviewPlayerResults[
+                triggeredPlayerIndex as PlayerIndex
+              ].scoreChanges[0] === 'undefined'
+            ) {
+              newPreviewPlayerResults[
+                triggeredPlayerIndex as PlayerIndex
+              ].scoreChanges.push(-targetScore)
+            } else {
+              newPreviewPlayerResults[
+                triggeredPlayerIndex as PlayerIndex
+              ].scoreChanges[0] -= targetScore
+            }
+          } else if (yakuCompiledScore.all) {
+            for (let i = 0; i < playerIndexes.length; i += 1) {
+              const targetScore = yakuCompiledScore.all
+
+              if (
+                playerIndexes[i] !== activePlayerIndex &&
+                playerIndexes[i] !== triggeredPlayerIndex
+              ) {
+                newPreviewPlayerResults[playerIndexes[i]].afterScore +=
+                  targetScore
+                newPreviewPlayerResults[playerIndexes[i]].scoreChanges[0] +=
+                  targetScore
+                if (
+                  newPreviewPlayerResults[playerIndexes[i]].scoreChanges[0] ===
+                  0
+                ) {
+                  newPreviewPlayerResults[playerIndexes[i]].scoreChanges.splice(
+                    0,
+                    1
+                  )
+                }
+
+                newPreviewPlayerResults[
+                  triggeredPlayerIndex as PlayerIndex
+                ].afterScore -= targetScore
+                if (
+                  typeof newPreviewPlayerResults[
+                    triggeredPlayerIndex as PlayerIndex
+                  ].scoreChanges[0] === 'undefined'
+                ) {
+                  newPreviewPlayerResults[
+                    triggeredPlayerIndex as PlayerIndex
+                  ].scoreChanges.push(-targetScore)
+                } else {
+                  newPreviewPlayerResults[
+                    triggeredPlayerIndex as PlayerIndex
+                  ].scoreChanges[0] -= targetScore
+                }
+              }
+            }
+          } else if (yakuCompiledScore.east && yakuCompiledScore.others) {
+            for (let i = 0; i < playerIndexes.length; i += 1) {
+              if (
+                playerIndexes[i] !== activePlayerIndex &&
+                playerIndexes[i] !== triggeredPlayerIndex
+              ) {
+                const targetScore = getIsPlayerEast(
+                  playerIndexes[i],
+                  currentMatchRound.roundCount
+                )
+                  ? yakuCompiledScore.east
+                  : yakuCompiledScore.others
+
+                newPreviewPlayerResults[playerIndexes[i]].afterScore +=
+                  targetScore
+                newPreviewPlayerResults[playerIndexes[i]].scoreChanges[0] +=
+                  targetScore
+                if (
+                  newPreviewPlayerResults[playerIndexes[i]].scoreChanges[0] ===
+                  0
+                ) {
+                  newPreviewPlayerResults[playerIndexes[i]].scoreChanges.splice(
+                    0,
+                    1
+                  )
+                }
+
+                newPreviewPlayerResults[
+                  triggeredPlayerIndex as PlayerIndex
+                ].afterScore -= targetScore
+                if (
+                  typeof newPreviewPlayerResults[
+                    triggeredPlayerIndex as PlayerIndex
+                  ].scoreChanges[0] === 'undefined'
+                ) {
+                  newPreviewPlayerResults[
+                    triggeredPlayerIndex as PlayerIndex
+                  ].scoreChanges.push(-targetScore)
+                } else {
+                  newPreviewPlayerResults[
+                    triggeredPlayerIndex as PlayerIndex
+                  ].scoreChanges[0] -= targetScore
+                }
+              }
+            }
+          }
+        }
+      }
+    }, [])
+
+    let activePlayerBonus = 0
+
+    for (let i = 0; i < playerIndexes.length; i += 1) {
+      const currentPlayerIndex = playerIndexes[i]
       if (
         currentPlayerIndex !== activePlayerIndex &&
         newPreviewPlayerResults[currentPlayerIndex].isRiichi
@@ -274,9 +470,16 @@ export default function MJMatchRonDialog({
     compiledScore.others,
     compiledScore.target,
     compiledScore.win,
-    currentMatchRound,
+    currentMatchRound.playerResults,
+    currentMatchRound.roundCount,
+    isDaisangenTriggered,
+    isDaisuushiiTriggered,
+    isSuukantsuTriggered,
     targetPlayerIndex,
     yakuResult,
+    yakumanDaisangenTriggerPlayerIndex,
+    yakumanDaisuushiiTriggerPlayerIndex,
+    yakumanSuukantsuTriggerPlayerIndex,
   ])
 
   const handleSubmit = useCallback(() => {
@@ -292,7 +495,7 @@ export default function MJMatchRonDialog({
       resultDetail: {
         winnerPlayerIndex: activePlayerIndex as PlayerIndex,
         ...yakuResult,
-        yakusInText: yakuResult.yakusInText ?? [],
+        yakus: yakuResult.yakus ?? [],
       },
     }
 
@@ -363,8 +566,9 @@ export default function MJMatchRonDialog({
           <div>
             <MJYakuKeyboardDiv
               round={currentMatchRound.roundCount}
-              activePlayerIndex={initialActivePlayerIndex}
-              onChange={handleChangeYaku}
+              activePlayerIndex={activePlayerIndex as PlayerIndex}
+              targetPlayerIndex={targetPlayerIndex as PlayerIndex | '-1'}
+              onChange={setYakuResult}
               value={
                 currentMatchRound.playerResults[
                   activePlayerIndex as PlayerIndex
@@ -382,6 +586,69 @@ export default function MJMatchRonDialog({
             </div>
           </div>
         </div>
+
+        {(isDaisangenTriggered ||
+          isDaisuushiiTriggered ||
+          isSuukantsuTriggered) && (
+          <div className="space-y-2 bg-yellow-200 p-4">
+            <h5 className="font-bold">包牌</h5>
+            <p>
+              當某家打出的牌被鳴牌後，導致役滿確定時（大三元、大四喜、四槓子），便會觸發「包牌」。
+              <br />- 如自摸，包牌者需支付該役種全部點數
+              <br />- 如他家放銃，包牌者需支付該役種一半點數
+            </p>
+
+            <div className="grid grid-cols-2 gap-6">
+              {isDaisangenTriggered && (
+                <MJUIFormGroup label="大三元包牌者">
+                  <MJUISelect
+                    value={yakumanDaisangenTriggerPlayerIndex}
+                    onChangeValue={setYakumanDaisangenTriggerPlayerIndex}
+                  >
+                    <option value="-1">沒有包牌</option>
+                    {players.map(({ index, name }) => (
+                      <option key={index} value={index}>
+                        {name}
+                      </option>
+                    ))}
+                  </MJUISelect>
+                </MJUIFormGroup>
+              )}
+
+              {isDaisuushiiTriggered && (
+                <MJUIFormGroup label="大四喜包牌者">
+                  <MJUISelect
+                    value={yakumanDaisuushiiTriggerPlayerIndex}
+                    onChangeValue={setYakumanDaisuushiiTriggerPlayerIndex}
+                  >
+                    <option value="-1">沒有包牌</option>
+                    {players.map(({ index, name }) => (
+                      <option key={index} value={index}>
+                        {name}
+                      </option>
+                    ))}
+                  </MJUISelect>
+                </MJUIFormGroup>
+              )}
+
+              {isSuukantsuTriggered && (
+                <MJUIFormGroup label="四槓子包牌者">
+                  <MJUISelect
+                    value={yakumanSuukantsuTriggerPlayerIndex}
+                    onChangeValue={setYakumanSuukantsuTriggerPlayerIndex}
+                  >
+                    <option value="-1">沒有包牌</option>
+                    {players.map(({ index, name }) => (
+                      <option key={index} value={index}>
+                        {name}
+                      </option>
+                    ))}
+                  </MJUISelect>
+                </MJUIFormGroup>
+              )}
+            </div>
+          </div>
+        )}
 
         <div className="space-y-2">
           <h5 className="font-bold">分數變動</h5>
@@ -433,9 +700,7 @@ export default function MJMatchRonDialog({
           <MJUIButton
             onClick={handleSubmit}
             className="w-full"
-            disabled={
-              !yakuResult?.yakusInText || yakuResult.yakusInText.length <= 0
-            }
+            disabled={!yakuResult?.yakus || yakuResult.yakus.length <= 0}
           >
             <i className="bi bi-camera-reels-fill"></i> 提交並播出分數變動動畫
           </MJUIButton>

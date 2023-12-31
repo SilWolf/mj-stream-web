@@ -9,22 +9,40 @@ import {
 import { useToggle } from 'react-use'
 import MJUISwitch from '../MJUI/MJUISwitch'
 import { MatchSetting, PlayerIndex } from '@/models'
-import {
-  getWindByRound,
-  getWindByRoundAndPlayerIndex,
-} from '@/utils/string.util'
 import MJHanFuTextSpan from '../MJHanFuTextSpan'
 import MJUISelectClicker from '../MJUI/MJUISelectClicker'
 import MJUIDialogV2, { MJUIDialogV2Props } from '../MJUI/MJUIDialogV2'
 import MJUIButton from '../MJUI/MJUIButton'
+import {
+  getIsPlayerEast,
+  getIsPlayerNorth,
+  getIsPlayerSouth,
+  getIsPlayerWest,
+  getIsRoundEast,
+  getIsRoundNorth,
+  getIsRoundSouth,
+  getIsRoundWest,
+} from '@/helpers/mahjong.helper'
+
+type YakuFnProps = {
+  round: number
+  activePlayerIndex: PlayerIndex
+  targetPlayerIndex: '-1' | PlayerIndex
+  isRevealed: boolean
+  raw: Record<string, boolean>
+}
 
 type Yaku = {
   id: string
   label: string
   han: number
   hanIfOpened: number
+  yakumanCount?: number
   overrideFu?: number
   hidden?: boolean
+  disableFn?: (props: YakuFnProps) => boolean
+  hiddenIfDisabled?: boolean
+  group: string
 }
 
 const YAKUS: Yaku[] = [
@@ -33,103 +51,262 @@ const YAKUS: Yaku[] = [
     label: '立直',
     han: 1,
     hanIfOpened: 0,
-  },
-  {
-    id: 'ippatsu',
-    label: '一發',
-    han: 1,
-    hanIfOpened: 0,
-  },
-  {
-    id: 'menzenchin-tsumohou',
-    label: '門前清自摸和',
-    han: 1,
-    hanIfOpened: 0,
-  },
-  {
-    id: 'pinfu',
-    label: '平和',
-    han: 1,
-    hanIfOpened: 0,
-  },
-  {
-    id: 'tanyao',
-    label: '斷么九',
-    han: 1,
-    hanIfOpened: 1,
-  },
-  {
-    id: 'iipeikou',
-    label: '一盃口',
-    han: 1,
-    hanIfOpened: 0,
-  },
-  {
-    id: 'yakuhai-self-kazehai',
-    label: '自風',
-    han: 1,
-    hanIfOpened: 1,
-  },
-  {
-    id: 'yakuhai-match-kazehai',
-    label: '場風',
-    han: 1,
-    hanIfOpened: 1,
-  },
-  {
-    id: 'yakuhai-double-kazehai',
-    label: '雙風',
-    han: 2,
-    hanIfOpened: 2,
-    hidden: true,
-  },
-  {
-    id: 'yakuhai-chun',
-    label: '中',
-    han: 1,
-    hanIfOpened: 1,
-  },
-  {
-    id: 'yakuhai-haku',
-    label: '白',
-    han: 1,
-    hanIfOpened: 1,
-  },
-  {
-    id: 'yakuhai-hatsu',
-    label: '發',
-    han: 1,
-    hanIfOpened: 1,
-  },
-  {
-    id: 'haitei-raoyue',
-    label: '海底撈月',
-    han: 1,
-    hanIfOpened: 1,
-  },
-  {
-    id: 'houtei-raoyui',
-    label: '河底撈魚',
-    han: 1,
-    hanIfOpened: 1,
-  },
-  {
-    id: 'rinshan-kaihou',
-    label: '嶺上開花',
-    han: 1,
-    hanIfOpened: 1,
-  },
-  {
-    id: 'chankan',
-    label: '搶槓',
-    han: 1,
-    hanIfOpened: 1,
+    disableFn: ({ isRevealed, raw }) => !!isRevealed || raw['double-riichi'],
+    group: 'riichi',
   },
   {
     id: 'double-riichi',
     label: '雙立直',
     han: 2,
     hanIfOpened: 0,
+    disableFn: ({ isRevealed, raw }) => !!isRevealed || raw['riichi'],
+    group: 'riichi',
+  },
+  {
+    id: 'ippatsu',
+    label: '一發',
+    han: 1,
+    hanIfOpened: 0,
+    disableFn: ({ raw }) =>
+      !(raw['riichi'] || raw['double-riichi']) || !!raw['chankan'],
+    group: 'riichi',
+  },
+  {
+    id: 'menzenchin-tsumohou',
+    label: '門前清自摸和',
+    han: 1,
+    hanIfOpened: 0,
+    hidden: true,
+    group: 'menzenchin-tsumohou',
+  },
+  {
+    id: 'tanyao',
+    label: '斷么九',
+    han: 1,
+    hanIfOpened: 1,
+    disableFn: ({ raw }) =>
+      !!raw['chantaiyao'] ||
+      !!raw['junchan-taiyao'] ||
+      !!raw['yakuhai-east'] ||
+      !!raw['yakuhai-south'] ||
+      !!raw['yakuhai-west'] ||
+      !!raw['yakuhai-north'] ||
+      !!raw['yakuhai-haku'] ||
+      !!raw['yakuhai-hatsu'] ||
+      !!raw['yakuhai-chun'] ||
+      !!raw['honroutou'] ||
+      !!raw['honitsu'] ||
+      !!raw['ittsu'],
+    group: 'common',
+  },
+  {
+    id: 'pinfu',
+    label: '平和',
+    han: 1,
+    hanIfOpened: 0,
+    disableFn: ({ isRevealed, raw }) =>
+      !!isRevealed ||
+      !!raw['chiitoitsu'] ||
+      !!raw['yakuhai-east'] ||
+      !!raw['yakuhai-south'] ||
+      !!raw['yakuhai-west'] ||
+      !!raw['yakuhai-north'] ||
+      !!raw['yakuhai-haku'] ||
+      !!raw['yakuhai-hatsu'] ||
+      !!raw['yakuhai-chun'] ||
+      !!raw['toitoi'],
+    group: 'common',
+  },
+  {
+    id: 'yakuhai-east',
+    label: '東',
+    han: 1,
+    hanIfOpened: 1,
+    disableFn: ({ round, activePlayerIndex, raw }) =>
+      (!getIsPlayerEast(activePlayerIndex, round) && !getIsRoundEast(round)) ||
+      !!raw['tanyao'] ||
+      !!raw['pinfu'] ||
+      !!raw['chiitoitsu'] ||
+      !!raw['chinitsu'] ||
+      !!raw['junchan-taiyao'] ||
+      !!raw['ryanpeikou'],
+    group: 'yakuhai',
+  },
+
+  {
+    id: 'yakuhai-double-east',
+    label: '雙東',
+    han: 2,
+    hanIfOpened: 2,
+    hidden: true,
+    group: 'yakuhai-special',
+  },
+
+  {
+    id: 'yakuhai-south',
+    label: '南',
+    han: 1,
+    hanIfOpened: 1,
+    disableFn: ({ round, activePlayerIndex, raw }) =>
+      (!getIsPlayerSouth(activePlayerIndex, round) &&
+        !getIsRoundSouth(round)) ||
+      !!raw['tanyao'] ||
+      !!raw['pinfu'] ||
+      !!raw['chiitoitsu'] ||
+      !!raw['chinitsu'] ||
+      !!raw['junchan-taiyao'] ||
+      !!raw['ryanpeikou'],
+    group: 'yakuhai',
+  },
+  {
+    id: 'yakuhai-double-south',
+    label: '雙南',
+    han: 2,
+    hanIfOpened: 2,
+    hidden: true,
+    group: 'yakuhai-special',
+  },
+  {
+    id: 'yakuhai-west',
+    label: '西',
+    han: 1,
+    hanIfOpened: 1,
+    disableFn: ({ round, activePlayerIndex, raw }) =>
+      (!getIsPlayerWest(activePlayerIndex, round) && !getIsRoundWest(round)) ||
+      !!raw['tanyao'] ||
+      !!raw['pinfu'] ||
+      !!raw['chiitoitsu'] ||
+      !!raw['chinitsu'] ||
+      !!raw['junchan-taiyao'] ||
+      !!raw['ryanpeikou'],
+    group: 'yakuhai',
+  },
+  {
+    id: 'yakuhai-double-west',
+    label: '雙西',
+    han: 2,
+    hanIfOpened: 2,
+    hidden: true,
+    group: 'yakuhai-special',
+  },
+  {
+    id: 'yakuhai-north',
+    label: '北',
+    han: 1,
+    hanIfOpened: 1,
+    disableFn: ({ round, activePlayerIndex, raw }) =>
+      (!getIsPlayerNorth(activePlayerIndex, round) &&
+        !getIsRoundNorth(round)) ||
+      !!raw['tanyao'] ||
+      !!raw['pinfu'] ||
+      !!raw['chiitoitsu'] ||
+      !!raw['chinitsu'] ||
+      !!raw['junchan-taiyao'] ||
+      !!raw['ryanpeikou'],
+    group: 'yakuhai',
+  },
+  {
+    id: 'yakuhai-double-north',
+    label: '雙北',
+    han: 2,
+    hanIfOpened: 2,
+    hidden: true,
+    group: 'yakuhai-special',
+  },
+  {
+    id: 'yakuhai-haku',
+    label: '白',
+    han: 1,
+    hanIfOpened: 1,
+    group: 'yakuhai',
+    disableFn: ({ raw }) =>
+      !!raw['tanyao'] ||
+      !!raw['pinfu'] ||
+      !!raw['chiitoitsu'] ||
+      !!raw['chinitsu'] ||
+      !!raw['junchan-taiyao'] ||
+      !!raw['ryanpeikou'],
+  },
+  {
+    id: 'yakuhai-hatsu',
+    label: '發',
+    han: 1,
+    hanIfOpened: 1,
+    group: 'yakuhai',
+    disableFn: ({ raw }) =>
+      !!raw['tanyao'] ||
+      !!raw['pinfu'] ||
+      !!raw['chiitoitsu'] ||
+      !!raw['chinitsu'] ||
+      !!raw['junchan-taiyao'] ||
+      !!raw['ryanpeikou'],
+  },
+  {
+    id: 'yakuhai-chun',
+    label: '中',
+    han: 1,
+    hanIfOpened: 1,
+    group: 'yakuhai',
+    disableFn: ({ raw }) =>
+      !!raw['tanyao'] ||
+      !!raw['pinfu'] ||
+      !!raw['chiitoitsu'] ||
+      !!raw['chinitsu'] ||
+      !!raw['junchan-taiyao'] ||
+      !!raw['ryanpeikou'],
+  },
+  {
+    id: 'shousangen',
+    label: '小三元',
+    han: 2,
+    hanIfOpened: 2,
+    disableFn: ({ raw }) =>
+      [raw['yakuhai-haku'], raw['yakuhai-hatsu'], raw['yakuhai-chun']].filter(
+        (value) => !!value
+      ).length !== 2,
+    group: 'yakuhai',
+  },
+  {
+    id: 'haitei-raoyue',
+    label: '海底撈月',
+    han: 1,
+    hanIfOpened: 1,
+    disableFn: ({ targetPlayerIndex, raw }) =>
+      targetPlayerIndex !== '-1' || !!raw['rinshan-kaihou'],
+    hiddenIfDisabled: true,
+    group: 'luck',
+  },
+  {
+    id: 'houtei-raoyui',
+    label: '河底撈魚',
+    han: 1,
+    hanIfOpened: 1,
+    disableFn: ({ targetPlayerIndex }) => targetPlayerIndex === '-1',
+    hiddenIfDisabled: true,
+    group: 'luck',
+  },
+  {
+    id: 'rinshan-kaihou',
+    label: '嶺上開花',
+    han: 1,
+    hanIfOpened: 1,
+    disableFn: ({ targetPlayerIndex, raw }) =>
+      targetPlayerIndex !== '-1' ||
+      !!raw['pinfu'] ||
+      !!raw['chiitoitsu'] ||
+      !!raw['ryanpeikou'] ||
+      !!raw['haitei-raoyue'],
+    hiddenIfDisabled: true,
+    group: 'luck',
+  },
+  {
+    id: 'chankan',
+    label: '搶槓',
+    han: 1,
+    hanIfOpened: 1,
+    disableFn: ({ targetPlayerIndex }) => targetPlayerIndex === '-1',
+    hiddenIfDisabled: true,
+    group: 'luck',
   },
   {
     id: 'chiitoitsu',
@@ -137,172 +314,527 @@ const YAKUS: Yaku[] = [
     han: 2,
     hanIfOpened: 0,
     overrideFu: 25,
+    disableFn: ({ isRevealed, raw }) =>
+      !!isRevealed ||
+      !!raw['iipeikou'] ||
+      !!raw['ryanpeikou'] ||
+      !!raw['pinfu'] ||
+      !!raw['sanshku-doujun'] ||
+      !!raw['ittsu'] ||
+      !!raw['chantaiyao'] ||
+      !!raw['junchan-taiyao'] ||
+      !!raw['toitoi'] ||
+      !!raw['sanshku-doukou'] ||
+      !!raw['sanankou'] ||
+      !!raw['sankantsu'] ||
+      !!raw['rinshan-kaihou'],
+    group: 'peikou',
   },
   {
-    id: 'sanshoku-doujun',
-    label: '三色同順',
-    han: 2,
-    hanIfOpened: 1,
-  },
-  {
-    id: 'ittsu',
-    label: '一氣通貫',
-    han: 2,
-    hanIfOpened: 1,
-  },
-  {
-    id: 'toitoi',
-    label: '對對和',
-    han: 2,
-    hanIfOpened: 2,
-  },
-  {
-    id: 'sanankou',
-    label: '三暗刻',
-    han: 2,
-    hanIfOpened: 2,
-  },
-  {
-    id: 'chantaiyao',
-    label: '混全帶么九',
-    han: 2,
-    hanIfOpened: 1,
-  },
-  {
-    id: 'sanshku-doukou',
-    label: '三色同刻',
-    han: 2,
-    hanIfOpened: 2,
-  },
-  {
-    id: 'sankantsu',
-    label: '三槓子',
-    han: 2,
-    hanIfOpened: 2,
-  },
-  {
-    id: 'honroutou',
-    label: '混老頭',
-    han: 2,
-    hanIfOpened: 2,
-  },
-  {
-    id: 'shousangen',
-    label: '小三元',
-    han: 2,
-    hanIfOpened: 2,
-  },
-  {
-    id: 'honitsu',
-    label: '混一色',
-    han: 3,
-    hanIfOpened: 2,
-  },
-  {
-    id: 'junchan-taiyao',
-    label: '純全帶么九',
-    han: 3,
-    hanIfOpened: 2,
+    id: 'iipeikou',
+    label: '一盃口',
+    han: 1,
+    hanIfOpened: 0,
+    disableFn: ({ isRevealed, raw }) =>
+      !!isRevealed ||
+      !!raw['ryanpeikou'] ||
+      !!raw['chiitoitsu'] ||
+      !!raw['honroutou'] ||
+      !!raw['toitoi'] ||
+      !!raw['sanshku-doukou'] ||
+      !!raw['sanankou'] ||
+      !!raw['sankantsu'],
+    group: 'peikou',
   },
   {
     id: 'ryanpeikou',
     label: '二盃口',
     han: 3,
     hanIfOpened: 0,
+    disableFn: ({ isRevealed, raw }) =>
+      !!isRevealed ||
+      !!raw['iipeikou'] ||
+      !!raw['chiitoitsu'] ||
+      !!raw['rinshan-kaihou'] ||
+      !!raw['sanshku-doujun'] ||
+      !!raw['ittsu'] ||
+      !!raw['honroutou'] ||
+      !!raw['toitoi'] ||
+      !!raw['sanshku-doukou'] ||
+      !!raw['sanankou'] ||
+      !!raw['sankantsu'] ||
+      !!raw['yakuhai-east'] ||
+      !!raw['yakuhai-south'] ||
+      !!raw['yakuhai-west'] ||
+      !!raw['yakuhai-north'] ||
+      !!raw['yakuhai-haku'] ||
+      !!raw['yakuhai-hatsu'] ||
+      !!raw['yakuhai-chun'],
+    group: 'peikou',
+  },
+  {
+    id: 'sanshku-doujun',
+    label: '三色同順',
+    han: 2,
+    hanIfOpened: 1,
+    disableFn: ({ raw }) =>
+      !!raw['sanshku-doukou'] ||
+      !!raw['sanankou'] ||
+      !!raw['chiitoitsu'] ||
+      !!raw['ittsu'] ||
+      !!raw['sankantsu'] ||
+      !!raw['ryanpeikou'] ||
+      !!raw['honroutou'] ||
+      !!raw['chinitsu'] ||
+      !!raw['honitsu'] ||
+      !!raw['toitoi'],
+    group: 'row',
+  },
+  {
+    id: 'ittsu',
+    label: '一氣通貫',
+    han: 2,
+    hanIfOpened: 1,
+    disableFn: ({ raw }) =>
+      !!raw['sanshku-doukou'] ||
+      !!raw['sanankou'] ||
+      !!raw['chiitoitsu'] ||
+      !!raw['tanyao'] ||
+      !!raw['sanshku-doujun'] ||
+      !!raw['sankantsu'] ||
+      !!raw['ryanpeikou'] ||
+      !!raw['honroutou'] ||
+      !!raw['chantaiyao'] ||
+      !!raw['junchan-taiyao'] ||
+      !!raw['toitoi'],
+    group: 'row',
+  },
+  {
+    id: 'honitsu',
+    label: '混一色',
+    han: 3,
+    hanIfOpened: 2,
+    disableFn: ({ raw }) =>
+      !!raw['chinitsu'] ||
+      !!raw['tanyao'] ||
+      !!raw['junchan-taiyao'] ||
+      !!raw['sanshku-doujun'] ||
+      !!raw['sanshku-doukou'],
+    group: 'itsu',
   },
   {
     id: 'chinitsu',
     label: '清一色',
     han: 6,
     hanIfOpened: 5,
+    disableFn: ({ raw }) =>
+      !!raw['honitsu'] ||
+      !!raw['honroutou'] ||
+      !!raw['chantaiyao'] ||
+      !!raw['sanshku-doukou'],
+    group: 'itsu',
   },
   {
-    id: 'kazoe-yakuman',
-    label: '累計役滿',
-    han: 13,
-    hanIfOpened: 13,
+    id: 'chantaiyao',
+    label: '混全帶么九',
+    han: 2,
+    hanIfOpened: 1,
+    disableFn: ({ raw }) =>
+      !!raw['tanyao'] ||
+      !!raw['junchan-taiyao'] ||
+      !!raw['honroutou'] ||
+      !!raw['chiitoitsu'] ||
+      !!raw['chinitsu'] ||
+      !!raw['ittsu'] ||
+      !!raw['toitoi'],
+    group: 'taiyao',
+  },
+  {
+    id: 'junchan-taiyao',
+    label: '純全帶么九',
+    han: 3,
+    hanIfOpened: 2,
+    disableFn: ({ raw }) =>
+      !!raw['tanyao'] ||
+      !!raw['chantaiyao'] ||
+      !!raw['honroutou'] ||
+      !!raw['chiitoitsu'] ||
+      !!raw['ittsu'] ||
+      !!raw['honitsu'] ||
+      !!raw['toitoi'],
+    group: 'taiyao',
+  },
+  {
+    id: 'honroutou',
+    label: '混老頭',
+    han: 2,
+    hanIfOpened: 2,
+    disableFn: ({ raw }) =>
+      !!raw['tanyao'] ||
+      !!raw['chantaiyao'] ||
+      !!raw['junchan-taiyao'] ||
+      !!raw['chinitsu'] ||
+      !!raw['iipeikou'] ||
+      !!raw['ryanpeikou'],
+    group: 'taiyao',
+  },
+  {
+    id: 'toitoi',
+    label: '對對和',
+    han: 2,
+    hanIfOpened: 2,
+    disableFn: ({ raw }) =>
+      !!raw['sanshku-doujun'] ||
+      !!raw['chiitoitsu'] ||
+      !!raw['chantaiyao'] ||
+      !!raw['junchan-taiyao'] ||
+      !!raw['ittsu'] ||
+      !!raw['iipeikou'] ||
+      !!raw['ryanpeikou'],
+    group: 'column',
+  },
+  {
+    id: 'sanshku-doukou',
+    label: '三色同刻',
+    han: 2,
+    hanIfOpened: 2,
+    disableFn: ({ raw }) =>
+      !!raw['sanshku-doujun'] ||
+      !!raw['chiitoitsu'] ||
+      !!raw['ittsu'] ||
+      !!raw['chinitsu'] ||
+      !!raw['iipeikou'] ||
+      !!raw['ryanpeikou'] ||
+      !!raw['honitsu'],
+    group: 'column',
+  },
+  {
+    id: 'sanankou',
+    label: '三暗刻',
+    han: 2,
+    hanIfOpened: 2,
+    disableFn: ({ raw }) =>
+      !!raw['sanshku-doujun'] ||
+      !!raw['chiitoitsu'] ||
+      !!raw['ittsu'] ||
+      !!raw['iipeikou'] ||
+      !!raw['ryanpeikou'],
+    group: 'column',
+  },
+  {
+    id: 'sankantsu',
+    label: '三槓子',
+    han: 2,
+    hanIfOpened: 2,
+    disableFn: ({ raw }) =>
+      !!raw['sanshku-doujun'] ||
+      !!raw['chiitoitsu'] ||
+      !!raw['ittsu'] ||
+      !!raw['iipeikou'] ||
+      !!raw['ryanpeikou'],
+    group: 'column',
   },
   {
     id: 'kokushi-musou',
     label: '國士無雙',
     han: 13,
     hanIfOpened: 0,
+    yakumanCount: 1,
+    disableFn: ({ raw, isRevealed }) =>
+      !!isRevealed ||
+      !!raw['suuankou'] ||
+      !!raw['suuankou-dannki'] ||
+      !!raw['daisangen'] ||
+      !!raw['shousuushii'] ||
+      !!raw['daisuushii'] ||
+      !!raw['tsuuiisou'] ||
+      !!raw['chinroutou'] ||
+      !!raw['suukantsu'] ||
+      !!raw['ryuuiisou'] ||
+      !!raw['chuuren-poutou'] ||
+      !!raw['pure-chuuren-poutou'] ||
+      !!raw['kokushi-musou-jsuan-men'],
+    group: 'kokushi-musou',
   },
   {
-    id: 'suuankou',
-    label: '四暗刻',
+    id: 'kokushi-musou-jsuan-men',
+    label: '國士無雙十三面',
     han: 13,
     hanIfOpened: 0,
+    yakumanCount: 1,
+    disableFn: ({ raw, isRevealed }) =>
+      !!isRevealed ||
+      !!raw['suuankou'] ||
+      !!raw['suuankou-dannki'] ||
+      !!raw['daisangen'] ||
+      !!raw['shousuushii'] ||
+      !!raw['daisuushii'] ||
+      !!raw['tsuuiisou'] ||
+      !!raw['chinroutou'] ||
+      !!raw['suukantsu'] ||
+      !!raw['ryuuiisou'] ||
+      !!raw['chuuren-poutou'] ||
+      !!raw['pure-chuuren-poutou'] ||
+      !!raw['kokushi-musou'],
+    group: 'kokushi-musou',
   },
   {
     id: 'daisangen',
     label: '大三元',
     han: 13,
     hanIfOpened: 13,
+    yakumanCount: 1,
+    disableFn: ({ raw }) =>
+      !!raw['kokushi-musou'] ||
+      !!raw['shousuushii'] ||
+      !!raw['daisuushii'] ||
+      !!raw['chinroutou'] ||
+      !!raw['ryuuiisou'] ||
+      !!raw['chuuren-poutou'] ||
+      !!raw['pure-chuuren-poutou'],
+    group: 'kan',
   },
   {
     id: 'shousuushii',
     label: '小四喜',
     han: 13,
     hanIfOpened: 13,
+    yakumanCount: 1,
+    disableFn: ({ raw }) =>
+      !!raw['kokushi-musou'] ||
+      !!raw['daisangen'] ||
+      !!raw['daisuushii'] ||
+      !!raw['chinroutou'] ||
+      !!raw['ryuuiisou'] ||
+      !!raw['chuuren-poutou'] ||
+      !!raw['pure-chuuren-poutou'],
+    group: 'kan',
   },
   {
     id: 'daisuushii',
     label: '大四喜',
-    han: 13,
-    hanIfOpened: 13,
-  },
-  {
-    id: 'tsuuiisou',
-    label: '字一色',
-    han: 13,
-    hanIfOpened: 13,
+    han: 26,
+    hanIfOpened: 26,
+    yakumanCount: 1,
+    disableFn: ({ raw }) =>
+      !!raw['kokushi-musou'] ||
+      !!raw['daisangen'] ||
+      !!raw['shousuushii'] ||
+      !!raw['chinroutou'] ||
+      !!raw['ryuuiisou'] ||
+      !!raw['chuuren-poutou'] ||
+      !!raw['pure-chuuren-poutou'],
+    group: 'kan',
   },
   {
     id: 'chinroutou',
     label: '清老頭',
     han: 13,
     hanIfOpened: 13,
+    yakumanCount: 1,
+    disableFn: ({ raw }) =>
+      !!raw['kokushi-musou'] ||
+      !!raw['shousuushii'] ||
+      !!raw['daisangen'] ||
+      !!raw['daisuushii'] ||
+      !!raw['ryuuiisou'] ||
+      !!raw['chuuren-poutou'] ||
+      !!raw['pure-chuuren-poutou'],
+    group: 'kan',
   },
   {
     id: 'ryuuiisou',
     label: '綠一色',
     han: 13,
     hanIfOpened: 13,
+    yakumanCount: 1,
+    disableFn: ({ raw }) =>
+      !!raw['kokushi-musou'] ||
+      !!raw['shousuushii'] ||
+      !!raw['daisangen'] ||
+      !!raw['daisuushii'] ||
+      !!raw['chinroutou'] ||
+      !!raw['chuuren-poutou'] ||
+      !!raw['pure-chuuren-poutou'] ||
+      !!raw['tsuuiisou'],
+    group: 'ryuuiisou',
   },
   {
-    id: 'chuuren-poutou',
-    label: '九連寶燈',
+    id: 'tsuuiisou',
+    label: '字一色',
+    han: 13,
+    hanIfOpened: 13,
+    yakumanCount: 1,
+    disableFn: ({ raw }) =>
+      !!raw['kokushi-musou'] ||
+      !!raw['chinroutou'] ||
+      !!raw['ryuuiisou'] ||
+      !!raw['chuuren-poutou'] ||
+      !!raw['pure-chuuren-poutou'],
+    group: 'combo',
+  },
+  {
+    id: 'suuankou',
+    label: '四暗刻',
     han: 13,
     hanIfOpened: 0,
+    yakumanCount: 1,
+    disableFn: ({ isRevealed, raw }) =>
+      !!isRevealed ||
+      !!raw['kokushi-musou'] ||
+      !!raw['chuuren-poutou'] ||
+      !!raw['pure-chuuren-poutou'] ||
+      !!raw['suuankou-dannki'],
+    group: 'combo',
+  },
+  {
+    id: 'suuankou-dannki',
+    label: '四暗刻單騎',
+    han: 13,
+    hanIfOpened: 0,
+    yakumanCount: 1,
+    disableFn: ({ isRevealed, raw }) =>
+      !!isRevealed ||
+      !!raw['kokushi-musou'] ||
+      !!raw['chuuren-poutou'] ||
+      !!raw['pure-chuuren-poutou'] ||
+      !!raw['suuankou'],
+    group: 'combo',
   },
   {
     id: 'suukantsu',
     label: '四槓子',
     han: 13,
     hanIfOpened: 13,
+    yakumanCount: 1,
+    disableFn: ({ raw }) =>
+      !!raw['kokushi-musou'] ||
+      !!raw['chuuren-poutou'] ||
+      !!raw['pure-chuuren-poutou'] ||
+      !!raw['tenhou'] ||
+      !!raw['chiihou'] ||
+      !!raw['ronhou'],
+    group: 'combo',
+  },
+  {
+    id: 'chuuren-poutou',
+    label: '九連寶燈',
+    han: 13,
+    hanIfOpened: 0,
+    yakumanCount: 1,
+    disableFn: ({ isRevealed, raw }) =>
+      !!isRevealed ||
+      !!raw['kokushi-musou'] ||
+      !!raw['daisangen'] ||
+      !!raw['shousuushii'] ||
+      !!raw['daisuushii'] ||
+      !!raw['chinroutou'] ||
+      !!raw['ryuuiisou'] ||
+      !!raw['tsuuiisou'] ||
+      !!raw['suuankou'] ||
+      !!raw['suuankou-dannki'] ||
+      !!raw['suukantsu'] ||
+      !!raw['pure-chuuren-poutou'],
+    group: 'chuuren-poutou',
+  },
+  {
+    id: 'pure-chuuren-poutou',
+    label: '純正九連寶燈',
+    han: 13,
+    hanIfOpened: 0,
+    yakumanCount: 1,
+    disableFn: ({ isRevealed, raw }) =>
+      !!isRevealed ||
+      !!raw['kokushi-musou'] ||
+      !!raw['daisangen'] ||
+      !!raw['shousuushii'] ||
+      !!raw['daisuushii'] ||
+      !!raw['chinroutou'] ||
+      !!raw['ryuuiisou'] ||
+      !!raw['tsuuiisou'] ||
+      !!raw['suuankou'] ||
+      !!raw['suuankou-dannki'] ||
+      !!raw['suukantsu'] ||
+      !!raw['chuuren-poutou'],
+    group: 'chuuren-poutou',
   },
   {
     id: 'tenhou',
     label: '天和',
     han: 13,
     hanIfOpened: 0,
+    yakumanCount: 1,
+    disableFn: ({
+      isRevealed,
+      round,
+      activePlayerIndex,
+      targetPlayerIndex,
+      raw,
+    }) =>
+      !!isRevealed ||
+      !getIsPlayerEast(activePlayerIndex, round) ||
+      targetPlayerIndex !== '-1' ||
+      !!raw['suukantsu'],
+    hiddenIfDisabled: true,
+    group: 'hou',
   },
   {
     id: 'chiihou',
     label: '地和',
     han: 13,
     hanIfOpened: 0,
+    yakumanCount: 1,
+    disableFn: ({
+      isRevealed,
+      round,
+      activePlayerIndex,
+      targetPlayerIndex,
+      raw,
+    }) =>
+      !!isRevealed ||
+      !!getIsPlayerEast(activePlayerIndex, round) ||
+      targetPlayerIndex !== '-1' ||
+      !!raw['suukantsu'],
+    hiddenIfDisabled: true,
+    group: 'hou',
+  },
+  {
+    id: 'ronhou',
+    label: '人和',
+    han: 13,
+    hanIfOpened: 0,
+    yakumanCount: 1,
+    disableFn: ({
+      isRevealed,
+      round,
+      activePlayerIndex,
+      targetPlayerIndex,
+      raw,
+    }) =>
+      !!isRevealed ||
+      !!getIsPlayerEast(activePlayerIndex, round) ||
+      targetPlayerIndex === '-1' ||
+      !!raw['suukantsu'],
+    hiddenIfDisabled: true,
+    group: 'hou',
   },
 ]
 
-const YAKUS_GROUPS_BY_HAN = {
-  1: YAKUS.filter(({ han, hidden }) => han === 1 && !hidden),
-  2: YAKUS.filter(({ han, hidden }) => han === 2 && !hidden),
-  3: YAKUS.filter(({ han, hidden }) => han === 3 && !hidden),
-  6: YAKUS.filter(({ han, hidden }) => han === 6 && !hidden),
-  13: YAKUS.filter(({ han, hidden }) => han === 13 && !hidden),
-} as const
+const NORMAL_YAKUS = YAKUS.filter(
+  ({ yakumanCount, hidden }) => !yakumanCount && !hidden
+)
+const YAKUS_GROUP_KEYS = NORMAL_YAKUS.map((yaku) => yaku.group).filter(
+  (item, index) =>
+    NORMAL_YAKUS.findIndex(({ group }) => item === group) === index
+)
+
+const YAKUMANS = YAKUS.filter(
+  ({ yakumanCount, hidden }) =>
+    typeof yakumanCount !== 'undefined' && yakumanCount > 0 && !hidden
+)
+const YAKUMANS_GROUP_KEYS = YAKUMANS.map((yaku) => yaku.group).filter(
+  (item, index) => YAKUMANS.findIndex(({ group }) => item === group) === index
+)
 
 const DORA_OPTIONS = [
   { label: '0', value: '0' },
@@ -334,7 +866,6 @@ const RED_DORA_OPTIONS = [
 ]
 
 const FU_OPTIONS = [
-  { label: '20符', value: '20' },
   { label: '30符', value: '30' },
   { label: '40符', value: '40' },
   { label: '50符', value: '50' },
@@ -344,27 +875,34 @@ const FU_OPTIONS = [
   { label: '90符', value: '90' },
   { label: '100符', value: '100' },
   { label: '110符', value: '110' },
+  { label: '20符', value: '20' },
   { label: '25符', value: '25' },
 ]
 
 const MJYakuButton = ({
   yaku,
   active,
-  isOpened,
+  isRevealed,
   disabled,
   onClick,
+  hiddenIfDisabled,
 }: {
   yaku: Yaku
   active: boolean
-  isOpened: boolean
+  isRevealed: boolean
+  hiddenIfDisabled?: boolean
 } & ButtonHTMLAttributes<HTMLButtonElement>) => {
+  if (disabled && hiddenIfDisabled) {
+    return <></>
+  }
+
   return (
     <button
       data-id={yaku.id}
-      data-han={isOpened ? yaku.hanIfOpened : yaku.han}
+      data-han={isRevealed ? yaku.hanIfOpened : yaku.han}
       data-active={active ? '1' : '0'}
       disabled={disabled}
-      className="text-xl text-center px-3 border border-neutral-300 text-neutral-800 cursor-pointer hover:opacity-80 data-[han='0']:cursor-not-allowed disabled:opacity-20 disabled:hover:opacity-20 data-[active='1']:enabled:border-teal-800 data-[active='1']:enabled:text-white data-[active='1']:enabled:bg-teal-800"
+      className="text-xl text-center px-3 border border-neutral-300 text-neutral-800 cursor-pointer hover:opacity-80 data-[han='0']:cursor-not-allowed disabled:opacity-20 disabled:hover:opacity-20 data-[active='1']:enabled:border-teal-800 data-[active='1']:enabled:text-white data-[active='1']:enabled:bg-teal-800 disabled:cursor-not-allowed"
       key={yaku.id}
       onClick={onClick}
     >
@@ -376,6 +914,7 @@ const MJYakuButton = ({
 export type MJYakuKeyboardDivProps = {
   round: number
   activePlayerIndex: PlayerIndex
+  targetPlayerIndex: PlayerIndex | '-1'
   onChange?: (result: Required<MJYakuKeyboardResult>) => unknown
   value?: MJYakuKeyboardResult
 }
@@ -383,8 +922,10 @@ export type MJYakuKeyboardDivProps = {
 export type MJYakuKeyboardResult = {
   han: number
   fu: number
-  yakusInText: string[] | null
-  isYakuman: boolean
+  yakumanCount: number
+  yakus:
+    | { id: string; label: string; han: number; yakumanCount: number }[]
+    | null
   raw: Record<string, boolean> | null
   dora: number
   redDora: number
@@ -396,13 +937,14 @@ export type MJYakuKeyboardResult = {
 const MJYakuKeyboardDiv = ({
   round,
   activePlayerIndex,
+  targetPlayerIndex,
   onChange,
   value,
 }: MJYakuKeyboardDivProps) => {
   const [yakuChecks, setYakuChecks] = useState<
     NonNullable<MJYakuKeyboardResult['raw']>
   >({})
-  const [isOpened, toggleOpened] = useToggle(false)
+  const [isRevealed, toggleOpened] = useToggle(false)
   const [isShowYakuman, toggleShowYakuman] = useToggle(false)
 
   const [dora, setDora] = useState('0')
@@ -436,94 +978,151 @@ const MJYakuKeyboardDiv = ({
     setFu('30')
   }, [toggleOpened])
 
+  const yakuFnProps = useMemo<YakuFnProps>(
+    () => ({
+      activePlayerIndex,
+      targetPlayerIndex,
+      round,
+      isRevealed: isRevealed,
+      raw: yakuChecks,
+    }),
+    [activePlayerIndex, isRevealed, round, targetPlayerIndex, yakuChecks]
+  )
+
   const result = useMemo(() => {
-    let finalHan = 0
     let finalFu = parseInt(fu)
     let isFuOverrided = false
-    const yakusInText: string[] = []
+    const finalYakus: {
+      id: string
+      label: string
+      han: number
+      yakumanCount: number
+    }[] = []
 
     const myYakuChecks = { ...yakuChecks }
 
+    if (targetPlayerIndex === '-1' && !isRevealed) {
+      myYakuChecks['menzenchin-tsumohou'] = true
+    }
+
+    if (myYakuChecks['yakuhai-east'] && getIsRoundEast(round)) {
+      myYakuChecks['yakuhai-east'] = false
+      myYakuChecks['yakuhai-double-east'] = true
+    } else if (myYakuChecks['yakuhai-south'] && getIsRoundSouth(round)) {
+      myYakuChecks['yakuhai-south'] = false
+      myYakuChecks['yakuhai-double-south'] = true
+    } else if (myYakuChecks['yakuhai-west'] && getIsRoundWest(round)) {
+      myYakuChecks['yakuhai-west'] = false
+      myYakuChecks['yakuhai-double-west'] = true
+    } else if (myYakuChecks['yakuhai-north'] && getIsRoundNorth(round)) {
+      myYakuChecks['yakuhai-north'] = false
+      myYakuChecks['yakuhai-double-north'] = true
+    }
+
     if (
-      myYakuChecks['yakuhai-match-kazehai'] &&
-      myYakuChecks['yakuhai-self-kazehai'] &&
-      getWindByRound(round) ===
-        getWindByRoundAndPlayerIndex(round, activePlayerIndex)
+      myYakuChecks['yakuhai-haku'] &&
+      myYakuChecks['yakuhai-hatsu'] &&
+      myYakuChecks['yakuhai-chun']
     ) {
-      myYakuChecks['yakuhai-double-kazehai'] = true
-      myYakuChecks['yakuhai-match-kazehai'] = false
-      myYakuChecks['yakuhai-self-kazehai'] = false
+      myYakuChecks['daisangen'] = true
     }
 
-    const yakus = YAKUS.filter(({ id }) => !!myYakuChecks[id])
-    for (const yaku of yakus) {
-      const hanPlus = isOpened ? yaku.hanIfOpened : yaku.han
-      if (hanPlus === 0) {
-        continue
+    const yakus = YAKUS.filter(
+      ({ id, disableFn }) => !!myYakuChecks[id] && !disableFn?.(yakuFnProps)
+    )
+    const yakumans = yakus.filter(
+      ({ yakumanCount }) =>
+        typeof yakumanCount !== 'undefined' && yakumanCount > 0
+    )
+
+    if (yakumans.length > 0) {
+      for (const yakuman of yakumans) {
+        if (yakuman.yakumanCount && yakuman.yakumanCount > 0) {
+          finalYakus.push({
+            id: yakuman.id,
+            label: yakuman.label,
+            han: 0,
+            yakumanCount: yakuman.yakumanCount,
+          })
+        }
+      }
+    } else if (yakus.length > 0) {
+      for (const yaku of yakus) {
+        const hanPlus = isRevealed ? yaku.hanIfOpened : yaku.han
+        if (hanPlus === 0) {
+          continue
+        }
+
+        finalYakus.push({
+          id: yaku.id,
+          label: yaku.label,
+          han: hanPlus,
+          yakumanCount: 0,
+        })
       }
 
-      if (
-        (isShowYakuman && hanPlus < 13) ||
-        (!isShowYakuman && hanPlus >= 13)
-      ) {
-        continue
-      }
-
-      finalHan += hanPlus
-      if (typeof yaku.overrideFu !== 'undefined') {
-        finalFu = yaku.overrideFu
+      if (finalYakus.findIndex(({ id }) => id === 'chiitoitsu') !== -1) {
         isFuOverrided = true
+        finalFu = 25
+      } else if (finalYakus.findIndex(({ id }) => id === 'pinfu') !== -1) {
+        isFuOverrided = true
+        finalFu = targetPlayerIndex === '-1' ? 20 : 30
       }
 
-      if (yaku.id === 'yakuhai-match-kazehai') {
-        yakusInText.push(getWindByRound(round))
-      } else if (yaku.id === 'yakuhai-self-kazehai') {
-        yakusInText.push(getWindByRoundAndPlayerIndex(round, activePlayerIndex))
-      } else if (yaku.id === 'yakuhai-double-kazehai') {
-        yakusInText.push(`雙${getWindByRound(round)}`)
-      } else {
-        yakusInText.push(yaku.label)
+      if (dora !== '0') {
+        finalYakus.push({
+          id: `dora-${dora}`,
+          label: `寶牌${dora}`,
+          han: parseInt(dora),
+          yakumanCount: 0,
+        })
       }
-    }
 
-    if (dora !== '0') {
-      finalHan += parseInt(dora)
-      yakusInText.push(`寶牌${dora}`)
-    }
+      if (redDora !== '0') {
+        finalYakus.push({
+          id: `dora-${redDora}`,
+          label: `赤寶牌${redDora}`,
+          han: parseInt(redDora),
+          yakumanCount: 0,
+        })
+      }
 
-    if (redDora !== '0') {
-      finalHan += parseInt(redDora)
-      yakusInText.push(`赤寶牌${redDora}`)
-    }
-
-    if (innerDora !== '0') {
-      finalHan += parseInt(innerDora)
-      yakusInText.push(`裡寶牌${innerDora}`)
+      if (innerDora !== '0') {
+        finalYakus.push({
+          id: `dora-${innerDora}`,
+          label: `赤寶牌${innerDora}`,
+          han: parseInt(innerDora),
+          yakumanCount: 0,
+        })
+      }
     }
 
     return {
-      yakusInText,
-      han: finalHan,
+      han: finalYakus.reduce((prev, { han }) => prev + han, 0),
       fu: finalFu,
+      yakumanCount: finalYakus.reduce(
+        (prev, { yakumanCount }) => prev + yakumanCount,
+        0
+      ),
+      yakus: finalYakus,
       isFuOverrided,
-      isYakuman: isShowYakuman,
       raw: yakuChecks,
       dora: parseInt(dora),
       redDora: parseInt(redDora),
       innerDora: parseInt(innerDora),
-      isRevealed: isOpened,
+      isRevealed,
       isRiichied: !!yakuChecks['riichi'],
     }
   }, [
-    isOpened,
-    round,
-    activePlayerIndex,
+    fu,
     yakuChecks,
+    targetPlayerIndex,
+    isRevealed,
+    round,
     dora,
     redDora,
     innerDora,
-    fu,
-    isShowYakuman,
+    yakuFnProps,
   ])
 
   useEffect(() => {
@@ -546,9 +1145,9 @@ const MJYakuKeyboardDiv = ({
 
   return (
     <div>
-      <div className="flex justify-between">
+      <div className="flex justify-between mb-2">
         <div>
-          <MJUISwitch checked={isOpened} onChangeChecked={toggleOpened} />{' '}
+          <MJUISwitch checked={isRevealed} onChangeChecked={toggleOpened} />{' '}
           有副露？
         </div>
         <div className="space-x-4">
@@ -569,100 +1168,25 @@ const MJYakuKeyboardDiv = ({
 
       {!isShowYakuman && (
         <div>
-          <table className="data-table">
-            <tbody>
-              <tr>
-                <th className="bg-neutral-100 px-1 border-neutral-100 border-t border-b">
-                  1番
-                </th>
-                <td
-                  className="py-1 pl-2 border-neutral-100 border-t border-b"
-                  colSpan={3}
-                >
-                  <div className="flex flex-wrap gap-2">
-                    {YAKUS_GROUPS_BY_HAN[1].map((yaku) => (
-                      <MJYakuButton
-                        key={yaku.id}
-                        yaku={yaku}
-                        isOpened={isOpened}
-                        active={yakuChecks[yaku.id]}
-                        disabled={isOpened && yaku.hanIfOpened === 0}
-                        onClick={handleClickYaku}
-                      >
-                        {yaku.label}
-                      </MJYakuButton>
-                    ))}
-                  </div>
-                </td>
-              </tr>
-
-              <tr>
-                <th className="bg-neutral-100 px-1 border-neutral-100 border-t border-b">
-                  2番
-                </th>
-                <td
-                  className="py-1 pl-2 border-neutral-100 border-t border-b"
-                  colSpan={3}
-                >
-                  <div className="flex flex-wrap gap-2">
-                    {YAKUS_GROUPS_BY_HAN[2].map((yaku) => (
-                      <MJYakuButton
-                        key={yaku.id}
-                        yaku={yaku}
-                        isOpened={isOpened}
-                        active={yakuChecks[yaku.id]}
-                        disabled={isOpened && yaku.hanIfOpened === 0}
-                        onClick={handleClickYaku}
-                      >
-                        {yaku.label}
-                      </MJYakuButton>
-                    ))}
-                  </div>
-                </td>
-              </tr>
-
-              <tr>
-                <th className="bg-neutral-100 px-1 border-neutral-100 border-t border-b">
-                  3番
-                </th>
-                <td className="py-1 pl-2 border-neutral-100 border-t border-b w-2/3">
-                  <div className="flex flex-wrap gap-2">
-                    {YAKUS_GROUPS_BY_HAN[3].map((yaku) => (
-                      <MJYakuButton
-                        key={yaku.id}
-                        yaku={yaku}
-                        isOpened={isOpened}
-                        active={yakuChecks[yaku.id]}
-                        disabled={isOpened && yaku.hanIfOpened === 0}
-                        onClick={handleClickYaku}
-                      >
-                        {yaku.label}
-                      </MJYakuButton>
-                    ))}
-                  </div>
-                </td>
-                <th className="bg-neutral-100 px-1 border-neutral-100 border-t border-b">
-                  6番
-                </th>
-                <td className="py-1 pl-2 border-neutral-100 border-t border-b w-1/3 ">
-                  <div className="flex flex-wrap gap-2">
-                    {YAKUS_GROUPS_BY_HAN[6].map((yaku) => (
-                      <MJYakuButton
-                        key={yaku.id}
-                        yaku={yaku}
-                        isOpened={isOpened}
-                        active={yakuChecks[yaku.id]}
-                        disabled={isOpened && yaku.hanIfOpened === 0}
-                        onClick={handleClickYaku}
-                      >
-                        {yaku.label}
-                      </MJYakuButton>
-                    ))}
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <div className="flex flex-wrap gap-y-4 gap-x-8">
+            {YAKUS_GROUP_KEYS.map((groupKey) => (
+              <div className="flex flex-wrap gap-2" key={groupKey}>
+                {YAKUS.filter(({ group }) => group === groupKey).map((yaku) => (
+                  <MJYakuButton
+                    key={yaku.id}
+                    yaku={yaku}
+                    isRevealed={isRevealed}
+                    active={yakuChecks[yaku.id]}
+                    disabled={yaku.disableFn?.(yakuFnProps)}
+                    hiddenIfDisabled={yaku.hiddenIfDisabled}
+                    onClick={handleClickYaku}
+                  >
+                    {yaku.label}
+                  </MJYakuButton>
+                ))}
+              </div>
+            ))}
+          </div>
 
           <table className="w-full mt-2">
             <tbody>
@@ -680,6 +1204,7 @@ const MJYakuKeyboardDiv = ({
                     options={DORA_OPTIONS}
                   />
                 </td>
+                <td className="w-2"></td>
                 <th className="w-20 bg-red-400 px-1 border-neutral-100 border-t border-b">
                   赤寶牌
                 </th>
@@ -693,6 +1218,7 @@ const MJYakuKeyboardDiv = ({
                     options={RED_DORA_OPTIONS}
                   />
                 </td>
+                <td className="w-2"></td>
                 <th className="w-20 bg-blue-400 px-1 border-neutral-100 border-t border-b">
                   裡寶牌
                 </th>
@@ -706,13 +1232,11 @@ const MJYakuKeyboardDiv = ({
                     options={DORA_OPTIONS}
                   />
                 </td>
+                <td className="w-2"></td>
                 <th className="w-20 bg-neutral-400 px-1 border-neutral-100 border-t border-b">
                   符數
                 </th>
-                <td
-                  className="w-36 py-1 px-2 bg-neutral-200 data-[active='1']:text-red-600"
-                  data-active={dora !== '0' ? '1' : '0'}
-                >
+                <td className="w-36 py-1 px-2 bg-neutral-200">
                   <MJUISelectClicker
                     value={result.isFuOverrided ? result.fu.toString() : fu}
                     onChange={setFu}
@@ -727,35 +1251,24 @@ const MJYakuKeyboardDiv = ({
       )}
 
       {isShowYakuman && (
-        <div>
-          <table className="data-table">
-            <tbody>
-              <tr>
-                <th className="bg-neutral-100 px-1 border-neutral-100 border-t border-b">
-                  役滿
-                </th>
-                <td
-                  className="py-1 pl-2 border-neutral-100 border-t border-b"
-                  colSpan={3}
+        <div className="flex flex-wrap gap-y-4 gap-x-8">
+          {YAKUMANS_GROUP_KEYS.map((groupKey) => (
+            <div className="flex flex-wrap gap-2" key={groupKey}>
+              {YAKUS.filter(({ group }) => group === groupKey).map((yaku) => (
+                <MJYakuButton
+                  key={yaku.id}
+                  yaku={yaku}
+                  isRevealed={isRevealed}
+                  active={yakuChecks[yaku.id]}
+                  disabled={yaku.disableFn?.(yakuFnProps)}
+                  hiddenIfDisabled={yaku.hiddenIfDisabled}
+                  onClick={handleClickYaku}
                 >
-                  <div className="flex flex-wrap gap-2">
-                    {YAKUS_GROUPS_BY_HAN[13].map((yaku) => (
-                      <MJYakuButton
-                        key={yaku.id}
-                        yaku={yaku}
-                        isOpened={isOpened}
-                        active={yakuChecks[yaku.id]}
-                        disabled={isOpened && yaku.hanIfOpened === 0}
-                        onClick={handleClickYaku}
-                      >
-                        {yaku.label}
-                      </MJYakuButton>
-                    ))}
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                  {yaku.label}
+                </MJYakuButton>
+              ))}
+            </div>
+          ))}
         </div>
       )}
     </div>
@@ -780,20 +1293,22 @@ export const MJYakuKeyboardResultDiv = ({
           <tr>
             <th className="w-16 bg-teal-400 py-2 px-1">結算</th>
             <td className="flex flex-wrap gap-2 p-2 align-middle">
-              {result.yakusInText?.map((text) => (
-                <span key={text}>{text}</span>
+              {result.yakus?.map(({ label }) => (
+                <span key={label}>{label}</span>
               ))}
             </td>
             <td className="w-32 bg-teal-400 text-center">
               <MJHanFuTextSpan
-                han={Math.min(result.isYakuman ? 13 : 12, result.han)}
+                han={result.han}
                 fu={result.fu}
+                yakumanCount={result.yakumanCount}
                 isManganRoundUp={matchSetting.isManganRoundUp === '1'}
               />
               <MJHanFuTextSpan
                 className="text-xs text-neutral-600"
                 han={result.han}
                 fu={result.fu}
+                yakumanCount={result.yakumanCount}
                 isManganRoundUp={matchSetting.isManganRoundUp === '1'}
                 raw
               />

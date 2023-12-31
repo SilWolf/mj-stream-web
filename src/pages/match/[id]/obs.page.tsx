@@ -3,7 +3,7 @@ import MJMatchCounterSpan from '@/components/MJMatchCounterSpan'
 import MJTileDiv from '@/components/MJTileDiv'
 import useMatch from '@/hooks/useMatch'
 
-import { PlayerIndex } from '@/models'
+import { PlayerIndex, RoundResultTypeEnum } from '@/models'
 import { getIsPlayerEast } from '@/helpers/mahjong.helper'
 import MJPlayerCardDiv from '@/components/MJPlayerCardDiv'
 import OBSInstructionDiv from './components/OBSInstructionDiv'
@@ -88,7 +88,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
         }
         style={{
           background:
-            'linear-gradient(transparent, transparent 73%, rgba(0, 0, 0, 0.25))',
+            'linear-gradient(transparent, transparent 73%, rgba(0, 0, 0, 0.4))',
           opacity: currentRiichiPlayerIndex !== null ? 0 : 1,
         }}
       >
@@ -158,9 +158,11 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
         </div>
 
         <div
-          className="fixed bottom-0 left-0 right-0 px-10 pb-6 grid grid-cols-4 items-end gap-x-8 text-white transition-opacity animate-[fadeInFromBottom_1s_ease-in-out]"
+          className="fixed bottom-0 left-0 right-0 px-10 pb-6 grid grid-cols-4 items-end gap-x-8 text-white animate-[fadeInFromBottom_1s_ease-in-out]"
           style={{
-            opacity: match.activeResultDetail ? 0 : 'inherit',
+            opacity: match.activeResultDetail ? 0 : 1,
+            bottom: match.activeResultDetail ? '-150px' : 0,
+            transition: 'opacity 0.5s, bottom 0.5s',
           }}
         >
           {players.map((player) => (
@@ -170,8 +172,17 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
                 score={player.currentStatus.afterScore}
                 scoreChanges={player.currentStatus.scoreChanges}
                 isEast={player.currentStatus.isEast}
-                isRiichi={player.currentStatus.isRiichi}
-                waitingTiles={player.currentStatus.waitingTiles}
+                isRiichi={
+                  player.currentStatus.isRiichi &&
+                  matchCurrentRound.resultType === RoundResultTypeEnum.Unknown
+                }
+                waitingTiles={
+                  matchCurrentRound.resultType === RoundResultTypeEnum.Unknown
+                    ? player.currentStatus.waitingTiles
+                    : []
+                }
+                isYellowCarded={player.currentStatus.isYellowCarded}
+                isRedCarded={player.currentStatus.isRedCarded}
               />
               <img src={player.largeTeamPicUrl as string} className="w-0 h-0" />
             </div>
@@ -195,23 +206,21 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
             <div className="col-span-3 bg-black bg-opacity-50 py-6 px-8 text-[0.5em] flex items-stretch gap-x-4">
               <div
                 className={`flex-1 flex flex-wrap gap-x-[0.75em] ${
-                  match.activeResultDetail.isYakuman
+                  match.activeResultDetail.yakumanCount > 0
                     ? 'self-center justify-center'
                     : ''
                 }`}
               >
-                {match.activeResultDetail.yakusInText.map((text) => (
-                  <span key={text}>{text}</span>
+                {match.activeResultDetail.yakus.map(({ label }) => (
+                  <span key={label}>{label}</span>
                 ))}
               </div>
               <div className="shrink-0 w-px bg-neutral-200"></div>
               <div className="shrink-0 min-w-[3em] self-center text-green-400 text-[1.4em] text-center">
                 <MJHanFuTextSpecialSpan
-                  han={Math.min(
-                    match.activeResultDetail.isYakuman ? 13 : 12,
-                    match.activeResultDetail.han
-                  )}
+                  han={match.activeResultDetail.han}
                   fu={match.activeResultDetail.fu}
+                  yakumanCount={match.activeResultDetail.yakumanCount}
                 />
               </div>
             </div>

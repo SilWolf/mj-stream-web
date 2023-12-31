@@ -78,12 +78,12 @@ const ControlNewMatch = ({ dbMatch }: Props) => {
           detail: {
             han: 1,
             fu: 30,
-            yakusInText: [],
-            isYakuman: false,
-            raw: {},
+            yakumanCount: 0,
             dora: 0,
             redDora: 0,
             innerDora: 0,
+            yakus: [],
+            raw: {},
             isRevealed: false,
             isRiichied: false,
           },
@@ -97,12 +97,12 @@ const ControlNewMatch = ({ dbMatch }: Props) => {
           detail: {
             han: 1,
             fu: 30,
-            yakusInText: [],
-            isYakuman: false,
-            raw: {},
+            yakumanCount: 0,
             dora: 0,
             redDora: 0,
             innerDora: 0,
+            yakus: [],
+            raw: {},
             isRevealed: false,
             isRiichied: false,
           },
@@ -116,12 +116,12 @@ const ControlNewMatch = ({ dbMatch }: Props) => {
           detail: {
             han: 1,
             fu: 30,
-            yakusInText: [],
-            isYakuman: false,
-            raw: {},
+            yakumanCount: 0,
             dora: 0,
             redDora: 0,
             innerDora: 0,
+            yakus: [],
+            raw: {},
             isRevealed: false,
             isRiichied: false,
           },
@@ -135,12 +135,12 @@ const ControlNewMatch = ({ dbMatch }: Props) => {
           detail: {
             han: 1,
             fu: 30,
-            yakusInText: [],
-            isYakuman: false,
-            raw: {},
+            yakumanCount: 0,
             dora: 0,
             redDora: 0,
             innerDora: 0,
+            yakus: [],
+            raw: {},
             isRevealed: false,
             isRiichied: false,
           },
@@ -189,7 +189,7 @@ const ControlNewMatch = ({ dbMatch }: Props) => {
         <div className="grid grid-cols-10 gap-x-2">
           <div className="col-span-4 col-start-4">
             <div className="text-[48px]">
-              <DBTeamPlayerDiv teamPlayer={dbMatch.playerSouth} />
+              <DBTeamPlayerDiv teamPlayer={dbMatch.playerWest} />
             </div>
             <p className="text-center text-4xl">西</p>
           </div>

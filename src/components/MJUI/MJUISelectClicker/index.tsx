@@ -36,9 +36,9 @@ const MJUISelectClicker = ({ options, value, onChange, disabled }: Props) => {
     <div className="flex items-center">
       <div className="shrink-0">
         <button
-          className="w-4 h-4 text-center text-xs"
+          className="w-4 h-4 text-center text-xs disabled:text-transparent"
           onClick={handleClickMinus}
-          disabled={disabled}
+          disabled={disabled || index === 0}
         >
           <i className="bi bi-dash-circle"></i>
         </button>
@@ -46,9 +46,9 @@ const MJUISelectClicker = ({ options, value, onChange, disabled }: Props) => {
       <div className="flex-1 text-center text-2xl">{myOption.label}</div>
       <div className="shrink-0">
         <button
-          className="w-4 h-4 text-center text-xs"
+          className="w-4 h-4 text-center text-xs disabled:text-transparent"
           onClick={handleClickPlus}
-          disabled={disabled}
+          disabled={disabled || index === options.length - 1}
         >
           <i className="bi bi-plus-circle"></i>
         </button>

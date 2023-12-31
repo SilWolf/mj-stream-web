@@ -3,13 +3,31 @@ import React, { useMemo } from 'react'
 type Props = React.HTMLAttributes<HTMLDivElement> & {
   han: number
   fu: number | undefined
+  yakumanCount: number | undefined
 }
 
-export default function MJHanFuTextSpecialSpan({ han, fu, ...props }: Props) {
+export default function MJHanFuTextSpecialSpan({
+  han,
+  fu,
+  yakumanCount,
+  ...props
+}: Props) {
   const specialNameDisplay = useMemo(() => {
-    if (han >= 13) {
-      return '役滿'
-    } else if (han >= 11) {
+    if (yakumanCount && yakumanCount > 0) {
+      if (yakumanCount === 1) {
+        return '役滿'
+      } else if (yakumanCount === 2) {
+        return '兩倍役滿'
+      } else if (yakumanCount === 3) {
+        return '三倍役滿'
+      } else if (yakumanCount === 4) {
+        return '四倍役滿'
+      } else {
+        return `${yakumanCount}倍役滿`
+      }
+    }
+
+    if (han >= 11) {
       return '三倍滿'
     } else if (han >= 8) {
       return '倍滿'
@@ -26,7 +44,7 @@ export default function MJHanFuTextSpecialSpan({ han, fu, ...props }: Props) {
     }
 
     return undefined
-  }, [han, fu])
+  }, [yakumanCount, han, fu])
 
   if (specialNameDisplay) {
     return <div {...props}>{specialNameDisplay}</div>

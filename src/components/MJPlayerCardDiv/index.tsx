@@ -11,6 +11,8 @@ type Props = HTMLAttributes<HTMLDivElement> & {
   scoreChanges?: number[]
   isEast?: boolean
   isRiichi?: boolean
+  isYellowCarded?: boolean
+  isRedCarded?: boolean
   animated?: boolean
   onAnimationEnd?: () => void
   waitingTiles?: string[]
@@ -24,6 +26,8 @@ export default function MJPlayerCardDiv({
   scoreChanges = [],
   isEast,
   isRiichi,
+  isYellowCarded,
+  isRedCarded,
   waitingTiles,
   onClickWaitingTiles,
   className,
@@ -60,9 +64,23 @@ export default function MJPlayerCardDiv({
 
   return (
     <div
-      className="min-w-[5.35em] mx-auto [&_.hide-if-changing]:transition-opacity [&_.hide-if-changing]:data-[score-changing='1']:opacity-0"
+      className="relative min-w-[5.35em] mx-auto [&_.hide-if-changing]:transition-opacity [&_.hide-if-changing]:data-[score-changing='1']:opacity-0 overflow-visible"
       data-score-changing={isScoreChanging ? '1' : '0'}
     >
+      <div className="absolute top-[0.05em] bottom-[0.15em] -left-[0.1em] -right-[0.1em] rounded-[0.1em] overflow-hidden -z-50">
+        {isYellowCarded && (
+          <div className="absolute top-0 left-0 w-[200%] aspect-square animate-[yellowPenaltyAni_8s_ease-in-out_1]"></div>
+        )}
+        {isRedCarded && (
+          <div className="absolute top-0 left-0 w-[200%] aspect-square animate-[redPenaltyAni_8s_ease-in-out_1]"></div>
+        )}
+      </div>
+      {isYellowCarded && (
+        <div className="absolute -top-[0.4em] left-0 h-[0.5em] w-[0.37em] bg-[#ffe100] rounded-[0.05em]"></div>
+      )}
+      {isRedCarded && (
+        <div className="absolute -top-[0.4em] left-[0.45em] h-[0.5em] w-[0.37em] bg-[#ff1900] rounded-[0.05em]"></div>
+      )}
       <div className="flex items-end gap-x-[0.1em]">
         <div className="shrink-0 w-[1.75em] h-full relative -bottom-[0.085em] -left-[0.085em]">
           <div

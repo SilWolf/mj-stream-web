@@ -99,14 +99,16 @@ const MatchStatPage = ({ params: { matchId } }: Props) => {
                   />
                 </td>
                 <td className="text-center py-1">
-                  <p>{matchRound.resultDetail!.yakusInText.join(' ')}</p>
+                  <p>
+                    {matchRound
+                      .resultDetail!.yakus.map(({ label }) => label)
+                      .join(' ')}
+                  </p>
                   <p>
                     <MJHanFuTextSpan
-                      han={Math.min(
-                        matchRound.resultDetail!.isYakuman ? 13 : 12,
-                        matchRound.resultDetail!.han
-                      )}
+                      han={matchRound.resultDetail!.han}
                       fu={matchRound.resultDetail!.fu}
+                      yakumanCount={matchRound.resultDetail!.yakumanCount}
                       isManganRoundUp={match.setting.isManganRoundUp === '1'}
                     />
                   </p>

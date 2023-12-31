@@ -13,6 +13,8 @@ export type PlayersViewAction =
   | 'ron-before'
   | 'ron-after'
   | 'ron-opposite'
+  | 'yellow-card'
+  | 'red-card'
 
 export type PlayersViewProps = {
   players: Record<PlayerIndex, Player>

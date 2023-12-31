@@ -79,6 +79,12 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                   }
                   isEast={getIsPlayerEast(index, matchCurrentRound.roundCount)}
                   isRiichi={matchCurrentRound.playerResults[index].isRiichi}
+                  isYellowCarded={
+                    matchCurrentRound.playerResults[index].isYellowCarded
+                  }
+                  isRedCarded={
+                    matchCurrentRound.playerResults[index].isRedCarded
+                  }
                 />
               </div>
             </div>

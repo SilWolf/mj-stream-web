@@ -2,7 +2,12 @@ import { PlayerIndex } from '@/models'
 import { PlayersViewAction, PlayersViewProps } from '..'
 import React, { useCallback } from 'react'
 import MJTileDiv from '@/components/MJTileDiv'
-import { getIsPlayerEast } from '@/helpers/mahjong.helper'
+import {
+  getAfterOfPlayerIndex,
+  getBeforeOfPlayerIndex,
+  getIsPlayerEast,
+  getOppositeOfPlayerIndex,
+} from '@/helpers/mahjong.helper'
 
 const PlayersListView = ({
   players,
@@ -36,9 +41,45 @@ const PlayersListView = ({
           <tbody>
             <tr>
               <td
-                className="p-1 text-white w-32"
+                className="p-1 text-white w-32 relative"
                 style={{ background: players[index].color }}
               >
+                <button
+                  className="absolute text-gray-900 text-xs px-1 rounded"
+                  style={{
+                    backgroundColor: '#ffe100',
+                    width: '2rem',
+                    height: '2.5rem',
+                    top: '0rem',
+                    left: '-2.5rem',
+                    opacity: currentRound.playerResults[index].isYellowCarded
+                      ? 1
+                      : 0.35,
+                  }}
+                  data-player-index={index}
+                  data-action="yellow-card"
+                  onClick={handleAction}
+                >
+                  黃牌
+                </button>
+                <button
+                  className="absolute text-gray-900 text-xs px-1 rounded"
+                  style={{
+                    backgroundColor: '#ff1900',
+                    width: '2rem',
+                    height: '2.5rem',
+                    top: '2.7rem',
+                    left: '-2.5rem',
+                    opacity: currentRound.playerResults[index].isRedCarded
+                      ? 1
+                      : 0.35,
+                  }}
+                  data-player-index={index}
+                  data-action="red-card"
+                  onClick={handleAction}
+                >
+                  紅牌
+                </button>
                 <div className="flex gap-x-1 items-center w-32">
                   <img
                     className="shrink-0 w-8 h-8 inline-block"
@@ -55,7 +96,7 @@ const PlayersListView = ({
                       {players[index].title}
                     </p>
                     <p className="whitespace-nowrap overflow-ellipsis">
-                      {players[index].name}
+                      {players[index].nickname || players[index].name}
                     </p>
                   </div>
                 </div>
@@ -102,7 +143,8 @@ const PlayersListView = ({
                     data-action="ron-before"
                     onClick={handleAction}
                   >
-                    和上家
+                    和
+                    {players[getBeforeOfPlayerIndex(index)].nickname || '上家'}
                   </button>
                 </div>
                 <div className="space-x-1">
@@ -124,7 +166,9 @@ const PlayersListView = ({
                     data-action="ron-opposite"
                     onClick={handleAction}
                   >
-                    和對家
+                    和
+                    {players[getOppositeOfPlayerIndex(index)].nickname ||
+                      '對家'}
                   </button>
                 </div>
                 <div className="space-x-1">
@@ -142,7 +186,7 @@ const PlayersListView = ({
                     data-action="ron-after"
                     onClick={handleAction}
                   >
-                    和下家
+                    和{players[getAfterOfPlayerIndex(index)].nickname || '下家'}
                   </button>
                 </div>
               </td>
@@ -163,8 +207,8 @@ const PlayersListView = ({
                 >
                   <span className="mr-2 text-xl">役</span>
                   <div className="inline-block space-x-1">
-                    {currentRound.playerResults[index].detail.yakusInText?.map(
-                      (yakuText) => <span key={yakuText}>{yakuText}</span>
+                    {currentRound.playerResults[index].detail.yakus?.map(
+                      ({ label }) => <span key={label}>{label}</span>
                     )}
                   </div>
                 </button>
