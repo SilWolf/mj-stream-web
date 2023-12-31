@@ -1,6 +1,10 @@
 import MJAmountSpan from '@/components/MJAmountSpan'
 import React, { HTMLAttributes, useEffect, useMemo, useState } from 'react'
-import { getLightColorOfColor } from '@/utils/string.util'
+import {
+  getLightColorOfColor,
+  renderPoint,
+  renderRanking,
+} from '@/utils/string.util'
 import { Player, PlayerIndex } from '@/models'
 import MJTileDiv from '../MJTileDiv'
 
@@ -9,6 +13,8 @@ type Props = HTMLAttributes<HTMLDivElement> & {
   playerIndex?: PlayerIndex
   score: number
   scoreChanges?: number[]
+  point?: number
+  ranking?: number
   isEast?: boolean
   isRiichi?: boolean
   isYellowCarded?: boolean
@@ -17,6 +23,7 @@ type Props = HTMLAttributes<HTMLDivElement> & {
   onAnimationEnd?: () => void
   waitingTiles?: string[]
   onClickWaitingTiles?: (e: React.MouseEvent) => unknown
+  showPointAndRanking?: boolean
 }
 
 export default function MJPlayerCardDiv({
@@ -24,12 +31,15 @@ export default function MJPlayerCardDiv({
   playerIndex,
   score,
   scoreChanges = [],
+  point,
+  ranking,
   isEast,
   isRiichi,
   isYellowCarded,
   isRedCarded,
   waitingTiles,
   onClickWaitingTiles,
+  showPointAndRanking,
   className,
   ...props
 }: Props) {
@@ -181,9 +191,31 @@ export default function MJPlayerCardDiv({
               </div>
             )}
 
-            <div className="mt-[0.12em] mb-[0.03em]">
-              <p className="text-[0.5625em] flex-1 leading-none text-white font-numeric">
+            <div className="relative mt-[0.12em] mb-[0.03em]">
+              <p
+                className="relative text-[0.5625em] flex-1 leading-none text-white font-numeric"
+                style={{
+                  transition: 'opacity 1s, bottom 1s',
+                  opacity: showPointAndRanking ? 0 : 1,
+                  bottom: showPointAndRanking ? '1em' : 0,
+                }}
+              >
                 <MJAmountSpan animated value={storedScore} />
+              </p>
+              <p
+                className="absolute left-0 right-[0.25em] text-[0.5625em] flex-1 leading-none text-white font-numeric"
+                style={{
+                  transition: 'opacity 1s, bottom 1s',
+                  opacity: showPointAndRanking ? 1 : 0,
+                  bottom: showPointAndRanking ? 0 : '-1em',
+                }}
+              >
+                {renderPoint(point)}
+                <span className="text-[0.8em]">pt</span>
+
+                <span className="absolute right-0 bottom-0 text-[0.75em]">
+                  {renderRanking(ranking)}
+                </span>
               </p>
             </div>
           </div>

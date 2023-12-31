@@ -22,12 +22,43 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
       return []
     }
 
+    const rankings = [
+      { ranking: 1, point: 50.0 },
+      { ranking: 2, point: 10.0 },
+      { ranking: 3, point: -10.0 },
+      { ranking: 4, point: -30.0 },
+    ]
+
+    const playersRanking = Object.entries(matchCurrentRound.playerResults)
+      .map(([key, value]) => ({
+        playerIndex: key,
+        score: value.afterScore,
+      }))
+      .sort((a, b) => b.score - a.score)
+      .map((value, i) => ({
+        playerIndex: value.playerIndex,
+        ...rankings[i],
+        point: (value.score - 30000) / 1000.0 + rankings[i].point,
+      }))
+      .reduce(
+        (prev, curr) => {
+          prev[curr.playerIndex] = {
+            point: curr.point,
+            ranking: curr.ranking,
+          }
+
+          return prev
+        },
+        {} as Record<string, { point: number; ranking: number }>
+      )
+
     return (['0', '1', '2', '3'] as PlayerIndex[]).map((index) => ({
       ...match.players[index],
       color: match.players[index].color,
       currentStatus: {
         ...matchCurrentRound.playerResults[index],
         isEast: getIsPlayerEast(index, matchCurrentRound.roundCount),
+        ...playersRanking[index],
       },
     }))
   }, [match, matchCurrentRound])
@@ -183,6 +214,9 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
                 }
                 isYellowCarded={player.currentStatus.isYellowCarded}
                 isRedCarded={player.currentStatus.isRedCarded}
+                ranking={player.currentStatus.ranking}
+                point={player.currentStatus.point}
+                showPointAndRanking={!!match.showPoints}
               />
               <img src={player.largeTeamPicUrl as string} className="w-0 h-0" />
             </div>

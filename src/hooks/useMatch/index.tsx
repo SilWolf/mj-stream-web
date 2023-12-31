@@ -74,6 +74,13 @@ const useMatch = (matchId: string) => {
     [updateMatch]
   )
 
+  const setMatchPointDisplay = useCallback(
+    (newShowPoints: Match['showPoints'] | null) => {
+      updateMatch({ showPoints: newShowPoints })
+    },
+    [updateMatch]
+  )
+
   const setMatchRoundHasBroadcastedToTrue = useCallback(
     (matchRoundId: string) => {
       updateMatchRounds({
@@ -92,6 +99,7 @@ const useMatch = (matchId: string) => {
     matchCurrentRound,
     matchCurrentRoundDoras,
     setMatchName,
+    setMatchPointDisplay,
     setMatchActiveResultDetail,
     setMatchRoundHasBroadcastedToTrue,
     setCurrentRoundDoras,

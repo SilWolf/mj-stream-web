@@ -108,3 +108,27 @@ export const getYakumanMaxLabel = (value: '13' | '26' | '39' | '130') => {
 
   return '(未知)'
 }
+
+export const renderPoint = (value: number | undefined | null) => {
+  if (typeof value === 'undefined' || value === null) {
+    return '-'
+  }
+
+  if (value >= 0) {
+    return `+${value.toFixed(1)}`
+  }
+
+  return `▲${Math.abs(value).toFixed(1)}`
+}
+
+export const renderRanking = (i: number | undefined) => {
+  if (i === 1) {
+    return '1st'
+  } else if (i === 2) {
+    return '2nd'
+  } else if (i === 3) {
+    return '3rd'
+  }
+
+  return `${i}th`
+}

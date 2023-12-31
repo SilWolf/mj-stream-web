@@ -4,7 +4,7 @@ export type MJUIDialogV2Props = {
   open?: boolean
   title?: React.ReactNode
   children: React.ReactNode
-  onClose: () => void
+  onClose?: () => void
   hideCloseButton?: boolean
 }
 

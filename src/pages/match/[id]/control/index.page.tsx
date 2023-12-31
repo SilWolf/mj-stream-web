@@ -101,6 +101,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
     pushMatchRound,
     setCurrentRoundDoras,
     setMatchName,
+    setMatchPointDisplay,
     setMatchActiveResultDetail,
     setMatchRoundHasBroadcastedToTrue,
   } = useMatch(matchId)
@@ -330,6 +331,13 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                   },
                 },
               })
+
+              if (!playerResult.isRiichi) {
+                setActiveAnimationMessage('立直動畫')
+                setTimeout(() => {
+                  setActiveAnimationMessage(null)
+                }, 2000)
+              }
             },
           })
 
@@ -608,6 +616,11 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
             : NextRoundTypeEnum.NextRound,
         })
         toggleRonDialog(false)
+
+        setActiveAnimationMessage('分數變動中…')
+        setTimeout(() => {
+          setActiveAnimationMessage(null)
+        }, 4000)
       } catch (e) {
         console.error(e)
       }
@@ -640,6 +653,11 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
             : NextRoundTypeEnum.Extended,
         })
         toggleExhaustedDialog(false)
+
+        setActiveAnimationMessage('分數變動中…')
+        setTimeout(() => {
+          setActiveAnimationMessage(null)
+        }, 4000)
       } catch (e) {
         console.error(e)
       }
@@ -675,6 +693,11 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         }
 
         pushMatchRound(newMatchRound)
+
+        setActiveAnimationMessage('分數變動中…')
+        setTimeout(() => {
+          setActiveAnimationMessage(null)
+        }, 4000)
 
         toggleHotfixDialog(false)
       } catch (e) {
@@ -881,9 +904,11 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
 
       setMatchActiveResultDetail(newResultDetail)
       setMatchRoundHasBroadcastedToTrue(matchRoundId)
+      setActiveAnimationMessage('播放和牌中…')
 
       setTimeout(() => {
         setMatchActiveResultDetail(null)
+        setActiveAnimationMessage(null)
       }, 20000)
     },
     [matchRounds, setMatchActiveResultDetail, setMatchRoundHasBroadcastedToTrue]
@@ -892,6 +917,14 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
   const handleClickClearActiveResult = useCallback(() => {
     setMatchActiveResultDetail(null)
   }, [setMatchActiveResultDetail])
+
+  const handleClickDisplayPoint = useCallback(() => {
+    setMatchPointDisplay(true)
+  }, [setMatchPointDisplay])
+
+  const handleClickDisplayScore = useCallback(() => {
+    setMatchPointDisplay(false)
+  }, [setMatchPointDisplay])
 
   useEffect(() => {
     if (matchCurrentRoundDoras.length === 0) {
@@ -909,7 +942,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
 
   return (
     <div>
-      <div className="container mx-auto my-8 px-8 space-y-24">
+      <div className="container mx-auto my-8 px-8 space-y-24 pb-32">
         <div className="space-y-6">
           <div className="flex flex-row items-center gap-x-4 text-white">
             <div
@@ -1217,15 +1250,9 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                   </td>
                   <td className="text-right py-1 px-2">
                     <MJUIButton
-                      color={
-                        matchRound.hasBroadcasted ? 'secondary' : 'success'
-                      }
+                      color={matchRound.hasBroadcasted ? 'secondary' : 'danger'}
                       type="button"
-                      className={
-                        matchRound.hasBroadcasted
-                          ? 'opacity-50'
-                          : 'animate-pulse'
-                      }
+                      className={matchRound.hasBroadcasted ? 'opacity-50' : ''}
                       onClick={handleClickBroadcastRonDetail}
                       data-match-round-id={matchRound.id}
                     >
@@ -1253,7 +1280,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
             className="w-full table-auto"
           />
 
-          <div>
+          {/* <div>
             <MJUIButton
               color="secondary"
               type="button"
@@ -1261,7 +1288,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
             >
               手動調整分數
             </MJUIButton>
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -1313,27 +1340,18 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         }
       />
 
-      <MJUIDialogV2 open={!!activeAnimationMessage} onClose={() => {}}>
-        <div className="space-y-6 text-center">
-          <p className="text-6xl text-red-600 animate-bounce">
-            <i className="bi bi-camera-reels"></i>
-          </p>
-          <p>{activeAnimationMessage}</p>
-        </div>
-      </MJUIDialogV2>
-
       <MJUIDialogV2
+        hideCloseButton
         open={
           matchCurrentRound.nextRoundType !== NextRoundTypeEnum.Unknown &&
           matchCurrentRound.nextRoundType !== NextRoundTypeEnum.End
         }
-        onClose={() => {}}
       >
         <div className="space-y-6 text-center">
           <p>
             當準備好時，點擊按鈕進入下一局。
             <br />
-            如果發現分數有誤需要修改，請在下一局開始後，點擊最下方的「手動調整分數」。
+            如果發現分數有誤需要修改，請在下一局開始後，點擊頁面最下方的「手動調整分數」。
           </p>
 
           <div>
@@ -1393,7 +1411,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         onClose={() => toggleHotfixDialog(false)}
         {...ronDialogProps}
       />
-
+      {/* 
       {unboardcastedMatchRounds.length > 0 && (
         <div className="fixed bottom-0 left-0 right-0 px-4 pb-4">
           <div className="bg-red-300 border-red-600 rounded-lg shadow-lg border-2 p-4">
@@ -1476,7 +1494,53 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
             </table>
           </div>
         </div>
-      )}
+      )} */}
+
+      <div className="fixed bottom-0 left-0 right-0 pl-6 pr-6 pb-6 z-50 flex justify-between items-end bg-gradient-to-b from-transparent to-[#00000080]">
+        <div className="text-left">
+          <button
+            onClick={handleClickHotfix}
+            className="relative rounded-full py-2 px-4 shadow shadow-neutral-700 text-center bg-neutral-200 border border-neutral-300 leading-6 text-neutral-600"
+          >
+            <i className="bi bi-pencil"></i> 手動調整分數
+          </button>
+        </div>
+
+        <div className="flex gap-x-6 items-end">
+          {!match.showPoints && (
+            <button
+              onClick={handleClickDisplayPoint}
+              className="relative rounded-full py-2 px-4 shadow shadow-neutral-700 text-center bg-neutral-200 border border-neutral-300 leading-6 text-neutral-600"
+            >
+              <i className="bi bi-list-ol"></i> 切換播放馬點＆名次
+            </button>
+          )}
+          {match.showPoints && (
+            <button
+              onClick={handleClickDisplayScore}
+              className="relative rounded-full py-2 px-4 shadow shadow-neutral-700 text-center bg-green-300 border border-green-300 leading-6 text-green-800"
+            >
+              <i className="bi bi-list-ol"></i> 切換播放馬點＆名次
+            </button>
+          )}
+          <button className="relative rounded-full p-5 shadow shadow-neutral-700 text-center bg-neutral-200 border border-neutral-300 text-4xl leading-6 text-neutral-600">
+            {activeAnimationMessage ? (
+              <span>
+                <i className="bi bi-hourglass-split"></i>{' '}
+                {activeAnimationMessage}
+              </span>
+            ) : (
+              <i className="bi bi-camera-reels"></i>
+            )}
+
+            {unboardcastedMatchRounds.length > 0 && (
+              <div className="absolute h-6 w-6 -top-1 -left-1 shadow shadow-neutral-700 bg-red-600 text-white text-sm rounded-full font-semibold">
+                {unboardcastedMatchRounds.length}
+              </div>
+            )}
+          </button>
+        </div>
+      </div>
     </div>
   )
 }
