@@ -25,7 +25,7 @@ export default function OBSInstructionDivV2() {
           2. 來源 {'->'} + {'->'} 瀏覽器，然後照下面設定
         </p>
         <p>
-          - 網址 = <strong>{window.location.origin}/obs/1</strong>
+          - 網址 = <strong>上述網址</strong>
           <br />- 寬度 = 1920, 高度 = 1080
           <br /> - 自訂CSS ={' '}
           <div className="relative bg-gray-700 text-white p-4 rounded">

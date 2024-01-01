@@ -133,6 +133,26 @@ function IndexPage() {
                     {location.origin}/obs/1
                   </a>
                 </p>
+                <p className="text-2xl">
+                  倒數頁面：{' '}
+                  <a
+                    href={`${location.origin}/obs/1/forecast?m=15`}
+                    target="_blank"
+                    className="text-black"
+                  >
+                    {location.origin}/forecast?m=15
+                  </a>
+                </p>
+                <p className="text-2xl">
+                  今天已完結頁面：{' '}
+                  <a
+                    href={`${location.origin}/obs/1/end`}
+                    target="_blank"
+                    className="text-black"
+                  >
+                    {location.origin}/end
+                  </a>
+                </p>
                 <div className="text-left">
                   <OBSInstructionDivV2 />
                 </div>
