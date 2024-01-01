@@ -25,6 +25,9 @@ import MatchNameplatesPage from './pages/match/[id]/nameplates.page'
 import MatchStatPage from './pages/match/[id]/stat/index.page'
 import ObsStatPage from './pages/obs/[obsRoomId]/stat.page'
 import MatchExportPage from './pages/match/[id]/export/index.page'
+import MatchForecastPage from './pages/match/[id]/forecast.page'
+import ObsRoomForecastPage from './pages/obs/[obsRoomId]/forecast.page'
+import ObsRoomEndPage from './pages/obs/[obsRoomId]/ended.page'
 
 // Import the functions you need from the SDKs you need
 // TODO: Add SDKs for Firebase products that you want to use
@@ -59,6 +62,10 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             />
             <Route path="/match/:matchId/export" component={MatchExportPage} />
             <Route
+              path="/match/:matchId/forecast"
+              component={MatchForecastPage}
+            />
+            <Route
               path="/match/:matchId/nameplates"
               component={MatchNameplatesPage}
             />
@@ -69,6 +76,11 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               path="/obs/:obsRoomId/control"
               component={ObsRoomControlPage}
             />
+            <Route
+              path="/obs/:obsRoomId/forecast"
+              component={ObsRoomForecastPage}
+            />
+            <Route path="/obs/:obsRoomId/end" component={ObsRoomEndPage} />
             <Route path="/obs/:obsRoomId/score" component={ObsScorePage} />
             <Route path="/obs/:obsRoomId/chart" component={ObsChartPage} />
             <Route
