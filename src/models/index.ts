@@ -36,6 +36,7 @@ export type Match = {
     yakus: { id: string; label: string; han: number; yakumanCount: number }[]
   } | null
   showPoints?: boolean | null
+  hideHeader?: boolean | null
 }
 
 export type RawPlayer = {

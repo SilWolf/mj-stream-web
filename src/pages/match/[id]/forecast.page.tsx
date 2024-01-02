@@ -1,5 +1,4 @@
-import useMatch from '@/hooks/useMatch'
-import { PlayerIndex } from '@/models'
+import useDbMatch from '@/hooks/useDbMatch'
 import { useEffect, useMemo, useState } from 'react'
 import { useInterval, useSearchParam } from 'react-use'
 
@@ -38,17 +37,20 @@ type Props = {
 }
 
 const MatchForecastPage = ({ params: { matchId } }: Props) => {
-  const { match } = useMatch(matchId)
+  const { data: matchDTO } = useDbMatch(matchId)
 
   const players = useMemo(() => {
-    if (!match) {
+    if (!matchDTO) {
       return []
     }
 
-    return (['0', '1', '2', '3'] as PlayerIndex[]).map(
-      (index) => match.players[index]
-    )
-  }, [match])
+    return [
+      matchDTO.playerEast,
+      matchDTO.playerSouth,
+      matchDTO.playerWest,
+      matchDTO.playerNorth,
+    ]
+  }, [matchDTO])
 
   const minutes = useSearchParam('m')
   const initialMinutes = useMemo(() => {
@@ -94,7 +96,7 @@ const MatchForecastPage = ({ params: { matchId } }: Props) => {
             {players.map((player) => (
               <img
                 className="w-[16vw] aspect-square"
-                src={player.largeTeamPicUrl as string}
+                src={player.teamLogoImageUrl + '?w=500&h=500'}
               />
             ))}
           </div>

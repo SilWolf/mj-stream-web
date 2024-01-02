@@ -1,36 +1,27 @@
-import {
-  DB_TeamPlayer,
-  apiGetMatchById,
-  convertDbTeamPlayerToPlayer,
-} from '@/helpers/sanity.helper'
+import { TeamPlayerDTO, apiGetMatchById } from '@/helpers/sanity.helper'
 import { getLightColorOfColor } from '@/utils/string.util'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { useParams } from 'wouter'
 
-const MatchNameplate = ({ teamPlayer }: { teamPlayer: DB_TeamPlayer }) => {
-  const player = useMemo(
-    () => convertDbTeamPlayerToPlayer(teamPlayer),
-    [teamPlayer]
-  )
-
+const MatchNameplate = ({ teamPlayer }: { teamPlayer: TeamPlayerDTO }) => {
   const lightenedColor = useMemo(
-    () => getLightColorOfColor(player.color ?? '#000000'),
-    [player.color]
+    () => getLightColorOfColor(teamPlayer.color),
+    [teamPlayer.color]
   )
 
   return (
     <div className="relative overflow-hidden">
       <table className="w-full">
         <tbody>
-          <tr style={{ background: player.color }}>
+          <tr style={{ background: teamPlayer.color }}>
             <td className="w-[8mm] h-[8mm]"></td>
             <td className="w-[2mm] border-r border-white"></td>
             <td></td>
             <td className="w-[2mm] border-l border-white"></td>
             <td className="w-[8mm] h-[8mm]"></td>
           </tr>
-          <tr style={{ background: player.color }}>
+          <tr style={{ background: teamPlayer.color }}>
             <td className="h-[2mm] border-b border-white"></td>
             <td></td>
             <td></td>
@@ -39,7 +30,7 @@ const MatchNameplate = ({ teamPlayer }: { teamPlayer: DB_TeamPlayer }) => {
           </tr>
           <tr
             style={{
-              background: `linear-gradient(180deg, ${player.color}, ${lightenedColor})`,
+              background: `linear-gradient(180deg, ${teamPlayer.color}, ${lightenedColor})`,
             }}
           >
             <td></td>
@@ -67,7 +58,9 @@ const MatchNameplate = ({ teamPlayer }: { teamPlayer: DB_TeamPlayer }) => {
       <div
         className="absolute left-[0] top-[2.5mm] w-[55mm] h-[55mm] bg-contain opacity-50"
         style={{
-          backgroundImage: `url(${player.largeTeamPicUrl})`,
+          backgroundImage: `url(${
+            teamPlayer.teamLogoImageUrl + '?w=500&h=500'
+          })`,
         }}
       ></div>
       <div className="absolute top-[10mm] bottom-[10mm] left-[25mm] right-[12mm] flex flex-col items-center justify-center">
@@ -77,7 +70,7 @@ const MatchNameplate = ({ teamPlayer }: { teamPlayer: DB_TeamPlayer }) => {
             textShadow: '0px 0px 3px #333333B0, 0px 0px 6px #333333B0',
           }}
         >
-          {player.name}
+          {teamPlayer.playerName}
         </p>
         <p
           className="text-[13mm] text-white leading-none font-semibold"
@@ -85,7 +78,7 @@ const MatchNameplate = ({ teamPlayer }: { teamPlayer: DB_TeamPlayer }) => {
             textShadow: '0px 0px 3px #333333B0, 0px 0px 6px #333333B0',
           }}
         >
-          {player.nickname}
+          {teamPlayer.playerNickname}
         </p>
       </div>
     </div>
@@ -94,7 +87,6 @@ const MatchNameplate = ({ teamPlayer }: { teamPlayer: DB_TeamPlayer }) => {
 
 const MatchNameplatesPage = () => {
   const { matchId } = useParams() as { matchId: string }
-  console.log(matchId)
 
   const { data: dbMatch } = useQuery({
     queryKey: ['matches', matchId],

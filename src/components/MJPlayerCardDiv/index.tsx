@@ -23,7 +23,7 @@ type Props = HTMLAttributes<HTMLDivElement> & {
   onAnimationEnd?: () => void
   waitingTiles?: string[]
   onClickWaitingTiles?: (e: React.MouseEvent) => unknown
-  showPointAndRanking?: boolean
+  showPointAndRanking?: boolean | null
 }
 
 export default function MJPlayerCardDiv({

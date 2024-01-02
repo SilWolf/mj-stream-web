@@ -115,7 +115,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
     <>
       <div
         className={
-          'w-screen h-screen mx-auto py-8 overflow-hidden text-[4.8rem] transition-opacity'
+          'relativew-screen h-screen mx-auto py-8 overflow-hidden text-[4.8rem] transition-opacity'
         }
         style={{
           background:
@@ -125,8 +125,11 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
       >
         <div className="flex flex-row items-stretch gap-x-4 text-white">
           <div
-            className="text-[0.6em] p-2 pl-10 pr-[1em] flex items-center gap-x-8 transition-[width]"
+            className="relative text-[0.6em] p-2 pl-10 pr-[1em] flex items-center gap-x-8"
             style={{
+              transition: 'width 0.3s, left 1.5s, opacity 1.5s',
+              left: match.hideHeader ? '-100%' : '0',
+              opacity: match.hideHeader ? '0' : '1',
               background: `linear-gradient(280deg, transparent, transparent 0.5em, #00000080 0.5em, #00000080 100%)`,
             }}
           >

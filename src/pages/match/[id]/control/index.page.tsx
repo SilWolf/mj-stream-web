@@ -87,7 +87,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
   const { data: obsInfo, set: setObsInfo } =
     useFirebaseDatabaseByKey<string>('obs/1')
 
-  const { data: dbMatch } = useQuery({
+  const { data: matchDTO } = useQuery({
     queryKey: ['matches', matchId],
     queryFn: ({ queryKey }) => apiGetMatchById(queryKey[1]),
   })
@@ -102,6 +102,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
     setCurrentRoundDoras,
     setMatchName,
     setMatchPointDisplay,
+    setMatchHideHeaderDisplay,
     setMatchActiveResultDetail,
     setMatchRoundHasBroadcastedToTrue,
   } = useMatch(matchId)
@@ -926,14 +927,22 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
     setMatchPointDisplay(false)
   }, [setMatchPointDisplay])
 
+  const handleClickHideHeader = useCallback(() => {
+    setMatchHideHeaderDisplay(true)
+  }, [setMatchHideHeaderDisplay])
+
+  const handleClickShowHeader = useCallback(() => {
+    setMatchHideHeaderDisplay(false)
+  }, [setMatchHideHeaderDisplay])
+
   useEffect(() => {
     if (matchCurrentRoundDoras.length === 0) {
       setClickedDoraIndex(-1)
     }
   }, [matchCurrentRoundDoras.length])
 
-  if ((!match || !matchCurrentRound) && dbMatch) {
-    return <ControlNewMatch dbMatch={dbMatch} />
+  if ((!match || !matchCurrentRound) && matchDTO) {
+    return <ControlNewMatch matchDTO={matchDTO} />
   }
 
   if (!match || !matchCurrentRound) {
@@ -942,7 +951,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
 
   return (
     <div>
-      <div className="container mx-auto my-8 px-8 space-y-24 pb-32">
+      <div className="container mx-auto my-8 px-8 space-y-24 pb-48">
         <div className="space-y-6">
           <div className="flex flex-row items-center gap-x-4 text-white">
             <div
@@ -951,7 +960,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                 background: `linear-gradient(280deg, transparent, transparent 22px, #00000080 23px, #00000080 100%)`,
               }}
             >
-              <div className="text-[0.5em]">
+              <div className="text-[0.5em] relative">
                 <div className="text-[0.5em]">
                   <button type="button" onClick={handleClickEditMatchName}>
                     {match.name} <i className="bi bi-pencil"></i>
@@ -992,6 +1001,11 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                     </div>
                   </div>
                 </div>
+                {match.hideHeader && (
+                  <div className="absolute inset-0 opacity-100 bg-red-800 text-center">
+                    隱藏中
+                  </div>
+                )}
               </div>
 
               <div className="flex items-center gap-x-2">
@@ -1130,6 +1144,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                       isRedCarded={
                         matchCurrentRound.playerResults[index].isRedCarded
                       }
+                      showPointAndRanking={match.showPoints}
                     />
                   </div>
                   {/* <div>
@@ -1340,51 +1355,6 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         }
       />
 
-      <MJUIDialogV2
-        hideCloseButton
-        open={
-          matchCurrentRound.nextRoundType !== NextRoundTypeEnum.Unknown &&
-          matchCurrentRound.nextRoundType !== NextRoundTypeEnum.End
-        }
-      >
-        <div className="space-y-6 text-center">
-          <p>
-            當準備好時，點擊按鈕進入下一局。
-            <br />
-            如果發現分數有誤需要修改，請在下一局開始後，點擊頁面最下方的「手動調整分數」。
-          </p>
-
-          <div>
-            <MJUIButton
-              color="success"
-              type="button"
-              className="text-xl"
-              onClick={handleClickGoNextRound}
-            >
-              進入
-              <MJMatchCounterSpan
-                roundCount={
-                  matchCurrentRound.nextRoundType ===
-                    NextRoundTypeEnum.NextRound ||
-                  matchCurrentRound.nextRoundType ===
-                    NextRoundTypeEnum.NextRoundAndExtended
-                    ? matchCurrentRound.roundCount + 1
-                    : matchCurrentRound.roundCount
-                }
-                extendedRoundCount={
-                  matchCurrentRound.nextRoundType ===
-                    NextRoundTypeEnum.Extended ||
-                  matchCurrentRound.nextRoundType ===
-                    NextRoundTypeEnum.NextRoundAndExtended
-                    ? matchCurrentRound.extendedRoundCount + 1
-                    : 0
-                }
-              />
-            </MJUIButton>
-          </div>
-        </div>
-      </MJUIDialogV2>
-
       <MJMatchRonDialog
         match={match}
         currentMatchRound={matchCurrentRound}
@@ -1506,24 +1476,83 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
           </button>
         </div>
 
-        <div className="flex gap-x-6 items-end">
-          {!match.showPoints && (
-            <button
-              onClick={handleClickDisplayPoint}
-              className="relative rounded-full py-2 px-4 shadow shadow-neutral-700 text-center bg-neutral-200 border border-neutral-300 leading-6 text-neutral-600"
-            >
-              <i className="bi bi-list-ol"></i> 切換播放馬點＆名次
-            </button>
-          )}
-          {match.showPoints && (
-            <button
-              onClick={handleClickDisplayScore}
-              className="relative rounded-full py-2 px-4 shadow shadow-neutral-700 text-center bg-green-300 border border-green-300 leading-6 text-green-800"
-            >
-              <i className="bi bi-list-ol"></i> 切換播放馬點＆名次
-            </button>
-          )}
-          <button className="relative rounded-full p-5 shadow shadow-neutral-700 text-center bg-neutral-200 border border-neutral-300 text-4xl leading-6 text-neutral-600">
+        <div>
+          <div className="text-right mb-4">
+            {matchCurrentRound.nextRoundType !== NextRoundTypeEnum.Unknown &&
+              matchCurrentRound.nextRoundType !== NextRoundTypeEnum.End && (
+                <button
+                  className="text-6xl p-4 text-green-800 bg-green-400 border-4 border-green-600 rounded-lg"
+                  onClick={handleClickGoNextRound}
+                >
+                  進入
+                  <MJMatchCounterSpan
+                    roundCount={
+                      matchCurrentRound.nextRoundType ===
+                        NextRoundTypeEnum.NextRound ||
+                      matchCurrentRound.nextRoundType ===
+                        NextRoundTypeEnum.NextRoundAndExtended
+                        ? matchCurrentRound.roundCount + 1
+                        : matchCurrentRound.roundCount
+                    }
+                    extendedRoundCount={
+                      matchCurrentRound.nextRoundType ===
+                        NextRoundTypeEnum.Extended ||
+                      matchCurrentRound.nextRoundType ===
+                        NextRoundTypeEnum.NextRoundAndExtended
+                        ? matchCurrentRound.extendedRoundCount + 1
+                        : 0
+                    }
+                  />{' '}
+                  <i className="bi bi-play-fill"></i>
+                </button>
+              )}
+          </div>
+          <div className="flex gap-x-6 items-end justify-end">
+            {!match.hideHeader && (
+              <button
+                onClick={handleClickHideHeader}
+                className="relative rounded-full py-2 px-4 shadow shadow-neutral-700 text-center bg-neutral-200 border border-neutral-300 leading-6 text-neutral-600"
+              >
+                <i className="bi bi-eye"></i> 標題：顯示中
+              </button>
+            )}
+            {match.hideHeader && (
+              <button
+                onClick={handleClickShowHeader}
+                className="relative rounded-full py-2 px-4 shadow shadow-neutral-700 text-center bg-red-600 border border-red-500 leading-6 text-white"
+              >
+                <i className="bi bi-eye-slash"></i> 標題：隱藏中
+              </button>
+            )}
+            {!match.showPoints && (
+              <button
+                onClick={handleClickDisplayPoint}
+                className="relative rounded-full py-2 px-4 shadow shadow-neutral-700 text-center bg-neutral-200 border border-neutral-300 leading-6 text-neutral-600"
+              >
+                <i className="bi bi-list-ol"></i> 切換播放馬點＆名次
+              </button>
+            )}
+            {match.showPoints && (
+              <button
+                onClick={handleClickDisplayScore}
+                className="relative rounded-full py-2 px-4 shadow shadow-neutral-700 text-center bg-green-300 border border-green-300 leading-6 text-green-800"
+              >
+                <i className="bi bi-list-ol"></i> 切換播放馬點＆名次
+              </button>
+            )}
+
+            {unboardcastedMatchRounds.map((matchRound) => (
+              <button
+                onClick={handleClickBroadcastRonDetail}
+                data-match-round-id={matchRound.id}
+                className="relative rounded-full py-2 px-4 shadow shadow-neutral-700 text-center bg-red-200 border border-red-300 leading-6 text-red-800 animate-bounce"
+              >
+                <i className="bi bi-trophy"></i> {matchRound.roundCount}.
+                {matchRound.extendedRoundCount} 和牌動畫：待播放
+              </button>
+            ))}
+
+            {/* <button className="relative rounded-full p-5 shadow shadow-neutral-700 text-center bg-neutral-200 border border-neutral-300 text-4xl leading-6 text-neutral-600">
             {activeAnimationMessage ? (
               <span>
                 <i className="bi bi-hourglass-split"></i>{' '}
@@ -1538,7 +1567,8 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                 {unboardcastedMatchRounds.length}
               </div>
             )}
-          </button>
+          </button> */}
+          </div>
         </div>
       </div>
     </div>

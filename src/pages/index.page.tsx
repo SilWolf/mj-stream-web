@@ -1,25 +1,17 @@
 import MJUIButton from '@/components/MJUI/MJUIButton'
-import { DB_TeamPlayer, apiGetMatches } from '@/helpers/sanity.helper'
+import { TeamPlayerDTO, apiGetMatches } from '@/helpers/sanity.helper'
 import { useQuery } from '@tanstack/react-query'
 import React, { useCallback } from 'react'
 import OBSInstructionDivV2 from './obs/components/OBSInstructionDivV2'
 import { getQrCodeImgSrc } from '@/utils/string.util'
 import { useFirebaseDatabaseByKey } from '@/providers/firebaseDatabase.provider'
 
-const DBTeamPlayerDiv = ({ teamPlayer }: { teamPlayer: DB_TeamPlayer }) => {
-  const portraitImage =
-    teamPlayer.overridedPortraitImage || teamPlayer.player.portraitImage
-      ? `${
-          teamPlayer.overridedPortraitImage ?? teamPlayer.player.portraitImage
-        }?w=32&h=32`
-      : null
-  const squareLogoImage = `${teamPlayer.team.squareLogoImage}?w=32&h=32`
-  const designation =
-    teamPlayer.overridedDesignation ??
-    teamPlayer.team.name ??
-    teamPlayer.player.designation
-  const name = teamPlayer.overridedName ?? teamPlayer.player.name
-  const color = teamPlayer.overridedColor ?? teamPlayer.team.color
+const DBTeamPlayerDiv = ({ teamPlayer }: { teamPlayer: TeamPlayerDTO }) => {
+  const portraitImage = teamPlayer.playerPortraitImageUrl
+  const squareLogoImage = `${teamPlayer.teamLogoImageUrl}?w=32&h=32`
+  const designation = teamPlayer.playerDesignation
+  const name = teamPlayer.playerName
+  const color = teamPlayer.color
 
   return (
     <div
@@ -41,7 +33,7 @@ const DBTeamPlayerDiv = ({ teamPlayer }: { teamPlayer: DB_TeamPlayer }) => {
 }
 
 function IndexPage() {
-  const { data: matches } = useQuery({
+  const { data: matches, refetch: refetchMatches } = useQuery({
     queryKey: ['matches'],
     queryFn: apiGetMatches,
   })
@@ -49,22 +41,25 @@ function IndexPage() {
   const { data: obsInfo, set: setObsInfo } =
     useFirebaseDatabaseByKey<string>(`obs/1`)
 
-  const handleClickStartBroadcast = useCallback((e: React.MouseEvent) => {
-    const newMatchId = e.currentTarget.getAttribute('data-id')
-    if (!newMatchId) {
-      return
-    }
+  const handleClickStartBroadcast = useCallback(
+    (e: React.MouseEvent) => {
+      const newMatchId = e.currentTarget.getAttribute('data-id')
+      if (!newMatchId) {
+        return
+      }
 
-    if (
-      confirm(
-        '請確定上一局對局已經結束才開始新的直播！！\n確定要開始直播新的對局嗎？'
-      )
-    ) {
-      setObsInfo({
-        matchId: newMatchId,
-      })
-    }
-  }, [])
+      if (
+        confirm(
+          '請確定上一局對局已經結束才開始新的直播！！\n確定要開始直播新的對局嗎？'
+        )
+      ) {
+        setObsInfo({
+          matchId: newMatchId,
+        })
+      }
+    },
+    [setObsInfo]
+  )
 
   return (
     <div className="container mx-auto">
@@ -134,23 +129,13 @@ function IndexPage() {
                   </a>
                 </p>
                 <p className="text-2xl">
-                  倒數頁面：{' '}
-                  <a
-                    href={`${location.origin}/obs/1/forecast?m=15`}
-                    target="_blank"
-                    className="text-black"
-                  >
-                    {location.origin}/forecast?m=15
-                  </a>
-                </p>
-                <p className="text-2xl">
                   今天已完結頁面：{' '}
                   <a
                     href={`${location.origin}/obs/1/end`}
                     target="_blank"
                     className="text-black"
                   >
-                    {location.origin}/end
+                    {location.origin}/obs/1/end
                   </a>
                 </p>
                 <div className="text-left">
@@ -206,66 +191,76 @@ function IndexPage() {
           </div>
 
           <div>
-            {
-              <table className="data-table w-full text-left">
-                <thead>
-                  <tr>
-                    <th>對局</th>
-                    <th>東</th>
-                    <th>南</th>
-                    <th>西</th>
-                    <th>北</th>
-                    <th className="text-right">操作</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {matches?.map((match) => (
-                    <tr key={match._id}>
-                      <th>
-                        <p>{match.name}</p>
-                        <p className="font-normal text-sm text-neutral-600">
-                          {match.tournament.name}
-                        </p>
-                      </th>
-                      <td>
-                        <DBTeamPlayerDiv teamPlayer={match.playerEast} />
-                      </td>
-                      <td>
-                        <DBTeamPlayerDiv teamPlayer={match.playerSouth} />
-                      </td>
-                      <td>
-                        <DBTeamPlayerDiv teamPlayer={match.playerWest} />
-                      </td>
-                      <td>
-                        <DBTeamPlayerDiv teamPlayer={match.playerNorth} />
-                      </td>
-                      <td className="space-x-2 text-right">
-                        <a
-                          href={`/match/${match._id}/nameplates`}
-                          target="_blank"
-                        >
-                          <i className="bi bi-person-badge"></i> 列印名牌
-                        </a>
+            <div className="text-right mb-2">
+              <MJUIButton color="secondary" onClick={() => refetchMatches()}>
+                <i className="bi bi-arrow-repeat"></i> 刷新
+              </MJUIButton>
+            </div>
+            <table className="data-table w-full text-left">
+              <thead>
+                <tr>
+                  <th>對局</th>
+                  <th>東</th>
+                  <th>南</th>
+                  <th>西</th>
+                  <th>北</th>
+                  <th className="text-right">操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                {matches?.map((match) => (
+                  <tr key={match._id}>
+                    <th>
+                      <p>{match.name}</p>
+                      <p className="font-normal text-sm text-neutral-600">
+                        {match.tournament.name}
+                      </p>
+                    </th>
+                    <td>
+                      <DBTeamPlayerDiv teamPlayer={match.playerEast} />
+                    </td>
+                    <td>
+                      <DBTeamPlayerDiv teamPlayer={match.playerSouth} />
+                    </td>
+                    <td>
+                      <DBTeamPlayerDiv teamPlayer={match.playerWest} />
+                    </td>
+                    <td>
+                      <DBTeamPlayerDiv teamPlayer={match.playerNorth} />
+                    </td>
+                    <td className="space-x-2 text-right">
+                      <a
+                        href={`/match/${match._id}/forecast?m=15`}
+                        target="_blank"
+                      >
+                        <i className="bi bi-bell"></i> 預告倒數
+                      </a>
 
-                        {match._id === obsInfo?.matchId ? (
-                          <span className="bg-red-600 px-2 py-1 rounded text-white">
-                            <i className="bi bi-record-circle"></i> LIVE 直播中
-                          </span>
-                        ) : (
-                          <a
-                            href={`/match/${match._id}/control`}
-                            target="_blank"
-                            className="text-red-600"
-                          >
-                            <i className="bi bi-record-circle"></i> 直播此對局
-                          </a>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            }
+                      <a
+                        href={`/match/${match._id}/nameplates`}
+                        target="_blank"
+                      >
+                        <i className="bi bi-person-badge"></i> 列印名牌
+                      </a>
+
+                      {match._id === obsInfo?.matchId ? (
+                        <span className="bg-red-600 px-2 py-1 rounded text-white">
+                          <i className="bi bi-record-circle"></i> LIVE 直播中
+                        </span>
+                      ) : (
+                        <a
+                          href={`/match/${match._id}/control`}
+                          target="_blank"
+                          className="text-red-600"
+                        >
+                          <i className="bi bi-record-circle"></i> 直播此對局
+                        </a>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
 
           <div>
