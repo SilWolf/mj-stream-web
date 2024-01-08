@@ -28,6 +28,9 @@ import MatchExportPage from './pages/match/[id]/export/index.page'
 import MatchForecastPage from './pages/match/[id]/forecast.page'
 import ObsRoomForecastPage from './pages/obs/[obsRoomId]/forecast.page'
 import ObsRoomEndPage from './pages/obs/[obsRoomId]/ended.page'
+import MatchIntroductionPage from './pages/match/[id]/introduction.page'
+import MatchOverviewOverlayPage from './pages/match/[id]/overviewOverlay.page'
+import ObsOverviewOverlayPage from './pages/obs/[obsRoomId]/overlay.page'
 
 // Import the functions you need from the SDKs you need
 // TODO: Add SDKs for Firebase products that you want to use
@@ -57,6 +60,10 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <Route path="/match/:matchId" component={MatchDetailPage} />
             <Route path="/match/:matchId/obs" component={MatchOBSPage} />
             <Route
+              path="/match/:matchId/overlay"
+              component={MatchOverviewOverlayPage}
+            />
+            <Route
               path="/match/:matchId/control"
               component={MatchControlPage}
             />
@@ -66,12 +73,20 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               component={MatchForecastPage}
             />
             <Route
+              path="/match/:matchId/introduction"
+              component={MatchIntroductionPage}
+            />
+            <Route
               path="/match/:matchId/nameplates"
               component={MatchNameplatesPage}
             />
             <Route path="/match/:matchId/stat" component={MatchStatPage} />
 
             <Route path="/obs/:obsRoomId" component={ObsRoomPage} />
+            <Route
+              path="/obs/:obsRoomId/overlay"
+              component={ObsOverviewOverlayPage}
+            />
             <Route
               path="/obs/:obsRoomId/control"
               component={ObsRoomControlPage}

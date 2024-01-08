@@ -1090,7 +1090,7 @@ const MJYakuKeyboardDiv = ({
       if (innerDora !== '0') {
         finalYakus.push({
           id: `dora-${innerDora}`,
-          label: `赤寶牌${innerDora}`,
+          label: `裡寶牌${innerDora}`,
           han: parseInt(innerDora),
           yakumanCount: 0,
         })

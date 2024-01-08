@@ -7,8 +7,8 @@ import { getQrCodeImgSrc } from '@/utils/string.util'
 import { useFirebaseDatabaseByKey } from '@/providers/firebaseDatabase.provider'
 
 const DBTeamPlayerDiv = ({ teamPlayer }: { teamPlayer: TeamPlayerDTO }) => {
-  const portraitImage = teamPlayer.playerPortraitImageUrl
-  const squareLogoImage = `${teamPlayer.teamLogoImageUrl}?w=32&h=32`
+  const portraitImage = `${teamPlayer.playerPortraitImageUrl}?w=64&h=64&fit=crop&crop=top`
+  const squareLogoImage = `${teamPlayer.teamLogoImageUrl}?w=64&h=64`
   const designation = teamPlayer.playerDesignation
   const name = teamPlayer.playerName
   const color = teamPlayer.color
@@ -155,6 +155,16 @@ function IndexPage() {
                     className="text-black"
                   >
                     {location.origin}/obs/1/stat
+                  </a>
+                </p>
+                <p className="text-2xl">
+                  固定的Overlay頁面：
+                  <a
+                    href={`${location.origin}/obs/1/stat`}
+                    target="_blank"
+                    className="text-black"
+                  >
+                    {location.origin}/obs/1/overlay
                   </a>
                 </p>
                 <div className="pt-16">

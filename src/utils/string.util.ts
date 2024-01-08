@@ -132,3 +132,11 @@ export const renderRanking = (i: number | undefined) => {
 
   return `${i}th`
 }
+
+export const renderPercentage = (value: number | undefined | null) => {
+  if (typeof value === 'undefined' || value === null) {
+    return '-'
+  }
+
+  return value.toFixed(2)
+}

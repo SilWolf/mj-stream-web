@@ -1,8 +1,4 @@
-15:26:13.310 [NamespaceSystem-akka.actor.default-dispatcher-5] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started
-15:26:13.404 [main] INFO com.firebase.server.forge.App$ - Listening at 127.0.0.1:9000
-15:26:15.670 [NamespaceSystem-akka.actor.default-dispatcher-7] INFO com.firebase.core.namespace.NamespaceActor - hkmjbs-streaming-default-rtdb successfully activated FBKV (SurveyIdle(0)) wait: 72ms, init: 0ms
-15:26:15.709 [NamespaceSystem-blocking-namespace-operation-dispatcher-8] INFO com.firebase.core.namespace.StateManager - Namespace hkmjbs-streaming-default-rtdb status Active to Active
-16:02:47.785 [Thread-0] INFO com.firebase.server.forge.App$ - Attempting graceful shutdown.
-16:02:47.795 [NamespaceSystem-akka.actor.default-dispatcher-78] INFO com.firebase.core.namespace.Terminator$Terminator - 1 actors left to terminate: hkmjbs-streaming-default-rtdb
-16:02:47.799 [NamespaceSystem-akka.actor.default-dispatcher-78] INFO com.firebase.core.namespace.NamespaceActor - stopped namespace actor for hkmjbs-streaming-default-rtdb
-16:02:47.802 [Thread-0] INFO com.firebase.server.forge.App$ - Graceful shutdown complete.
+17:43:32.426 [NamespaceSystem-akka.actor.default-dispatcher-4] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started
+17:43:32.515 [main] INFO com.firebase.server.forge.App$ - Listening at 127.0.0.1:9000
+17:43:32.894 [NamespaceSystem-akka.actor.default-dispatcher-4] INFO com.firebase.core.namespace.NamespaceActor - hkmjbs-streaming-default-rtdb successfully activated FBKV (SurveyIdle(0)) wait: 72ms, init: 0ms
+17:43:34.904 [NamespaceSystem-blocking-namespace-operation-dispatcher-6] INFO com.firebase.core.namespace.StateManager - Namespace hkmjbs-streaming-default-rtdb status Active to Active
