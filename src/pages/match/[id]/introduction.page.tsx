@@ -27,7 +27,7 @@ type Slide =
       _id: string
       type: 'teams'
       teams: TeamPlayerDTO[]
-      subslide: 2
+      subslide: 1 | 2
     }
   | {
       _id: string
@@ -162,6 +162,9 @@ const MatchIntroductionSlide = ({
                 <h3 className="text-[1.5em] font-semibold text-center">
                   {team.teamName}
                 </h3>
+                <h3 className="text-[1.25em] font-semibold text-center">
+                  {team.teamSecondaryName}
+                </h3>
               </div>
               <div
                 className={cns('absolute inset-0 opacity-0', {
@@ -227,7 +230,7 @@ const MatchIntroductionSlide = ({
         >
           <img
             src={slide.team.teamLogoImageUrl + '?w=512&h=512&auto=format'}
-            alt={slide.team.teamName}
+            alt={slide.team.teamFullname}
             className="aspect-square"
             style={{
               width: 256,
@@ -236,7 +239,7 @@ const MatchIntroductionSlide = ({
           />
           <div className="text-right">
             <h3 className="font-semibold text-[1.5em] mb-[.5em]">
-              {slide.team.teamName}
+              {slide.team.teamFullname}
             </h3>
             <div className="flex justify-end gap-x-[1em]">
               <p>隊伍積分</p>
@@ -441,35 +444,35 @@ const MatchIntroductionPage = ({ params: { matchId } }: Props) => {
           matchDTO.playerWest,
           matchDTO.playerNorth,
         ],
-        subslide: 2,
+        subslide: 1,
       },
       {
         _id: 'team_playerEast',
         type: 'team',
         team: matchDTO.playerEast,
         teamPlayers: playersGroupedByTeamIds[matchDTO.playerEast.teamId],
-        subslide: matchDTO.playerEast.playerName ? 2 : 1,
+        subslide: 2,
       },
       {
         _id: 'team_playerSouth',
         type: 'team',
         team: matchDTO.playerSouth,
         teamPlayers: playersGroupedByTeamIds[matchDTO.playerSouth.teamId],
-        subslide: matchDTO.playerSouth.playerName ? 2 : 1,
+        subslide: 2,
       },
       {
         _id: 'team_playerWest',
         type: 'team',
         team: matchDTO.playerWest,
         teamPlayers: playersGroupedByTeamIds[matchDTO.playerWest.teamId],
-        subslide: matchDTO.playerWest.playerName ? 2 : 1,
+        subslide: 2,
       },
       {
         _id: 'team_playerNorth',
         type: 'team',
         team: matchDTO.playerNorth,
         teamPlayers: playersGroupedByTeamIds[matchDTO.playerNorth.teamId],
-        subslide: matchDTO.playerNorth.playerName ? 2 : 1,
+        subslide: 2,
       },
     ]
   }, [matchDTO, playersGroupedByTeamIds])
@@ -485,11 +488,13 @@ const MatchIntroductionPage = ({ params: { matchId } }: Props) => {
 
     const activeSlide = slides[slideIndex]
     if (!activeSlide) {
-      setSlideIndex(0)
+      setSlideIndex(1)
       return
     }
 
-    if (subSlideIndex >= activeSlide.subslide - 1) {
+    if (activeSlide.type === 'empty') {
+      setSlideIndex((prev) => prev + 1)
+    } else if (subSlideIndex >= activeSlide.subslide - 1) {
       setSlideIndex((prev) => prev + 0.5)
       setIsSlideChanging(true)
 

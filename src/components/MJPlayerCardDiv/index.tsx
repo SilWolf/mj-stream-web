@@ -165,13 +165,23 @@ export default function MJPlayerCardDiv({
             {...props}
             style={{
               background: `linear-gradient(260deg, transparent, transparent 22px, ${lightenedColor} 23px, ${player.color} 100%`,
+              textShadow: '0px 0px 0.04em #2D2D2DA0, 0px 0px 0.03em #2D2D2DA0',
             }}
           >
             <div className="flex flex-col justify-center gap-y-[0.075em] mt-[0.04em]">
-              <div className="text-[0.1875em] ml-[0.1em] leading-none text-white hide-if-changing font-semibold">
+              <div className="text-[0.1875em] ml-[0.1em] leading-none text-white hide-if-changing font-semibold whitespace-nowrap">
                 {player.title || '　'}
               </div>
-              <div className="text-[0.3125em] ml-[0.1em] leading-none text-white hide-if-changing font-semibold">
+              <div
+                className="text-[0.3125em] ml-[0.1em] leading-none text-white hide-if-changing font-semibold whitespace-nowrap"
+                style={{
+                  transformOrigin: 'left',
+                  transform:
+                    (player.name || '').length >= 17
+                      ? 'scaleX(0.9)'
+                      : 'scaleX(1)',
+                }}
+              >
                 {player.name}
               </div>
             </div>

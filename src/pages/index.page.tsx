@@ -239,33 +239,63 @@ function IndexPage() {
                       <DBTeamPlayerDiv teamPlayer={match.playerNorth} />
                     </td>
                     <td className="space-x-2 text-right">
-                      <a
-                        href={`/match/${match._id}/forecast?m=15`}
-                        target="_blank"
-                      >
-                        <i className="bi bi-bell"></i> 預告倒數
-                      </a>
-
-                      <a
-                        href={`/match/${match._id}/nameplates`}
-                        target="_blank"
-                      >
-                        <i className="bi bi-person-badge"></i> 列印名牌
-                      </a>
-
-                      {match._id === obsInfo?.matchId ? (
-                        <span className="bg-red-600 px-2 py-1 rounded text-white">
-                          <i className="bi bi-record-circle"></i> LIVE 直播中
-                        </span>
-                      ) : (
+                      <div className="space-x-2">
                         <a
-                          href={`/match/${match._id}/control`}
+                          href={`${
+                            import.meta.env.VITE_HOMEPAGE_HOST
+                          }/api/match/${match._id}/square`}
                           target="_blank"
-                          className="text-red-600"
                         >
-                          <i className="bi bi-record-circle"></i> 直播此對局
+                          <i className="bi bi-card-image"></i> 出Post圖
                         </a>
-                      )}
+
+                        <a
+                          href={`${
+                            import.meta.env.VITE_HOMEPAGE_HOST
+                          }/api/match/${match._id}/thumbnail`}
+                          target="_blank"
+                        >
+                          <i className="bi bi-youtube"></i> YT Thumbnail
+                        </a>
+                      </div>
+                      <div className="space-x-2">
+                        <a
+                          href={`/match/${match._id}/forecast?startAt=${
+                            match.name.endsWith('2') ? '21' : '19'
+                          }:30`}
+                          target="_blank"
+                        >
+                          <i className="bi bi-bell"></i> 倒數
+                        </a>
+
+                        <a
+                          href={`/match/${match._id}/introduction`}
+                          target="_blank"
+                        >
+                          <i className="bi bi-person-vcard"></i> 介紹
+                        </a>
+
+                        <a
+                          href={`/match/${match._id}/nameplates`}
+                          target="_blank"
+                        >
+                          <i className="bi bi-person-badge"></i> 名牌
+                        </a>
+
+                        {match._id === obsInfo?.matchId ? (
+                          <span className="bg-red-600 px-2 py-1 rounded text-white">
+                            <i className="bi bi-record-circle"></i> LIVE 直播中
+                          </span>
+                        ) : (
+                          <a
+                            href={`/match/${match._id}/control`}
+                            target="_blank"
+                            className="text-red-600"
+                          >
+                            <i className="bi bi-record-circle"></i> 直播
+                          </a>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}

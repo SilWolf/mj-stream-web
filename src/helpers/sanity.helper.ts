@@ -2,7 +2,7 @@ import { Player } from '@/models'
 import { createClient } from '@sanity/client'
 
 const PLAYER_PROJECTION = `_id, name, nickname, designation, "portraitImage": portraitImage.asset->url`
-const TEAM_PROJECTION = `_id, "slug": slug.current, name, "squareLogoImage": squareLogoImage.asset->url, "color": color.hex, description`
+const TEAM_PROJECTION = `_id, "slug": slug.current, name, secondaryName, thirdName, "squareLogoImage": squareLogoImage.asset->url, "color": color.hex, description`
 const TEAM_PLAYER_PROJECTION = `team->{${TEAM_PROJECTION}}, player->{${PLAYER_PROJECTION}}, overridedDesignation, overridedName, overridedNickname, "overridedColor": overridedColor.hex, "overridedPortraitImage": overridedPortraitImage.asset->url`
 
 export const client = createClient({
@@ -42,6 +42,8 @@ export type DB_TeamPlayer = {
 export type DB_Team = {
   _id: string
   name: string
+  secondaryName: string
+  thirdName: string
   color: string
   squareLogoImage: string | null
 }
@@ -140,7 +142,7 @@ export const apiGetPlayersForIntroduction = async (
 export const apiGetMatches = (): Promise<MatchDTO[]> => {
   return client
     .fetch<DB_Match[]>(
-      `*[_type == "match" && !(_id in path("drafts.**")) && (status == "initialized" || status == "streaming")] | order(startAt asc)[0...5]{ _id, name, playerEast->{${TEAM_PLAYER_PROJECTION}}, playerSouth->{${TEAM_PLAYER_PROJECTION}}, playerWest->{${TEAM_PLAYER_PROJECTION}}, playerNorth->{${TEAM_PLAYER_PROJECTION}}, playerEastTeam->{${TEAM_PROJECTION}}, playerSouthTeam->{${TEAM_PROJECTION}}, playerWestTeam->{${TEAM_PROJECTION}}, playerNorthTeam->{${TEAM_PROJECTION}}, startAt, tournament->{_id, name, "logoUrl": logo.asset->url, startingScore, isManganRoundUp, yakuMax, yakumanMax}}`
+      `*[_type == "match" && !(_id in path("drafts.**")) && (status == "initialized" || status == "streaming")] | order(startAt asc)[0...10]{ _id, name, playerEast->{${TEAM_PLAYER_PROJECTION}}, playerSouth->{${TEAM_PLAYER_PROJECTION}}, playerWest->{${TEAM_PLAYER_PROJECTION}}, playerNorth->{${TEAM_PLAYER_PROJECTION}}, playerEastTeam->{${TEAM_PROJECTION}}, playerSouthTeam->{${TEAM_PROJECTION}}, playerWestTeam->{${TEAM_PROJECTION}}, playerNorthTeam->{${TEAM_PROJECTION}}, startAt, tournament->{_id, name, "logoUrl": logo.asset->url, startingScore, isManganRoundUp, yakuMax, yakumanMax}}`
     )
     .then((matches) =>
       matches.map((match) => {
@@ -156,13 +158,46 @@ export const apiGetMatches = (): Promise<MatchDTO[]> => {
           ...matchRest
         } = match
 
-        return {
+        const newMatch: MatchDTO = {
           ...matchRest,
           playerEast: formatTeamPlayerDTO(playerEastTeam, playerEast),
           playerSouth: formatTeamPlayerDTO(playerSouthTeam, playerSouth),
           playerWest: formatTeamPlayerDTO(playerWestTeam, playerWest),
           playerNorth: formatTeamPlayerDTO(playerNorthTeam, playerNorth),
+          _order: ['playerEast', 'playerSouth', 'playerWest', 'playerNorth'],
         }
+
+        if (
+          playerEast &&
+          playerEastTeam &&
+          playerSouth &&
+          playerSouthTeam &&
+          playerWest &&
+          playerWestTeam &&
+          playerNorth &&
+          playerNorthTeam
+        ) {
+          // assume both player and placeholder team exist
+
+          const playersMap: Record<
+            string,
+            'playerEast' | 'playerSouth' | 'playerWest' | 'playerNorth'
+          > = {
+            [playerEast.team._id]: 'playerEast',
+            [playerSouth.team._id]: 'playerSouth',
+            [playerWest.team._id]: 'playerWest',
+            [playerNorth.team._id]: 'playerNorth',
+          }
+
+          newMatch._order = [
+            playersMap[playerEastTeam._id],
+            playersMap[playerSouthTeam._id],
+            playersMap[playerWestTeam._id],
+            playersMap[playerNorthTeam._id],
+          ]
+        }
+
+        return newMatch
       })
     )
 }
@@ -188,13 +223,46 @@ export const apiGetMatchById = async (
         ...match
       } = matches[0]
 
-      return {
+      const newMatch: MatchDTO = {
         ...match,
         playerEast: formatTeamPlayerDTO(playerEastTeam, playerEast),
         playerSouth: formatTeamPlayerDTO(playerSouthTeam, playerSouth),
         playerWest: formatTeamPlayerDTO(playerWestTeam, playerWest),
         playerNorth: formatTeamPlayerDTO(playerNorthTeam, playerNorth),
+        _order: ['playerEast', 'playerSouth', 'playerWest', 'playerNorth'],
       }
+
+      if (
+        playerEast &&
+        playerEastTeam &&
+        playerSouth &&
+        playerSouthTeam &&
+        playerWest &&
+        playerWestTeam &&
+        playerNorth &&
+        playerNorthTeam
+      ) {
+        // assume both player and placeholder team exist
+
+        const playersMap: Record<
+          string,
+          'playerEast' | 'playerSouth' | 'playerWest' | 'playerNorth'
+        > = {
+          [playerEast.team._id]: 'playerEast',
+          [playerSouth.team._id]: 'playerSouth',
+          [playerWest.team._id]: 'playerWest',
+          [playerNorth.team._id]: 'playerNorth',
+        }
+
+        newMatch._order = [
+          playersMap[playerEastTeam._id],
+          playersMap[playerSouthTeam._id],
+          playersMap[playerWestTeam._id],
+          playersMap[playerNorthTeam._id],
+        ]
+      }
+
+      return newMatch
     })
 
   if (withStatistics) {
@@ -313,7 +381,10 @@ export type TeamPlayerDTO = {
   playerFullname: string
   playerPortraitImageUrl: string
   teamId: string
+  teamFullname: string
   teamName: string
+  teamSecondaryName: string
+  teamThirdName: string
   color: string
   teamLogoImageUrl: string
   playerStatistic: PlayerStatisticDTO | null
@@ -355,6 +426,7 @@ export type MatchDTO = Omit<
   playerSouth: TeamPlayerDTO
   playerWest: TeamPlayerDTO
   playerNorth: TeamPlayerDTO
+  _order: ('playerEast' | 'playerSouth' | 'playerWest' | 'playerNorth')[]
 }
 
 export const formatTeamPlayerDTO = (
@@ -364,6 +436,14 @@ export const formatTeamPlayerDTO = (
   const playerName = teamPlayer?.overridedName || teamPlayer?.player?.name || ''
   const playerNickname =
     teamPlayer?.overridedNickname || teamPlayer?.player?.nickname || ''
+
+  const teamFullname = [
+    teamPlayer?.team?.name || placeholderTeam?.name || '',
+    teamPlayer?.team?.secondaryName || placeholderTeam?.secondaryName || '',
+    teamPlayer?.team?.thirdName || placeholderTeam?.thirdName || '',
+  ]
+    .filter((item) => !!item)
+    .join(' ')
 
   const stat = teamPlayer?.player.statistics
 
@@ -376,7 +456,7 @@ export const formatTeamPlayerDTO = (
       : playerName,
     playerDesignation:
       teamPlayer?.overridedDesignation ||
-      teamPlayer?.team?.name ||
+      teamFullname ||
       teamPlayer?.player?.designation ||
       '',
     playerPortraitImageUrl:
@@ -385,6 +465,11 @@ export const formatTeamPlayerDTO = (
       '/images/empty.png',
     teamId: teamPlayer?.team?._id || (placeholderTeam?._id as string),
     teamName: teamPlayer?.team?.name || placeholderTeam?.name || '',
+    teamSecondaryName:
+      teamPlayer?.team?.secondaryName || placeholderTeam?.secondaryName || '',
+    teamThirdName:
+      teamPlayer?.team?.thirdName || placeholderTeam?.thirdName || '',
+    teamFullname,
     color:
       teamPlayer?.overridedColor ||
       teamPlayer?.team?.color ||

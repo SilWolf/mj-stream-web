@@ -122,6 +122,10 @@ export const renderPoint = (value: number | undefined | null) => {
 }
 
 export const renderRanking = (i: number | undefined) => {
+  if (typeof i === 'undefined' || i === null) {
+    return '-'
+  }
+
   if (i === 1) {
     return '1st'
   } else if (i === 2) {

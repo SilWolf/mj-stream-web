@@ -172,11 +172,16 @@ export const getScoreInFullDetail = (
   yakumanCount: number,
   isEast: boolean,
   isRon: boolean,
-  options?: { roundUp?: boolean }
+  options?: { roundUp?: boolean; yakumanMax?: '13' | '26' | '39' | '130' }
 ) => {
   const score =
     yakumanCount > 0
-      ? getScoreByYakumanCount(yakumanCount)
+      ? getScoreByYakumanCount(
+          Math.min(
+            convertYakumanMaxToCountMax(options?.yakumanMax ?? '130'),
+            yakumanCount
+          )
+        )
       : getScoreByHanAndFu(han, fu, options)
 
   if (isEast) {
@@ -405,5 +410,20 @@ export const getOppositeOfPlayerIndex = (playerIndex: PlayerIndex) => {
       return '0'
     case '3':
       return '1'
+  }
+}
+
+export const convertYakumanMaxToCountMax = (
+  value: '13' | '26' | '39' | '130'
+) => {
+  switch (value) {
+    case '13':
+      return 1
+    case '26':
+      return 2
+    case '39':
+      return 3
+    case '130':
+      return 10
   }
 }

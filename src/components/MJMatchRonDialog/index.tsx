@@ -91,7 +91,10 @@ export default function MJMatchRonDialog({
       yakuResult.yakumanCount,
       activePlayer?.position === PlayerPositionEnum.East,
       targetPlayerIndex !== '-1',
-      { roundUp: match.setting.isManganRoundUp === '1' }
+      {
+        roundUp: match.setting.isManganRoundUp === '1',
+        yakumanMax: match.setting.yakumanMax,
+      }
     )
 
     if (currentMatchRound.extendedRoundCount > 0) {
@@ -123,6 +126,7 @@ export default function MJMatchRonDialog({
     activePlayer?.position,
     targetPlayerIndex,
     match.setting.isManganRoundUp,
+    match.setting.yakumanMax,
     currentMatchRound.extendedRoundCount,
     currentMatchRound.cumulatedThousands,
   ])
@@ -309,7 +313,11 @@ export default function MJMatchRonDialog({
               activePlayerIndex as PlayerIndex,
               currentMatchRound.roundCount
             ),
-            targetPlayerIndex !== '-1'
+            targetPlayerIndex !== '-1',
+            {
+              roundUp: match.setting.isManganRoundUp === '1',
+              yakumanMax: match.setting.yakumanMax,
+            }
           )
 
           if (yakuCompiledScore.target) {
@@ -475,6 +483,8 @@ export default function MJMatchRonDialog({
     isDaisangenTriggered,
     isDaisuushiiTriggered,
     isSuukantsuTriggered,
+    match.setting.isManganRoundUp,
+    match.setting.yakumanMax,
     targetPlayerIndex,
     yakuResult,
     yakumanDaisangenTriggerPlayerIndex,

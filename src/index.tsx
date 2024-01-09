@@ -31,6 +31,7 @@ import ObsRoomEndPage from './pages/obs/[obsRoomId]/ended.page'
 import MatchIntroductionPage from './pages/match/[id]/introduction.page'
 import MatchOverviewOverlayPage from './pages/match/[id]/overviewOverlay.page'
 import ObsOverviewOverlayPage from './pages/obs/[obsRoomId]/overlay.page'
+import ObsRoomExportPage from './pages/obs/[obsRoomId]/export.page'
 
 // Import the functions you need from the SDKs you need
 // TODO: Add SDKs for Firebase products that you want to use
@@ -90,6 +91,10 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <Route
               path="/obs/:obsRoomId/control"
               component={ObsRoomControlPage}
+            />
+            <Route
+              path="/obs/:obsRoomId/export"
+              component={ObsRoomExportPage}
             />
             <Route
               path="/obs/:obsRoomId/forecast"

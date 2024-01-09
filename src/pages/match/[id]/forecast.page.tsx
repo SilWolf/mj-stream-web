@@ -45,22 +45,28 @@ const MatchForecastPage = ({ params: { matchId } }: Props) => {
     }
 
     return [
-      matchDTO.playerEast,
-      matchDTO.playerSouth,
-      matchDTO.playerWest,
-      matchDTO.playerNorth,
+      matchDTO[matchDTO._order[0]],
+      matchDTO[matchDTO._order[1]],
+      matchDTO[matchDTO._order[2]],
+      matchDTO[matchDTO._order[3]],
     ]
   }, [matchDTO])
 
-  const minutes = useSearchParam('m')
+  const startAt = useSearchParam('startAt')
   const initialMinutes = useMemo(() => {
-    const n = parseInt(minutes as string)
-    if (isNaN(n)) {
+    try {
+      const [hour, minute] = startAt!.split(':').map((value) => parseInt(value))
+      const targetDate = new Date()
+      targetDate.setHours(hour)
+      targetDate.setMinutes(minute)
+
+      const now = new Date()
+
+      return Math.max(0, (targetDate.getTime() - now.getTime()) / 60000)
+    } catch {
       return 15
     }
-
-    return n
-  }, [minutes])
+  }, [startAt])
 
   return (
     <div

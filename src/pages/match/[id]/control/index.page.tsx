@@ -20,6 +20,7 @@ import MJMatchRonDialog, {
   MJMatchRonProps,
 } from '@/components/MJMatchRonDialog'
 import {
+  convertYakumanMaxToCountMax,
   formatPlayerResultsByPreviousPlayerResults,
   generateMatchRoundCode,
   getAfterOfPlayerIndex,
@@ -936,10 +937,10 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
   }, [setMatchHideHeaderDisplay])
 
   useEffect(() => {
-    if (matchCurrentRoundDoras.length === 0) {
+    if (!!matchCurrentRound && matchCurrentRoundDoras.length === 0) {
       setClickedDoraIndex(-1)
     }
-  }, [matchCurrentRoundDoras.length])
+  }, [matchCurrentRound, matchCurrentRoundDoras.length])
 
   if ((!match || !matchCurrentRound) && matchDTO) {
     return <ControlNewMatch matchDTO={matchDTO} />
@@ -1259,6 +1260,9 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                         han={matchRound.resultDetail!.han}
                         fu={matchRound.resultDetail!.fu}
                         yakumanCount={matchRound.resultDetail!.yakumanCount}
+                        yakumanCountMax={convertYakumanMaxToCountMax(
+                          match.setting.yakumanMax
+                        )}
                         isManganRoundUp={match.setting.isManganRoundUp === '1'}
                       />
                     </p>
@@ -1506,6 +1510,15 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                   <i className="bi bi-play-fill"></i>
                 </button>
               )}
+
+            {matchCurrentRound.nextRoundType === NextRoundTypeEnum.End && (
+              <a href={`/match/${matchId}/export`} target="_blank">
+                <button className="text-6xl p-4 text-yellow-800 bg-yellow-400 border-4 border-yellow-600 rounded-lg">
+                  上傳成績
+                  <i className="bi bi-cloud-upload"></i>
+                </button>
+              </a>
+            )}
           </div>
           <div className="flex gap-x-6 items-end justify-end">
             {!match.hideHeader && (

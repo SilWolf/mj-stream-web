@@ -4,6 +4,7 @@ type Props = React.HTMLAttributes<HTMLDivElement> & {
   han: number
   fu: number | undefined
   yakumanCount?: number
+  yakumanCountMax?: number
   raw?: boolean
   twoRows?: boolean
   isManganRoundUp?: boolean
@@ -13,22 +14,24 @@ export default function MJHanFuTextSpan({
   han,
   fu,
   yakumanCount,
+  yakumanCountMax = 10,
   raw,
   isManganRoundUp,
   ...props
 }: Props) {
   const hanFuDisplay = useMemo(() => {
     if (yakumanCount && yakumanCount > 0) {
-      if (yakumanCount === 1) {
+      const trueYakumanCount = Math.min(yakumanCountMax, yakumanCount)
+      if (trueYakumanCount === 1) {
         return '役滿'
-      } else if (yakumanCount === 2) {
+      } else if (trueYakumanCount === 2) {
         return '兩倍役滿'
-      } else if (yakumanCount === 3) {
+      } else if (trueYakumanCount === 3) {
         return '三倍役滿'
-      } else if (yakumanCount === 4) {
+      } else if (trueYakumanCount === 4) {
         return '四倍役滿'
       } else {
-        return `${yakumanCount}倍役滿`
+        return `${trueYakumanCount}倍役滿`
       }
     }
 
@@ -65,7 +68,7 @@ export default function MJHanFuTextSpan({
     }
 
     return `${han}飜`
-  }, [yakumanCount, raw, han, fu, isManganRoundUp])
+  }, [yakumanCount, raw, han, fu, isManganRoundUp, yakumanCountMax])
 
   return <div {...props}>{hanFuDisplay}</div>
 }

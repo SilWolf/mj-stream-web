@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import useMatch from '@/hooks/useMatch'
 import {
   MatchRound,
@@ -68,6 +68,9 @@ const mapPlayerResult = (matchRound: MatchRound, playerIndex: PlayerIndex) => ({
 export default function MatchExportPage({ params: { matchId } }: Props) {
   const { match, matchRounds, matchCurrentRound } = useMatch(matchId)
 
+  const [isExported, setIsExported] = useState<boolean>(false)
+  const [isExporting, setIsExporting] = useState<boolean>(false)
+
   const handleClickExport = useCallback(() => {
     if (!match || !matchRounds) {
       return
@@ -96,10 +99,10 @@ export default function MatchExportPage({ params: { matchId } }: Props) {
       '3': (ranking.findIndex((rank) => rank.index === '3') + 1).toString(),
     }
     const pointOffsetByRanking: Record<string, number> = {
-      '1': 15,
-      '2': 5,
-      '3': -5,
-      '4': -15,
+      '1': 50,
+      '2': 10,
+      '3': -10,
+      '4': -30,
     }
 
     const exportedMatch = {
@@ -109,29 +112,37 @@ export default function MatchExportPage({ params: { matchId } }: Props) {
           score: lastRound.playerResults[0].afterScore,
           ranking: rankingByPlayerIndex['0'],
           point:
-            (lastRound.playerResults[0].afterScore - 25000) / 1000.0 +
+            (lastRound.playerResults[0].afterScore - 30000) / 1000.0 +
             pointOffsetByRanking[rankingByPlayerIndex['0']],
+          penalty: lastRound.playerResults[0].isRedCarded ? -30 : 0,
+          penaltyReason: lastRound.playerResults[0].isRedCarded ? '紅牌' : '',
         },
         playerSouth: {
           score: lastRound.playerResults[1].afterScore,
           ranking: rankingByPlayerIndex['1'],
           point:
-            (lastRound.playerResults[1].afterScore - 25000) / 1000.0 +
+            (lastRound.playerResults[1].afterScore - 30000) / 1000.0 +
             pointOffsetByRanking[rankingByPlayerIndex['1']],
+          penalty: lastRound.playerResults[1].isRedCarded ? -30 : 0,
+          penaltyReason: lastRound.playerResults[1].isRedCarded ? '紅牌' : '',
         },
         playerWest: {
           score: lastRound.playerResults[2].afterScore,
           ranking: rankingByPlayerIndex['2'],
           point:
-            (lastRound.playerResults[2].afterScore - 25000) / 1000.0 +
+            (lastRound.playerResults[2].afterScore - 30000) / 1000.0 +
             pointOffsetByRanking[rankingByPlayerIndex['2']],
+          penalty: lastRound.playerResults[2].isRedCarded ? -30 : 0,
+          penaltyReason: lastRound.playerResults[2].isRedCarded ? '紅牌' : '',
         },
         playerNorth: {
           score: lastRound.playerResults[3].afterScore,
           ranking: rankingByPlayerIndex['3'],
           point:
-            (lastRound.playerResults[3].afterScore - 25000) / 1000.0 +
+            (lastRound.playerResults[3].afterScore - 30000) / 1000.0 +
             pointOffsetByRanking[rankingByPlayerIndex['3']],
+          penalty: lastRound.playerResults[3].isRedCarded ? -30 : 0,
+          penaltyReason: lastRound.playerResults[3].isRedCarded ? '紅牌' : '',
         },
       },
       rounds: myMatchRounds.map((round) => ({
@@ -144,15 +155,22 @@ export default function MatchExportPage({ params: { matchId } }: Props) {
         playerNorth: mapPlayerResult(round, '3'),
       })),
     }
-
-    fetch(`http://localhost:3000/api/match/${exportedMatch._id}/result`, {
-      method: 'PATCH',
-      body: JSON.stringify(exportedMatch),
-      headers: {
-        Accept: 'application/json',
-      },
-    }).then(() => {
-      alert('done')
+    setIsExporting(true)
+    fetch(
+      `${import.meta.env.VITE_HOMEPAGE_HOST}/api/match/${
+        exportedMatch._id
+      }/result`,
+      {
+        method: 'PATCH',
+        body: JSON.stringify(exportedMatch),
+        headers: {
+          Accept: 'application/json',
+        },
+      }
+    ).then(() => {
+      setIsExported(true)
+      setIsExporting(false)
+      alert('上傳完畢，請在資料庫上查看。')
     })
   }, [match, matchId, matchRounds])
 
@@ -175,7 +193,20 @@ export default function MatchExportPage({ params: { matchId } }: Props) {
         />
 
         <div className="text-center">
-          <MJUIButton onClick={handleClickExport}>匯出</MJUIButton>
+          {!isExported && (
+            <MJUIButton disabled={isExporting} onClick={handleClickExport}>
+              {isExporting ? '上傳中…' : '上傳成績'}
+            </MJUIButton>
+          )}
+          {isExported && (
+            <a
+              href={`${
+                import.meta.env.VITE_CMS_HOST
+              }/structure/general-list-matches-past;${matchId}`}
+            >
+              <MJUIButton color="secondary">在資料庫上查看</MJUIButton>
+            </a>
+          )}
         </div>
       </div>
     </div>

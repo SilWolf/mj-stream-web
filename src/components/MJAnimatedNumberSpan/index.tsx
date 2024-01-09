@@ -25,6 +25,34 @@ function MJAnimatedNumberSpan({ value }: Props) {
     setTimeout(() => {
       setStoredValue(value)
     }, animationMs + msPerFrame)
+
+    setTimeout(
+      () => {
+        setStoredValue(value)
+      },
+      animationMs + 2 * msPerFrame
+    )
+
+    setTimeout(
+      () => {
+        setStoredValue(value)
+      },
+      animationMs + 3 * msPerFrame
+    )
+
+    setTimeout(
+      () => {
+        setStoredValue(value)
+      },
+      animationMs + 4 * msPerFrame
+    )
+
+    setTimeout(
+      () => {
+        setStoredValue(value)
+      },
+      animationMs + 5 * msPerFrame
+    )
   }, [storedValue, value])
 
   useEffect(() => {

@@ -14,6 +14,7 @@ import MJUISelectClicker from '../MJUI/MJUISelectClicker'
 import MJUIDialogV2, { MJUIDialogV2Props } from '../MJUI/MJUIDialogV2'
 import MJUIButton from '../MJUI/MJUIButton'
 import {
+  convertYakumanMaxToCountMax,
   getIsPlayerEast,
   getIsPlayerNorth,
   getIsPlayerSouth,
@@ -1005,16 +1006,32 @@ const MJYakuKeyboardDiv = ({
       myYakuChecks['menzenchin-tsumohou'] = true
     }
 
-    if (myYakuChecks['yakuhai-east'] && getIsRoundEast(round)) {
+    if (
+      myYakuChecks['yakuhai-east'] &&
+      getIsRoundEast(round) &&
+      getIsPlayerEast(activePlayerIndex, round)
+    ) {
       myYakuChecks['yakuhai-east'] = false
       myYakuChecks['yakuhai-double-east'] = true
-    } else if (myYakuChecks['yakuhai-south'] && getIsRoundSouth(round)) {
+    } else if (
+      myYakuChecks['yakuhai-south'] &&
+      getIsRoundSouth(round) &&
+      getIsPlayerSouth(activePlayerIndex, round)
+    ) {
       myYakuChecks['yakuhai-south'] = false
       myYakuChecks['yakuhai-double-south'] = true
-    } else if (myYakuChecks['yakuhai-west'] && getIsRoundWest(round)) {
+    } else if (
+      myYakuChecks['yakuhai-west'] &&
+      getIsRoundWest(round) &&
+      getIsPlayerWest(activePlayerIndex, round)
+    ) {
       myYakuChecks['yakuhai-west'] = false
       myYakuChecks['yakuhai-double-west'] = true
-    } else if (myYakuChecks['yakuhai-north'] && getIsRoundNorth(round)) {
+    } else if (
+      myYakuChecks['yakuhai-north'] &&
+      getIsRoundNorth(round) &&
+      getIsPlayerNorth(activePlayerIndex, round)
+    ) {
       myYakuChecks['yakuhai-north'] = false
       myYakuChecks['yakuhai-double-north'] = true
     }
@@ -1303,6 +1320,9 @@ export const MJYakuKeyboardResultDiv = ({
                 fu={result.fu}
                 yakumanCount={result.yakumanCount}
                 isManganRoundUp={matchSetting.isManganRoundUp === '1'}
+                yakumanCountMax={convertYakumanMaxToCountMax(
+                  matchSetting.yakumanMax
+                )}
               />
               <MJHanFuTextSpan
                 className="text-xs text-neutral-600"
