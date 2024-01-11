@@ -8,6 +8,7 @@ import React, {
 } from 'react'
 import useMatch from '@/hooks/useMatch'
 import {
+  Match,
   MatchRound,
   NextRoundTypeEnum,
   PlayerIndex,
@@ -16,9 +17,6 @@ import {
   RoundResultTypeEnum,
 } from '@/models'
 import { useConfirmDialog } from '@/components/ConfirmDialog/provider'
-import MJMatchRonDialog, {
-  MJMatchRonProps,
-} from '@/components/MJMatchRonDialog'
 import {
   convertYakumanMaxToCountMax,
   formatPlayerResultsByPreviousPlayerResults,
@@ -34,13 +32,9 @@ import MJPlayerCardDiv from '@/components/MJPlayerCardDiv'
 import MJTileDiv, { MJTileKey } from '@/components/MJTileDiv'
 import MJMatchCounterSpan from '@/components/MJMatchCounterSpan'
 import MJTileKeyboardDiv from '@/components/MJTileKeyboardDiv'
-import MJMatchHistoryTable from '@/components/MJMatchHistoryTable'
-import MJMatchExhaustedDialog from '@/components/MJMatchExhaustedDialog'
 import MJUIDialogV2 from '@/components/MJUI/MJUIDialogV2'
 import MJUIButton from '@/components/MJUI/MJUIButton'
-import MJMatchHotfixDialog from '@/components/MJMatchHotifxDialog'
 import { useFirebaseDatabaseByKey } from '@/providers/firebaseDatabase.provider'
-import MJHanFuTextSpan from '@/components/MJHanFuTextSpan'
 import { useQuery } from '@tanstack/react-query'
 import { apiGetMatchById } from '@/helpers/sanity.helper'
 import ControlNewMatch from '../ControlNewMatch'
@@ -52,6 +46,13 @@ import {
   MJYakuKeyboardDialog,
   MJYakuKeyboardResult,
 } from '@/components/MJYakuKeyboardDiv'
+import MJAmountSpan from '@/components/MJAmountSpan'
+import MJMatchRonForm, {
+  MJMatchRonFormProps,
+} from '@/components/MJMatchRonForm'
+import MJHanFuTextSpan from '@/components/MJHanFuTextSpan'
+import MJMatchExhaustedForm from '@/components/MJMatchExhaustedForm'
+import MJMatchHotfixForm from '@/components/MJMatchHotifxForm'
 
 const VIEW_TABS = [
   {
@@ -79,6 +80,71 @@ const VIEW_TABS = [
     value: 'gridView',
   },
 ]
+
+function MJMatchHistoryAmountSpan({ value }: { value: number }) {
+  return (
+    <MJAmountSpan
+      value={value}
+      positiveClassName="text-green-600"
+      negativeClassName="text-red-600"
+      signed
+      hideZero
+    />
+  )
+}
+
+const PlayerResultMetadata = ({
+  match,
+  matchRound,
+  playerIndex,
+}: {
+  match: Match
+  matchRound: MatchRound
+  playerIndex: PlayerIndex
+}) => {
+  return (
+    <div className="text-xs">
+      <p>
+        {matchRound.playerResults[playerIndex].isRiichi && <span>立</span>}
+        {matchRound.resultType === RoundResultTypeEnum.Ron &&
+          matchRound.playerResults[playerIndex].type ===
+            PlayerResultWinnerOrLoserEnum.Lose && <span>統</span>}
+        {matchRound.resultType === RoundResultTypeEnum.Ron &&
+          matchRound.playerResults[playerIndex].type ===
+            PlayerResultWinnerOrLoserEnum.Win && <span>和</span>}
+        {matchRound.resultType === RoundResultTypeEnum.SelfDrawn &&
+          matchRound.playerResults[playerIndex].type ===
+            PlayerResultWinnerOrLoserEnum.Win && <span>摸</span>}
+        {matchRound.resultType === RoundResultTypeEnum.Exhausted &&
+          matchRound.playerResults[playerIndex].type ===
+            PlayerResultWinnerOrLoserEnum.Win && <span>聽</span>}
+      </p>
+      {(matchRound.resultType === RoundResultTypeEnum.Ron ||
+        matchRound.resultType === RoundResultTypeEnum.SelfDrawn) &&
+        matchRound.playerResults[playerIndex].type ===
+          PlayerResultWinnerOrLoserEnum.Win && (
+          <div className="bg-black bg-opacity-10 rounded py-1 px-2 mx-auto inline-block">
+            <p className="font-bold">
+              <MJHanFuTextSpan
+                className="text-xs text-neutral-600"
+                han={matchRound.playerResults[playerIndex].detail.han}
+                fu={matchRound.playerResults[playerIndex].detail.fu}
+                yakumanCount={
+                  matchRound.playerResults[playerIndex].detail.yakumanCount
+                }
+                isManganRoundUp={match.setting.isManganRoundUp === '1'}
+              />
+            </p>
+            <p>
+              {matchRound.playerResults[playerIndex].detail.yakus
+                ?.map(({ label }) => label)
+                .join(' ')}
+            </p>
+          </div>
+        )}
+    </div>
+  )
+}
 
 type Props = {
   params: { matchId: string }
@@ -110,18 +176,18 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
 
   const matchRoundsWithDetail = useMemo(
     () =>
-      Object.entries(matchRounds ?? {})
-        .filter(([, matchRound]) => !!matchRound.resultDetail)
-        .map(([matchRoundId, matchRound]) => ({
-          id: matchRoundId,
-          ...matchRound,
-        }))
-        .reverse() ?? [],
+      Object.entries(matchRounds ?? {}).map(([matchRoundId, matchRound]) => ({
+        id: matchRoundId,
+        ...matchRound,
+      })) ?? [],
     [matchRounds]
   )
 
   const unboardcastedMatchRounds = useMemo(
-    () => matchRoundsWithDetail.filter(({ hasBroadcasted }) => !hasBroadcasted),
+    () =>
+      matchRoundsWithDetail.filter(
+        ({ resultDetail, hasBroadcasted }) => !!resultDetail && !hasBroadcasted
+      ),
     [matchRoundsWithDetail]
   )
 
@@ -134,7 +200,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
   const [isShowingRonDialog, toggleRonDialog] = useBoolean(false)
   const [ronDialogProps, setRonDialogProps] = useState<
     Pick<
-      MJMatchRonProps,
+      MJMatchRonFormProps,
       'initialActivePlayerIndex' | 'initialTargetPlayerIndex'
     >
   >({ initialActivePlayerIndex: '0', initialTargetPlayerIndex: '-1' })
@@ -1212,7 +1278,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
           )}
         </div>
 
-        <div className="space-y-6">
+        {/* <div className="space-y-6">
           <h4 className="text-3xl">
             <i className="bi bi-clock-history"></i> 和牌記錄
           </h4>
@@ -1283,21 +1349,211 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
               ))}
             </tbody>
           </table>
-        </div>
+        </div> */}
 
         <div className="space-y-6">
           <h4 className="text-3xl">
-            <i className="bi bi-bar-chart-steps"></i> 分數{' '}
+            <i className="bi bi-bar-chart-steps"></i> 紀錄{' '}
             <span className="text-sm">
               ( 立=立直, 和=和牌, 統=出統, 摸=自摸, 聽=聽牌 )
             </span>
           </h4>
 
-          <MJMatchHistoryTable
-            players={match.players}
-            matchRounds={matchRounds ?? {}}
-            className="w-full table-auto"
-          />
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-gray-400 [&>th]:p-2">
+                <th className="whitespace-nowrap px-16">局數</th>
+                <th>{match.players['0'].nickname}</th>
+                <th>{match.players['1'].nickname}</th>
+                <th>{match.players['2'].nickname}</th>
+                <th>{match.players['3'].nickname}</th>
+                <th className="text-right">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              {matchRoundsWithDetail[0] && (
+                <tr className="even:bg-gray-200 [&>td]:p-2">
+                  <td className="text-center" />
+                  <td className="text-center">
+                    <MJAmountSpan
+                      value={
+                        matchRoundsWithDetail[0].playerResults['0'].beforeScore
+                      }
+                    />
+                  </td>
+                  <td className="text-center">
+                    <MJAmountSpan
+                      value={
+                        matchRoundsWithDetail[0].playerResults['1'].beforeScore
+                      }
+                    />
+                  </td>
+                  <td className="text-center">
+                    <MJAmountSpan
+                      value={
+                        matchRoundsWithDetail[0].playerResults['2'].beforeScore
+                      }
+                    />
+                  </td>
+                  <td className="text-center">
+                    <MJAmountSpan
+                      value={
+                        matchRoundsWithDetail[0].playerResults['3'].beforeScore
+                      }
+                    />
+                  </td>
+                  <td></td>
+                </tr>
+              )}
+              {matchRoundsWithDetail.map(
+                ({ id: matchRoundId, ...matchRound }) => {
+                  if (matchRound.resultType === RoundResultTypeEnum.Hotfix) {
+                    return (
+                      <tr
+                        key={matchRoundId}
+                        className="even:bg-gray-200 [&>td]:p-2"
+                      >
+                        <td className="text-center whitespace-nowrap px-16">
+                          手動調整
+                        </td>
+                        <td className="text-center">
+                          {matchRound.playerResults['0'].afterScore}
+                        </td>
+                        <td className="text-center">
+                          {matchRound.playerResults['1'].afterScore}
+                        </td>
+                        <td className="text-center">
+                          {matchRound.playerResults['2'].afterScore}
+                        </td>
+                        <td className="text-center">
+                          {matchRound.playerResults['3'].afterScore}
+                        </td>
+                        <td></td>
+                      </tr>
+                    )
+                  }
+
+                  return (
+                    <tr
+                      key={matchRoundId}
+                      className="even:bg-gray-200 [&>td]:p-2"
+                    >
+                      <td className="text-center whitespace-nowrap">
+                        <MJMatchCounterSpan
+                          roundCount={matchRound.roundCount}
+                          extendedRoundCount={matchRound.extendedRoundCount}
+                          max={8}
+                          className="px-4"
+                        />
+                      </td>
+                      <td className="text-center">
+                        <MJMatchHistoryAmountSpan
+                          value={
+                            matchRound.playerResults['0'].afterScore -
+                            matchRound.playerResults['0'].beforeScore
+                          }
+                        />
+                        <PlayerResultMetadata
+                          match={match}
+                          matchRound={matchRound}
+                          playerIndex="0"
+                        />
+                      </td>
+                      <td className="text-center">
+                        <MJMatchHistoryAmountSpan
+                          value={
+                            matchRound.playerResults['1'].afterScore -
+                            matchRound.playerResults['1'].beforeScore
+                          }
+                        />
+                        <PlayerResultMetadata
+                          match={match}
+                          matchRound={matchRound}
+                          playerIndex="1"
+                        />
+                      </td>
+                      <td className="text-center">
+                        <MJMatchHistoryAmountSpan
+                          value={
+                            matchRound.playerResults['2'].afterScore -
+                            matchRound.playerResults['2'].beforeScore
+                          }
+                        />
+                        <PlayerResultMetadata
+                          match={match}
+                          matchRound={matchRound}
+                          playerIndex="2"
+                        />
+                      </td>
+                      <td className="text-center">
+                        <MJMatchHistoryAmountSpan
+                          value={
+                            matchRound.playerResults['3'].afterScore -
+                            matchRound.playerResults['3'].beforeScore
+                          }
+                        />
+                        <PlayerResultMetadata
+                          match={match}
+                          matchRound={matchRound}
+                          playerIndex="3"
+                        />
+                      </td>
+                      <td className="text-right">
+                        {matchRound.resultType !==
+                          RoundResultTypeEnum.Unknown && (
+                          <MJUIButton
+                            variant="text"
+                            color="danger"
+                            data-matchRoundId={matchRoundId}
+                          >
+                            <i className="bi bi-pencil"></i> 修改
+                          </MJUIButton>
+                        )}
+                      </td>
+                    </tr>
+                  )
+                }
+              )}
+              {matchRoundsWithDetail[matchRoundsWithDetail.length - 1] && (
+                <tr className="even:bg-gray-200 [&>td]:p-2">
+                  <td className="text-center whitespace-nowrap px-16" />
+                  <td className="text-center font-bold text-lg">
+                    <MJAmountSpan
+                      value={
+                        matchRoundsWithDetail[matchRoundsWithDetail.length - 1]
+                          .playerResults['0'].afterScore
+                      }
+                    />
+                  </td>
+                  <td className="text-center font-bold text-lg">
+                    <MJAmountSpan
+                      value={
+                        matchRoundsWithDetail[matchRoundsWithDetail.length - 1]
+                          .playerResults['1'].afterScore
+                      }
+                    />
+                  </td>
+                  <td className="text-center font-bold text-lg">
+                    <MJAmountSpan
+                      value={
+                        matchRoundsWithDetail[matchRoundsWithDetail.length - 1]
+                          .playerResults['2'].afterScore
+                      }
+                    />
+                  </td>
+                  <td className="text-center font-bold text-lg">
+                    <MJAmountSpan
+                      value={
+                        matchRoundsWithDetail[matchRoundsWithDetail.length - 1]
+                          .playerResults['3'].afterScore
+                      }
+                    />
+                  </td>
+                  <td></td>
+                </tr>
+              )}
+            </tbody>
+          </table>
 
           {/* <div>
             <MJUIButton
@@ -1359,32 +1615,45 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         }
       />
 
-      <MJMatchRonDialog
-        match={match}
-        currentMatchRound={matchCurrentRound}
+      <MJUIDialogV2
+        title="和了"
         open={isShowingRonDialog}
-        onSubmit={handleSubmitMatchRonDialog}
         onClose={() => toggleRonDialog(false)}
-        {...ronDialogProps}
-      />
+      >
+        <MJMatchRonForm
+          match={match}
+          currentMatchRound={matchCurrentRound}
+          onSubmit={handleSubmitMatchRonDialog}
+          {...ronDialogProps}
+        />
+      </MJUIDialogV2>
 
-      <MJMatchExhaustedDialog
-        match={match}
-        currentMatchRound={matchCurrentRound}
+      <MJUIDialogV2
+        title="流局"
         open={isShowingExhaustedDialog}
-        onSubmit={handleSubmitMatchExhaustedDialog}
         onClose={() => toggleExhaustedDialog(false)}
-        {...ronDialogProps}
-      />
+      >
+        <MJMatchExhaustedForm
+          match={match}
+          currentMatchRound={matchCurrentRound}
+          onSubmit={handleSubmitMatchExhaustedDialog}
+          {...ronDialogProps}
+        />
+      </MJUIDialogV2>
 
-      <MJMatchHotfixDialog
-        match={match}
-        currentMatchRound={matchCurrentRound}
+      <MJUIDialogV2
+        title="手動調整分數"
         open={isShowingHotfixDialog}
-        onSubmit={handleSubmitMatchHotfixDialog}
         onClose={() => toggleHotfixDialog(false)}
-        {...ronDialogProps}
-      />
+      >
+        <MJMatchHotfixForm
+          match={match}
+          currentMatchRound={matchCurrentRound}
+          onSubmit={handleSubmitMatchHotfixDialog}
+          {...ronDialogProps}
+        />
+      </MJUIDialogV2>
+
       {/* 
       {unboardcastedMatchRounds.length > 0 && (
         <div className="fixed bottom-0 left-0 right-0 px-4 pb-4">
