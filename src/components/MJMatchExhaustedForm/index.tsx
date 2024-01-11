@@ -10,17 +10,23 @@ import {
 import MJUISwitch from '../MJUI/MJUISwitch'
 import MJAmountSpan from '../MJAmountSpan'
 
-export type MJMatchRonProps = {
+export type MJMatchExhaustedFormProps = {
   match: Match
   currentMatchRound: MatchRound
+  submitNode?: React.ReactNode
   onSubmit?: (resultMatchRound: MatchRound) => unknown
 }
 
 export default function MJMatchExhaustedForm({
   match,
   currentMatchRound,
+  submitNode = (
+    <span>
+      <i className="bi bi-camera-reels-fill"></i> 提交並播出分數變動動畫
+    </span>
+  ),
   onSubmit,
-}: MJMatchRonProps) {
+}: MJMatchExhaustedFormProps) {
   const [playersChecked, setPlayersChecked] = useState<
     Record<PlayerIndex, boolean>
   >({
@@ -231,7 +237,7 @@ export default function MJMatchExhaustedForm({
 
       <div className="space-y-2">
         <MJUIButton onClick={handleSubmit} className="w-full">
-          <i className="bi bi-camera-reels-fill"></i> 提交並播出分數變動動畫
+          {submitNode}
         </MJUIButton>
       </div>
     </div>

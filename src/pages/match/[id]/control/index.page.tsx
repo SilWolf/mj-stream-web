@@ -53,6 +53,9 @@ import MJMatchRonForm, {
 import MJHanFuTextSpan from '@/components/MJHanFuTextSpan'
 import MJMatchExhaustedForm from '@/components/MJMatchExhaustedForm'
 import MJMatchHotfixForm from '@/components/MJMatchHotifxForm'
+import MJMatchRoundEditForm, {
+  MJMatchRoundEditFormProps,
+} from '@/components/MJMatchRoundEditForm'
 
 const VIEW_TABS = [
   {
@@ -208,6 +211,29 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
 
   const [isShowingExhaustedDialog, toggleExhaustedDialog] = useBoolean(false)
   const [isShowingHotfixDialog, toggleHotfixDialog] = useBoolean(false)
+
+  const [isShowingEditDialog, toggleEditDialog] = useBoolean(false)
+  const [editDialogProps, setEditDialogProps] = useState<
+    Pick<MJMatchRoundEditFormProps, 'matchRound'>
+  >({ matchRound: null })
+
+  const handleClickEditMatchRound = useCallback(
+    (e: MouseEvent<HTMLButtonElement>) => {
+      const matchRoundId = e.currentTarget.getAttribute('data-matchRoundId')
+      if (!matchRoundId) {
+        return
+      }
+
+      const matchRound = matchRounds?.[matchRoundId]
+      if (!matchRound) {
+        return
+      }
+
+      setEditDialogProps({ matchRound })
+      toggleEditDialog(true)
+    },
+    [matchRounds, toggleEditDialog]
+  )
 
   const [activeAnimationMessage, setActiveAnimationMessage] = useState<
     string | null
@@ -1505,6 +1531,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                             variant="text"
                             color="danger"
                             data-matchRoundId={matchRoundId}
+                            onClick={handleClickEditMatchRound}
                           >
                             <i className="bi bi-pencil"></i> 修改
                           </MJUIButton>
@@ -1652,6 +1679,14 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
           onSubmit={handleSubmitMatchHotfixDialog}
           {...ronDialogProps}
         />
+      </MJUIDialogV2>
+
+      <MJUIDialogV2
+        title="修改局數"
+        open={isShowingEditDialog}
+        onClose={() => toggleEditDialog(false)}
+      >
+        <MJMatchRoundEditForm match={match} {...editDialogProps} />
       </MJUIDialogV2>
 
       {/* 

@@ -27,6 +27,7 @@ export type MJMatchRonFormProps = {
   currentMatchRound: MatchRound
   initialActivePlayerIndex?: PlayerIndex
   initialTargetPlayerIndex?: PlayerIndex | '-1'
+  submitNode?: React.ReactNode
   onSubmit?: (resultMatchRound: MatchRound) => unknown
 }
 
@@ -35,6 +36,11 @@ export default function MJMatchRonForm({
   currentMatchRound,
   initialActivePlayerIndex = '0',
   initialTargetPlayerIndex = '-1',
+  submitNode = (
+    <span>
+      <i className="bi bi-camera-reels-fill"></i> 提交並播出分數變動動畫
+    </span>
+  ),
   onSubmit,
 }: MJMatchRonFormProps) {
   const [yakuResult, setYakuResult] = useState<
@@ -59,7 +65,7 @@ export default function MJMatchRonForm({
       Object.keys(match.players) as unknown as PlayerIndex[]
     ).map((index) => ({
       index: index.toString(),
-      name: match.players[index].name,
+      name: `${match.players[index].name} (${match.players[index].nickname})`,
       position: getPlayerPosition(index, currentMatchRound.roundCount),
     }))
 
@@ -687,7 +693,7 @@ export default function MJMatchRonForm({
           className="w-full"
           disabled={!yakuResult?.yakus || yakuResult.yakus.length <= 0}
         >
-          <i className="bi bi-camera-reels-fill"></i> 提交並播出分數變動動畫
+          {submitNode}
         </MJUIButton>
       </div>
     </div>
