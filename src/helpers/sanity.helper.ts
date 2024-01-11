@@ -433,68 +433,109 @@ export const formatTeamPlayerDTO = (
   placeholderTeam: DB_Team | null | undefined,
   teamPlayer?: DB_TeamPlayer | null | undefined
 ): TeamPlayerDTO => {
-  const playerName = teamPlayer?.overridedName || teamPlayer?.player?.name || ''
-  const playerNickname =
-    teamPlayer?.overridedNickname || teamPlayer?.player?.nickname || ''
+  const newTeamPlayerDTO: TeamPlayerDTO = {
+    playerId: '',
+    playerName: '',
+    playerNickname: '',
+    playerDesignation: '',
+    playerPortraitImageUrl:
+      'https://hkleague2024.hkmahjong.org/images/empty.png',
+    playerFullname: '',
+    playerStatistic: null,
+    teamId: '',
+    teamName: '',
+    teamSecondaryName: '',
+    teamThirdName: '',
+    teamFullname: '',
+    teamStatistic: null,
+    color: '#000000',
+    teamLogoImageUrl: 'https://hkleague2024.hkmahjong.org/images/empty.png',
+  }
 
-  const teamFullname = [
-    teamPlayer?.team?.name || placeholderTeam?.name || '',
-    teamPlayer?.team?.secondaryName || placeholderTeam?.secondaryName || '',
-    teamPlayer?.team?.thirdName || placeholderTeam?.thirdName || '',
+  if (teamPlayer) {
+    if (teamPlayer.player) {
+      newTeamPlayerDTO.playerName = teamPlayer.player.name
+      if (teamPlayer.player.nickname) {
+        newTeamPlayerDTO.playerNickname = teamPlayer.player.nickname
+      }
+      if (teamPlayer.player.designation) {
+        newTeamPlayerDTO.playerDesignation = teamPlayer.player.designation
+      }
+      if (teamPlayer.player.portraitImage) {
+        newTeamPlayerDTO.playerPortraitImageUrl =
+          teamPlayer.player.portraitImage
+      }
+
+      const stat = teamPlayer.player.statistics
+
+      newTeamPlayerDTO.playerStatistic =
+        stat && stat.matchCount > 0
+          ? {
+              point: stat.point,
+              matchCount: stat.matchCount,
+              nonFourthP: 1 - stat.fourthCount / stat.matchCount,
+              firstAndSecondP:
+                (stat.firstCount + stat.secondCount) / stat.matchCount,
+              riichiP: stat.riichiCount / stat.roundCount,
+              ronP: stat.ronCount / stat.roundCount,
+              chuckP: stat.chuckCount / stat.roundCount,
+              revealP: stat.revealCount / stat.roundCount,
+              ronPureScoreAvg: stat.ronPureScoreAvg,
+              chuckPureScoreAvg: stat.chuckPureScoreAvg,
+            }
+          : null
+    }
+
+    if (teamPlayer.team) {
+      newTeamPlayerDTO.teamId = teamPlayer.team._id
+      newTeamPlayerDTO.teamName = teamPlayer.team.name
+      newTeamPlayerDTO.teamSecondaryName = teamPlayer.team.secondaryName
+      newTeamPlayerDTO.teamThirdName = teamPlayer.team.thirdName
+      newTeamPlayerDTO.color = teamPlayer.team.color
+      if (teamPlayer.team.squareLogoImage) {
+        newTeamPlayerDTO.teamLogoImageUrl = teamPlayer.team.squareLogoImage
+      }
+    }
+
+    if (teamPlayer.overridedDesignation) {
+      newTeamPlayerDTO.playerDesignation = teamPlayer.overridedDesignation
+    }
+    if (teamPlayer.overridedName) {
+      newTeamPlayerDTO.playerName = teamPlayer.overridedName
+    }
+    if (teamPlayer.overridedNickname) {
+      newTeamPlayerDTO.playerNickname = teamPlayer.overridedNickname
+    }
+    if (teamPlayer.overridedColor) {
+      newTeamPlayerDTO.color = teamPlayer.overridedColor
+    }
+    if (teamPlayer.overridedPortraitImage) {
+      newTeamPlayerDTO.playerPortraitImageUrl =
+        teamPlayer.overridedPortraitImage
+    }
+  } else if (placeholderTeam) {
+    newTeamPlayerDTO.teamId = placeholderTeam._id
+    newTeamPlayerDTO.teamName = placeholderTeam.name
+    newTeamPlayerDTO.teamSecondaryName = placeholderTeam.secondaryName
+    newTeamPlayerDTO.teamThirdName = placeholderTeam.thirdName
+    newTeamPlayerDTO.color = placeholderTeam.color
+    if (placeholderTeam.squareLogoImage) {
+      newTeamPlayerDTO.teamLogoImageUrl = placeholderTeam.squareLogoImage
+    }
+  }
+
+  newTeamPlayerDTO.playerFullname =
+    newTeamPlayerDTO.playerName +
+    (newTeamPlayerDTO.playerNickname
+      ? ` (${newTeamPlayerDTO.playerNickname})`
+      : '')
+  newTeamPlayerDTO.teamFullname = [
+    newTeamPlayerDTO.teamName,
+    newTeamPlayerDTO.teamSecondaryName,
+    newTeamPlayerDTO.teamThirdName,
   ]
     .filter((item) => !!item)
     .join(' ')
 
-  const stat = teamPlayer?.player.statistics
-
-  return {
-    playerId: teamPlayer?.player._id ?? '',
-    playerName,
-    playerNickname,
-    playerFullname: playerNickname
-      ? `${playerName} (${playerNickname})`
-      : playerName,
-    playerDesignation:
-      teamPlayer?.overridedDesignation ||
-      teamFullname ||
-      teamPlayer?.player?.designation ||
-      '',
-    playerPortraitImageUrl:
-      teamPlayer?.overridedPortraitImage ||
-      teamPlayer?.player?.portraitImage ||
-      '/images/empty.png',
-    teamId: teamPlayer?.team?._id || (placeholderTeam?._id as string),
-    teamName: teamPlayer?.team?.name || placeholderTeam?.name || '',
-    teamSecondaryName:
-      teamPlayer?.team?.secondaryName || placeholderTeam?.secondaryName || '',
-    teamThirdName:
-      teamPlayer?.team?.thirdName || placeholderTeam?.thirdName || '',
-    teamFullname,
-    color:
-      teamPlayer?.overridedColor ||
-      teamPlayer?.team?.color ||
-      placeholderTeam?.color ||
-      '#000000',
-    teamLogoImageUrl:
-      teamPlayer?.team?.squareLogoImage ||
-      placeholderTeam?.squareLogoImage ||
-      '/images/empty.png',
-    playerStatistic:
-      stat && stat.matchCount > 0
-        ? {
-            point: stat.point,
-            matchCount: stat.matchCount,
-            nonFourthP: 1 - stat.fourthCount / stat.matchCount,
-            firstAndSecondP:
-              (stat.firstCount + stat.secondCount) / stat.matchCount,
-            riichiP: stat.riichiCount / stat.roundCount,
-            ronP: stat.ronCount / stat.roundCount,
-            chuckP: stat.chuckCount / stat.roundCount,
-            revealP: stat.revealCount / stat.roundCount,
-            ronPureScoreAvg: stat.ronPureScoreAvg,
-            chuckPureScoreAvg: stat.chuckPureScoreAvg,
-          }
-        : null,
-    teamStatistic: null,
-  }
+  return newTeamPlayerDTO
 }
