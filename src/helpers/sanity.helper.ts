@@ -497,6 +497,21 @@ export const formatTeamPlayerDTO = (
       }
     }
 
+    newTeamPlayerDTO.playerFullname =
+      newTeamPlayerDTO.playerName +
+      (newTeamPlayerDTO.playerNickname
+        ? ` (${newTeamPlayerDTO.playerNickname})`
+        : '')
+    newTeamPlayerDTO.teamFullname = [
+      newTeamPlayerDTO.teamName,
+      newTeamPlayerDTO.teamSecondaryName,
+      newTeamPlayerDTO.teamThirdName,
+    ]
+      .filter((item) => !!item)
+      .join(' ')
+
+    newTeamPlayerDTO.playerDesignation = newTeamPlayerDTO.teamFullname
+
     if (teamPlayer.overridedDesignation) {
       newTeamPlayerDTO.playerDesignation = teamPlayer.overridedDesignation
     }
@@ -522,20 +537,15 @@ export const formatTeamPlayerDTO = (
     if (placeholderTeam.squareLogoImage) {
       newTeamPlayerDTO.teamLogoImageUrl = placeholderTeam.squareLogoImage
     }
-  }
 
-  newTeamPlayerDTO.playerFullname =
-    newTeamPlayerDTO.playerName +
-    (newTeamPlayerDTO.playerNickname
-      ? ` (${newTeamPlayerDTO.playerNickname})`
-      : '')
-  newTeamPlayerDTO.teamFullname = [
-    newTeamPlayerDTO.teamName,
-    newTeamPlayerDTO.teamSecondaryName,
-    newTeamPlayerDTO.teamThirdName,
-  ]
-    .filter((item) => !!item)
-    .join(' ')
+    newTeamPlayerDTO.teamFullname = [
+      newTeamPlayerDTO.teamName,
+      newTeamPlayerDTO.teamSecondaryName,
+      newTeamPlayerDTO.teamThirdName,
+    ]
+      .filter((item) => !!item)
+      .join(' ')
+  }
 
   return newTeamPlayerDTO
 }

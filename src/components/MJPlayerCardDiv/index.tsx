@@ -165,7 +165,8 @@ export default function MJPlayerCardDiv({
             {...props}
             style={{
               background: `linear-gradient(260deg, transparent, transparent 22px, ${lightenedColor} 23px, ${player.color} 100%`,
-              textShadow: '0px 0px 0.04em #2D2D2DA0, 0px 0px 0.03em #2D2D2DA0',
+              textShadow:
+                '#00000048 2px 2px 3px, #00000048 -2px -2px 3px, #00000048 -2px 2px 3px, #00000048 2px -2px 3px, #00000048 0 0 6px',
             }}
           >
             <div className="flex flex-col justify-center gap-y-[0.075em] mt-[0.04em]">

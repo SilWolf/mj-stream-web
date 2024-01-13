@@ -162,7 +162,7 @@ const MatchIntroductionSlide = ({
                 <h3 className="text-[1.5em] font-semibold text-center">
                   {team.teamName}
                 </h3>
-                <h3 className="text-[1.25em] font-semibold text-center">
+                <h3 className="text-[1em] font-semibold text-center">
                   {team.teamSecondaryName}
                 </h3>
               </div>
@@ -222,42 +222,46 @@ const MatchIntroductionSlide = ({
             opacity: 0.125,
           }}
         ></div>
+
         <div
-          className={cns('flex-1 flex gap-x-[.5em] justify-end', {
+          className={cns('text-right mb-[.5em]', {
             'mi-team-team-in': status === 0,
             'mi-team-team-out': status > 0,
           })}
         >
-          <img
-            src={slide.team.teamLogoImageUrl + '?w=512&h=512&auto=format'}
-            alt={slide.team.teamFullname}
-            className="aspect-square"
-            style={{
-              width: 256,
-              height: 256,
-            }}
-          />
-          <div className="text-right">
-            <h3 className="font-semibold text-[1.5em] mb-[.5em]">
-              {slide.team.teamFullname}
-            </h3>
-            <div className="flex justify-end gap-x-[1em]">
-              <p>隊伍積分</p>
-              <p>
-                <span className="font-numeric">
-                  {renderPoint(slide.team.teamStatistic?.point)}
-                </span>
-              </p>
+          <div className="flex-1 flex gap-x-[1.5em] items-center justify-end">
+            <div className="text-left space-y-[.5em]">
+              <div className="flex justify-start gap-x-[1em]">
+                <p>隊伍積分</p>
+                <p>
+                  <span className="font-numeric">
+                    {renderPoint(slide.team.teamStatistic?.point)}
+                  </span>
+                </p>
+              </div>
+              <div className="flex justify-start gap-x-[1em]">
+                <p>隊伍排名</p>
+                <p>
+                  <span className="font-numeric">
+                    {renderRanking(slide.team.teamStatistic?.ranking)}
+                  </span>
+                </p>
+              </div>
             </div>
-            <div className="flex justify-end gap-x-[1em]">
-              <p>隊伍排名</p>
-              <p>
-                <span className="font-numeric">
-                  {renderRanking(slide.team.teamStatistic?.ranking)}
-                </span>
-              </p>
-            </div>
+            <img
+              src={slide.team.teamLogoImageUrl + '?w=512&h=512&auto=format'}
+              alt={slide.team.teamFullname}
+              className="aspect-square"
+              style={{
+                width: 256,
+                height: 256,
+              }}
+            />
           </div>
+
+          <h3 className="inline-block font-semibold text-right text-[1.5em]">
+            {slide.team.teamFullname}
+          </h3>
         </div>
         <div className="flex-[2] relative">
           <div

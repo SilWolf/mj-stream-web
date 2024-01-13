@@ -312,13 +312,13 @@
     }
 
     @keyframes mi-team-team-in {
-      0%    {transform: translateY(-100%)}
+      0%    {transform: translateY(-120%)}
       100%  {transform: translateY(0)}
     }
 
     @keyframes mi-team-team-out {
       0%  {transform: translateY(0)}
-      100%    {transform: translateY(-100%)}
+      100%    {transform: translateY(-120%)}
     }
 
     .mi-team-team-in {
