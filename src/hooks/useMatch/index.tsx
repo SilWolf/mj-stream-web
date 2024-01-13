@@ -33,6 +33,24 @@ const useMatch = (matchId: string) => {
     [matchCurrentRound]
   )
 
+  const updateMatchRoundById = useCallback(
+    (id: string, payload: Partial<MatchRound>) => {
+      const oldMatchRound = matchRounds?.[id]
+
+      if (!oldMatchRound) {
+        return
+      }
+
+      updateMatchRounds({
+        [id]: {
+          ...oldMatchRound,
+          ...payload,
+        } as MatchRound,
+      })
+    },
+    [matchRounds, updateMatchRounds]
+  )
+
   const updateCurrentMatchRound = useCallback(
     (payload: Partial<MatchRound>) => {
       const currentMatchRoundId = getLastItemOfArray(
@@ -111,6 +129,7 @@ const useMatch = (matchId: string) => {
     setMatchActiveResultDetail,
     setMatchRoundHasBroadcastedToTrue,
     setCurrentRoundDoras,
+    updateMatchRoundById,
     updateCurrentMatchRound,
     pushMatchRound,
   }

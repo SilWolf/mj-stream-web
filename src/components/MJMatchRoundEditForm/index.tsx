@@ -5,7 +5,7 @@ import {
   PlayerResultWinnerOrLoserEnum,
   RoundResultTypeEnum,
 } from '@/models'
-import { useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import MJMatchRonForm, { MJMatchRonFormProps } from '../MJMatchRonForm'
 import MJMatchExhaustedForm, {
@@ -16,6 +16,7 @@ export type MJMatchRoundEditFormProps = {
   match: Match
   matchRound: MatchRound | null
   showChainedWarning?: boolean
+  onSubmit?: (resultMatchRound: MatchRound) => unknown
 }
 
 type FormProps = {
@@ -29,49 +30,111 @@ type FormProps = {
 const MJMatchRoundEditForm = ({
   match,
   matchRound,
+  onSubmit,
 }: MJMatchRoundEditFormProps) => {
   const { control, register, reset } = useForm<FormProps>()
+
+  const myPlayerResults = useWatch({ name: '_playerResults', control })
   const myResultType = useWatch({ name: '_resultType', control })
+
+  const myMatchRound = useMemo<MatchRound | null>(() => {
+    if (!matchRound || !myPlayerResults) {
+      return null
+    }
+
+    return {
+      ...matchRound,
+      playerResults: {
+        '0': {
+          ...matchRound.playerResults['0'],
+          isRiichi: myPlayerResults[0].status === 'isRiichied',
+          isRevealed: myPlayerResults[0].status === 'isRevealed',
+          detail: {
+            ...matchRound.playerResults['0'].detail,
+            isRiichied: myPlayerResults[0].status === 'isRiichied',
+            isRevealed: myPlayerResults[0].status === 'isRevealed',
+          },
+        },
+        '1': {
+          ...matchRound.playerResults['1'],
+          isRiichi: myPlayerResults[1].status === 'isRiichied',
+          isRevealed: myPlayerResults[1].status === 'isRevealed',
+          detail: {
+            ...matchRound.playerResults['1'].detail,
+            isRiichied: myPlayerResults[1].status === 'isRiichied',
+            isRevealed: myPlayerResults[1].status === 'isRevealed',
+          },
+        },
+        '2': {
+          ...matchRound.playerResults['2'],
+          isRiichi: myPlayerResults[2].status === 'isRiichied',
+          isRevealed: myPlayerResults[2].status === 'isRevealed',
+          detail: {
+            ...matchRound.playerResults['2'].detail,
+            isRiichied: myPlayerResults[2].status === 'isRiichied',
+            isRevealed: myPlayerResults[2].status === 'isRevealed',
+          },
+        },
+        '3': {
+          ...matchRound.playerResults['3'],
+          isRiichi: myPlayerResults[3].status === 'isRiichied',
+          isRevealed: myPlayerResults[3].status === 'isRevealed',
+          detail: {
+            ...matchRound.playerResults['3'].detail,
+            isRiichied: myPlayerResults[3].status === 'isRiichied',
+            isRevealed: myPlayerResults[3].status === 'isRevealed',
+          },
+        },
+      },
+    }
+  }, [matchRound, myPlayerResults])
 
   const ronFormProps = useMemo<Omit<
     MJMatchRonFormProps,
     'onSubmit'
   > | null>(() => {
-    if (!matchRound) {
+    if (!myMatchRound) {
       return null
     }
 
     return {
       match,
-      currentMatchRound: matchRound,
-      initialActivePlayerIndex: (matchRound.resultType ===
+      currentMatchRound: myMatchRound,
+      initialActivePlayerIndex: (myMatchRound.resultType ===
         RoundResultTypeEnum.Ron ||
-      matchRound.resultType === RoundResultTypeEnum.SelfDrawn
-        ? Object.entries(matchRound.playerResults).find(
+      myMatchRound.resultType === RoundResultTypeEnum.SelfDrawn
+        ? Object.entries(myMatchRound.playerResults).find(
             ([, player]) => player.type === PlayerResultWinnerOrLoserEnum.Win
           )?.[0] ?? '0'
         : '0') as PlayerIndex,
-      initialTargetPlayerIndex: (matchRound.resultType ===
+      initialTargetPlayerIndex: (myMatchRound.resultType ===
       RoundResultTypeEnum.Ron
-        ? Object.entries(matchRound.playerResults).find(
+        ? Object.entries(myMatchRound.playerResults).find(
             ([, player]) => player.type === PlayerResultWinnerOrLoserEnum.Lose
           )?.[0] ?? '-1'
         : '-1') as PlayerIndex,
     }
-  }, [match, matchRound])
+  }, [match, myMatchRound])
 
   const exhaustedFormProps = useMemo<Omit<
     MJMatchExhaustedFormProps,
     'onSubmit'
   > | null>(() => {
-    if (!matchRound) {
+    if (!myMatchRound) {
       return null
     }
     return {
       match,
-      currentMatchRound: matchRound,
+      currentMatchRound: myMatchRound,
     }
-  }, [match, matchRound])
+  }, [match, myMatchRound])
+
+  const handleSubmitRonFormOrExhaustedForm = useCallback(
+    (newMatchRound: MatchRound) => {
+      onSubmit?.(newMatchRound)
+    },
+    [onSubmit]
+  )
 
   useEffect(() => {
     if (!matchRound) {
@@ -154,10 +217,18 @@ const MJMatchRoundEditForm = ({
       </h2>
 
       {myResultType === 'ron' && !!ronFormProps && (
-        <MJMatchRonForm {...ronFormProps} submitNode="提交修改" />
+        <MJMatchRonForm
+          {...ronFormProps}
+          submitNode="提交修改"
+          onSubmit={handleSubmitRonFormOrExhaustedForm}
+        />
       )}
       {myResultType === 'exhausted' && !!exhaustedFormProps && (
-        <MJMatchExhaustedForm {...exhaustedFormProps} submitNode="提交修改" />
+        <MJMatchExhaustedForm
+          {...exhaustedFormProps}
+          submitNode="提交修改"
+          onSubmit={handleSubmitRonFormOrExhaustedForm}
+        />
       )}
     </div>
   )

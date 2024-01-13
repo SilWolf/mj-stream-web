@@ -427,3 +427,86 @@ export const convertYakumanMaxToCountMax = (
       return 10
   }
 }
+
+export class MahjongRenderer {
+  yakumanCountMax: number = 10
+  isManganRoundUp: boolean = true
+
+  constructor(props: { yakumanCountMax?: number; isManganRoundUp?: boolean }) {
+    if (typeof props?.yakumanCountMax !== 'undefined') {
+      this.yakumanCountMax = props.yakumanCountMax
+    }
+    if (typeof props?.isManganRoundUp !== 'undefined') {
+      this.isManganRoundUp = props.isManganRoundUp
+    }
+  }
+
+  renderHanFu(
+    han: number = 1,
+    fu: number = 30,
+    yakumanCount: number = 0,
+    options?: { raw?: boolean }
+  ): string {
+    if (yakumanCount && yakumanCount > 0) {
+      const trueYakumanCount = Math.min(
+        this.yakumanCountMax ?? 10,
+        yakumanCount
+      )
+      if (trueYakumanCount === 1) {
+        return '役滿'
+      } else if (trueYakumanCount === 2) {
+        return '兩倍役滿'
+      } else if (trueYakumanCount === 3) {
+        return '三倍役滿'
+      } else if (trueYakumanCount === 4) {
+        return '四倍役滿'
+      } else {
+        return `${trueYakumanCount}倍役滿`
+      }
+    }
+
+    if (options?.raw) {
+      if (typeof fu !== 'undefined' && han <= 4) {
+        return `${han}飜${fu}符`
+      }
+
+      return `${han}飜`
+    }
+
+    if (han >= 11) {
+      return '三倍滿'
+    } else if (han >= 8) {
+      return '倍滿'
+    } else if (han >= 6) {
+      return '跳滿'
+    } else if (han >= 5) {
+      return '滿貫'
+    } else if (
+      han >= 4 &&
+      typeof fu !== 'undefined' &&
+      (fu >= 40 || (this.isManganRoundUp && fu >= 30))
+    ) {
+      return '滿貫'
+    } else if (
+      han >= 3 &&
+      typeof fu !== 'undefined' &&
+      (fu >= 70 || (this.isManganRoundUp && fu >= 60))
+    ) {
+      return '滿貫'
+    } else if (typeof fu !== 'undefined') {
+      return `${han}飜${fu}符`
+    }
+
+    return `${han}飜`
+  }
+
+  renderRawHanFu(
+    han: number = 1,
+    fu: number = 30,
+    yakumanCount: number = 0
+  ): string {
+    return this.renderHanFu(han, fu, yakumanCount, {
+      raw: true,
+    })
+  }
+}

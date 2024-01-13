@@ -10,6 +10,10 @@
   dialog {
     @apply w-full max-w-3xl;
   }
+
+  input {
+    @apply border border-neutral-400 focus:border-neutral-600 py-1 px-2 rounded bg-white text-black;
+  }
 }
 
 @layer components {
