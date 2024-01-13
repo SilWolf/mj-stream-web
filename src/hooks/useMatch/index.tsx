@@ -85,6 +85,13 @@ const useMatch = (matchId: string) => {
     [updateMatch]
   )
 
+  const setMatchPlayers = useCallback(
+    (newPlayers: Match['players']) => {
+      updateMatch({ players: newPlayers })
+    },
+    [updateMatch]
+  )
+
   const setMatchActiveResultDetail = useCallback(
     (newResultDetail: Match['activeResultDetail'] | null) => {
       updateMatch({ activeResultDetail: newResultDetail })
@@ -124,6 +131,7 @@ const useMatch = (matchId: string) => {
     matchCurrentRound,
     matchCurrentRoundDoras,
     setMatchName,
+    setMatchPlayers,
     setMatchPointDisplay,
     setMatchHideHeaderDisplay,
     setMatchActiveResultDetail,

@@ -11,6 +11,7 @@ import {
   Match,
   MatchRound,
   NextRoundTypeEnum,
+  Player,
   PlayerIndex,
   PlayerResult,
   PlayerResultWinnerOrLoserEnum,
@@ -172,6 +173,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
     pushMatchRound,
     setCurrentRoundDoras,
     setMatchName,
+    setMatchPlayers,
     setMatchPointDisplay,
     setMatchHideHeaderDisplay,
     setMatchActiveResultDetail,
@@ -217,6 +219,13 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
   const handleClickEditPlayers = useCallback(() => {
     toggleEditPlayersDialog(true)
   }, [toggleEditPlayersDialog])
+  const handleSubmitPlayersForm = useCallback(
+    (newPlayers: Record<PlayerIndex, Player>) => {
+      setMatchPlayers(newPlayers)
+      toggleEditPlayersDialog(false)
+    },
+    [setMatchPlayers, toggleEditPlayersDialog]
+  )
 
   const [isShowingHotfixDialog, toggleHotfixDialog] = useBoolean(false)
 
@@ -1770,7 +1779,10 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         open={isShowingEditPlayersDialog}
         onClose={() => toggleEditPlayersDialog(false)}
       >
-        <MJPlayersForm defaultPlayers={match.players} />
+        <MJPlayersForm
+          defaultPlayers={match.players}
+          onSubmit={handleSubmitPlayersForm}
+        />
       </MJUIDialogV2>
 
       <MJUIDialogV2
