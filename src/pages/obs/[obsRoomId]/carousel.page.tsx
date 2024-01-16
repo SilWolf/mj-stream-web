@@ -41,12 +41,7 @@ export default function ObsCarouselPage({ params: { obsRoomId } }: Props) {
           className="w-full table-auto"
         />
       </div>
-      <div className={screen === 1 ? 'block' : 'hidden'}>
-        <MJMatchHistoryChart
-          players={match.players}
-          matchRounds={matchRounds}
-        />
-      </div>
+      <div className={screen === 1 ? 'block' : 'hidden'}></div>
     </div>
   )
 }

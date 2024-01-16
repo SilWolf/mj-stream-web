@@ -121,16 +121,18 @@ export const renderPoint = (value: number | undefined | null) => {
   return `▲${Math.abs(value).toFixed(1)}`
 }
 
-export const renderRanking = (i: number | undefined) => {
+export const renderRanking = (
+  i: number | '1' | '2' | '3' | '4' | undefined
+) => {
   if (typeof i === 'undefined' || i === null) {
     return '-'
   }
 
-  if (i === 1) {
+  if (i === 1 || i === '1') {
     return '1st'
-  } else if (i === 2) {
+  } else if (i === 2 || i === '2') {
     return '2nd'
-  } else if (i === 3) {
+  } else if (i === 3 || i === '3') {
     return '3rd'
   }
 
@@ -143,4 +145,45 @@ export const renderPercentage = (value: number | undefined | null) => {
   }
 
   return value.toFixed(2)
+}
+
+export const renderScore = (newValue: number) => {
+  if (newValue === 0) {
+    return newValue.toLocaleString('en-US')
+  }
+
+  if (newValue > 0) {
+    return `${Math.floor(newValue).toLocaleString('en-US')}`
+  }
+
+  return Math.floor(newValue).toLocaleString('en-US')
+}
+
+export const renderMatchCode = (code: string) => {
+  try {
+    const [round, extendedRound] = code
+      .split('.')
+      .map((value) => parseInt(value))
+
+    let title = ''
+    if (round >= 1 && round <= 4) {
+      title += '東'
+    } else if (round >= 5 && round <= 8) {
+      title += '南'
+    } else if (round >= 9 && round <= 12) {
+      title += '西'
+    } else if (round >= 13 && round <= 16) {
+      title += '北'
+    }
+
+    title += `${((round - 1) % 4) + 1}局`
+
+    if (extendedRound > 0) {
+      title += `${extendedRound}本場`
+    }
+
+    return title
+  } catch (_) {
+    return '-'
+  }
 }

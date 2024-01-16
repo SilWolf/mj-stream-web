@@ -53,7 +53,11 @@ const MatchForecastPage = ({ params: { matchId } }: Props) => {
   }, [matchDTO])
 
   const startAt = useSearchParam('startAt')
+  const m = useSearchParam('m')
   const initialMinutes = useMemo(() => {
+    if (m) {
+      return parseInt(m)
+    }
     try {
       const [hour, minute] = startAt!.split(':').map((value) => parseInt(value))
       const targetDate = new Date()
@@ -66,7 +70,7 @@ const MatchForecastPage = ({ params: { matchId } }: Props) => {
     } catch {
       return 15
     }
-  }, [startAt])
+  }, [m, startAt])
 
   return (
     <div

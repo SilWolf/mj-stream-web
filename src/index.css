@@ -386,5 +386,104 @@
     .mi-team-activePlayerStat-out {
       animation: mi-team-activePlayerStat-out 0.5s ease-in-out 0.25s 1 normal both;
     }
+
+    @keyframes mi-chart-chart-in {
+      0%    {transform: translateX(-12%); opacity: 0}
+      100%  {transform: translateX(0); opacity: 1}
+    }
+
+    @keyframes mi-chart-chart-out {
+      0%  {transform: translateX(0); opacity: 1}
+      100%    {transform: translateX(-12%); opacity: 0}
+    }
+
+    .mi-chart-chart-in {
+      animation: mi-chart-chart-in 0.8s ease-in-out 0s 1 normal both;
+    }
+
+    .mi-chart-chart-out {
+      animation: mi-chart-chart-out 0.5s ease-in-out 0s 1 normal both;
+    }
+
+    @keyframes mi-chart-player-in {
+      0%    {transform: translateX(20%); opacity: 0}
+      100%  {transform: translateX(0); opacity: 1}
+    }
+
+    @keyframes mi-chart-player-out {
+      0%  {transform: translateX(0); opacity: 1}
+      100%    {transform: translateX(12%); opacity: 0}
+    }
+
+    .mi-chart-player-in {
+      animation: mi-chart-player-in 0.8s ease-in-out 0s 1 normal both;
+    }
+
+    .mi-chart-player-out {
+      animation: mi-chart-player-out 0.5s ease-in-out 0s 1 normal both;
+    }
+  }
+
+  .tournament-weekly-report {
+    opacity: 0;
+
+    &[data-active=true] {
+      opacity: 1;
+    }
+
+    @keyframes twr-title-in {
+      0%    {transform: translateX(-150%)}
+      100%  {transform: translateX(0)}
+    }
+    @keyframes twr-title-out {
+      0%  {transform: translateX(0)}
+      100%    {transform: translateX(-150%)}
+    }
+
+    .twr-title {
+      animation: twr-title-out .8s ease-in-out 0s 1 normal both;
+
+      &[data-active=true] {
+        animation: twr-title-in .8s ease-in-out 0s 1 normal both;
+      }
+    }
+
+    @keyframes twr-team-ranking-row-in {
+      0%    {transform: translateY(1080px)}
+      100%  {transform: translateY(0)}
+    }
+    @keyframes twr-team-ranking-row-out {
+      0%  {transform: translateX(0); opacity: 1}
+      100%    {transform: translateX(200px); opacity: 0}
+    }
+
+    .twr-team-ranking {
+      & .twr-team-ranking-row {
+        animation: twr-team-ranking-row-out .6s ease-in-out 0s 1 normal both;
+      }
+
+      &[data-active=true] .twr-team-ranking-row {
+        animation: twr-team-ranking-row-in .6s ease-in-out 0s 1 normal both;
+      }
+    }
+
+    @keyframes twr-player-ranking-row-in {
+      0%    {transform: translateY(1080px)}
+      100%  {transform: translateY(0)}
+    }
+    @keyframes twr-player-ranking-row-out {
+      0%  {transform: translateX(0); opacity: 1}
+      100%    {transform: translateX(200px); opacity: 0}
+    }
+
+    .twr-player-ranking {
+      & .twr-player-ranking-row {
+        animation: twr-player-ranking-row-out .6s ease-in-out 0s 1 normal both;
+      }
+
+      &[data-active=true] .twr-player-ranking-row {
+        animation: twr-player-ranking-row-in .6s ease-in-out 0s 1 normal both;
+      }
+    }
   }
 }

@@ -20,12 +20,7 @@ export default function ObsChartPage({ params: { obsRoomId } }: Props) {
 
   return (
     <div>
-      <div className="container mx-auto my-8 px-8 space-y-6">
-        <MJMatchHistoryChart
-          players={match.players}
-          matchRounds={matchRounds}
-        />
-      </div>
+      <div className="container mx-auto my-8 px-8 space-y-6"></div>
     </div>
   )
 }
