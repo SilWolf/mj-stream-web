@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import useMatch from '@/hooks/useMatch'
 import MJMatchHistoryTable from '@/components/MJMatchHistoryTable'
 import { useFirebaseDatabaseByKey } from '@/providers/firebaseDatabase.provider'
-import MJMatchHistoryChart from '@/components/MJMatchHistoryChart'
 
 type Props = {
   params: { obsRoomId: string }

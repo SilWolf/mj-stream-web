@@ -1,14 +1,11 @@
-import {
-  DB_MatchResult,
-  TeamPlayerDTO,
-  apiGetPlayersForIntroduction,
-} from '@/helpers/sanity.helper'
-import useDbMatch from '@/hooks/useDbMatch'
 import { renderPoint, renderRanking, renderScore } from '@/utils/string.util'
-import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo, useState } from 'react'
 import cns from 'classnames'
 import MJMatchHistoryChart from '@/components/MJMatchHistoryChart'
+import useMatch from '@/hooks/useMatch'
+import { convertMatchToExportedMatch } from '@/helpers/mahjong.helper'
+import useDbMatch from '@/hooks/useDbMatch'
+import { TeamPlayerDTO } from '@/helpers/sanity.helper'
 
 type Props = {
   params: { matchId: string }
@@ -23,7 +20,14 @@ type Slide =
   | {
       _id: string
       type: 'teams'
-      teams: (TeamPlayerDTO & { result: DB_MatchResult | null | undefined })[]
+      teams: Record<
+        'playerEast' | 'playerSouth' | 'playerWest' | 'playerNorth',
+        TeamPlayerDTO & {
+          color: string
+          point: number
+          ranking: string
+        }
+      >
       subslide: 1 | 2
     }
   | {
@@ -33,7 +37,7 @@ type Slide =
         result: {
           score: number
           point: number
-          ranking: '1' | '2' | '3' | '4'
+          ranking: string
           ronCount: number
           riichiCount: number
           chuckCount: number
@@ -59,7 +63,7 @@ type Slide =
         result: {
           score: number
           point: number
-          ranking: '1' | '2' | '3' | '4'
+          ranking: string
           ronCount: number
           riichiCount: number
           chuckCount: number
@@ -87,9 +91,11 @@ const MatchSummarySlide = ({
       >
         <div className="flex-1"></div>
         <div className="flex-[2] grid grid-cols-4 items-center">
-          {slide.teams.map((team, index) => (
+          {(
+            ['playerEast', 'playerSouth', 'playerWest', 'playerNorth'] as const
+          ).map((playerKey, index) => (
             <div
-              key={team.teamId}
+              key={playerKey}
               className={cns('relative h-full overflow-hidden', {
                 'mi-teams-in': status === 0,
                 'mi-teams-out': status > 0,
@@ -97,16 +103,15 @@ const MatchSummarySlide = ({
               style={{
                 animationDelay: status === 0 ? index * 0.25 + 's' : '0s',
                 filter:
-                  team.result?.ranking !== '1'
+                  slide.teams[playerKey].ranking !== '1'
                     ? 'grayscale(1)'
                     : 'grayscale(0)',
               }}
             >
               <div
-                key={team.teamId}
                 className="absolute inset-0 -z-10"
                 style={{
-                  background: `linear-gradient(to bottom, transparent, ${team.color})`,
+                  background: `linear-gradient(to bottom, transparent, ${slide.teams[playerKey].color})`,
                   opacity: 0.5,
                 }}
               ></div>
@@ -114,7 +119,8 @@ const MatchSummarySlide = ({
                 className="absolute inset-0 -z-10"
                 style={{
                   background: `url(${
-                    team.teamLogoImageUrl + '?w=800&h=800&auto=format'
+                    slide.teams[playerKey].teamLogoImageUrl +
+                    '?w=800&h=800&auto=format'
                   })`,
                   backgroundRepeat: 'no-repeat',
                   backgroundPosition: 'center center',
@@ -127,39 +133,23 @@ const MatchSummarySlide = ({
                 })}
               >
                 <img
-                  src={team.teamLogoImageUrl + '?w=800&h=800&auto=format'}
+                  src={
+                    slide.teams[playerKey].teamLogoImageUrl +
+                    '?w=800&h=800&auto=format'
+                  }
                   className="aspect-square w-full"
                   alt=""
                 />
                 <h3 className="text-[1.5em] font-semibold text-center">
-                  {team.teamName}
+                  {slide.teams[playerKey].teamName}
                 </h3>
                 <h3 className="text-[1em] h-[2em] font-semibold text-center">
-                  {team.teamSecondaryName}
+                  {slide.teams[playerKey].teamSecondaryName}
                 </h3>
                 <h3 className="text-[1.5em] font-semibold text-center flex justify-between px-[.5em]">
-                  <span>{renderRanking(team.result?.ranking)}</span>
-                  <span>{renderPoint(team.result?.point)}</span>
+                  <span>{renderRanking(slide.teams[playerKey].ranking)}</span>
+                  <span>{renderPoint(slide.teams[playerKey].point)}</span>
                 </h3>
-              </div>
-              <div
-                className={cns('absolute inset-0 opacity-0', {
-                  'mi-teams-player-in': status >= 0 && subslide >= 1,
-                  'mi-teams-player-out': status > 0,
-                })}
-                style={{
-                  animationDelay: status === 0 ? index * 0.25 + 's' : '0s',
-                }}
-              >
-                <img
-                  src={team.playerPortraitImageUrl + '?w=360&h=500&auto=format'}
-                  className="aspect-[18/25] w-full"
-                  alt=""
-                />
-                <div className="font-semibold text-center">
-                  <p className="text-[1em]">{team.playerNickname}</p>
-                  <p className="text-[.8em]">{team.playerName}</p>
-                </div>
               </div>
             </div>
           ))}
@@ -198,7 +188,7 @@ const MatchSummarySlide = ({
           </div>
           {slide.teamPlayers.map((teamPlayer, index) => (
             <div
-              key={teamPlayer.teamId}
+              key={teamPlayer.teamName}
               className={cns('relative overflow-hidden flex-1', {
                 'mi-teams-in': status === 0,
                 'mi-teams-out': status > 0,
@@ -208,7 +198,7 @@ const MatchSummarySlide = ({
               }}
             >
               <div
-                key={teamPlayer.teamId}
+                key={teamPlayer.teamName}
                 className="absolute inset-0 -z-10"
                 style={{
                   background: `linear-gradient(to left, transparent, ${teamPlayer.color})`,
@@ -236,11 +226,10 @@ const MatchSummarySlide = ({
               >
                 <div className="text-left flex-[5]">
                   <h3 className="text-[1.5em] font-semibold">
-                    {teamPlayer.playerFullname}
+                    {teamPlayer.playerName} ({teamPlayer.playerNickname})
                   </h3>
                   <h3 className="text-[.8em] font-semibold">
                     {teamPlayer.teamName}
-                    {teamPlayer.teamSecondaryName}
                   </h3>
                 </div>
                 <div className="flex-1 text-right">
@@ -268,7 +257,7 @@ const MatchSummarySlide = ({
                   回
                 </div>
               </div>
-              <div
+              {/* <div
                 className={cns('absolute inset-0 opacity-0', {
                   'mi-teams-player-in': status >= 0 && subslide >= 1,
                   'mi-teams-player-out': status > 0,
@@ -289,7 +278,7 @@ const MatchSummarySlide = ({
                   <p className="text-[1em]">{teamPlayer.playerNickname}</p>
                   <p className="text-[.8em]">{teamPlayer.playerName}</p>
                 </div>
-              </div>
+              </div> */}
             </div>
           ))}
         </div>
@@ -332,7 +321,7 @@ const MatchSummarySlide = ({
                   {slide.teamPlayers[index].playerNickname}
                 </p>
                 <p className="text-[.75em]">
-                  {slide.teamPlayers[index].teamFullname}
+                  {slide.teamPlayers[index].teamName}
                 </p>
               </div>
             ))}
@@ -346,94 +335,81 @@ const MatchSummarySlide = ({
 }
 
 const MatchSummaryPage = ({ params: { matchId } }: Props) => {
-  const { data: matchDTO } = useDbMatch(matchId, true)
-  const teamIds = useMemo(
-    () =>
-      matchDTO
-        ? [
-            matchDTO?.playerEast.teamId as string,
-            matchDTO?.playerSouth.teamId as string,
-            matchDTO?.playerWest.teamId as string,
-            matchDTO?.playerNorth.teamId as string,
-          ]
-        : null,
-    [matchDTO]
-  )
-
-  const { data: playersGroupedByTeamIds } = useQuery({
-    queryKey: ['match', matchId, 'groupedPlayers'],
-    queryFn: () =>
-      apiGetPlayersForIntroduction(
-        teamIds as string[],
-        matchDTO?.tournament._id as string
-      ),
-    enabled: !!matchDTO && !!teamIds,
-  })
+  const { match, matchRounds } = useMatch(matchId)
+  const { data: matchDTO } = useDbMatch(matchId)
 
   const slides = useMemo<Slide[]>(() => {
-    if (!matchDTO || !playersGroupedByTeamIds) {
+    if (!match || !matchRounds || !matchDTO) {
       return [{ type: 'empty', _id: 'empty', subslide: 0 }]
     }
+
+    const exportedMatch = convertMatchToExportedMatch(
+      Object.values(matchRounds)
+    )
 
     const resultSlides: Slide[] = [
       { type: 'empty', _id: 'empty', subslide: 0 },
       {
         type: 'teams',
         _id: 'teams',
-        teams: [
-          {
+        teams: {
+          playerEast: {
             ...matchDTO.playerEast,
-            result: matchDTO.result?.playerEast,
+            point: exportedMatch.result.playerEast.point,
+            ranking: exportedMatch.result.playerEast.ranking,
           },
-          {
+          playerSouth: {
             ...matchDTO.playerSouth,
-            result: matchDTO.result?.playerSouth,
+            point: exportedMatch.result.playerSouth.point,
+            ranking: exportedMatch.result.playerSouth.ranking,
           },
-          {
+          playerWest: {
             ...matchDTO.playerWest,
-            result: matchDTO.result?.playerWest,
+            point: exportedMatch.result.playerWest.point,
+            ranking: exportedMatch.result.playerWest.ranking,
           },
-          {
+          playerNorth: {
             ...matchDTO.playerNorth,
-            result: matchDTO.result?.playerNorth,
+            point: exportedMatch.result.playerNorth.point,
+            ranking: exportedMatch.result.playerNorth.ranking,
           },
-        ],
+        },
         subslide: 1,
       },
     ]
 
     const playersStat = {
       playerEast: {
-        score: matchDTO.result.playerEast?.score ?? 25000,
-        point: matchDTO.result.playerEast?.point ?? 0,
-        ranking: matchDTO.result.playerEast?.ranking ?? '1',
+        score: exportedMatch.result.playerEast?.score ?? 25000,
+        point: exportedMatch.result.playerEast?.point ?? 0,
+        ranking: exportedMatch.result.playerEast?.ranking ?? '1',
         ronCount: 0,
         riichiCount: 0,
         chuckCount: 0,
         scores: [25000],
       },
       playerSouth: {
-        score: matchDTO.result.playerSouth?.score ?? 25000,
-        point: matchDTO.result.playerSouth?.point ?? 0,
-        ranking: matchDTO.result.playerSouth?.ranking ?? '1',
+        score: exportedMatch.result.playerSouth?.score ?? 25000,
+        point: exportedMatch.result.playerSouth?.point ?? 0,
+        ranking: exportedMatch.result.playerSouth?.ranking ?? '1',
         ronCount: 0,
         riichiCount: 0,
         chuckCount: 0,
         scores: [25000],
       },
       playerWest: {
-        score: matchDTO.result.playerWest?.score ?? 25000,
-        point: matchDTO.result.playerWest?.point ?? 0,
-        ranking: matchDTO.result.playerWest?.ranking ?? '1',
+        score: exportedMatch.result.playerWest?.score ?? 25000,
+        point: exportedMatch.result.playerWest?.point ?? 0,
+        ranking: exportedMatch.result.playerWest?.ranking ?? '1',
         ronCount: 0,
         riichiCount: 0,
         chuckCount: 0,
         scores: [25000],
       },
       playerNorth: {
-        score: matchDTO.result.playerNorth?.score ?? 25000,
-        point: matchDTO.result.playerNorth?.point ?? 0,
-        ranking: matchDTO.result.playerNorth?.ranking ?? '1',
+        score: exportedMatch.result.playerNorth?.score ?? 25000,
+        point: exportedMatch.result.playerNorth?.point ?? 0,
+        ranking: exportedMatch.result.playerNorth?.ranking ?? '1',
         ronCount: 0,
         riichiCount: 0,
         chuckCount: 0,
@@ -441,7 +417,7 @@ const MatchSummaryPage = ({ params: { matchId } }: Props) => {
       },
     }
 
-    for (const round of matchDTO.rounds) {
+    for (const round of exportedMatch.rounds) {
       playersStat.playerEast.scores.push(round.playerEast.afterScore)
       playersStat.playerSouth.scores.push(round.playerSouth.afterScore)
       playersStat.playerWest.scores.push(round.playerWest.afterScore)
@@ -528,7 +504,7 @@ const MatchSummaryPage = ({ params: { matchId } }: Props) => {
           playerWest: 25000,
           playerNorth: 25000,
         },
-        ...matchDTO.rounds.map((round) => ({
+        ...exportedMatch.rounds.map((round) => ({
           name:
             round.code === '1.0'
               ? '東一局'
@@ -564,7 +540,7 @@ const MatchSummaryPage = ({ params: { matchId } }: Props) => {
     })
 
     return resultSlides
-  }, [matchDTO, playersGroupedByTeamIds])
+  }, [match, matchDTO, matchRounds])
 
   const [slideIndex, setSlideIndex] = useState<number>(0)
   const [subSlideIndex, setSubSlideIndex] = useState<number>(0)
@@ -603,7 +579,7 @@ const MatchSummaryPage = ({ params: { matchId } }: Props) => {
     }
   }, [isSlideChanging, slideIndex, slides, subSlideIndex])
 
-  if (!matchDTO || !playersGroupedByTeamIds) {
+  if (!match || !matchRounds || !matchDTO) {
     return <></>
   }
 

@@ -122,7 +122,7 @@ export const renderPoint = (value: number | undefined | null) => {
 }
 
 export const renderRanking = (
-  i: number | '1' | '2' | '3' | '4' | undefined
+  i: number | '1' | '2' | '3' | '4' | string | undefined
 ) => {
   if (typeof i === 'undefined' || i === null) {
     return '-'
