@@ -230,6 +230,7 @@ const TournamentDetailPage = ({ params: { week } }: Props) => {
             </span>
           </p>
         </div>
+
         <div className="flex-1 relative">
           <div
             className="absolute inset-0 flex flex-col twr-team-ranking"

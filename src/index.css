@@ -422,6 +422,24 @@
     .mi-chart-player-out {
       animation: mi-chart-player-out 0.5s ease-in-out 0s 1 normal both;
     }
+
+    @keyframes mi-ranking-ranking-in {
+      0%    {transform: translateY(1080px)}
+      100%  {transform: translateY(0)}
+    }
+
+    @keyframes mi-ranking-ranking-out {
+      0%  {transform: translateX(0)}
+      100%    {transform: translateX(200px); opacity: 0}
+    }
+
+    .mi-ranking-ranking-in {
+      animation: mi-ranking-ranking-in 0.8s ease-in-out 0s 1 normal both;
+    }
+
+    .mi-ranking-ranking-out {
+      animation: mi-ranking-ranking-out 0.5s ease-in-out 0s 1 normal both;
+    }
   }
 
   .tournament-weekly-report {
