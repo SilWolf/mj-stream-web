@@ -27,8 +27,20 @@ function MJMatchHistoryChart({ players, rounds }: Props) {
       <LineChart data={rounds}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis tick={{ fill: 'white' }} dataKey="name" />
-        <YAxis tick={{ fill: 'white' }} width={100} />
+        <YAxis
+          tick={{ fill: 'white' }}
+          width={120}
+          allowDecimals={false}
+          tickCount={5}
+        />
         {/* <Legend /> */}
+        <Line
+          type="linear"
+          stroke="#FFF"
+          strokeWidth={10}
+          isAnimationActive={false}
+          dataKey="playerEast"
+        />
         <Line
           type="linear"
           stroke={players.playerEast.color}
@@ -36,6 +48,14 @@ function MJMatchHistoryChart({ players, rounds }: Props) {
           isAnimationActive={false}
           name={players.playerEast.name}
           dataKey="playerEast"
+        />
+
+        <Line
+          type="linear"
+          stroke="#FFF"
+          strokeWidth={10}
+          isAnimationActive={false}
+          dataKey="playerSouth"
         />
         <Line
           type="linear"
@@ -45,6 +65,14 @@ function MJMatchHistoryChart({ players, rounds }: Props) {
           name={players.playerSouth.name}
           dataKey="playerSouth"
         />
+
+        <Line
+          type="linear"
+          stroke="#FFF"
+          strokeWidth={10}
+          isAnimationActive={false}
+          dataKey="playerWest"
+        />
         <Line
           type="linear"
           stroke={players.playerWest.color}
@@ -52,6 +80,14 @@ function MJMatchHistoryChart({ players, rounds }: Props) {
           isAnimationActive={false}
           name={players.playerWest.name}
           dataKey="playerWest"
+        />
+
+        <Line
+          type="linear"
+          stroke="#FFF"
+          strokeWidth={10}
+          isAnimationActive={false}
+          dataKey="playerNorth"
         />
         <Line
           type="linear"

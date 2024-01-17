@@ -205,6 +205,11 @@ export const apiGetMatches = (): Promise<MatchDTO[]> => {
 
         const newMatch: MatchDTO = {
           ...matchRest,
+          nameAlt: matchRest.name.startsWith('常規賽 #23Pre')
+            ? `常規賽 ${matchRest.startAt.substring(0, 10)} 第${
+                matchRest.name[matchRest.name.length - 1]
+              }回戰`
+            : matchRest.name,
           playerEast: formatTeamPlayerDTO(playerEastTeam, playerEast),
           playerSouth: formatTeamPlayerDTO(playerSouthTeam, playerSouth),
           playerWest: formatTeamPlayerDTO(playerWestTeam, playerWest),
@@ -270,6 +275,11 @@ export const apiGetMatchById = async (
 
       const newMatch: MatchDTO = {
         ...match,
+        nameAlt: match.name.startsWith('常規賽 #23Pre')
+          ? `常規賽 ${match.startAt.substring(0, 10)} 第${
+              match.name[match.name.length - 1]
+            }回戰`
+          : match.name,
         playerEast: formatTeamPlayerDTO(playerEastTeam, playerEast),
         playerSouth: formatTeamPlayerDTO(playerSouthTeam, playerSouth),
         playerWest: formatTeamPlayerDTO(playerWestTeam, playerWest),
@@ -471,6 +481,7 @@ export type MatchDTO = Omit<
   playerSouth: TeamPlayerDTO
   playerWest: TeamPlayerDTO
   playerNorth: TeamPlayerDTO
+  nameAlt: string
   _order: ('playerEast' | 'playerSouth' | 'playerWest' | 'playerNorth')[]
 }
 

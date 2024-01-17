@@ -1,4 +1,9 @@
-import { renderPoint, renderRanking, renderScore } from '@/utils/string.util'
+import {
+  renderMatchCode,
+  renderPoint,
+  renderRanking,
+  renderScore,
+} from '@/utils/string.util'
 import { useCallback, useMemo, useState } from 'react'
 import cns from 'classnames'
 import MJMatchHistoryChart from '@/components/MJMatchHistoryChart'
@@ -48,6 +53,8 @@ type Slide =
           chuckCount: number
         }
       })[]
+      roundCount: number
+      exhaustedRoundCount: number
       subslide: 1
     }
   | {
@@ -188,12 +195,23 @@ const MatchSummarySlide = ({
         <div className="flex-1"></div>
         <div className="flex-[3] flex flex-col items-stretch">
           <div
-            className={cns('flex gap-x-[1em] pl-[1em] mb-[.5em]', {
+            className={cns('flex gap-x-[1em] pl-[1em] mb-[.5em] items-end', {
               'mi-teams-in': status === 0,
               'mi-teams-out': status > 0,
             })}
           >
-            <div className="flex-[5]"></div>
+            <div className="flex-[5] space-x-[1.5em] text-[1.1em]">
+              <span>
+                <span className="text-[1.5em]">{slide.roundCount}</span> 總局數
+              </span>
+              <span className="opacity-80">
+                （{' '}
+                <span className="text-[1.5em]">
+                  {slide.exhaustedRoundCount}
+                </span>{' '}
+                流局數 ）
+              </span>
+            </div>
             <div className="flex-1 text-right text-[.9em] font-semibold">
               分數
             </div>
@@ -329,21 +347,43 @@ const MatchSummarySlide = ({
           <div className="flex-1 flex flex-col pb-[1em]">
             {[0, 1, 2, 3].map((index) => (
               <div
-                className={cns('flex-1 pl-[1em] flex flex-col justify-center', {
-                  'mi-chart-player-in': status === 0,
-                  'mi-chart-player-out': status > 0,
-                })}
+                className={cns(
+                  'relative overflow-hidden flex-1 pl-[.5em] flex flex-col justify-center',
+                  {
+                    'mi-chart-player-in': status === 0,
+                    'mi-chart-player-out': status > 0,
+                  }
+                )}
                 style={{
                   background: `linear-gradient(to left, transparent, ${slide.teamPlayers[index].color}C0)`,
                   animationDelay: status === 0 ? index * 0.25 + 's' : '0s',
                 }}
               >
-                <p className="text-[1.5em] leading-[1em]">
-                  {slide.teamPlayers[index].playerNickname}
-                </p>
-                <p className="text-[.75em]">
-                  {slide.teamPlayers[index].teamName}
-                </p>
+                <img
+                  src={
+                    slide.teamPlayers[index].teamLogoImageUrl + '?w=320&h=320'
+                  }
+                  alt={slide.teamPlayers[index].teamId}
+                  className="absolute left-0 opacity-10 -z-10"
+                />
+                <div className="flex justify-between">
+                  <div>
+                    <p className="text-[1.5em] leading-[1em]">
+                      {slide.teamPlayers[index].playerNickname}
+                    </p>
+                    <p className="text-[.75em]">
+                      {slide.teamPlayers[index].teamName}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-[1.5em] leading-[1em]">
+                      {slide.teamPlayers[index].result.score}
+                    </p>
+                    <p className="text-[.75em]">
+                      {renderPoint(slide.teamPlayers[index].result.point)}
+                    </p>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
@@ -368,9 +408,9 @@ const MatchSummarySlide = ({
           <div className="flex-1 flex items-center text-[0.75em] gap-6">
             <p className="flex-1 text-center">排名</p>
             <p className="flex-[5]">隊伍</p>
-            <p className="flex-1 text-center">積分</p>
-            <p className="flex-1 text-center">與前名差距</p>
-            <p className="flex-1 text-center">半莊數</p>
+            <p className="flex-1 text-right">積分</p>
+            <p className="flex-1 text-right">與前名差距</p>
+            <p className="flex-1 text-right">半莊數</p>
           </div>
           {slide.teams.map((team, index) => (
             <div
@@ -393,24 +433,26 @@ const MatchSummarySlide = ({
                 alt={team.team._id}
                 className="absolute left-0 opacity-25 -z-10"
               />
-              <p className="flex-1 text-center space-x-1">
-                <span>{renderRanking(index + 1)}</span>
-                {team.ranking < index + 1 && (
+              <div className="absolute left-[.5em]">
+                {team.ranking > index + 1 && (
                   <span>
                     <i className="bi bi-caret-up-fill text-green-500"></i>
                   </span>
                 )}
-                {team.ranking > index + 1 && (
+                {team.ranking < index + 1 && (
                   <span>
                     <i className="bi bi-caret-down-fill text-red-500"></i>
                   </span>
                 )}
+              </div>
+              <p className="flex-1 text-center space-x-1">
+                <span>{renderRanking(index + 1)}</span>
               </p>
               <p className="flex-[5]">
                 {team.team.name} {team.team.secondaryName}
               </p>
               <p
-                className={cns('flex-1 text-center', {
+                className={cns('flex-1 text-right', {
                   'text-green-500':
                     team.newResult && team.newResult.point > team.point,
                   'text-red-500':
@@ -419,12 +461,12 @@ const MatchSummarySlide = ({
               >
                 {renderPoint(team.newResult?.point || team.point)}
               </p>
-              <p className="flex-1 text-center">
+              <p className="flex-1 text-right">
                 {index > 0
                   ? (slide.teams[index - 1].point - team.point).toFixed(1)
                   : '-'}
               </p>
-              <p className="flex-1 text-center">
+              <p className="flex-1 text-right">
                 {team.newResult?.matchCount || team.matchCount}
                 <span className="text-[0.75em]">/60</span>
               </p>
@@ -606,8 +648,16 @@ const MatchSummaryPage = ({ params: { matchId } }: Props) => {
       type: 'players',
       _id: 'players',
       teamPlayers: sortedTeamPlayers,
+      roundCount: matchDTO.rounds?.length ?? 0,
+      exhaustedRoundCount:
+        matchDTO.rounds?.filter((round) => round.type === 'exhausted').length ??
+        0,
       subslide: 1,
     })
+
+    const firstSouthRoundIndex = exportedMatch.rounds.findIndex((round) =>
+      round.code.startsWith('5.')
+    )
 
     resultSlides.push({
       type: 'chart',
@@ -620,12 +670,12 @@ const MatchSummaryPage = ({ params: { matchId } }: Props) => {
           playerWest: 25000,
           playerNorth: 25000,
         },
-        ...exportedMatch.rounds.map((round) => ({
+        ...exportedMatch.rounds.map((round, roundIndex) => ({
           name:
-            round.code === '1.0'
-              ? '東一局'
-              : round.code === '5.0'
-              ? '南一局'
+            roundIndex === 0
+              ? '東'
+              : roundIndex === firstSouthRoundIndex
+              ? '南'
               : '',
           playerEast: round.playerEast.afterScore,
           playerSouth: round.playerSouth.afterScore,
@@ -767,7 +817,7 @@ const MatchSummaryPage = ({ params: { matchId } }: Props) => {
               {matchDTO.tournament.name}
             </h3>
             <h1 className="text-[2em] leading-[1.2em] font-semibold">
-              常規賽 {matchDTO.startAt?.substring(0, 10)}
+              {matchDTO.nameAlt}
             </h1>
           </div>
           <div>

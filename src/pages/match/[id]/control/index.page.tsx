@@ -1623,7 +1623,29 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                         playerIndex="3"
                       />
                     </td>
-                    <td className="text-right">
+                    <td className="text-right space-x-2">
+                      {(matchRound.resultType === RoundResultTypeEnum.Ron ||
+                        matchRound.resultType ===
+                          RoundResultTypeEnum.SelfDrawn) && (
+                        <MJUIButton
+                          color={
+                            matchRound.hasBroadcasted ? 'secondary' : 'success'
+                          }
+                          type="button"
+                          variant="text"
+                          className={
+                            matchRound.hasBroadcasted ? 'opacity-50' : ''
+                          }
+                          onClick={handleClickBroadcastRonDetail}
+                          data-match-round-id={matchRound.id}
+                        >
+                          <i className="bi bi-camera-reels"></i>{' '}
+                          {matchRound.hasBroadcasted
+                            ? '已播放過'
+                            : '播放和牌詳情'}
+                        </MJUIButton>
+                      )}
+
                       {matchRound.resultType !==
                         RoundResultTypeEnum.Unknown && (
                         <MJUIButton
