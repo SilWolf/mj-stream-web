@@ -1,7 +1,7 @@
 import MJUIButton from '@/components/MJUI/MJUIButton'
 import { TeamPlayerDTO, apiGetMatches } from '@/helpers/sanity.helper'
 import { useQuery } from '@tanstack/react-query'
-import React, { useCallback } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import OBSInstructionDivV2 from './obs/components/OBSInstructionDivV2'
 import { getQrCodeImgSrc } from '@/utils/string.util'
 import { useFirebaseDatabaseByKey } from '@/providers/firebaseDatabase.provider'
@@ -61,6 +61,10 @@ function IndexPage() {
     [setObsInfo]
   )
 
+  const liveMatch = useMemo(() => {
+    return matches?.find((match) => match._id === obsInfo?.matchId)
+  }, [matches, obsInfo?.matchId])
+
   return (
     <div className="container mx-auto">
       <div className="h-screen flex flex-col py-16 gap-y-12">
@@ -118,26 +122,106 @@ function IndexPage() {
             <div>
               <div className="px-8 py-4 bg-green-300 border-2 border-green-600 text-center space-y-4">
                 <p className="text-3xl font-bold text-green-900">OBS設定</p>
-                <p className="text-2xl">
-                  固定的直播頁面：{' '}
+
+                <div className="grid grid-cols-3 gap-4">
                   <a
-                    href={`${location.origin}/obs/1`}
+                    href={`${location.origin}/obs/1/weekly-summary`}
                     target="_blank"
-                    className="text-black"
+                    className="text-black bg-black bg-opacity-20 p-2 rounded hover:text-black"
                   >
-                    {location.origin}/obs/1
+                    一週結算
                   </a>
-                </p>
-                <p className="text-2xl">
-                  今天已完結頁面：{' '}
+                </div>
+
+                <div className="bg-white rounded p-4 space-y-4">
+                  {!liveMatch && (
+                    <p className="text-center">請在下方表格直播一場新的賽事</p>
+                  )}
+
+                  {liveMatch && (
+                    <p className="text-center font-bold text-red-500">
+                      LIVE 直播中
+                    </p>
+                  )}
+
+                  {liveMatch && (
+                    <div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <DBTeamPlayerDiv teamPlayer={liveMatch.playerEast} />
+                        <DBTeamPlayerDiv teamPlayer={liveMatch.playerSouth} />
+                        <DBTeamPlayerDiv teamPlayer={liveMatch.playerWest} />
+                        <DBTeamPlayerDiv teamPlayer={liveMatch.playerNorth} />
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-4">
+                    <p>開始前倒數</p>
+                    <a
+                      href={`${location.origin}/obs/1/forecast?m=5`}
+                      target="_blank"
+                      className="text-black bg-red-800 bg-opacity-50 p-2 rounded hover:text-black"
+                    >
+                      5分鐘
+                    </a>
+                    <a
+                      href={`${location.origin}/obs/1/forecast?m=10`}
+                      target="_blank"
+                      className="text-black bg-red-800 bg-opacity-50 p-2 rounded hover:text-black"
+                    >
+                      10分鐘
+                    </a>
+                    <a
+                      href={`${location.origin}/obs/1/forecast?m=15`}
+                      target="_blank"
+                      className="text-black bg-red-800 bg-opacity-50 p-2 rounded hover:text-black"
+                    >
+                      15分鐘
+                    </a>
+                    <a
+                      href={`${location.origin}/obs/1/forecast?m=20`}
+                      target="_blank"
+                      className="text-black bg-red-800 bg-opacity-50 p-2 rounded hover:text-black"
+                    >
+                      20分鐘
+                    </a>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-4">
+                    <a
+                      href={`${location.origin}/obs/1/introduction`}
+                      target="_blank"
+                      className="text-black bg-black bg-opacity-20 p-2 rounded hover:text-black"
+                    >
+                      賽前介紹
+                    </a>
+                    <a
+                      href={`${location.origin}/obs/1`}
+                      target="_blank"
+                      className="text-black bg-black bg-opacity-20 p-2 rounded hover:text-black"
+                    >
+                      直播頁面
+                    </a>
+                    <a
+                      href={`${location.origin}/obs/1/summary`}
+                      target="_blank"
+                      className="text-black bg-black bg-opacity-20 p-2 rounded hover:text-black"
+                    >
+                      賽後結果
+                    </a>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-4">
                   <a
                     href={`${location.origin}/obs/1/end`}
                     target="_blank"
-                    className="text-black"
+                    className="text-black bg-black bg-opacity-20 p-2 rounded hover:text-black"
                   >
-                    {location.origin}/obs/1/end
+                    今日賽事已完結
                   </a>
-                </p>
+                </div>
+
                 <div className="text-left">
                   <OBSInstructionDivV2 />
                 </div>
@@ -243,7 +327,10 @@ function IndexPage() {
                         <a
                           href={`${
                             import.meta.env.VITE_HOMEPAGE_HOST
-                          }/api/match/${match._id}/square`}
+                          }/api/schedule/${match.startAt.substring(
+                            0,
+                            10
+                          )}/square`}
                           target="_blank"
                         >
                           <i className="bi bi-card-image"></i> 出Post圖
@@ -252,12 +339,23 @@ function IndexPage() {
                         <a
                           href={`${
                             import.meta.env.VITE_HOMEPAGE_HOST
-                          }/api/match/${match._id}/thumbnail`}
+                          }/api/schedule/${match.startAt.substring(
+                            0,
+                            10
+                          )}/thumbnail`}
                           target="_blank"
                         >
                           <i className="bi bi-youtube"></i> YT Thumbnail
                         </a>
+
+                        <a
+                          href={`/match/${match._id}/nameplates`}
+                          target="_blank"
+                        >
+                          <i className="bi bi-person-badge"></i> 名牌
+                        </a>
                       </div>
+
                       <div className="space-x-2">
                         <a
                           href={`/match/${match._id}/forecast?startAt=${
@@ -275,11 +373,8 @@ function IndexPage() {
                           <i className="bi bi-person-vcard"></i> 介紹
                         </a>
 
-                        <a
-                          href={`/match/${match._id}/nameplates`}
-                          target="_blank"
-                        >
-                          <i className="bi bi-person-badge"></i> 名牌
+                        <a href={`/match/${match._id}/summary`} target="_blank">
+                          <i className="bi bi-trophy"></i> 結果
                         </a>
 
                         {match._id === obsInfo?.matchId ? (

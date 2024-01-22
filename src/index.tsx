@@ -32,6 +32,10 @@ import MatchIntroductionPage from './pages/match/[id]/introduction.page'
 import MatchOverviewOverlayPage from './pages/match/[id]/overviewOverlay.page'
 import ObsOverviewOverlayPage from './pages/obs/[obsRoomId]/overlay.page'
 import ObsRoomExportPage from './pages/obs/[obsRoomId]/export.page'
+import WeeklySummaryPage from './pages/weekly-summary/[week]/index.page'
+import ObsRoomIntroductionPage from './pages/obs/[obsRoomId]/introduction.page'
+import MatchSummaryPage from './pages/match/[id]/summary.page'
+import ObsRoomSummaryPage from './pages/obs/[obsRoomId]/summary.page'
 
 // Import the functions you need from the SDKs you need
 // TODO: Add SDKs for Firebase products that you want to use
@@ -78,6 +82,10 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               component={MatchIntroductionPage}
             />
             <Route
+              path="/match/:matchId/summary"
+              component={MatchSummaryPage}
+            />
+            <Route
               path="/match/:matchId/nameplates"
               component={MatchNameplatesPage}
             />
@@ -100,6 +108,18 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               path="/obs/:obsRoomId/forecast"
               component={ObsRoomForecastPage}
             />
+            <Route
+              path="/obs/:obsRoomId/introduction"
+              component={ObsRoomIntroductionPage}
+            />
+            <Route
+              path="/obs/:obsRoomId/summary"
+              component={ObsRoomSummaryPage}
+            />
+            <Route
+              path="/obs/:obsRoomId/weekly-summary"
+              component={WeeklySummaryPage}
+            />
             <Route path="/obs/:obsRoomId/end" component={ObsRoomEndPage} />
             <Route path="/obs/:obsRoomId/score" component={ObsScorePage} />
             <Route path="/obs/:obsRoomId/chart" component={ObsChartPage} />
@@ -112,6 +132,8 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <Route path="/players" component={PlayersPage} />
             <Route path="/teams" component={TeamsPage} />
             <Route path="/matches" component={MatchesPage} />
+
+            <Route path="/weekly-summary/:week" component={WeeklySummaryPage} />
           </Switch>
         </ConfirmDialogProvider>
       </FirebaseDatabaseProvider>

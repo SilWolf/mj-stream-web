@@ -1,4 +1,5 @@
 import {
+  MatchRound,
   PlayerIndex,
   PlayerPositionEnum,
   PlayerResult,
@@ -426,4 +427,253 @@ export const convertYakumanMaxToCountMax = (
     case '130':
       return 10
   }
+}
+
+export class MahjongRenderer {
+  yakumanCountMax: number = 10
+  isManganRoundUp: boolean = true
+
+  constructor(props: { yakumanCountMax?: number; isManganRoundUp?: boolean }) {
+    if (typeof props?.yakumanCountMax !== 'undefined') {
+      this.yakumanCountMax = props.yakumanCountMax
+    }
+    if (typeof props?.isManganRoundUp !== 'undefined') {
+      this.isManganRoundUp = props.isManganRoundUp
+    }
+  }
+
+  renderHanFu(
+    han: number = 1,
+    fu: number = 30,
+    yakumanCount: number = 0,
+    options?: { raw?: boolean }
+  ): string {
+    if (yakumanCount && yakumanCount > 0) {
+      const trueYakumanCount = Math.min(
+        this.yakumanCountMax ?? 10,
+        yakumanCount
+      )
+      if (trueYakumanCount === 1) {
+        return '役滿'
+      } else if (trueYakumanCount === 2) {
+        return '兩倍役滿'
+      } else if (trueYakumanCount === 3) {
+        return '三倍役滿'
+      } else if (trueYakumanCount === 4) {
+        return '四倍役滿'
+      } else {
+        return `${trueYakumanCount}倍役滿`
+      }
+    }
+
+    if (options?.raw) {
+      if (typeof fu !== 'undefined' && han <= 4) {
+        return `${han}飜${fu}符`
+      }
+
+      return `${han}飜`
+    }
+
+    if (han >= 11) {
+      return '三倍滿'
+    } else if (han >= 8) {
+      return '倍滿'
+    } else if (han >= 6) {
+      return '跳滿'
+    } else if (han >= 5) {
+      return '滿貫'
+    } else if (
+      han >= 4 &&
+      typeof fu !== 'undefined' &&
+      (fu >= 40 || (this.isManganRoundUp && fu >= 30))
+    ) {
+      return '滿貫'
+    } else if (
+      han >= 3 &&
+      typeof fu !== 'undefined' &&
+      (fu >= 70 || (this.isManganRoundUp && fu >= 60))
+    ) {
+      return '滿貫'
+    } else if (typeof fu !== 'undefined') {
+      return `${han}飜${fu}符`
+    }
+
+    return `${han}飜`
+  }
+
+  renderRawHanFu(
+    han: number = 1,
+    fu: number = 30,
+    yakumanCount: number = 0
+  ): string {
+    return this.renderHanFu(han, fu, yakumanCount, {
+      raw: true,
+    })
+  }
+}
+
+export const mapRoundType: Record<MatchRound['resultType'], string> = {
+  [RoundResultTypeEnum.Ron]: 'ron',
+  [RoundResultTypeEnum.SelfDrawn]: 'tsumo',
+  [RoundResultTypeEnum.Exhausted]: 'exhausted',
+  [RoundResultTypeEnum.Hotfix]: 'hotfix',
+  [RoundResultTypeEnum.Unknown]: 'unknown',
+}
+
+export const mapPlayerPosition = {
+  [PlayerPositionEnum.East]: 'east',
+  [PlayerPositionEnum.South]: 'south',
+  [PlayerPositionEnum.West]: 'west',
+  [PlayerPositionEnum.North]: 'north',
+}
+
+export const mapPlayerWinOrLose = {
+  [PlayerResultWinnerOrLoserEnum.None]: 'none',
+  [PlayerResultWinnerOrLoserEnum.Win]: 'win',
+  [PlayerResultWinnerOrLoserEnum.Lose]: 'lose',
+}
+
+const mapPlayerResult = (matchRound: MatchRound, playerIndex: PlayerIndex) => ({
+  position:
+    mapPlayerPosition[getPlayerPosition(playerIndex, matchRound.roundCount)],
+  type: mapPlayerWinOrLose[matchRound.playerResults[playerIndex].type],
+  status:
+    matchRound.playerResults[playerIndex].isRiichi ||
+    matchRound.playerResults[playerIndex].detail?.isRiichied
+      ? 'isRiichied'
+      : matchRound.playerResults[playerIndex].isRevealed ||
+        matchRound.playerResults[playerIndex].detail?.isRevealed
+      ? 'isRevealed'
+      : 'none',
+  isWaited:
+    !!matchRound.playerResults[playerIndex].waitingTiles &&
+    (matchRound.playerResults[playerIndex].waitingTiles as string[]).length > 0,
+  beforeScore: matchRound.playerResults[playerIndex].beforeScore,
+  afterScore: matchRound.playerResults[playerIndex].afterScore,
+  dora: matchRound.playerResults[playerIndex].detail?.dora,
+  redDora: matchRound.playerResults[playerIndex].detail?.redDora,
+  innerDora: matchRound.playerResults[playerIndex].detail?.innerDora,
+  han: matchRound.playerResults[playerIndex].detail?.han,
+  fu: matchRound.playerResults[playerIndex].detail?.fu,
+  yaku: matchRound.playerResults[playerIndex].detail?.yakus
+    ?.map(({ label }) => label)
+    .join(' '),
+  pureScore: 0,
+})
+
+export const convertMatchToExportedMatch = (matchRounds: MatchRound[]) => {
+  const lastRound = matchRounds.at(-1)!
+
+  const ranking = [
+    { index: 0, score: lastRound.playerResults[0].afterScore },
+    { index: 1, score: lastRound.playerResults[1].afterScore },
+    { index: 2, score: lastRound.playerResults[2].afterScore },
+    { index: 3, score: lastRound.playerResults[3].afterScore },
+  ].sort((a, b) => {
+    if (a.score === b.score) {
+      return a.index < b.index ? -1 : 1
+    }
+
+    return b.score - a.score
+  })
+  const rankingByPlayerIndex = [
+    ranking.findIndex((rank) => rank.index === 0),
+    ranking.findIndex((rank) => rank.index === 1),
+    ranking.findIndex((rank) => rank.index === 2),
+    ranking.findIndex((rank) => rank.index === 3),
+  ]
+  const pointOffsetByRanking: number[] = [50, 10, -10, -30]
+
+  // Handle same score
+  if (
+    new Set([
+      ranking[0].score,
+      ranking[1].score,
+      ranking[2].score,
+      ranking[3].score,
+    ]).size !== 4
+  ) {
+    let ps = 0
+    while (ps < 3) {
+      let pe = ps
+      while (pe < 3 && ranking[ps].score === ranking[pe + 1].score) {
+        pe += 1
+      }
+
+      if (ps !== pe) {
+        const sum = pointOffsetByRanking.reduce(
+          (prev, value, index) =>
+            prev + (index >= ps && index <= pe ? value : 0),
+          0
+        )
+        const length = pe - ps + 1
+        const highAvg = Math.round(
+          sum * (length === 3 && sum % 3 !== 0 ? 0.4 : 1 / length)
+        )
+        const lowAvg = Math.round(
+          sum * (length === 3 && sum % 3 !== 0 ? 0.3 : 1 / length)
+        )
+
+        pointOffsetByRanking[ps] = highAvg
+        for (let i = ps + 1; i <= pe; i++) {
+          pointOffsetByRanking[i] = lowAvg
+        }
+      }
+      ps = pe + 1
+    }
+  }
+
+  const result = {
+    playerEast: {
+      score: lastRound.playerResults[0].afterScore,
+      ranking: (rankingByPlayerIndex[0] + 1).toString(),
+      point:
+        (lastRound.playerResults[0].afterScore - 30000) / 1000.0 +
+        pointOffsetByRanking[rankingByPlayerIndex[0]],
+      penalty: lastRound.playerResults[0].isRedCarded ? -30 : 0,
+      penaltyReason: lastRound.playerResults[0].isRedCarded ? '紅牌' : '',
+    },
+    playerSouth: {
+      score: lastRound.playerResults[1].afterScore,
+      ranking: (rankingByPlayerIndex[1] + 1).toString(),
+      point:
+        (lastRound.playerResults[1].afterScore - 30000) / 1000.0 +
+        pointOffsetByRanking[rankingByPlayerIndex[1]],
+      penalty: lastRound.playerResults[1].isRedCarded ? -30 : 0,
+      penaltyReason: lastRound.playerResults[1].isRedCarded ? '紅牌' : '',
+    },
+    playerWest: {
+      score: lastRound.playerResults[2].afterScore,
+      ranking: (rankingByPlayerIndex[2] + 1).toString(),
+      point:
+        (lastRound.playerResults[2].afterScore - 30000) / 1000.0 +
+        pointOffsetByRanking[rankingByPlayerIndex[2]],
+      penalty: lastRound.playerResults[2].isRedCarded ? -30 : 0,
+      penaltyReason: lastRound.playerResults[2].isRedCarded ? '紅牌' : '',
+    },
+    playerNorth: {
+      score: lastRound.playerResults[3].afterScore,
+      ranking: (rankingByPlayerIndex[3] + 1).toString(),
+      point:
+        (lastRound.playerResults[3].afterScore - 30000) / 1000.0 +
+        pointOffsetByRanking[rankingByPlayerIndex[3]],
+      penalty: lastRound.playerResults[3].isRedCarded ? -30 : 0,
+      penaltyReason: lastRound.playerResults[3].isRedCarded ? '紅牌' : '',
+    },
+  }
+
+  const exportedMatch = {
+    result,
+    rounds: matchRounds.map((round) => ({
+      _key: getRandomId(),
+      type: mapRoundType[round.resultType],
+      code: `${round.roundCount}.${round.extendedRoundCount}`,
+      playerEast: mapPlayerResult(round, '0'),
+      playerSouth: mapPlayerResult(round, '1'),
+      playerWest: mapPlayerResult(round, '2'),
+      playerNorth: mapPlayerResult(round, '3'),
+    })),
+  }
+
+  return exportedMatch
 }

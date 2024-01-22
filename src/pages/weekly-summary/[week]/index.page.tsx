@@ -1,0 +1,471 @@
+import {
+  DB_PlayerStatistics,
+  DB_Team,
+  TeamPlayerDTO,
+  apiGetTeamPlayersOfTournament,
+  apiGetTournament,
+  formatTeamPlayerDTO,
+} from '@/helpers/sanity.helper'
+import { renderPoint, renderRanking } from '@/utils/string.util'
+import { useQuery } from '@tanstack/react-query'
+import { useCallback, useMemo, useState } from 'react'
+
+type Props = {
+  params: { week: string }
+}
+
+const TOURNAMENT_ID = 'b6908027-9179-485a-8bce-822c42114371'
+
+const sortPlayersAndConvertToTeamPlayerDTOByKey = (
+  teamPlayers: Awaited<ReturnType<typeof apiGetTeamPlayersOfTournament>>,
+  teamsMap: Record<string, DB_Team>,
+  valueFn: (stat: DB_PlayerStatistics) => number,
+  tieBreakValueFn: (stat: DB_PlayerStatistics) => number,
+  direction: 'asc' | 'desc',
+  tieBreakDirection: 'asc' | 'desc'
+): {
+  player: TeamPlayerDTO
+  value: number
+  tieBreakValue: number
+}[] => {
+  return teamPlayers
+    .map((teamPlayer) => ({
+      player: formatTeamPlayerDTO(teamsMap[teamPlayer.teamId], {
+        ...teamPlayer,
+        team: teamsMap[teamPlayer.teamId],
+      }),
+      value: valueFn(teamPlayer.player.statistics!),
+      tieBreakValue: tieBreakValueFn(teamPlayer.player.statistics!),
+    }))
+    .sort((a, b) => {
+      if (a.value === b.value) {
+        return (
+          (a.tieBreakValue - b.tieBreakValue) *
+          (tieBreakDirection === 'asc' ? 1 : -1)
+        )
+      }
+      return (a.value - b.value) * (direction === 'asc' ? 1 : -1)
+    })
+    .slice(0, 6)
+}
+
+const TournamentDetailPage = ({ params: { week } }: Props) => {
+  const [slideIndex, setSlideIndex] = useState<number>(0)
+  const handleClickScreen = useCallback(() => {
+    if (slideIndex === 2) {
+      setSlideIndex((prev) => prev + 0.5)
+      setTimeout(() => {
+        setSlideIndex(3)
+      }, 1000)
+    } else if (slideIndex < 2) {
+      setSlideIndex((prev) => prev + 1)
+    }
+  }, [slideIndex])
+
+  const { data: tournament } = useQuery({
+    queryKey: ['tournament', TOURNAMENT_ID],
+    queryFn: () =>
+      apiGetTournament(TOURNAMENT_ID as string).then((tournament) => ({
+        ...tournament,
+        teams: tournament.teams.sort((a, b) => b.point - a.point),
+      })),
+    enabled: !!TOURNAMENT_ID,
+  })
+
+  const { data: teamPlayers } = useQuery({
+    queryKey: ['tournament', TOURNAMENT_ID, 'players'],
+    queryFn: () => apiGetTeamPlayersOfTournament(TOURNAMENT_ID as string),
+    enabled: !!TOURNAMENT_ID,
+  })
+
+  const teamsMap = useMemo(() => {
+    if (!tournament) {
+      return {}
+    }
+
+    return tournament.teams.reduce(
+      (prev, { team }) => {
+        prev[team._id] = team
+        return prev
+      },
+      {} as Record<string, DB_Team>
+    )
+  }, [tournament])
+
+  const [
+    highestPointPlayers,
+    highestRonPPlayers,
+    highestRonPurePointPlayers,
+    lowestChuckPPlayers,
+    highestScoreMax,
+  ] = useMemo(() => {
+    if (!teamPlayers || !teamsMap) {
+      return [[], [], [], [], []]
+    }
+
+    const filteredTeamPlayers = teamPlayers.filter(
+      (teamPlayer) => teamPlayer.player.statistics!.matchCount > 0
+    )
+
+    return [
+      sortPlayersAndConvertToTeamPlayerDTOByKey(
+        filteredTeamPlayers,
+        teamsMap,
+        (stat) => stat.point,
+        (stat) => stat.matchCount,
+        'desc',
+        'asc'
+      ),
+      sortPlayersAndConvertToTeamPlayerDTOByKey(
+        filteredTeamPlayers,
+        teamsMap,
+        (stat) => stat.ronCount / stat.roundCount,
+        (stat) => stat.roundCount,
+        'desc',
+        'desc'
+      ),
+      sortPlayersAndConvertToTeamPlayerDTOByKey(
+        filteredTeamPlayers,
+        teamsMap,
+        (stat) => stat.ronPureScoreAvg,
+        (stat) => stat.roundCount,
+        'desc',
+        'desc'
+      ),
+      sortPlayersAndConvertToTeamPlayerDTOByKey(
+        filteredTeamPlayers,
+        teamsMap,
+        (stat) => stat.chuckCount / stat.roundCount,
+        (stat) => stat.roundCount,
+        'asc',
+        'desc'
+      ),
+      sortPlayersAndConvertToTeamPlayerDTOByKey(
+        filteredTeamPlayers,
+        teamsMap,
+        (stat) => stat.scoreMax,
+        (stat) => stat.roundCount,
+        'desc',
+        'desc'
+      ),
+    ]
+  }, [teamPlayers, teamsMap])
+
+  console.log(
+    highestPointPlayers,
+    highestRonPPlayers,
+    highestRonPurePointPlayers,
+    lowestChuckPPlayers
+  )
+
+  if (!tournament) {
+    return <></>
+  }
+
+  return (
+    <div
+      className="fixed inset-0"
+      style={{
+        background:
+          'linear-gradient(to bottom, rgb(30, 34, 59), rgb(16, 18, 33))',
+      }}
+      onClick={handleClickScreen}
+    >
+      <div
+        className="absolute inset-0 tournament-weekly-report text-white text-[36px] flex py-[1em] px-[1em] gap-x-[1em]"
+        data-active={slideIndex >= 1}
+      >
+        <div
+          className="twr-title flex flex-col justify-between items-center"
+          data-active={slideIndex >= 1}
+        >
+          <div>
+            <img
+              src={tournament.logoUrl + '?w=280&h=280&auto=format'}
+              alt={tournament.name}
+              style={{ width: '3.5em', height: '3.5em', marginTop: '0.15em' }}
+            />
+          </div>
+          <p
+            style={{
+              fontSize: '3em',
+              writingMode: 'vertical-rl',
+              textOrientation: 'upright',
+            }}
+          >
+            第
+            <span
+              style={{
+                writingMode: 'initial',
+                textOrientation: 'initial',
+              }}
+            >
+              1
+            </span>
+            週結算
+          </p>
+          <p
+            style={{
+              fontSize: '1.2em',
+              writingMode: 'vertical-rl',
+              textOrientation: 'upright',
+            }}
+          >
+            <span
+              style={{
+                writingMode: 'initial',
+                textOrientation: 'initial',
+              }}
+            >
+              9/1
+            </span>
+            ~
+            <span
+              style={{
+                writingMode: 'initial',
+                textOrientation: 'initial',
+              }}
+            >
+              11/1
+            </span>
+          </p>
+        </div>
+
+        <div className="flex-1 relative">
+          <div
+            className="absolute inset-0 flex flex-col twr-team-ranking"
+            data-active={slideIndex === 2}
+          >
+            <div className="flex-1 flex items-center text-[0.75em] gap-6 twr-team-ranking-row">
+              <p className="flex-1 text-center">排名</p>
+              <p className="flex-[5]">隊伍</p>
+              <p className="flex-1 text-center">積分</p>
+              <p className="flex-1 text-center">與前名差距</p>
+              <p className="flex-1 text-center">半莊數</p>
+            </div>
+            {tournament.teams.map((team, index) => (
+              <div
+                key={team._id}
+                className="relative flex-1 flex items-center gap-6 overflow-hidden twr-team-ranking-row"
+                style={{
+                  background: `linear-gradient(to right, ${team.team.color}C0, transparent 105%)`,
+                  animationDelay: `${index * 0.05}s`,
+                }}
+              >
+                <img
+                  src={team.team.squareLogoImage + '?w=320&h=320'}
+                  alt={team.team._id}
+                  className="absolute left-0 opacity-25 -z-10"
+                />
+                <p className="flex-1 text-center">
+                  {renderRanking(team.ranking)}
+                </p>
+                <p className="flex-[5]">
+                  {team.team.name} {team.team.secondaryName}
+                </p>
+                <p className="flex-1 text-center">{renderPoint(team.point)}</p>
+                <p className="flex-1 text-center">
+                  {index > 0
+                    ? (tournament.teams[index - 1].point - team.point).toFixed(
+                        1
+                      )
+                    : '-'}
+                </p>
+                <p className="flex-1 text-center">
+                  {team.matchCount}
+                  <span className="text-[0.75em]">/60</span>
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div
+            className="absolute inset-0 flex twr-player-ranking gap-[1em] items-stretch twr-player-ranking"
+            data-active={slideIndex === 3}
+          >
+            <div className="flex-1 flex flex-col gap-y-[.5em]">
+              <h4 className="text-[2em] font-semibold text-center leading-[1em] twr-player-ranking-row">
+                MVP
+              </h4>
+              <p className="text-center twr-player-ranking-row">積分最高選手</p>
+              <div className="flex-1 flex flex-col">
+                {highestPointPlayers.map(
+                  ({ player, value, tieBreakValue }, index) => (
+                    <div
+                      key={player.playerId}
+                      className="relative overflow-hidden flex-1 flex flex-col items-stretch justify-center twr-player-ranking-row"
+                      style={{
+                        background: `linear-gradient(to right, ${player.color}C0, transparent 105%)`,
+                        animationDelay: `${index * 0.05}s`,
+                      }}
+                    >
+                      <img
+                        src={player.teamLogoImageUrl + '?w=320&h=320'}
+                        alt={player.teamName}
+                        className="absolute left-[3em] opacity-25 -z-10"
+                      />
+                      <div className="flex items-center justify-between px-[.5em] gap-x-[.5em]">
+                        <div className="w-[2.2em]">
+                          {renderRanking(index + 1)}
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-[1.5em] leading-[1em]">
+                            {player.playerNickname}
+                          </p>
+                          <p className="text-[.75em] leading-[1em]">
+                            {player.playerName}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-[1.5em] leading-[1em] font-numeric">
+                            {value.toFixed(1)}
+                          </p>
+                          <p className="text-[.75em] leading-[1em] opacity-80">
+                            (半莊數: {tieBreakValue})
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                )}
+              </div>
+            </div>
+
+            <div
+              className="flex-1 grid grid-cols-2 gap-[1em] twr-player-ranking-row"
+              style={{
+                animationDelay: `1.5s`,
+              }}
+            >
+              <div className="space-y-[.5em]">
+                <p className="text-center">和了率</p>
+                <div className="flex-1 flex flex-col">
+                  {highestRonPPlayers.map(({ player, value }) => (
+                    <div
+                      key={player.playerId}
+                      className="relative overflow-hidden flex-1 flex flex-col items-stretch justify-center"
+                      style={{
+                        background: `${player.color}20`,
+                      }}
+                    >
+                      <img
+                        src={player.teamLogoImageUrl + '?w=320&h=320'}
+                        alt={player.teamName}
+                        className="absolute left-[3em] opacity-5 -z-10"
+                      />
+                      <div className="flex items-center justify-between px-[.5em] gap-x-[.5em] py-[.25em]">
+                        <div className="flex-1">
+                          <p className="leading-[1.2em]">
+                            {player.playerNickname}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="leading-[1.2em]">{value.toFixed(2)}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-[.5em]">
+                <p className="text-center">平均打點</p>
+                <div className="flex-1 flex flex-col">
+                  {highestRonPurePointPlayers.map(({ player, value }) => (
+                    <div
+                      key={player.playerId}
+                      className="relative overflow-hidden flex-1 flex flex-col items-stretch justify-center"
+                      style={{
+                        background: `${player.color}20`,
+                      }}
+                    >
+                      <img
+                        src={player.teamLogoImageUrl + '?w=320&h=320'}
+                        alt={player.teamName}
+                        className="absolute left-[3em] opacity-5 -z-10"
+                      />
+                      <div className="flex items-center justify-between px-[.5em] gap-x-[.5em] py-[.25em]">
+                        <div className="flex-1">
+                          <p className="leading-[1.2em]">
+                            {player.playerNickname}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="leading-[1.2em]">{value.toFixed(2)}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-[.5em]">
+                <p className="text-center">銃和率</p>
+                <div className="flex-1 flex flex-col">
+                  {lowestChuckPPlayers.map(({ player, value }) => (
+                    <div
+                      key={player.playerId}
+                      className="relative overflow-hidden flex-1 flex flex-col items-stretch justify-center"
+                      style={{
+                        background: `${player.color}20`,
+                      }}
+                    >
+                      <img
+                        src={player.teamLogoImageUrl + '?w=320&h=320'}
+                        alt={player.teamName}
+                        className="absolute left-[3em] opacity-5 -z-10"
+                      />
+                      <div className="flex items-center justify-between px-[.5em] gap-x-[.5em] py-[.25em]">
+                        <div className="flex-1">
+                          <p className="leading-[1.2em]">
+                            {player.playerNickname}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="leading-[1.2em]">{value.toFixed(2)}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-[.5em]">
+                <p className="text-center">最高得點</p>
+                <div className="flex-1 flex flex-col">
+                  {highestScoreMax.map(({ player, value }) => (
+                    <div
+                      key={player.playerId}
+                      className="relative overflow-hidden flex-1 flex flex-col items-stretch justify-center"
+                      style={{
+                        background: `${player.color}20`,
+                      }}
+                    >
+                      <img
+                        src={player.teamLogoImageUrl + '?w=320&h=320'}
+                        alt={player.teamName}
+                        className="absolute left-[3em] opacity-5 -z-10"
+                      />
+                      <div className="flex items-center justify-between px-[.5em] gap-x-[.5em] py-[.25em]">
+                        <div className="flex-1">
+                          <p className="leading-[1.2em]">
+                            {player.playerNickname}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="leading-[1.2em]">{value.toFixed(0)}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default TournamentDetailPage

@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import MJUIDialogV2, { MJUIDialogV2Props } from '@/components/MJUI/MJUIDialogV2'
 import MJUIButton from '@/components/MJUI/MJUIButton'
 import {
   Match,
@@ -14,7 +13,6 @@ import {
   getRoundResultTypeByCompiledScore,
   getScoreInFullDetail,
 } from '@/helpers/mahjong.helper'
-import MJMatchCounterSpan from '../MJMatchCounterSpan'
 import MJUISelect from '../MJUI/MJUISelect'
 import MJHanFuScoreSpan from '../MJHanFuScoreSpan'
 import MJAmountSpan from '../MJAmountSpan'
@@ -24,22 +22,27 @@ import MJYakuKeyboardDiv, {
 } from '../MJYakuKeyboardDiv'
 import MJUIFormGroup from '../MJUI/MJUIFormGroup'
 
-export type MJMatchRonProps = Pick<MJUIDialogV2Props, 'open' | 'onClose'> & {
+export type MJMatchRonFormProps = {
   match: Match
   currentMatchRound: MatchRound
   initialActivePlayerIndex?: PlayerIndex
   initialTargetPlayerIndex?: PlayerIndex | '-1'
+  submitNode?: React.ReactNode
   onSubmit?: (resultMatchRound: MatchRound) => unknown
 }
 
-export default function MJMatchRonDialog({
+export default function MJMatchRonForm({
   match,
   currentMatchRound,
   initialActivePlayerIndex = '0',
   initialTargetPlayerIndex = '-1',
+  submitNode = (
+    <span>
+      <i className="bi bi-camera-reels-fill"></i> 提交並播出分數變動動畫
+    </span>
+  ),
   onSubmit,
-  ...dialogProps
-}: MJMatchRonProps) {
+}: MJMatchRonFormProps) {
   const [yakuResult, setYakuResult] = useState<
     Omit<MJYakuKeyboardResult, 'raw'> & {
       raw: MJYakuKeyboardResult['raw'] | null
@@ -62,7 +65,7 @@ export default function MJMatchRonDialog({
       Object.keys(match.players) as unknown as PlayerIndex[]
     ).map((index) => ({
       index: index.toString(),
-      name: match.players[index].name,
+      name: `${match.players[index].name} (${match.players[index].nickname})`,
       position: getPlayerPosition(index, currentMatchRound.roundCount),
     }))
 
@@ -130,19 +133,6 @@ export default function MJMatchRonDialog({
     currentMatchRound.extendedRoundCount,
     currentMatchRound.cumulatedThousands,
   ])
-
-  const title = useMemo(() => {
-    return (
-      <div>
-        <MJMatchCounterSpan
-          roundCount={currentMatchRound.roundCount}
-          extendedRoundCount={currentMatchRound.extendedRoundCount}
-          max={8}
-        />
-        <span> 和了</span>
-      </div>
-    )
-  }, [currentMatchRound.roundCount, currentMatchRound.extendedRoundCount])
 
   const isDaisangenTriggered = useMemo(
     () =>
@@ -520,202 +510,192 @@ export default function MJMatchRonDialog({
   ])
 
   useEffect(() => {
-    if (dialogProps.open) {
-      // reset form
-      setActivePlayerIndex(initialActivePlayerIndex)
-      setTargetPlayerIndex(initialTargetPlayerIndex)
-      setYakuResult(
-        currentMatchRound.playerResults[initialActivePlayerIndex].detail
-      )
-      // setCompiledScore({
-      //   win: 1000,
-      //   target: 1000,
-      // })
-    }
+    // reset form
+    setActivePlayerIndex(initialActivePlayerIndex)
+    setTargetPlayerIndex(initialTargetPlayerIndex)
+    setYakuResult(
+      currentMatchRound.playerResults[initialActivePlayerIndex].detail
+    )
   }, [
     currentMatchRound.playerResults,
-    dialogProps.open,
     initialActivePlayerIndex,
     initialTargetPlayerIndex,
   ])
 
   return (
-    <MJUIDialogV2 title={title} {...dialogProps}>
-      <div className="space-y-8">
-        <div className="flex gap-x-4 items-center">
-          <div className="flex-1">
-            <MJUISelect
-              value={activePlayerIndex}
-              onChangeValue={setActivePlayerIndex}
-            >
-              {players.map(({ index, name }) => (
-                <option key={index} value={index}>
-                  {name}
-                </option>
-              ))}
-            </MJUISelect>
-          </div>
-          <div className="text-xs text-gray-500">和了</div>
-          <div className="flex-1">
-            <MJUISelect
-              value={targetPlayerIndex}
-              onChangeValue={setTargetPlayerIndex}
-            >
-              <option value="-1">自摸</option>
-              {players.map(({ index, name }) => (
-                <option key={index} value={index}>
-                  {name}
-                </option>
-              ))}
-            </MJUISelect>
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <h5 className="font-bold">役種</h5>
-          <div>
-            <MJYakuKeyboardDiv
-              round={currentMatchRound.roundCount}
-              activePlayerIndex={activePlayerIndex as PlayerIndex}
-              targetPlayerIndex={targetPlayerIndex as PlayerIndex | '-1'}
-              onChange={setYakuResult}
-              value={
-                currentMatchRound.playerResults[
-                  activePlayerIndex as PlayerIndex
-                ].detail
-              }
-            />
-
-            <MJYakuKeyboardResultDiv
-              result={yakuResult}
-              matchSetting={match.setting}
-            />
-
-            <div className="text-3xl font-bold text-center bg-teal-400 py-2">
-              <MJHanFuScoreSpan score={compiledScore} />
-            </div>
-          </div>
-        </div>
-
-        {(isDaisangenTriggered ||
-          isDaisuushiiTriggered ||
-          isSuukantsuTriggered) && (
-          <div className="space-y-2 bg-yellow-200 p-4">
-            <h5 className="font-bold">包牌</h5>
-            <p>
-              當某家打出的牌被鳴牌後，導致役滿確定時（大三元、大四喜、四槓子），便會觸發「包牌」。
-              <br />- 如自摸，包牌者需支付該役種全部點數
-              <br />- 如他家放銃，包牌者需支付該役種一半點數
-            </p>
-
-            <div className="grid grid-cols-2 gap-6">
-              {isDaisangenTriggered && (
-                <MJUIFormGroup label="大三元包牌者">
-                  <MJUISelect
-                    value={yakumanDaisangenTriggerPlayerIndex}
-                    onChangeValue={setYakumanDaisangenTriggerPlayerIndex}
-                  >
-                    <option value="-1">沒有包牌</option>
-                    {players.map(({ index, name }) => (
-                      <option key={index} value={index}>
-                        {name}
-                      </option>
-                    ))}
-                  </MJUISelect>
-                </MJUIFormGroup>
-              )}
-
-              {isDaisuushiiTriggered && (
-                <MJUIFormGroup label="大四喜包牌者">
-                  <MJUISelect
-                    value={yakumanDaisuushiiTriggerPlayerIndex}
-                    onChangeValue={setYakumanDaisuushiiTriggerPlayerIndex}
-                  >
-                    <option value="-1">沒有包牌</option>
-                    {players.map(({ index, name }) => (
-                      <option key={index} value={index}>
-                        {name}
-                      </option>
-                    ))}
-                  </MJUISelect>
-                </MJUIFormGroup>
-              )}
-
-              {isSuukantsuTriggered && (
-                <MJUIFormGroup label="四槓子包牌者">
-                  <MJUISelect
-                    value={yakumanSuukantsuTriggerPlayerIndex}
-                    onChangeValue={setYakumanSuukantsuTriggerPlayerIndex}
-                  >
-                    <option value="-1">沒有包牌</option>
-                    {players.map(({ index, name }) => (
-                      <option key={index} value={index}>
-                        {name}
-                      </option>
-                    ))}
-                  </MJUISelect>
-                </MJUIFormGroup>
-              )}
-            </div>
-          </div>
-        )}
-
-        <div className="space-y-2">
-          <h5 className="font-bold">分數變動</h5>
-
-          <table className="data-table w-full text-lg">
-            <thead>
-              <tr>
-                <th>玩家</th>
-                <th>目前分數</th>
-                <th>變動</th>
-                <th>最新分數</th>
-              </tr>
-            </thead>
-            <tbody>
-              {(Object.keys(match.players) as unknown as PlayerIndex[]).map(
-                (index) => (
-                  <tr key={index}>
-                    <th
-                      className="text-white py-1"
-                      style={{ background: match.players[index].color }}
-                    >
-                      {match.players[index].name}
-                    </th>
-                    <td className="px-2 text-center w-32">
-                      {previewPlayerResults[index].beforeScore}
-                    </td>
-                    <td className="text-center w-32">
-                      <MJAmountSpan
-                        signed
-                        value={
-                          previewPlayerResults[index].afterScore -
-                          previewPlayerResults[index].beforeScore
-                        }
-                        positiveClassName="text-green-400"
-                        negativeClassName="text-red-400"
-                      />
-                    </td>
-                    <td className="text-center w-32">
-                      {previewPlayerResults[index].afterScore}
-                    </td>
-                  </tr>
-                )
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        <div className="space-y-2">
-          <MJUIButton
-            onClick={handleSubmit}
-            className="w-full"
-            disabled={!yakuResult?.yakus || yakuResult.yakus.length <= 0}
+    <div className="space-y-8">
+      <div className="flex gap-x-4 items-center">
+        <div className="flex-1">
+          <MJUISelect
+            value={activePlayerIndex}
+            onChangeValue={setActivePlayerIndex}
           >
-            <i className="bi bi-camera-reels-fill"></i> 提交並播出分數變動動畫
-          </MJUIButton>
+            {players.map(({ index, name }) => (
+              <option key={index} value={index}>
+                {name}
+              </option>
+            ))}
+          </MJUISelect>
+        </div>
+        <div className="text-xs text-gray-500">和了</div>
+        <div className="flex-1">
+          <MJUISelect
+            value={targetPlayerIndex}
+            onChangeValue={setTargetPlayerIndex}
+          >
+            <option value="-1">自摸</option>
+            {players.map(({ index, name }) => (
+              <option key={index} value={index}>
+                {name}
+              </option>
+            ))}
+          </MJUISelect>
         </div>
       </div>
-    </MJUIDialogV2>
+
+      <div className="space-y-2">
+        <h5 className="font-bold">役種</h5>
+        <div>
+          <MJYakuKeyboardDiv
+            round={currentMatchRound.roundCount}
+            activePlayerIndex={activePlayerIndex as PlayerIndex}
+            targetPlayerIndex={targetPlayerIndex as PlayerIndex | '-1'}
+            onChange={setYakuResult}
+            value={
+              currentMatchRound.playerResults[activePlayerIndex as PlayerIndex]
+                .detail
+            }
+          />
+
+          <MJYakuKeyboardResultDiv
+            result={yakuResult}
+            matchSetting={match.setting}
+          />
+
+          <div className="text-3xl font-bold text-center bg-teal-400 py-2">
+            <MJHanFuScoreSpan score={compiledScore} />
+          </div>
+        </div>
+      </div>
+
+      {(isDaisangenTriggered ||
+        isDaisuushiiTriggered ||
+        isSuukantsuTriggered) && (
+        <div className="space-y-2 bg-yellow-200 p-4">
+          <h5 className="font-bold">包牌</h5>
+          <p>
+            當某家打出的牌被鳴牌後，導致役滿確定時（大三元、大四喜、四槓子），便會觸發「包牌」。
+            <br />- 如自摸，包牌者需支付該役種全部點數
+            <br />- 如他家放銃，包牌者需支付該役種一半點數
+          </p>
+
+          <div className="grid grid-cols-2 gap-6">
+            {isDaisangenTriggered && (
+              <MJUIFormGroup label="大三元包牌者">
+                <MJUISelect
+                  value={yakumanDaisangenTriggerPlayerIndex}
+                  onChangeValue={setYakumanDaisangenTriggerPlayerIndex}
+                >
+                  <option value="-1">沒有包牌</option>
+                  {players.map(({ index, name }) => (
+                    <option key={index} value={index}>
+                      {name}
+                    </option>
+                  ))}
+                </MJUISelect>
+              </MJUIFormGroup>
+            )}
+
+            {isDaisuushiiTriggered && (
+              <MJUIFormGroup label="大四喜包牌者">
+                <MJUISelect
+                  value={yakumanDaisuushiiTriggerPlayerIndex}
+                  onChangeValue={setYakumanDaisuushiiTriggerPlayerIndex}
+                >
+                  <option value="-1">沒有包牌</option>
+                  {players.map(({ index, name }) => (
+                    <option key={index} value={index}>
+                      {name}
+                    </option>
+                  ))}
+                </MJUISelect>
+              </MJUIFormGroup>
+            )}
+
+            {isSuukantsuTriggered && (
+              <MJUIFormGroup label="四槓子包牌者">
+                <MJUISelect
+                  value={yakumanSuukantsuTriggerPlayerIndex}
+                  onChangeValue={setYakumanSuukantsuTriggerPlayerIndex}
+                >
+                  <option value="-1">沒有包牌</option>
+                  {players.map(({ index, name }) => (
+                    <option key={index} value={index}>
+                      {name}
+                    </option>
+                  ))}
+                </MJUISelect>
+              </MJUIFormGroup>
+            )}
+          </div>
+        </div>
+      )}
+
+      <div className="space-y-2">
+        <h5 className="font-bold">分數變動</h5>
+
+        <table className="data-table w-full text-lg">
+          <thead>
+            <tr>
+              <th>玩家</th>
+              <th>目前分數</th>
+              <th>變動</th>
+              <th>最新分數</th>
+            </tr>
+          </thead>
+          <tbody>
+            {(Object.keys(match.players) as unknown as PlayerIndex[]).map(
+              (index) => (
+                <tr key={index}>
+                  <th
+                    className="text-white py-1"
+                    style={{ background: match.players[index].color }}
+                  >
+                    {match.players[index].name}
+                  </th>
+                  <td className="px-2 text-center w-32">
+                    {previewPlayerResults[index].beforeScore}
+                  </td>
+                  <td className="text-center w-32">
+                    <MJAmountSpan
+                      signed
+                      value={
+                        previewPlayerResults[index].afterScore -
+                        previewPlayerResults[index].beforeScore
+                      }
+                      positiveClassName="text-green-400"
+                      negativeClassName="text-red-400"
+                    />
+                  </td>
+                  <td className="text-center w-32">
+                    {previewPlayerResults[index].afterScore}
+                  </td>
+                </tr>
+              )
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="space-y-2">
+        <MJUIButton
+          onClick={handleSubmit}
+          className="w-full"
+          disabled={!yakuResult?.yakus || yakuResult.yakus.length <= 0}
+        >
+          {submitNode}
+        </MJUIButton>
+      </div>
+    </div>
   )
 }

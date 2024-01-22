@@ -26,6 +26,13 @@ export type DB_Match = {
   playerNorthTeam?: DB_Team
   tournament: DB_MatchTournament
   startAt: string
+  result: {
+    playerEast?: DB_MatchResult
+    playerSouth?: DB_MatchResult
+    playerWest?: DB_MatchResult
+    playerNorth?: DB_MatchResult
+  }
+  rounds: DB_MatchRound[]
 }
 
 export type DB_TeamPlayer = {
@@ -95,6 +102,38 @@ export type DB_PlayerStatistics = {
   chuckAfterRevealPureScoreAvg: number
 }
 
+export type DB_MatchResult = {
+  ranking: '1' | '2' | '3' | '4'
+  point: number
+  score: number
+}
+
+export type DB_MatchRound = {
+  _key: string
+  code: string
+  type: 'ron' | 'tsumo' | 'exhausted' | 'hotfix'
+  playerEast: DB_MatchRoundPlayer
+  playerSouth: DB_MatchRoundPlayer
+  playerWest: DB_MatchRoundPlayer
+  playerNorth: DB_MatchRoundPlayer
+}
+
+export type DB_MatchRoundPlayer = {
+  position: 'east' | 'south' | 'west' | 'north'
+  type: 'none' | 'win' | 'lose'
+  status: 'none' | 'isRiichied' | 'isRevealed'
+  isWaited: boolean
+  beforeScore: number
+  afterScore: number
+  dora?: number
+  redDora?: number
+  innerDora?: number
+  han?: number
+  fu?: number
+  pureScore?: number
+  yaku?: string
+}
+
 export type DB_MatchTournament = {
   _id: string
   name: string
@@ -103,7 +142,13 @@ export type DB_MatchTournament = {
   isManganRoundUp: boolean
   yakuMax: '12' | '13'
   yakumanMax: '13' | '26' | '39' | '130'
-  teams: { _id: string; point: number; ranking: number; matchCount: number }[]
+  teams: {
+    _id: string
+    point: number
+    ranking: number
+    matchCount: number
+    team: DB_Team
+  }[]
 }
 
 export const apiGetPlayers = (): Promise<DB_Player[]> => {
@@ -160,6 +205,11 @@ export const apiGetMatches = (): Promise<MatchDTO[]> => {
 
         const newMatch: MatchDTO = {
           ...matchRest,
+          nameAlt: matchRest.name.startsWith('常規賽 #23Pre')
+            ? `常規賽 ${matchRest.startAt.substring(0, 10)} 第${
+                matchRest.name[matchRest.name.length - 1]
+              }回戰`
+            : matchRest.name,
           playerEast: formatTeamPlayerDTO(playerEastTeam, playerEast),
           playerSouth: formatTeamPlayerDTO(playerSouthTeam, playerSouth),
           playerWest: formatTeamPlayerDTO(playerWestTeam, playerWest),
@@ -225,6 +275,11 @@ export const apiGetMatchById = async (
 
       const newMatch: MatchDTO = {
         ...match,
+        nameAlt: match.name.startsWith('常規賽 #23Pre')
+          ? `常規賽 ${match.startAt.substring(0, 10)} 第${
+              match.name[match.name.length - 1]
+            }回戰`
+          : match.name,
         playerEast: formatTeamPlayerDTO(playerEastTeam, playerEast),
         playerSouth: formatTeamPlayerDTO(playerSouthTeam, playerSouth),
         playerWest: formatTeamPlayerDTO(playerWestTeam, playerWest),
@@ -285,24 +340,24 @@ export const apiGetMatchById = async (
         playerStatisticMap[match.playerWest.playerId]
       match.playerNorth.playerStatistic =
         playerStatisticMap[match.playerNorth.playerId]
-
-      match.playerEast.teamStatistic =
-        match.tournament.teams.find(
-          ({ _id }) => _id === match.playerEast.teamId
-        ) || null
-      match.playerSouth.teamStatistic =
-        match.tournament.teams.find(
-          ({ _id }) => _id === match.playerSouth.teamId
-        ) || null
-      match.playerWest.teamStatistic =
-        match.tournament.teams.find(
-          ({ _id }) => _id === match.playerWest.teamId
-        ) || null
-      match.playerNorth.teamStatistic =
-        match.tournament.teams.find(
-          ({ _id }) => _id === match.playerNorth.teamId
-        ) || null
     }
+
+    match.playerEast.teamStatistic =
+      match.tournament.teams.find(
+        ({ _id }) => _id === match.playerEast.teamId
+      ) || null
+    match.playerSouth.teamStatistic =
+      match.tournament.teams.find(
+        ({ _id }) => _id === match.playerSouth.teamId
+      ) || null
+    match.playerWest.teamStatistic =
+      match.tournament.teams.find(
+        ({ _id }) => _id === match.playerWest.teamId
+      ) || null
+    match.playerNorth.teamStatistic =
+      match.tournament.teams.find(
+        ({ _id }) => _id === match.playerNorth.teamId
+      ) || null
   }
 
   return match
@@ -426,6 +481,7 @@ export type MatchDTO = Omit<
   playerSouth: TeamPlayerDTO
   playerWest: TeamPlayerDTO
   playerNorth: TeamPlayerDTO
+  nameAlt: string
   _order: ('playerEast' | 'playerSouth' | 'playerWest' | 'playerNorth')[]
 }
 
@@ -454,6 +510,7 @@ export const formatTeamPlayerDTO = (
 
   if (teamPlayer) {
     if (teamPlayer.player) {
+      newTeamPlayerDTO.playerId = teamPlayer.player._id
       newTeamPlayerDTO.playerName = teamPlayer.player.name
       if (teamPlayer.player.nickname) {
         newTeamPlayerDTO.playerNickname = teamPlayer.player.nickname
@@ -549,3 +606,25 @@ export const formatTeamPlayerDTO = (
 
   return newTeamPlayerDTO
 }
+
+export const apiGetTournament = async (tournamentId: string) => {
+  const tournament = await client.fetch<DB_MatchTournament>(
+    `*[_type == "matchTournament" && _id == "${tournamentId}"][0]{..., "logoUrl": logo.asset->url, teams[]{..., team->{${TEAM_PROJECTION}}}}`
+  )
+
+  return tournament
+}
+
+export const apiGetTeamPlayersOfTournament = async (tournamentId: string) => {
+  const teamPlayers = await client.fetch<
+    (DB_TeamPlayer & {
+      teamId: string
+    })[]
+  >(
+    `*[_type=="teamPlayer" && !(_id in path("drafts.**")) && defined(player->statistics[_key=="${tournamentId}"])]{"teamId": team._ref, player->{${PLAYER_PROJECTION}, "statistics": statistics[_key=="${tournamentId}"][0]}, overridedDesignation, overridedName, overridedNickname, "overridedColor": overridedColor.hex, "overridedPortraitImage": overridedPortraitImage.asset->url}`
+  )
+
+  return teamPlayers
+}
+
+apiGetTournament('b6908027-9179-485a-8bce-822c42114371')
