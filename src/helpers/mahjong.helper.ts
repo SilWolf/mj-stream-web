@@ -565,10 +565,10 @@ export const convertMatchToExportedMatch = (matchRounds: MatchRound[]) => {
   const lastRound = matchRounds.at(-1)!
 
   const ranking = [
-    { index: '0', score: lastRound.playerResults[0].afterScore },
-    { index: '1', score: lastRound.playerResults[1].afterScore },
-    { index: '2', score: lastRound.playerResults[2].afterScore },
-    { index: '3', score: lastRound.playerResults[3].afterScore },
+    { index: 0, score: lastRound.playerResults[0].afterScore },
+    { index: 1, score: lastRound.playerResults[1].afterScore },
+    { index: 2, score: lastRound.playerResults[2].afterScore },
+    { index: 3, score: lastRound.playerResults[3].afterScore },
   ].sort((a, b) => {
     if (a.score === b.score) {
       return a.index < b.index ? -1 : 1
@@ -576,58 +576,94 @@ export const convertMatchToExportedMatch = (matchRounds: MatchRound[]) => {
 
     return b.score - a.score
   })
-  const rankingByPlayerIndex = {
-    '0': (ranking.findIndex((rank) => rank.index === '0') + 1).toString(),
-    '1': (ranking.findIndex((rank) => rank.index === '1') + 1).toString(),
-    '2': (ranking.findIndex((rank) => rank.index === '2') + 1).toString(),
-    '3': (ranking.findIndex((rank) => rank.index === '3') + 1).toString(),
+  const rankingByPlayerIndex = [
+    ranking.findIndex((rank) => rank.index === 0),
+    ranking.findIndex((rank) => rank.index === 1),
+    ranking.findIndex((rank) => rank.index === 2),
+    ranking.findIndex((rank) => rank.index === 3),
+  ]
+  const pointOffsetByRanking: number[] = [50, 10, -10, -30]
+
+  // Handle same score
+  if (
+    new Set([
+      ranking[0].score,
+      ranking[1].score,
+      ranking[2].score,
+      ranking[3].score,
+    ]).size !== 4
+  ) {
+    let ps = 0
+    while (ps < 3) {
+      let pe = ps
+      while (pe < 3 && ranking[ps].score === ranking[pe + 1].score) {
+        pe += 1
+      }
+
+      if (ps !== pe) {
+        const sum = pointOffsetByRanking.reduce(
+          (prev, value, index) =>
+            prev + (index >= ps && index <= pe ? value : 0),
+          0
+        )
+        const length = pe - ps + 1
+        const highAvg = Math.round(
+          sum * (length === 3 && sum % 3 !== 0 ? 0.4 : 1 / length)
+        )
+        const lowAvg = Math.round(
+          sum * (length === 3 && sum % 3 !== 0 ? 0.3 : 1 / length)
+        )
+
+        pointOffsetByRanking[ps] = highAvg
+        for (let i = ps + 1; i <= pe; i++) {
+          pointOffsetByRanking[i] = lowAvg
+        }
+      }
+      ps = pe + 1
+    }
   }
-  const pointOffsetByRanking: Record<string, number> = {
-    '1': 50,
-    '2': 10,
-    '3': -10,
-    '4': -30,
+
+  const result = {
+    playerEast: {
+      score: lastRound.playerResults[0].afterScore,
+      ranking: (rankingByPlayerIndex[0] + 1).toString(),
+      point:
+        (lastRound.playerResults[0].afterScore - 30000) / 1000.0 +
+        pointOffsetByRanking[rankingByPlayerIndex[0]],
+      penalty: lastRound.playerResults[0].isRedCarded ? -30 : 0,
+      penaltyReason: lastRound.playerResults[0].isRedCarded ? '紅牌' : '',
+    },
+    playerSouth: {
+      score: lastRound.playerResults[1].afterScore,
+      ranking: (rankingByPlayerIndex[1] + 1).toString(),
+      point:
+        (lastRound.playerResults[1].afterScore - 30000) / 1000.0 +
+        pointOffsetByRanking[rankingByPlayerIndex[1]],
+      penalty: lastRound.playerResults[1].isRedCarded ? -30 : 0,
+      penaltyReason: lastRound.playerResults[1].isRedCarded ? '紅牌' : '',
+    },
+    playerWest: {
+      score: lastRound.playerResults[2].afterScore,
+      ranking: (rankingByPlayerIndex[2] + 1).toString(),
+      point:
+        (lastRound.playerResults[2].afterScore - 30000) / 1000.0 +
+        pointOffsetByRanking[rankingByPlayerIndex[2]],
+      penalty: lastRound.playerResults[2].isRedCarded ? -30 : 0,
+      penaltyReason: lastRound.playerResults[2].isRedCarded ? '紅牌' : '',
+    },
+    playerNorth: {
+      score: lastRound.playerResults[3].afterScore,
+      ranking: (rankingByPlayerIndex[3] + 1).toString(),
+      point:
+        (lastRound.playerResults[3].afterScore - 30000) / 1000.0 +
+        pointOffsetByRanking[rankingByPlayerIndex[3]],
+      penalty: lastRound.playerResults[3].isRedCarded ? -30 : 0,
+      penaltyReason: lastRound.playerResults[3].isRedCarded ? '紅牌' : '',
+    },
   }
 
   const exportedMatch = {
-    result: {
-      playerEast: {
-        score: lastRound.playerResults[0].afterScore,
-        ranking: rankingByPlayerIndex['0'],
-        point:
-          (lastRound.playerResults[0].afterScore - 30000) / 1000.0 +
-          pointOffsetByRanking[rankingByPlayerIndex['0']],
-        penalty: lastRound.playerResults[0].isRedCarded ? -30 : 0,
-        penaltyReason: lastRound.playerResults[0].isRedCarded ? '紅牌' : '',
-      },
-      playerSouth: {
-        score: lastRound.playerResults[1].afterScore,
-        ranking: rankingByPlayerIndex['1'],
-        point:
-          (lastRound.playerResults[1].afterScore - 30000) / 1000.0 +
-          pointOffsetByRanking[rankingByPlayerIndex['1']],
-        penalty: lastRound.playerResults[1].isRedCarded ? -30 : 0,
-        penaltyReason: lastRound.playerResults[1].isRedCarded ? '紅牌' : '',
-      },
-      playerWest: {
-        score: lastRound.playerResults[2].afterScore,
-        ranking: rankingByPlayerIndex['2'],
-        point:
-          (lastRound.playerResults[2].afterScore - 30000) / 1000.0 +
-          pointOffsetByRanking[rankingByPlayerIndex['2']],
-        penalty: lastRound.playerResults[2].isRedCarded ? -30 : 0,
-        penaltyReason: lastRound.playerResults[2].isRedCarded ? '紅牌' : '',
-      },
-      playerNorth: {
-        score: lastRound.playerResults[3].afterScore,
-        ranking: rankingByPlayerIndex['3'],
-        point:
-          (lastRound.playerResults[3].afterScore - 30000) / 1000.0 +
-          pointOffsetByRanking[rankingByPlayerIndex['3']],
-        penalty: lastRound.playerResults[3].isRedCarded ? -30 : 0,
-        penaltyReason: lastRound.playerResults[3].isRedCarded ? '紅牌' : '',
-      },
-    },
+    result,
     rounds: matchRounds.map((round) => ({
       _key: getRandomId(),
       type: mapRoundType[round.resultType],

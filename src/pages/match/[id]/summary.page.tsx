@@ -463,7 +463,11 @@ const MatchSummarySlide = ({
               </p>
               <p className="flex-1 text-right">
                 {index > 0
-                  ? (slide.teams[index - 1].point - team.point).toFixed(1)
+                  ? (
+                      (slide.teams[index - 1].newResult?.point ||
+                        slide.teams[index - 1].point) -
+                      (team.newResult?.point || team.point)
+                    ).toFixed(1)
                   : '-'}
               </p>
               <p className="flex-1 text-right">
@@ -648,10 +652,10 @@ const MatchSummaryPage = ({ params: { matchId } }: Props) => {
       type: 'players',
       _id: 'players',
       teamPlayers: sortedTeamPlayers,
-      roundCount: matchDTO.rounds?.length ?? 0,
+      roundCount: exportedMatch.rounds?.length ?? 0,
       exhaustedRoundCount:
-        matchDTO.rounds?.filter((round) => round.type === 'exhausted').length ??
-        0,
+        exportedMatch.rounds?.filter((round) => round.type === 'exhausted')
+          .length ?? 0,
       subslide: 1,
     })
 
