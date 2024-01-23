@@ -25,6 +25,10 @@ const CountdownTimer = ({ initialMinutes }: { initialMinutes: number }) => {
     sec > 0 ? 1000 : null
   )
 
+  if (sec <= 0) {
+    return <span className="text-[.5em]">比賽即將開始</span>
+  }
+
   return (
     <span>
       {minutes}:{seconds}

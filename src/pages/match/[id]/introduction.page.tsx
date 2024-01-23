@@ -306,10 +306,13 @@ const MatchIntroductionSlide = ({
                 })}
               >
                 <div className="flex justify-between mb-[1em]">
-                  <p className="text-[2em]">
-                    個人總分{' '}
+                  <p className="text-[2em] flex items-center">
+                    <span>個人總分</span>
                     <span className="font-numeric">
                       {renderPoint(slide.team.playerStatistic?.point)}
+                    </span>
+                    <span className="ml-4 font-numeric text-[.75em] min-w-[2.5em] text-right text-cyan-400">
+                      {slide.team.playerStatistic?.pointRanking ?? '-'}名
                     </span>
                   </p>
                   <p className="text-[2em]">
@@ -323,78 +326,115 @@ const MatchIntroductionSlide = ({
                 <div className="grid grid-cols-2 gap-x-[2em] text-[1.5em]">
                   <div className="flex justify-between">
                     <p className="text-[.9em]">四位迴避率</p>
-                    <p>
+                    <p className="flex items-center">
                       <span className="font-numeric">
                         {renderPercentage(
                           slide.team.playerStatistic?.nonFourthP
                         )}
                       </span>
+                      <span className="font-numeric ml-2 text-[.75em] min-w-[2.5em] text-right text-cyan-400">
+                        {' '}
+                        {slide.team.playerStatistic?.nonFourthPRanking ?? '-'}名
+                      </span>
                     </p>
                   </div>
                   <div className="flex justify-between">
                     <p className="text-[.9em]">連對率</p>
-                    <p>
+                    <p className="flex items-center">
                       <span className="font-numeric">
                         {renderPercentage(
                           slide.team.playerStatistic?.firstAndSecondP
                         )}
                       </span>
+                      <span className="font-numeric ml-2 text-[.75em] min-w-[2.5em] text-right text-cyan-400">
+                        {' '}
+                        {slide.team.playerStatistic?.firstAndSecondPRanking ??
+                          '-'}
+                        名
+                      </span>
                     </p>
                   </div>
                   <div className="flex justify-between">
                     <p className="text-[.9em]">立直率</p>
-                    <p>
+                    <p className="flex items-center">
                       <span className="font-numeric">
                         {renderPercentage(slide.team.playerStatistic?.riichiP)}
+                      </span>
+                      <span className="font-numeric ml-2 text-[.75em] min-w-[2.5em] text-right text-cyan-400">
+                        {' '}
+                        {slide.team.playerStatistic?.riichiPRanking ?? '-'}名
                       </span>
                     </p>
                   </div>
                   <div className="flex justify-between">
                     <p className="text-[.9em]">和了率</p>
-                    <p>
+                    <p className="flex items-center">
                       <span className="font-numeric">
                         {renderPercentage(slide.team.playerStatistic?.ronP)}
+                      </span>
+                      <span className="font-numeric ml-2 text-[.75em] min-w-[2.5em] text-right text-cyan-400">
+                        {' '}
+                        {slide.team.playerStatistic?.ronPRanking ?? '-'}名
                       </span>
                     </p>
                   </div>
                   <div className="flex justify-between">
                     <p className="text-[.9em]">銃和率</p>
-                    <p>
+                    <p className="flex items-center">
                       <span className="font-numeric">
                         {renderPercentage(slide.team.playerStatistic?.chuckP)}
+                      </span>
+                      <span className="font-numeric ml-2 text-[.75em] min-w-[2.5em] text-right text-cyan-400">
+                        {' '}
+                        {slide.team.playerStatistic?.chuckPRanking ?? '-'}名
                       </span>
                     </p>
                   </div>
                   <div className="flex justify-between">
                     <p className="text-[.9em]">副露率</p>
-                    <p>
+                    <p className="flex items-center">
                       <span className="font-numeric">
                         {renderPercentage(slide.team.playerStatistic?.revealP)}
+                      </span>
+                      <span className="font-numeric ml-2 text-[.75em] min-w-[2.5em] text-right text-cyan-400">
+                        {' '}
+                        {slide.team.playerStatistic?.revealPRanking ?? '-'}名
                       </span>
                     </p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-x-[2em] text-[1.5em] mt-[.8em]">
-                  <div className="flex justify-between">
+                  <div className="flex justify-between items-start">
                     <p className="text-[.9em]">和了平均打點</p>
-                    <p>
-                      <span className="font-numeric">
+                    <div className="text-right">
+                      <p className="font-numeric">
                         {renderPercentage(
                           slide.team.playerStatistic?.ronPureScoreAvg
                         )}
-                      </span>
-                    </p>
+                      </p>
+                      <p className="font-numeric text-[.75em] min-w-[2.5em] text-cyan-400 -mt-4">
+                        {slide.team.playerStatistic?.ronPureScoreAvgRanking ??
+                          '-'}
+                        名
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex justify-between">
+
+                  <div className="flex justify-between items-start">
                     <p className="text-[.9em]">銃和平均打點</p>
-                    <p>
-                      <span className="font-numeric">
+                    <div className="text-right">
+                      <p className="font-numeric">
                         {renderPercentage(
                           slide.team.playerStatistic?.chuckPureScoreAvg
                         )}
-                      </span>
-                    </p>
+                      </p>
+                      <p className="font-numeric text-[.75em] min-w-[2.5em] text-cyan-400 -mt-4">
+                        {slide.team.playerStatistic?.chuckPureScoreAvgRanking ??
+                          '-'}
+                        名
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -546,7 +586,7 @@ const MatchIntroductionPage = ({ params: { matchId } }: Props) => {
               {matchDTO.tournament.name}
             </h3>
             <h1 className="text-[2em] leading-[1.2em] font-semibold">
-              常規賽 {matchDTO.startAt?.substring(0, 10)}
+              {matchDTO.nameAlt}
             </h1>
           </div>
         </div>

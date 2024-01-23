@@ -157,34 +157,43 @@ function IndexPage() {
 
                   <div className="flex items-center gap-4">
                     <p>開始前倒數</p>
-                    <a
-                      href={`${location.origin}/obs/1/forecast?m=5`}
-                      target="_blank"
-                      className="text-black bg-red-800 bg-opacity-50 p-2 rounded hover:text-black"
-                    >
-                      5分鐘
-                    </a>
-                    <a
-                      href={`${location.origin}/obs/1/forecast?m=10`}
-                      target="_blank"
-                      className="text-black bg-red-800 bg-opacity-50 p-2 rounded hover:text-black"
-                    >
-                      10分鐘
-                    </a>
-                    <a
-                      href={`${location.origin}/obs/1/forecast?m=15`}
-                      target="_blank"
-                      className="text-black bg-red-800 bg-opacity-50 p-2 rounded hover:text-black"
-                    >
-                      15分鐘
-                    </a>
-                    <a
-                      href={`${location.origin}/obs/1/forecast?m=20`}
-                      target="_blank"
-                      className="text-black bg-red-800 bg-opacity-50 p-2 rounded hover:text-black"
-                    >
-                      20分鐘
-                    </a>
+                    <div className="flex-1 grid grid-cols-3 gap-2">
+                      <a
+                        href={`${location.origin}/obs/1/forecast?m=0`}
+                        target="_blank"
+                        className="text-black bg-red-800 bg-opacity-50 p-2 rounded hover:text-black"
+                      >
+                        即將開始
+                      </a>
+                      <a
+                        href={`${location.origin}/obs/1/forecast?m=5`}
+                        target="_blank"
+                        className="text-black bg-red-800 bg-opacity-50 p-2 rounded hover:text-black"
+                      >
+                        5分鐘
+                      </a>
+                      <a
+                        href={`${location.origin}/obs/1/forecast?m=10`}
+                        target="_blank"
+                        className="text-black bg-red-800 bg-opacity-50 p-2 rounded hover:text-black"
+                      >
+                        10分鐘
+                      </a>
+                      <a
+                        href={`${location.origin}/obs/1/forecast?m=15`}
+                        target="_blank"
+                        className="text-black bg-red-800 bg-opacity-50 p-2 rounded hover:text-black"
+                      >
+                        15分鐘
+                      </a>
+                      <a
+                        href={`${location.origin}/obs/1/forecast?m=20`}
+                        target="_blank"
+                        className="text-black bg-red-800 bg-opacity-50 p-2 rounded hover:text-black"
+                      >
+                        20分鐘
+                      </a>
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-3 gap-4">

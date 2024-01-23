@@ -100,6 +100,22 @@ export type DB_PlayerStatistics = {
   chuckAfterRiichiPureScoreAvg: number
   chuckAfterRevealCount: number
   chuckAfterRevealPureScoreAvg: number
+
+  pointRanking: number
+  nonFourthP: number
+  nonFourthPRanking: number
+  firstAndSecondP: number
+  firstAndSecondPRanking: number
+  riichiP: number
+  riichiPRanking: number
+  ronP: number
+  ronPRanking: number
+  chuckP: number
+  chuckPRanking: number
+  revealP: number
+  revealPRanking: number
+  ronPureScoreAvgRanking: number
+  chuckPureScoreAvgRanking: number
 }
 
 export type DB_MatchResult = {
@@ -147,6 +163,8 @@ export type DB_MatchTournament = {
     point: number
     ranking: number
     matchCount: number
+    pointHistories: number[]
+    rankingHistories: number[]
     team: DB_Team
   }[]
 }
@@ -385,19 +403,24 @@ export const getStatisticsByPlayerIds = async (
           const statisticsDTO = {
             point: player.statistics.point,
             matchCount: player.statistics.matchCount,
-            nonFourthP:
-              1 - player.statistics.fourthCount / player.statistics.matchCount,
-            firstAndSecondP:
-              (player.statistics.firstCount + player.statistics.secondCount) /
-              player.statistics.matchCount,
-            riichiP:
-              player.statistics.riichiCount / player.statistics.roundCount,
-            ronP: player.statistics.ronCount / player.statistics.roundCount,
-            chuckP: player.statistics.chuckCount / player.statistics.roundCount,
-            revealP:
-              player.statistics.revealCount / player.statistics.roundCount,
+            nonFourthP: player.statistics.nonFourthP,
+            firstAndSecondP: player.statistics.firstAndSecondP,
+            ronP: player.statistics.ronP,
+            riichiP: player.statistics.riichiP,
+            chuckP: player.statistics.chuckP,
+            revealP: player.statistics.revealP,
             ronPureScoreAvg: player.statistics.ronPureScoreAvg,
             chuckPureScoreAvg: player.statistics.chuckPureScoreAvg,
+            pointRanking: player.statistics.pointRanking,
+            nonFourthPRanking: player.statistics.nonFourthPRanking,
+            firstAndSecondPRanking: player.statistics.firstAndSecondPRanking,
+            ronPRanking: player.statistics.ronPRanking,
+            riichiPRanking: player.statistics.riichiPRanking,
+            chuckPRanking: player.statistics.chuckPRanking,
+            revealPRanking: player.statistics.revealPRanking,
+            ronPureScoreAvgRanking: player.statistics.ronPureScoreAvgRanking,
+            chuckPureScoreAvgRanking:
+              player.statistics.chuckPureScoreAvgRanking,
           }
 
           prev[player._id] = statisticsDTO
@@ -448,15 +471,24 @@ export type TeamPlayerDTO = {
 
 export type PlayerStatisticDTO = {
   point: number
+  pointRanking: number
   matchCount: number
   nonFourthP: number
+  nonFourthPRanking: number
   firstAndSecondP: number
+  firstAndSecondPRanking: number
   riichiP: number
+  riichiPRanking: number
   ronP: number
+  ronPRanking: number
   chuckP: number
+  chuckPRanking: number
   revealP: number
+  revealPRanking: number
   ronPureScoreAvg: number
+  ronPureScoreAvgRanking: number
   chuckPureScoreAvg: number
+  chuckPureScoreAvgRanking: number
 }
 
 export type TeamStatisticDTO = {
@@ -529,16 +561,24 @@ export const formatTeamPlayerDTO = (
         stat && stat.matchCount > 0
           ? {
               point: stat.point,
+              pointRanking: stat.pointRanking,
               matchCount: stat.matchCount,
-              nonFourthP: 1 - stat.fourthCount / stat.matchCount,
-              firstAndSecondP:
-                (stat.firstCount + stat.secondCount) / stat.matchCount,
-              riichiP: stat.riichiCount / stat.roundCount,
-              ronP: stat.ronCount / stat.roundCount,
-              chuckP: stat.chuckCount / stat.roundCount,
-              revealP: stat.revealCount / stat.roundCount,
+              nonFourthP: stat.nonFourthP,
+              nonFourthPRanking: stat.nonFourthPRanking,
+              firstAndSecondP: stat.firstAndSecondP,
+              firstAndSecondPRanking: stat.firstAndSecondPRanking,
+              riichiP: stat.riichiP,
+              riichiPRanking: stat.riichiPRanking,
+              ronP: stat.ronP,
+              ronPRanking: stat.ronPRanking,
+              chuckP: stat.chuckP,
+              chuckPRanking: stat.chuckPRanking,
+              revealP: stat.revealP,
+              revealPRanking: stat.revealPRanking,
               ronPureScoreAvg: stat.ronPureScoreAvg,
+              ronPureScoreAvgRanking: stat.ronPureScoreAvgRanking,
               chuckPureScoreAvg: stat.chuckPureScoreAvg,
+              chuckPureScoreAvgRanking: stat.chuckPureScoreAvgRanking,
             }
           : null
     }

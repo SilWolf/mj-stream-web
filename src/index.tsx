@@ -32,6 +32,7 @@ import MatchIntroductionPage from './pages/match/[id]/introduction.page'
 import MatchOverviewOverlayPage from './pages/match/[id]/overviewOverlay.page'
 import ObsOverviewOverlayPage from './pages/obs/[obsRoomId]/overlay.page'
 import ObsRoomExportPage from './pages/obs/[obsRoomId]/export.page'
+import WeeklySummaryAutoPage from './pages/weekly-summary/index.page'
 import WeeklySummaryPage from './pages/weekly-summary/[week]/index.page'
 import ObsRoomIntroductionPage from './pages/obs/[obsRoomId]/introduction.page'
 import MatchSummaryPage from './pages/match/[id]/summary.page'
@@ -118,7 +119,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             />
             <Route
               path="/obs/:obsRoomId/weekly-summary"
-              component={WeeklySummaryPage}
+              component={WeeklySummaryAutoPage}
             />
             <Route path="/obs/:obsRoomId/end" component={ObsRoomEndPage} />
             <Route path="/obs/:obsRoomId/score" component={ObsScorePage} />
@@ -133,6 +134,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <Route path="/teams" component={TeamsPage} />
             <Route path="/matches" component={MatchesPage} />
 
+            <Route path="/weekly-summary/" component={WeeklySummaryAutoPage} />
             <Route path="/weekly-summary/:week" component={WeeklySummaryPage} />
           </Switch>
         </ConfirmDialogProvider>
