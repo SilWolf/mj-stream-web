@@ -3,6 +3,7 @@ import {
   DB_MatchTournament,
   DB_PlayerStatistics,
   DB_Team,
+  DB_TeamPlayer,
   TeamPlayerDTO,
   apiGetTeamPlayersOfTournament,
   apiGetTournament,
@@ -58,6 +59,17 @@ type Slide =
         value: number
         tieBreakValue: number
       }[]
+      subslide: 1 | 2
+    }
+  | {
+      _id: string
+      type: 'heatmap'
+      teams: DB_MatchTournament['teams']
+      teamPlayersGroupedByTeamIds: Record<string, DB_TeamPlayer[]>
+      highestTeamPoint: number
+      lowestTeamPoint: number
+      highestPlayerPoint: number
+      lowestPlayerPoint: number
       subslide: 1 | 2
     }
 
@@ -409,6 +421,101 @@ const TournamentDetailSlide = ({
         </div>
       </div>
     )
+  } else if (slide.type === 'heatmap') {
+    return (
+      <div
+        className="absolute inset-0 flex gap-[1em] items-stretch twr-heatmap"
+        data-active={status === 0}
+        style={{
+          opacity: status >= 0 && status < 1 ? 1 : 0,
+        }}
+      >
+        <div className="flex-1 flex flex-col gap-y-[.5em]">
+          <h4 className="text-[2em] font-semibold text-center leading-[1em] twr-heatmap-title">
+            點數熱力圖
+          </h4>
+          <p className="text-center mb-8 twr-heatmap-title">
+            <span className="bg-green-500 px-1">綠色</span>
+            代表高分、
+            <span className="bg-red-500 px-1">紅色</span>代表低分
+          </p>
+          <div className="grid grid-cols-12 flex-1 text-center text-[.8em]">
+            {slide.teams.map((team, teamIndex) => (
+              <div
+                className="h-20 twr-heatmap-cell"
+                key={team.team._id}
+                style={{
+                  animationDelay: teamIndex * 0.05 + 's',
+                }}
+              >
+                <div
+                  style={{
+                    background: `${team.team.color}80`,
+                  }}
+                >
+                  <img
+                    src={team.team.squareLogoImage + '?w=128&h=128'}
+                    alt={team.team.name}
+                    className="h-24 w-24 my-2 inline-block"
+                  />
+                </div>
+                <p
+                  className="py-2"
+                  style={{
+                    background:
+                      team.point > 0
+                        ? `rgba(23, 235, 0, ${
+                            team.point / slide.highestTeamPoint
+                          })`
+                        : `rgba(235, 0, 0, ${
+                            team.point / slide.lowestTeamPoint
+                          })`,
+                  }}
+                >
+                  {renderPoint(team.point)}
+                </p>
+              </div>
+            ))}
+            {([0, 1, 2, 3] as const).map((index) =>
+              slide.teams.map((team, teamIndex) => (
+                <div
+                  className="flex items-center justify-center twr-heatmap-cell"
+                  key={team.team._id}
+                  style={{
+                    background:
+                      typeof slide.teamPlayersGroupedByTeamIds[team.team._id][
+                        index
+                      ].player.statistics?.point !== 'undefined'
+                        ? slide.teamPlayersGroupedByTeamIds[team.team._id][
+                            index
+                          ].player.statistics!.point > 0
+                          ? `rgba(23, 235, 0, ${
+                              slide.teamPlayersGroupedByTeamIds[team.team._id][
+                                index
+                              ].player.statistics!.point /
+                              slide.highestPlayerPoint
+                            })`
+                          : `rgba(235, 0, 0, ${
+                              slide.teamPlayersGroupedByTeamIds[team.team._id][
+                                index
+                              ].player.statistics!.point /
+                              slide.lowestPlayerPoint
+                            })`
+                        : 'tranparent',
+                    animationDelay: (teamIndex + index + 1) * 0.05 + 's',
+                  }}
+                >
+                  {renderPoint(
+                    slide.teamPlayersGroupedByTeamIds[team.team._id][index]
+                      .player.statistics?.point
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return <></>
@@ -471,6 +578,11 @@ const TournamentDetailPage = ({ params: { week } }: Props) => {
       (teamPlayer) => teamPlayer.player.statistics!.matchCount > 0
     )
 
+    const teamPlayersSortedByPoint = teamPlayers.toSorted(
+      (a, b) =>
+        (b.player.statistics?.point ?? 0) - (a.player.statistics?.point ?? 0)
+    )
+
     return [
       { type: 'empty', _id: 'empty', subslide: 0 },
       {
@@ -528,6 +640,22 @@ const TournamentDetailPage = ({ params: { week } }: Props) => {
           'desc',
           'desc'
         ),
+        subslide: 1,
+      },
+      {
+        type: 'heatmap',
+        _id: 'heatmap',
+        teams: tournament.teams,
+        teamPlayersGroupedByTeamIds: Object.groupBy(
+          teamPlayersSortedByPoint,
+          (item) => item.teamId
+        ),
+        highestTeamPoint: tournament.teams[0].point,
+        lowestTeamPoint: tournament.teams.at(-1)!.point,
+        highestPlayerPoint:
+          teamPlayersSortedByPoint[0].player.statistics?.point ?? 0,
+        lowestPlayerPoint:
+          teamPlayersSortedByPoint.at(-1)!.player.statistics?.point ?? 0,
         subslide: 1,
       },
     ]

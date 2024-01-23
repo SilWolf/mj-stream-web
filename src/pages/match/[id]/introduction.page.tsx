@@ -191,7 +191,6 @@ const MatchIntroductionSlide = ({
       </div>
     )
   } else if (slide.type === 'team') {
-    // console.log(slide.team)
     return (
       <div
         className="absolute py-16 px-24 inset-0 flex flex-col justify-center items-stretch"

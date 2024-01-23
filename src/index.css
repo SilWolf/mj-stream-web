@@ -512,5 +512,41 @@
         animation: twr-player-ranking-row-in .6s ease-in-out 0s 1 normal both;
       }
     }
+
+    @keyframes twr-heatmap-title-in {
+      0%    {transform: translateY(-200px)}
+      100%  {transform: translateY(0)}
+    }
+    @keyframes twr-heatmap-title-out {
+      0%  {transform: translateY(0); opacity: 1}
+      100%    {transform: translateY(-200px); opacity: 0}
+    }
+
+    @keyframes twr-heatmap-cell-in {
+      0%    {opacity: 0}
+      100%  {opacity: 1}
+    }
+    @keyframes twr-heatmap-cell-out {
+      0%    {opacity: 1}
+      100%    {opacity: 0}
+    }
+
+    .twr-heatmap {
+      & .twr-heatmap-title {
+        animation: twr-heatmap-title-out .4s ease-in-out 0s 1 normal both;
+      }
+
+      &[data-active=true] .twr-heatmap-title {
+        animation: twr-heatmap-title-in .4s ease-in-out 0s 1 normal both;
+      }
+
+      & .twr-heatmap-cell {
+        animation: twr-heatmap-cell-out .4s ease-in-out 0s 1 normal both;
+      }
+
+      &[data-active=true] .twr-heatmap-cell {
+        animation: twr-heatmap-cell-in .4s ease-in-out 0s 1 normal both;
+      }
+    }
   }
 }

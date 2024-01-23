@@ -32,8 +32,6 @@ function MJTeamHistoryChart({ teams }: Props) {
     return result
   }, [teams])
 
-  console.log(data)
-
   return (
     <ResponsiveContainer width="100%" height="100%">
       <LineChart data={data}>

@@ -16,8 +16,6 @@ function MatchesPage() {
     [matchesMap]
   )
 
-  console.log(matches)
-
   return (
     <div className="container mx-auto max-w-screen-sm space-y-4 py-16">
       <div className="shrink-0">

@@ -457,7 +457,6 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
 
   const handlePlayerListViewAction = useCallback(
     (playerIndex: PlayerIndex, action: PlayersViewAction) => {
-      console.log(playerIndex, action)
       if (!match || !matchCurrentRound) {
         return
       }

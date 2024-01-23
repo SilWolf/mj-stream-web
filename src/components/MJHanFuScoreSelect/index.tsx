@@ -63,12 +63,7 @@ export default function MJHanFuScoreSelect({
     <div>
       <div className="flex gap-x-4">
         <div className="flex-1">
-          <MJUISelect
-            className="w-full"
-            placeholder="番"
-            value={han}
-            onChange={handleChangeHan}
-          >
+          <MJUISelect className="w-full" value={han} onChange={handleChangeHan}>
             <option value={1}>1番</option>
             <option value={2}>2番</option>
             <option value={3}>3番</option>
@@ -85,12 +80,7 @@ export default function MJHanFuScoreSelect({
           </MJUISelect>
         </div>
         <div className="flex-1">
-          <MJUISelect
-            className="w-full"
-            placeholder="符"
-            value={fu}
-            onChange={handleChangeFu}
-          >
+          <MJUISelect className="w-full" value={fu} onChange={handleChangeFu}>
             <option value={20}>20符</option>
             <option value={25}>25符</option>
             <option value={30}>30符</option>
