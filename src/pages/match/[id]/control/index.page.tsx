@@ -19,6 +19,7 @@ import {
 } from '@/models'
 import { useConfirmDialog } from '@/components/ConfirmDialog/provider'
 import {
+  distributeThousandsToPlayers,
   formatPlayerResultsByPreviousPlayerResults,
   generateMatchRoundCode,
   getAfterOfPlayerIndex,
@@ -786,8 +787,51 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
           !isGoExtendedRound && updatedMatchRound.roundCount >= 8
 
         if (isGameEnded) {
-          // TODO: Proceed to Game End
-          alert('對局結束。')
+          // if game is ended but next round cumlatedThousands exists
+          if (updatedMatchRound.nextRoundCumulatedThousands > 0) {
+            // distribute to highest score players
+            const extraScores = distributeThousandsToPlayers(
+              [
+                updatedMatchRound.playerResults['0'].afterScore,
+                updatedMatchRound.playerResults['1'].afterScore,
+                updatedMatchRound.playerResults['2'].afterScore,
+                updatedMatchRound.playerResults['3'].afterScore,
+              ],
+              updatedMatchRound.nextRoundCumulatedThousands * 1000
+            )
+
+            if (extraScores[0] !== 0) {
+              updatedMatchRound.playerResults['0'].scoreChanges.unshift(
+                extraScores[0]
+              )
+              updatedMatchRound.playerResults['0'].afterScore += extraScores[0]
+            }
+            if (extraScores[1] !== 0) {
+              updatedMatchRound.playerResults['1'].scoreChanges.unshift(
+                extraScores[1]
+              )
+              updatedMatchRound.playerResults['1'].afterScore += extraScores[1]
+            }
+            if (extraScores[2] !== 0) {
+              updatedMatchRound.playerResults['2'].scoreChanges.unshift(
+                extraScores[2]
+              )
+              updatedMatchRound.playerResults['2'].afterScore += extraScores[2]
+            }
+            if (extraScores[3] !== 0) {
+              updatedMatchRound.playerResults['3'].scoreChanges.unshift(
+                extraScores[3]
+              )
+              updatedMatchRound.playerResults['3'].afterScore += extraScores[3]
+            }
+
+            alert(
+              `對局結束。終局時剩餘的 ${updatedMatchRound.nextRoundCumulatedThousands * 1000} 供託已派給首位。`
+            )
+          } else {
+            // TODO: Proceed to Game End
+            alert('對局結束。')
+          }
         }
 
         updateCurrentMatchRound({
@@ -795,8 +839,8 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
           nextRoundType: isGameEnded
             ? NextRoundTypeEnum.End
             : isGoExtendedRound
-            ? NextRoundTypeEnum.Extended
-            : NextRoundTypeEnum.NextRound,
+              ? NextRoundTypeEnum.Extended
+              : NextRoundTypeEnum.NextRound,
         })
         toggleRonDialog(false)
 
@@ -832,8 +876,8 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
           nextRoundType: isGameEnded
             ? NextRoundTypeEnum.End
             : isGoNextRound
-            ? NextRoundTypeEnum.NextRoundAndExtended
-            : NextRoundTypeEnum.Extended,
+              ? NextRoundTypeEnum.NextRoundAndExtended
+              : NextRoundTypeEnum.Extended,
         })
         toggleExhaustedDialog(false)
 

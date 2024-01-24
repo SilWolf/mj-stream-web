@@ -542,9 +542,9 @@ const mapPlayerResult = (matchRound: MatchRound, playerIndex: PlayerIndex) => ({
     matchRound.playerResults[playerIndex].detail?.isRiichied
       ? 'isRiichied'
       : matchRound.playerResults[playerIndex].isRevealed ||
-        matchRound.playerResults[playerIndex].detail?.isRevealed
-      ? 'isRevealed'
-      : 'none',
+          matchRound.playerResults[playerIndex].detail?.isRevealed
+        ? 'isRevealed'
+        : 'none',
   isWaited:
     !!matchRound.playerResults[playerIndex].waitingTiles &&
     (matchRound.playerResults[playerIndex].waitingTiles as string[]).length > 0,
@@ -563,100 +563,39 @@ const mapPlayerResult = (matchRound: MatchRound, playerIndex: PlayerIndex) => ({
 
 export const convertMatchToExportedMatch = (matchRounds: MatchRound[]) => {
   const lastRound = matchRounds.at(-1)!
-
-  const ranking = [
-    { index: 0, score: lastRound.playerResults[0].afterScore },
-    { index: 1, score: lastRound.playerResults[1].afterScore },
-    { index: 2, score: lastRound.playerResults[2].afterScore },
-    { index: 3, score: lastRound.playerResults[3].afterScore },
-  ].sort((a, b) => {
-    if (a.score === b.score) {
-      return a.index < b.index ? -1 : 1
-    }
-
-    return b.score - a.score
-  })
-  const rankingByPlayerIndex = [
-    ranking.findIndex((rank) => rank.index === 0),
-    ranking.findIndex((rank) => rank.index === 1),
-    ranking.findIndex((rank) => rank.index === 2),
-    ranking.findIndex((rank) => rank.index === 3),
-  ]
-  const pointOffsetByRanking: number[] = [50, 10, -10, -30]
-
-  // Handle same score
-  if (
-    new Set([
-      ranking[0].score,
-      ranking[1].score,
-      ranking[2].score,
-      ranking[3].score,
-    ]).size !== 4
-  ) {
-    let ps = 0
-    while (ps < 3) {
-      let pe = ps
-      while (pe < 3 && ranking[ps].score === ranking[pe + 1].score) {
-        pe += 1
-      }
-
-      if (ps !== pe) {
-        const sum = pointOffsetByRanking.reduce(
-          (prev, value, index) =>
-            prev + (index >= ps && index <= pe ? value : 0),
-          0
-        )
-        const length = pe - ps + 1
-        const highAvg = Math.round(
-          sum * (length === 3 && sum % 3 !== 0 ? 0.4 : 1 / length)
-        )
-        const lowAvg = Math.round(
-          sum * (length === 3 && sum % 3 !== 0 ? 0.3 : 1 / length)
-        )
-
-        pointOffsetByRanking[ps] = highAvg
-        for (let i = ps + 1; i <= pe; i++) {
-          pointOffsetByRanking[i] = lowAvg
-        }
-      }
-      ps = pe + 1
-    }
-  }
+  const pointsAndRankings = convertScoresToPointsAndRankings([
+    lastRound.playerResults[0].afterScore,
+    lastRound.playerResults[1].afterScore,
+    lastRound.playerResults[2].afterScore,
+    lastRound.playerResults[3].afterScore,
+  ])
 
   const result = {
     playerEast: {
       score: lastRound.playerResults[0].afterScore,
-      ranking: (rankingByPlayerIndex[0] + 1).toString(),
-      point:
-        (lastRound.playerResults[0].afterScore - 30000) / 1000.0 +
-        pointOffsetByRanking[rankingByPlayerIndex[0]],
+      ranking: pointsAndRankings[0].ranking.toString(),
+      point: pointsAndRankings[0].point,
       penalty: lastRound.playerResults[0].isRedCarded ? -30 : 0,
       penaltyReason: lastRound.playerResults[0].isRedCarded ? '紅牌' : '',
     },
     playerSouth: {
       score: lastRound.playerResults[1].afterScore,
-      ranking: (rankingByPlayerIndex[1] + 1).toString(),
-      point:
-        (lastRound.playerResults[1].afterScore - 30000) / 1000.0 +
-        pointOffsetByRanking[rankingByPlayerIndex[1]],
+      ranking: pointsAndRankings[1].ranking.toString(),
+      point: pointsAndRankings[1].point,
       penalty: lastRound.playerResults[1].isRedCarded ? -30 : 0,
       penaltyReason: lastRound.playerResults[1].isRedCarded ? '紅牌' : '',
     },
     playerWest: {
       score: lastRound.playerResults[2].afterScore,
-      ranking: (rankingByPlayerIndex[2] + 1).toString(),
-      point:
-        (lastRound.playerResults[2].afterScore - 30000) / 1000.0 +
-        pointOffsetByRanking[rankingByPlayerIndex[2]],
+      ranking: pointsAndRankings[2].ranking.toString(),
+      point: pointsAndRankings[2].point,
       penalty: lastRound.playerResults[2].isRedCarded ? -30 : 0,
       penaltyReason: lastRound.playerResults[2].isRedCarded ? '紅牌' : '',
     },
     playerNorth: {
       score: lastRound.playerResults[3].afterScore,
-      ranking: (rankingByPlayerIndex[3] + 1).toString(),
-      point:
-        (lastRound.playerResults[3].afterScore - 30000) / 1000.0 +
-        pointOffsetByRanking[rankingByPlayerIndex[3]],
+      ranking: pointsAndRankings[3].ranking.toString(),
+      point: pointsAndRankings[3].point,
       penalty: lastRound.playerResults[3].isRedCarded ? -30 : 0,
       penaltyReason: lastRound.playerResults[3].isRedCarded ? '紅牌' : '',
     },
@@ -676,4 +615,150 @@ export const convertMatchToExportedMatch = (matchRounds: MatchRound[]) => {
   }
 
   return exportedMatch
+}
+
+export const distributeThousandsToPlayers = (
+  scores: [number, number, number, number],
+  extraScore: number
+): [number, number, number, number] => {
+  if (extraScore === 0) {
+    return [0, 0, 0, 0]
+  }
+
+  if (new Set(scores).size === 1) {
+    // 4 players are same score
+    return Array(4).fill(Math.round(extraScore / 4)) as [
+      number,
+      number,
+      number,
+      number,
+    ]
+  }
+
+  const rankings = scores
+    .map((score, index) => ({ score, index }))
+    .sort((a, b) => b.score - a.score)
+  const result: [number, number, number, number] = [0, 0, 0, 0]
+
+  // same score
+  if (rankings[0].score === rankings[1].score) {
+    if (rankings[1].score === rankings[2].score) {
+      // 3 players same score
+      result[rankings[0].index] = Math.round(extraScore * 0.4)
+      result[rankings[1].index] = Math.round(extraScore * 0.3)
+      result[rankings[2].index] = Math.round(extraScore * 0.3)
+      return result
+    }
+
+    // 2 players same score
+    result[rankings[0].index] = Math.round(extraScore / 2)
+    result[rankings[1].index] = Math.round(extraScore / 2)
+    return result
+  }
+
+  result[rankings[0].index] = extraScore
+  return result
+}
+
+export const convertScoresToPointsAndRankings = (
+  scores: [number, number, number, number],
+  originScore: number = 30000,
+  rankingRewards: [number, number, number, number] = [50, 10, -10, -30]
+): [
+  { point: number; ranking: number },
+  { point: number; ranking: number },
+  { point: number; ranking: number },
+  { point: number; ranking: number },
+] => {
+  const rankings = scores
+    .map((score, index) => ({ score, index }))
+    .sort((a, b) => b.score - a.score)
+  const result: ReturnType<typeof convertScoresToPointsAndRankings> = [
+    {
+      point: 0,
+      ranking: 1,
+    },
+    {
+      point: 0,
+      ranking: 2,
+    },
+    {
+      point: 0,
+      ranking: 3,
+    },
+    {
+      point: 0,
+      ranking: 4,
+    },
+  ]
+
+  if (new Set(scores).size === 4) {
+    // 4 players are not same score
+    result[rankings[0].index] = {
+      point: (rankings[0].score - originScore) / 1000 + rankingRewards[0],
+      ranking: 1,
+    }
+    result[rankings[1].index] = {
+      point: (rankings[1].score - originScore) / 1000 + rankingRewards[1],
+      ranking: 2,
+    }
+    result[rankings[2].index] = {
+      point: (rankings[2].score - originScore) / 1000 + rankingRewards[2],
+      ranking: 3,
+    }
+    result[rankings[3].index] = {
+      point: (rankings[3].score - originScore) / 1000 + rankingRewards[3],
+      ranking: 4,
+    }
+
+    return result
+  }
+
+  // Handle same score
+  const myRankingRewards = [...rankingRewards]
+  let ps = 0
+  while (ps < 3) {
+    let pe = ps
+    while (pe < 3 && rankings[ps].score === rankings[pe + 1].score) {
+      pe += 1
+    }
+
+    if (ps !== pe) {
+      const sum =
+        myRankingRewards.reduce(
+          (prev, value, index) =>
+            prev + (index >= ps && index <= pe ? value : 0),
+          0
+        ) * 10
+
+      const length = pe - ps + 1
+      const lowAvg = Math.floor(sum * (1 / length))
+      const highAvg = Math.floor(sum - (length - 1) * lowAvg)
+
+      myRankingRewards[ps] = highAvg / 10
+      for (let i = ps + 1; i <= pe; i++) {
+        myRankingRewards[i] = lowAvg / 10
+      }
+    }
+    ps = pe + 1
+  }
+
+  result[rankings[0].index] = {
+    point: (rankings[0].score - originScore) / 1000 + myRankingRewards[0],
+    ranking: 1,
+  }
+  result[rankings[1].index] = {
+    point: (rankings[1].score - originScore) / 1000 + myRankingRewards[1],
+    ranking: 2,
+  }
+  result[rankings[2].index] = {
+    point: (rankings[2].score - originScore) / 1000 + myRankingRewards[2],
+    ranking: 3,
+  }
+  result[rankings[3].index] = {
+    point: (rankings[3].score - originScore) / 1000 + myRankingRewards[3],
+    ranking: 4,
+  }
+
+  return result
 }
