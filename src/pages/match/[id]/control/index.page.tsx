@@ -1092,7 +1092,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
       setTimeout(() => {
         setMatchActiveResultDetail(null)
         setActiveAnimationMessage(null)
-      }, 20000)
+      }, 10000)
     },
     [matchRounds, setMatchActiveResultDetail, setMatchRoundHasBroadcastedToTrue]
   )
@@ -1256,7 +1256,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                 >
                   結束播放中的和牌詳情
                   <br />
-                  <span className="text-xs">(或最多20秒後自動結束)</span>
+                  <span className="text-xs">(或最多10秒後自動結束)</span>
                 </MJUIButton>
               )}
               {matchCurrentRound.nextRoundType !== NextRoundTypeEnum.Unknown &&

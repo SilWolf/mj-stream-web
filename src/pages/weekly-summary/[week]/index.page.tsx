@@ -1,4 +1,5 @@
 import MJTeamHistoryChart from '@/components/MJTeamHistoryChart'
+import { arrGroupBy } from '@/helpers/array.helper'
 import {
   DB_MatchTournament,
   DB_PlayerStatistics,
@@ -522,18 +523,19 @@ const TournamentDetailSlide = ({
 }
 
 const TournamentDetailPage = ({ params: { week } }: Props) => {
-  const weekNum = useMemo(() => parseInt(week) ?? 1, [week])
+  // const weekNum = useMemo(() => parseInt(week) ?? 1, [week])
   const [periodStartDate, periodEndDate] = useMemo(() => {
-    const date = new Date('2024-01-09')
+    // const date = new Date('2024-01-09')
 
-    date.setDate(date.getDate() + (weekNum - 1) * 7)
-    const start = `${date.getDate()}/${date.getMonth() + 1}`
+    // date.setDate(date.getDate() + (weekNum - 1) * 7)
+    // const start = `${date.getDate()}/${date.getMonth() + 1}`
 
-    date.setDate(date.getDate() + 2)
-    const end = `${date.getDate()}/${date.getMonth() + 1}`
+    // date.setDate(date.getDate() + 2)
+    // const end = `${date.getDate()}/${date.getMonth() + 1}`
 
-    return [start, end]
-  }, [weekNum])
+    // return [start, end]
+    return ['16/1', '18/1']
+  }, [])
 
   const { data: tournament } = useQuery({
     queryKey: ['tournament', TOURNAMENT_ID],
@@ -578,7 +580,7 @@ const TournamentDetailPage = ({ params: { week } }: Props) => {
       (teamPlayer) => teamPlayer.player.statistics!.matchCount > 0
     )
 
-    const teamPlayersSortedByPoint = teamPlayers.toSorted(
+    const teamPlayersSortedByPoint = teamPlayers.sort(
       (a, b) =>
         (b.player.statistics?.point ?? 0) - (a.player.statistics?.point ?? 0)
     )
@@ -646,9 +648,9 @@ const TournamentDetailPage = ({ params: { week } }: Props) => {
         type: 'heatmap',
         _id: 'heatmap',
         teams: tournament.teams,
-        teamPlayersGroupedByTeamIds: Object.groupBy(
+        teamPlayersGroupedByTeamIds: arrGroupBy(
           teamPlayersSortedByPoint,
-          (item) => item.teamId
+          (item: any) => item.teamId
         ),
         highestTeamPoint: tournament.teams[0].point,
         lowestTeamPoint: tournament.teams.at(-1)!.point,

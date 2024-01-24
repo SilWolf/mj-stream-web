@@ -5,7 +5,7 @@ const week = Math.ceil(
 ).toString()
 
 const TournamentDetailPageWithLatestWeek = () => {
-  return <TournamentDetailPage params={{ week }} />
+  return <TournamentDetailPage params={{ week: '2' }} />
 }
 
 export default TournamentDetailPageWithLatestWeek

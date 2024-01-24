@@ -1,9 +1,4 @@
-import {
-  renderMatchCode,
-  renderPoint,
-  renderRanking,
-  renderScore,
-} from '@/utils/string.util'
+import { renderPoint, renderRanking, renderScore } from '@/utils/string.util'
 import { useCallback, useMemo, useState } from 'react'
 import cns from 'classnames'
 import MJMatchHistoryChart from '@/components/MJMatchHistoryChart'
@@ -265,10 +260,10 @@ const MatchSummarySlide = ({
               >
                 <div className="text-left flex-[5]">
                   <h3 className="text-[1.5em] font-semibold">
-                    {teamPlayer.playerName} ({teamPlayer.playerNickname})
+                    {teamPlayer.playerFullname}
                   </h3>
                   <h3 className="text-[.8em] font-semibold">
-                    {teamPlayer.teamName}
+                    {teamPlayer.teamFullname}
                   </h3>
                 </div>
                 <div className="flex-1 text-right">
@@ -668,19 +663,14 @@ const MatchSummaryPage = ({ params: { matchId } }: Props) => {
       _id: 'chart',
       rounds: [
         {
-          name: '',
+          name: '東',
           playerEast: 25000,
           playerSouth: 25000,
           playerWest: 25000,
           playerNorth: 25000,
         },
         ...exportedMatch.rounds.map((round, roundIndex) => ({
-          name:
-            roundIndex === 0
-              ? '東'
-              : roundIndex === firstSouthRoundIndex
-              ? '南'
-              : '',
+          name: roundIndex === firstSouthRoundIndex ? '南' : '',
           playerEast: round.playerEast.afterScore,
           playerSouth: round.playerSouth.afterScore,
           playerWest: round.playerWest.afterScore,
