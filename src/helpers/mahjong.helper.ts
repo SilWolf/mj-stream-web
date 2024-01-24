@@ -680,15 +680,15 @@ export const convertScoresToPointsAndRankings = (
     },
     {
       point: 0,
-      ranking: 2,
+      ranking: 1,
     },
     {
       point: 0,
-      ranking: 3,
+      ranking: 1,
     },
     {
       point: 0,
-      ranking: 4,
+      ranking: 1,
     },
   ]
 
@@ -715,7 +715,10 @@ export const convertScoresToPointsAndRankings = (
   }
 
   // Handle same score
-  const myRankingRewards = [...rankingRewards]
+  const myRankingRewards = rankingRewards.map((reward, index) => ({
+    point: reward,
+    ranking: index + 1,
+  }))
   let ps = 0
   while (ps < 3) {
     let pe = ps
@@ -727,7 +730,7 @@ export const convertScoresToPointsAndRankings = (
       const sum =
         myRankingRewards.reduce(
           (prev, value, index) =>
-            prev + (index >= ps && index <= pe ? value : 0),
+            prev + (index >= ps && index <= pe ? value.point : 0),
           0
         ) * 10
 
@@ -735,29 +738,31 @@ export const convertScoresToPointsAndRankings = (
       const lowAvg = Math.floor(sum * (1 / length))
       const highAvg = Math.floor(sum - (length - 1) * lowAvg)
 
-      myRankingRewards[ps] = highAvg / 10
+      myRankingRewards[ps].point = highAvg / 10
+      myRankingRewards[ps].ranking = ps + 1
       for (let i = ps + 1; i <= pe; i++) {
-        myRankingRewards[i] = lowAvg / 10
+        myRankingRewards[i].point = lowAvg / 10
+        myRankingRewards[i].ranking = ps + 1
       }
     }
     ps = pe + 1
   }
 
   result[rankings[0].index] = {
-    point: (rankings[0].score - originScore) / 1000 + myRankingRewards[0],
-    ranking: 1,
+    point: (rankings[0].score - originScore) / 1000 + myRankingRewards[0].point,
+    ranking: myRankingRewards[0].ranking,
   }
   result[rankings[1].index] = {
-    point: (rankings[1].score - originScore) / 1000 + myRankingRewards[1],
-    ranking: 2,
+    point: (rankings[1].score - originScore) / 1000 + myRankingRewards[1].point,
+    ranking: myRankingRewards[1].ranking,
   }
   result[rankings[2].index] = {
-    point: (rankings[2].score - originScore) / 1000 + myRankingRewards[2],
-    ranking: 3,
+    point: (rankings[2].score - originScore) / 1000 + myRankingRewards[2].point,
+    ranking: myRankingRewards[2].ranking,
   }
   result[rankings[3].index] = {
-    point: (rankings[3].score - originScore) / 1000 + myRankingRewards[3],
-    ranking: 4,
+    point: (rankings[3].score - originScore) / 1000 + myRankingRewards[3].point,
+    ranking: myRankingRewards[3].ranking,
   }
 
   return result

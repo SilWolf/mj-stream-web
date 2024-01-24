@@ -107,9 +107,9 @@ describe('convertScoresToPointsAndRankings', () => {
     expect(results[2].point).toBeCloseTo(0, 1)
     expect(results[3].point).toBeCloseTo(0, 1)
     expect(results[0].ranking).toBe(1)
-    expect(results[1].ranking).toBe(2)
-    expect(results[2].ranking).toBe(3)
-    expect(results[3].ranking).toBe(4)
+    expect(results[1].ranking).toBe(1)
+    expect(results[2].ranking).toBe(1)
+    expect(results[3].ranking).toBe(1)
   })
 
   it('When 1st, 2nd, 3rd players are with same score', () => {
@@ -119,9 +119,9 @@ describe('convertScoresToPointsAndRankings', () => {
     expect(results[2].point).toBeCloseTo(-59.9, 1)
     expect(results[3].point).toBeCloseTo(19.9, 1)
     expect(results[0].ranking).toBe(1)
-    expect(results[1].ranking).toBe(2)
+    expect(results[1].ranking).toBe(1)
     expect(results[2].ranking).toBe(4)
-    expect(results[3].ranking).toBe(3)
+    expect(results[3].ranking).toBe(1)
   })
 
   it('When 2nd, 3rd, 4th players are with same score', () => {
@@ -133,8 +133,8 @@ describe('convertScoresToPointsAndRankings', () => {
     expect(results[2].point).toBeCloseTo(-20, 1)
     expect(results[3].point).toBeCloseTo(60, 1)
     expect(results[0].ranking).toBe(2)
-    expect(results[1].ranking).toBe(3)
-    expect(results[2].ranking).toBe(4)
+    expect(results[1].ranking).toBe(2)
+    expect(results[2].ranking).toBe(2)
     expect(results[3].ranking).toBe(1)
   })
 
@@ -146,7 +146,7 @@ describe('convertScoresToPointsAndRankings', () => {
     expect(results[3].point).toBeCloseTo(-60, 1)
     expect(results[0].ranking).toBe(3)
     expect(results[1].ranking).toBe(1)
-    expect(results[2].ranking).toBe(2)
+    expect(results[2].ranking).toBe(1)
     expect(results[3].ranking).toBe(4)
   })
 
@@ -159,7 +159,7 @@ describe('convertScoresToPointsAndRankings', () => {
     expect(results[0].ranking).toBe(2)
     expect(results[1].ranking).toBe(1)
     expect(results[2].ranking).toBe(4)
-    expect(results[3].ranking).toBe(3)
+    expect(results[3].ranking).toBe(2)
   })
 
   it('When 3rd, 4th players are with same score', () => {
@@ -172,7 +172,7 @@ describe('convertScoresToPointsAndRankings', () => {
     expect(results[3].point).toBeCloseTo(24, 1)
     expect(results[0].ranking).toBe(1)
     expect(results[1].ranking).toBe(3)
-    expect(results[2].ranking).toBe(4)
+    expect(results[2].ranking).toBe(3)
     expect(results[3].ranking).toBe(2)
   })
 
@@ -186,8 +186,8 @@ describe('convertScoresToPointsAndRankings', () => {
     expect(results[3].point).toBeCloseTo(-40, 1)
     expect(results[0].ranking).toBe(1)
     expect(results[1].ranking).toBe(3)
-    expect(results[2].ranking).toBe(2)
-    expect(results[3].ranking).toBe(4)
+    expect(results[2].ranking).toBe(1)
+    expect(results[3].ranking).toBe(3)
   })
 
   it('When [25000, 25000, 25000, 25000] with weird origin score=28000', () => {
@@ -200,8 +200,8 @@ describe('convertScoresToPointsAndRankings', () => {
     expect(results[2].point).toBeCloseTo(2, 1)
     expect(results[3].point).toBeCloseTo(2, 1)
     expect(results[0].ranking).toBe(1)
-    expect(results[1].ranking).toBe(2)
-    expect(results[2].ranking).toBe(3)
-    expect(results[3].ranking).toBe(4)
+    expect(results[1].ranking).toBe(1)
+    expect(results[2].ranking).toBe(1)
+    expect(results[3].ranking).toBe(1)
   })
 })
