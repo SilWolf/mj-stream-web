@@ -19,6 +19,7 @@ type Props = HTMLAttributes<HTMLDivElement> & {
   isRiichi?: boolean
   isYellowCarded?: boolean
   isRedCarded?: boolean
+  isRonDisallowed?: boolean
   animated?: boolean
   onAnimationEnd?: () => void
   waitingTiles?: string[]
@@ -37,6 +38,7 @@ export default function MJPlayerCardDiv({
   isRiichi,
   isYellowCarded,
   isRedCarded,
+  isRonDisallowed,
   waitingTiles,
   onClickWaitingTiles,
   showPointAndRanking,
@@ -134,32 +136,44 @@ export default function MJPlayerCardDiv({
           </div>
         </div>
         <div className="flex-1 flex flex-col gap-y-[0.125em] items-start justify-end">
-          <div
-            className="bg-black bg-opacity-60 rounded text-[0.5em] flex gap-x-[0.2em] p-[0.1em] pl-[0.2em] pr-[0.2em] opacity-0 transition-opacity data-[has-waiting-tiles='1']:opacity-100 hide-if-changing cursor-pointer"
-            data-has-waiting-tiles={
-              (waitingTiles && waitingTiles.length > 0) || !!onClickWaitingTiles
-                ? '1'
-                : '0'
-            }
-            onClick={onClickWaitingTiles}
-            data-player-index={playerIndex}
-          >
-            <div className="flex-1 leading-none min-h-[1.19em] flex flex-wrap gap-[0.15em]">
-              {waitingTiles?.map((tile) => (
-                <MJTileDiv
-                  key={tile}
-                  className="inline-block align-bottom w-[0.85em] animate-[fadeInFromLeft_1s_ease-in-out]"
-                >
-                  {tile}
-                </MJTileDiv>
-              ))}
+          <div className="flex gap-[0.125em] relative self-stretch">
+            <div className="absolute inset-0 flex items-end">
+              <div
+                className="text-center bg-red-600 text-[0.3em] flex gap-x-[0.2em] px-[1em] opacity-0 transition-opacity hide-if-changing cursor-pointer"
+                style={{
+                  opacity: isRonDisallowed ? 1 : 0,
+                }}
+              >
+                <i className="bi bi-ban"></i> 和了禁止！
+              </div>
             </div>
-            <div className="bg-[#FFFFFF] w-[4px]" />
-            <div className="text-[#FFFFFF] text-[0.4em] leading-[1.3em] flex items-center">
-              待<br />牌
+            <div
+              className="bg-black bg-opacity-60 rounded text-[0.5em] flex gap-x-[0.2em] p-[0.1em] pl-[0.2em] pr-[0.2em] opacity-0 transition-opacity data-[has-waiting-tiles='1']:opacity-100 hide-if-changing cursor-pointer"
+              data-has-waiting-tiles={
+                (waitingTiles && waitingTiles.length > 0) ||
+                !!onClickWaitingTiles
+                  ? '1'
+                  : '0'
+              }
+              onClick={onClickWaitingTiles}
+              data-player-index={playerIndex}
+            >
+              <div className="flex-1 leading-none min-h-[1.19em] flex flex-wrap gap-[0.15em]">
+                {waitingTiles?.map((tile) => (
+                  <MJTileDiv
+                    key={tile}
+                    className="inline-block align-bottom w-[0.85em] animate-[fadeInFromLeft_1s_ease-in-out]"
+                  >
+                    {tile}
+                  </MJTileDiv>
+                ))}
+              </div>
+              <div className="bg-[#FFFFFF] w-[4px]" />
+              <div className="text-[#FFFFFF] text-[0.4em] leading-[1.3em] flex items-center">
+                待<br />牌
+              </div>
             </div>
           </div>
-
           <div
             className={`relative w-full text-left bg-white px-[0.1em] pb-[0.05em] pt-[0.08em] ${className}`}
             {...props}

@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import {
   convertScoresToPointsAndRankings,
+  distributeThousandsToPlayers,
   getPlayerPosition,
 } from './mahjong.helper'
 
@@ -38,6 +39,52 @@ describe('getPlayerPosition', () => {
     expect(getPlayerPosition('1', 5)).toEqual(1)
     expect(getPlayerPosition('2', 5)).toEqual(2)
     expect(getPlayerPosition('3', 5)).toEqual(3)
+  })
+})
+
+describe('distributeThousandsToPlayers', () => {
+  it('When a common match result', () => {
+    const results = distributeThousandsToPlayers(
+      [45000, 25000, 15000, 5000],
+      1000
+    )
+    expect(results[0]).toBe(1000)
+    expect(results[1]).toBe(0)
+    expect(results[2]).toBe(0)
+    expect(results[3]).toBe(0)
+  })
+
+  it('When two 1st players', () => {
+    const results = distributeThousandsToPlayers(
+      [30000, 10000, 30000, 5000],
+      3000
+    )
+    expect(results[0]).toBe(1500)
+    expect(results[1]).toBe(0)
+    expect(results[2]).toBe(1500)
+    expect(results[3]).toBe(0)
+  })
+
+  it('When three 1st players', () => {
+    const results = distributeThousandsToPlayers(
+      [30000, 10000, 30000, 30000],
+      3000
+    )
+    expect(results[0]).toBe(1200)
+    expect(results[1]).toBe(0)
+    expect(results[2]).toBe(900)
+    expect(results[3]).toBe(900)
+  })
+
+  it('When four 1st players', () => {
+    const results = distributeThousandsToPlayers(
+      [30000, 30000, 30000, 30000],
+      3000
+    )
+    expect(results[0]).toBe(1200)
+    expect(results[1]).toBe(600)
+    expect(results[2]).toBe(600)
+    expect(results[3]).toBe(600)
   })
 })
 

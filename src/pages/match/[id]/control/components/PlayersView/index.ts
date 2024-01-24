@@ -15,6 +15,7 @@ export type PlayersViewAction =
   | 'ron-opposite'
   | 'yellow-card'
   | 'red-card'
+  | 'disallow-ron'
 
 export type PlayersViewProps = {
   players: Record<PlayerIndex, Player>

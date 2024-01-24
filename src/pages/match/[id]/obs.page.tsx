@@ -197,6 +197,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
                 }
                 isYellowCarded={player.currentStatus.isYellowCarded}
                 isRedCarded={player.currentStatus.isRedCarded}
+                isRonDisallowed={player.currentStatus.isRonDisallowed}
                 ranking={player.currentStatus.ranking}
                 point={player.currentStatus.point}
                 showPointAndRanking={!!match.showPoints}

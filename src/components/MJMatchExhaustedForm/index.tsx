@@ -102,8 +102,10 @@ export default function MJMatchExhaustedForm({
     let win = 0
     let lose = 0
 
-    const numberOfWinners = Object.values(playersChecked).filter(
-      (checked) => !!checked
+    const numberOfWinners = (['0', '1', '2', '3'] as PlayerIndex[]).filter(
+      (playerIndex) =>
+        playersChecked[playerIndex] &&
+        !currentMatchRound.playerResults[playerIndex].isRonDisallowed
     ).length
 
     if (numberOfWinners === 1) {
@@ -122,14 +124,21 @@ export default function MJMatchExhaustedForm({
 
       if (win && lose) {
         if (playersChecked[currentPlayerIndex]) {
-          newPreviewPlayerResults[currentPlayerIndex].afterScore += win
           newPreviewPlayerResults[currentPlayerIndex].type =
             PlayerResultWinnerOrLoserEnum.Win
-          newPreviewPlayerResults[currentPlayerIndex].scoreChanges = [win]
+          if (
+            currentMatchRound.playerResults[currentPlayerIndex].isRonDisallowed
+          ) {
+            newPreviewPlayerResults[currentPlayerIndex].afterScore -= lose
+            newPreviewPlayerResults[currentPlayerIndex].scoreChanges = [-lose]
+          } else {
+            newPreviewPlayerResults[currentPlayerIndex].afterScore += win
+            newPreviewPlayerResults[currentPlayerIndex].scoreChanges = [win]
+          }
         } else {
-          newPreviewPlayerResults[currentPlayerIndex].afterScore -= lose
           newPreviewPlayerResults[currentPlayerIndex].type =
             PlayerResultWinnerOrLoserEnum.Lose
+          newPreviewPlayerResults[currentPlayerIndex].afterScore -= lose
           newPreviewPlayerResults[currentPlayerIndex].scoreChanges = [-lose]
         }
       }
@@ -204,12 +213,25 @@ export default function MJMatchExhaustedForm({
                   >
                     {match.players[index].name}
                   </th>
-                  <td className="text-center !bg-yellow-200">
+                  <td
+                    className="text-center bg-yellow-200"
+                    style={{
+                      backgroundColor: currentMatchRound.playerResults[index]
+                        .isRonDisallowed
+                        ? '#F00'
+                        : '',
+                    }}
+                  >
                     <MJUISwitch
                       checked={playersChecked[index]}
                       onChange={handleChangePlayersChecked}
                       data-player-index={index}
                     />
+                    {currentMatchRound.playerResults[index].isRonDisallowed && (
+                      <p className="text-white text-sm font-semibold">
+                        和了禁止！
+                      </p>
+                    )}
                   </td>
                   <td className="text-center">
                     {previewPlayerResults[index].beforeScore}

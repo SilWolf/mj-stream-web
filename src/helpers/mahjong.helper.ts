@@ -625,16 +625,6 @@ export const distributeThousandsToPlayers = (
     return [0, 0, 0, 0]
   }
 
-  if (new Set(scores).size === 1) {
-    // 4 players are same score
-    return Array(4).fill(Math.round(extraScore / 4)) as [
-      number,
-      number,
-      number,
-      number,
-    ]
-  }
-
   const rankings = scores
     .map((score, index) => ({ score, index }))
     .sort((a, b) => b.score - a.score)
@@ -643,6 +633,15 @@ export const distributeThousandsToPlayers = (
   // same score
   if (rankings[0].score === rankings[1].score) {
     if (rankings[1].score === rankings[2].score) {
+      if (rankings[2].score === rankings[3].score) {
+        // 4 players same score
+        result[rankings[0].index] = Math.round(extraScore * 0.4)
+        result[rankings[1].index] = Math.round(extraScore * 0.2)
+        result[rankings[2].index] = Math.round(extraScore * 0.2)
+        result[rankings[3].index] = Math.round(extraScore * 0.2)
+        return result
+      }
+
       // 3 players same score
       result[rankings[0].index] = Math.round(extraScore * 0.4)
       result[rankings[1].index] = Math.round(extraScore * 0.3)

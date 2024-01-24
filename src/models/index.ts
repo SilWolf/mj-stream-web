@@ -122,6 +122,7 @@ export type PlayerResult = {
   isRevealed?: boolean
   isYellowCarded?: boolean
   isRedCarded?: boolean
+  isRonDisallowed?: boolean
   waitingTiles?: string[]
   detail: {
     han: number

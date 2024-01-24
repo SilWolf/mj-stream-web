@@ -124,6 +124,9 @@ const PlayerResultMetadata = ({
           matchRound.playerResults[playerIndex].type ===
             PlayerResultWinnerOrLoserEnum.Win && <span>聽</span>}
       </p>
+      {matchRound.playerResults[playerIndex].isRonDisallowed && (
+        <p className="text-red-500 font-semibold">和了禁止！</p>
+      )}
       {(matchRound.resultType === RoundResultTypeEnum.Ron ||
         matchRound.resultType === RoundResultTypeEnum.SelfDrawn) &&
         matchRound.playerResults[playerIndex].type ===
@@ -757,6 +760,32 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                     isRedCarded:
                       !matchCurrentRound?.playerResults[playerIndex]
                         .isRedCarded,
+                  },
+                },
+              })
+            },
+          })
+
+        case 'disallow-ron':
+          return confirmDialog.showConfirmDialog({
+            title: !playerResult.isRedCarded
+              ? '確定要給予這名玩家和了禁止嗎？'
+              : '取消和了禁止？',
+            content: !playerResult.isRedCarded
+              ? `一旦點擊確定，就會播出紅牌動畫，請確定要和了禁止的是 ${player.name}！`
+              : `你是否想取消 ${player.name} 的和了禁止？`,
+            onClickOk: async () => {
+              updateCurrentMatchRound({
+                playerResults: {
+                  ...(matchCurrentRound?.playerResults as Record<
+                    PlayerIndex,
+                    PlayerResult
+                  >),
+                  [playerIndex]: {
+                    ...matchCurrentRound?.playerResults[playerIndex],
+                    isRonDisallowed:
+                      !matchCurrentRound?.playerResults[playerIndex]
+                        .isRonDisallowed,
                   },
                 },
               })
