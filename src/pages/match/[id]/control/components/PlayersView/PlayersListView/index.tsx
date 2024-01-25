@@ -241,7 +241,7 @@ const PlayersListView = ({
                         </div>
                         {currentRound.playerResults[index].isRonDisallowed && (
                           <div className="absolute inset-0 bg-red-500 text-white text-lg opacity-90 flex items-center justify-center">
-                            <i className="bi bi-ban"></i> 和了禁止！
+                            <i className="bi bi-ban"></i> 和了禁止
                           </div>
                         )}
                       </div>

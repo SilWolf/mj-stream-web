@@ -229,7 +229,7 @@ export default function MJMatchExhaustedForm({
                     />
                     {currentMatchRound.playerResults[index].isRonDisallowed && (
                       <p className="text-white text-sm font-semibold">
-                        和了禁止！
+                        和了禁止
                       </p>
                     )}
                   </td>

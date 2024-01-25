@@ -144,7 +144,7 @@ export default function MJPlayerCardDiv({
                   opacity: isRonDisallowed ? 1 : 0,
                 }}
               >
-                <i className="bi bi-ban"></i> 和了禁止！
+                <i className="bi bi-ban"></i> 和了禁止
               </div>
             </div>
             <div

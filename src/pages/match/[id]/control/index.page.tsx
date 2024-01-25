@@ -125,7 +125,7 @@ const PlayerResultMetadata = ({
             PlayerResultWinnerOrLoserEnum.Win && <span>聽</span>}
       </p>
       {matchRound.playerResults[playerIndex].isRonDisallowed && (
-        <p className="text-red-500 font-semibold">和了禁止！</p>
+        <p className="text-red-500 font-semibold">和了禁止</p>
       )}
       {(matchRound.resultType === RoundResultTypeEnum.Ron ||
         matchRound.resultType === RoundResultTypeEnum.SelfDrawn) &&

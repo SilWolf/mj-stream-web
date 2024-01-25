@@ -19,13 +19,17 @@ function MJTeamHistoryChart({ teams }: Props) {
     const count = teams[0].matchCount
     const result = Array(count + 1)
       .fill(undefined)
-      .map(() => ({}) as Record<string, number>)
+      .map(
+        (_, index) =>
+          ({
+            name: index % 2 === 1 ? `W${Math.ceil(index / 2)}` : '',
+          }) as Record<string, number> & { name: string }
+      )
 
     for (const team of teams) {
       result[0][team.team._id] = 0
       for (let i = 0; i < count; i++) {
-        result[i + 1][team.team._id] =
-          team.pointHistories[i] ?? team.pointHistories.at(-1)
+        result[i + 1][team.team._id] = team.pointHistories[i]
       }
     }
 
