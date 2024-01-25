@@ -816,6 +816,43 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
           !isGoExtendedRound && updatedMatchRound.roundCount >= 8
 
         if (isGameEnded) {
+          // TODO: Proceed to Game End
+          alert('對局結束。')
+        }
+
+        updateCurrentMatchRound({
+          ...updatedMatchRound,
+          nextRoundType: isGameEnded
+            ? NextRoundTypeEnum.End
+            : isGoExtendedRound
+              ? NextRoundTypeEnum.Extended
+              : NextRoundTypeEnum.NextRound,
+        })
+        toggleRonDialog(false)
+
+        setActiveAnimationMessage('分數變動中…')
+        setTimeout(() => {
+          setActiveAnimationMessage(null)
+        }, 4000)
+      } catch (e) {
+        console.error(e)
+      }
+    },
+    [toggleRonDialog, updateCurrentMatchRound]
+  )
+
+  const handleSubmitMatchExhaustedDialog = useCallback(
+    (updatedMatchRound: MatchRound) => {
+      try {
+        const eastPlayerIndex = getPlayerIndexOfEastByRound(
+          updatedMatchRound.roundCount
+        )
+        const isGoNextRound =
+          updatedMatchRound.playerResults[eastPlayerIndex].type !==
+          PlayerResultWinnerOrLoserEnum.Win
+        const isGameEnded = isGoNextRound && updatedMatchRound.roundCount >= 8
+
+        if (isGameEnded) {
           // if game is ended but next round cumlatedThousands exists
           if (updatedMatchRound.nextRoundCumulatedThousands > 0) {
             // distribute to highest score players
@@ -861,43 +898,6 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
             // TODO: Proceed to Game End
             alert('對局結束。')
           }
-        }
-
-        updateCurrentMatchRound({
-          ...updatedMatchRound,
-          nextRoundType: isGameEnded
-            ? NextRoundTypeEnum.End
-            : isGoExtendedRound
-              ? NextRoundTypeEnum.Extended
-              : NextRoundTypeEnum.NextRound,
-        })
-        toggleRonDialog(false)
-
-        setActiveAnimationMessage('分數變動中…')
-        setTimeout(() => {
-          setActiveAnimationMessage(null)
-        }, 4000)
-      } catch (e) {
-        console.error(e)
-      }
-    },
-    [toggleRonDialog, updateCurrentMatchRound]
-  )
-
-  const handleSubmitMatchExhaustedDialog = useCallback(
-    (updatedMatchRound: MatchRound) => {
-      try {
-        const eastPlayerIndex = getPlayerIndexOfEastByRound(
-          updatedMatchRound.roundCount
-        )
-        const isGoNextRound =
-          updatedMatchRound.playerResults[eastPlayerIndex].type !==
-          PlayerResultWinnerOrLoserEnum.Win
-        const isGameEnded = isGoNextRound && updatedMatchRound.roundCount >= 8
-
-        if (isGameEnded) {
-          // TODO: Proceed to Game End
-          alert('對局結束。')
         }
 
         updateCurrentMatchRound({
