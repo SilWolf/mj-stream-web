@@ -2024,7 +2024,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
               )}
 
             {matchCurrentRound.nextRoundType === NextRoundTypeEnum.End && (
-              <a href={`/match/${matchId}/export`} target="_blank">
+              <a href={`/v1/match/${matchId}/export`} target="_blank">
                 <button className="text-6xl p-4 text-yellow-800 bg-yellow-400 border-4 border-yellow-600 rounded-lg">
                   上傳成績
                   <i className="bi bi-cloud-upload"></i>

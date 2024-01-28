@@ -34,6 +34,7 @@ import ObsOverviewOverlayPage from './pages/obs/[obsRoomId]/overlay.page'
 import ObsRoomExportPage from './pages/obs/[obsRoomId]/export.page'
 import WeeklySummaryAutoPage from './pages/weekly-summary/index.page'
 import WeeklySummaryPage from './pages/weekly-summary/[week]/index.page'
+import RealtimeSummaryPage from './pages/realtime-summary/index.page'
 import ObsRoomIntroductionPage from './pages/obs/[obsRoomId]/introduction.page'
 import MatchSummaryPage from './pages/match/[id]/summary.page'
 import ObsRoomSummaryPage from './pages/obs/[obsRoomId]/summary.page'
@@ -61,81 +62,99 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <FirebaseDatabaseProvider>
         <ConfirmDialogProvider>
           <Switch>
-            <Route path="/" component={IndexPage} />
-            <Route path="/create-match" component={CreateMatchPage} />
-            <Route path="/match/:matchId" component={MatchDetailPage} />
-            <Route path="/match/:matchId/obs" component={MatchOBSPage} />
+            <Route path="/v1" component={IndexPage} />
+            <Route path="/v1/create-match" component={CreateMatchPage} />
+            <Route path="/v1/match/:matchId" component={MatchDetailPage} />
+            <Route path="/v1/match/:matchId/obs" component={MatchOBSPage} />
             <Route
-              path="/match/:matchId/overlay"
+              path="/v1/match/:matchId/overlay"
               component={MatchOverviewOverlayPage}
             />
             <Route
-              path="/match/:matchId/control"
+              path="/v1/match/:matchId/control"
               component={MatchControlPage}
             />
-            <Route path="/match/:matchId/export" component={MatchExportPage} />
             <Route
-              path="/match/:matchId/forecast"
+              path="/v1/match/:matchId/export"
+              component={MatchExportPage}
+            />
+            <Route
+              path="/v1/match/:matchId/forecast"
               component={MatchForecastPage}
             />
             <Route
-              path="/match/:matchId/introduction"
+              path="/v1/match/:matchId/introduction"
               component={MatchIntroductionPage}
             />
             <Route
-              path="/match/:matchId/summary"
+              path="/v1/match/:matchId/summary"
               component={MatchSummaryPage}
             />
             <Route
-              path="/match/:matchId/nameplates"
+              path="/v1/match/:matchId/nameplates"
               component={MatchNameplatesPage}
             />
-            <Route path="/match/:matchId/stat" component={MatchStatPage} />
+            <Route path="/v1/match/:matchId/stat" component={MatchStatPage} />
 
-            <Route path="/obs/:obsRoomId" component={ObsRoomPage} />
+            <Route path="/v1/obs/:obsRoomId" component={ObsRoomPage} />
             <Route
-              path="/obs/:obsRoomId/overlay"
+              path="/v1/obs/:obsRoomId/overlay"
               component={ObsOverviewOverlayPage}
             />
             <Route
-              path="/obs/:obsRoomId/control"
+              path="/v1/obs/:obsRoomId/control"
               component={ObsRoomControlPage}
             />
             <Route
-              path="/obs/:obsRoomId/export"
+              path="/v1/obs/:obsRoomId/export"
               component={ObsRoomExportPage}
             />
             <Route
-              path="/obs/:obsRoomId/forecast"
+              path="/v1/obs/:obsRoomId/forecast"
               component={ObsRoomForecastPage}
             />
             <Route
-              path="/obs/:obsRoomId/introduction"
+              path="/v1/obs/:obsRoomId/introduction"
               component={ObsRoomIntroductionPage}
             />
             <Route
-              path="/obs/:obsRoomId/summary"
+              path="/v1/obs/:obsRoomId/summary"
               component={ObsRoomSummaryPage}
             />
             <Route
-              path="/obs/:obsRoomId/weekly-summary"
+              path="/v1/obs/:obsRoomId/weekly-summary"
               component={WeeklySummaryAutoPage}
             />
-            <Route path="/obs/:obsRoomId/end" component={ObsRoomEndPage} />
-            <Route path="/obs/:obsRoomId/score" component={ObsScorePage} />
-            <Route path="/obs/:obsRoomId/chart" component={ObsChartPage} />
             <Route
-              path="/obs/:obsRoomId/carousel"
+              path="/v1/obs/:obsRoomId/realtime-summary"
+              component={RealtimeSummaryPage}
+            />
+            <Route path="/v1/obs/:obsRoomId/end" component={ObsRoomEndPage} />
+            <Route path="/v1/obs/:obsRoomId/score" component={ObsScorePage} />
+            <Route path="/v1/obs/:obsRoomId/chart" component={ObsChartPage} />
+            <Route
+              path="/v1/obs/:obsRoomId/carousel"
               component={ObsCarouselPage}
             />
-            <Route path="/obs/:obsRoomId/stat" component={ObsStatPage} />
+            <Route path="/v1/obs/:obsRoomId/stat" component={ObsStatPage} />
 
-            <Route path="/players" component={PlayersPage} />
-            <Route path="/teams" component={TeamsPage} />
-            <Route path="/matches" component={MatchesPage} />
+            <Route path="/v1/players" component={PlayersPage} />
+            <Route path="/v1/teams" component={TeamsPage} />
+            <Route path="/v1/matches" component={MatchesPage} />
 
-            <Route path="/weekly-summary/" component={WeeklySummaryAutoPage} />
-            <Route path="/weekly-summary/:week" component={WeeklySummaryPage} />
+            <Route
+              path="/v1/weekly-summary/"
+              component={WeeklySummaryAutoPage}
+            />
+            <Route
+              path="/v1/weekly-summary/:week"
+              component={WeeklySummaryPage}
+            />
+
+            <Route
+              path="/v1/realtime-summary/"
+              component={RealtimeSummaryPage}
+            />
           </Switch>
         </ConfirmDialogProvider>
       </FirebaseDatabaseProvider>

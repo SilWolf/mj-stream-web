@@ -42,7 +42,7 @@ function MatchesPage() {
           {matches.map((match) => (
             <tr key={match._id}>
               <td>
-                <a href={`/match/${match._id}`} target="_blank">
+                <a href={`/v1/match/${match._id}`} target="_blank">
                   {match.name}
                 </a>
               </td>

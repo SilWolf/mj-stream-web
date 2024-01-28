@@ -125,11 +125,18 @@ function IndexPage() {
 
                 <div className="grid grid-cols-3 gap-4">
                   <a
-                    href={`${location.origin}/obs/1/weekly-summary`}
+                    href={`${location.origin}/v1/obs/1/realtime-summary`}
                     target="_blank"
                     className="text-black bg-black bg-opacity-20 p-2 rounded hover:text-black"
                   >
-                    一週結算
+                    現時數據
+                  </a>
+                  <a
+                    href={`${location.origin}/v1/obs/1/weekly-summary`}
+                    target="_blank"
+                    className="text-black bg-black bg-opacity-20 p-2 rounded hover:text-black"
+                  >
+                    每週結算
                   </a>
                 </div>
 
@@ -159,35 +166,35 @@ function IndexPage() {
                     <p>開始前倒數</p>
                     <div className="flex-1 grid grid-cols-3 gap-2">
                       <a
-                        href={`${location.origin}/obs/1/forecast?m=0`}
+                        href={`${location.origin}/v1/obs/1/forecast?m=0`}
                         target="_blank"
                         className="text-black bg-red-800 bg-opacity-50 p-2 rounded hover:text-black"
                       >
                         即將開始
                       </a>
                       <a
-                        href={`${location.origin}/obs/1/forecast?m=5`}
+                        href={`${location.origin}/v1/obs/1/forecast?m=5`}
                         target="_blank"
                         className="text-black bg-red-800 bg-opacity-50 p-2 rounded hover:text-black"
                       >
                         5分鐘
                       </a>
                       <a
-                        href={`${location.origin}/obs/1/forecast?m=10`}
+                        href={`${location.origin}/v1/obs/1/forecast?m=10`}
                         target="_blank"
                         className="text-black bg-red-800 bg-opacity-50 p-2 rounded hover:text-black"
                       >
                         10分鐘
                       </a>
                       <a
-                        href={`${location.origin}/obs/1/forecast?m=15`}
+                        href={`${location.origin}/v1/obs/1/forecast?m=15`}
                         target="_blank"
                         className="text-black bg-red-800 bg-opacity-50 p-2 rounded hover:text-black"
                       >
                         15分鐘
                       </a>
                       <a
-                        href={`${location.origin}/obs/1/forecast?m=20`}
+                        href={`${location.origin}/v1/obs/1/forecast?m=20`}
                         target="_blank"
                         className="text-black bg-red-800 bg-opacity-50 p-2 rounded hover:text-black"
                       >
@@ -198,21 +205,21 @@ function IndexPage() {
 
                   <div className="grid grid-cols-3 gap-4">
                     <a
-                      href={`${location.origin}/obs/1/introduction`}
+                      href={`${location.origin}/v1/obs/1/introduction`}
                       target="_blank"
                       className="text-black bg-black bg-opacity-20 p-2 rounded hover:text-black"
                     >
                       賽前介紹
                     </a>
                     <a
-                      href={`${location.origin}/obs/1`}
+                      href={`${location.origin}/v1/obs/1`}
                       target="_blank"
                       className="text-black bg-black bg-opacity-20 p-2 rounded hover:text-black"
                     >
                       直播頁面
                     </a>
                     <a
-                      href={`${location.origin}/obs/1/summary`}
+                      href={`${location.origin}/v1/obs/1/summary`}
                       target="_blank"
                       className="text-black bg-black bg-opacity-20 p-2 rounded hover:text-black"
                     >
@@ -223,7 +230,7 @@ function IndexPage() {
 
                 <div className="grid grid-cols-3 gap-4">
                   <a
-                    href={`${location.origin}/obs/1/end`}
+                    href={`${location.origin}/v1/obs/1/end`}
                     target="_blank"
                     className="text-black bg-black bg-opacity-20 p-2 rounded hover:text-black"
                   >
@@ -243,7 +250,7 @@ function IndexPage() {
                 <p className="text-2xl">
                   固定的紀錄頁面：
                   <a
-                    href={`${location.origin}/obs/1/stat`}
+                    href={`${location.origin}/v1/obs/1/stat`}
                     target="_blank"
                     className="text-black"
                   >
@@ -253,7 +260,7 @@ function IndexPage() {
                 <p className="text-2xl">
                   固定的Overlay頁面：
                   <a
-                    href={`${location.origin}/obs/1/stat`}
+                    href={`${location.origin}/v1/obs/1/stat`}
                     target="_blank"
                     className="text-black"
                   >
@@ -263,7 +270,7 @@ function IndexPage() {
                 <div className="pt-16">
                   <img
                     className="mx-auto block w-64 h-64"
-                    src={getQrCodeImgSrc(`${location.origin}/obs/1/stat`)}
+                    src={getQrCodeImgSrc(`${location.origin}/v1/obs/1/stat`)}
                     alt=""
                   />
                 </div>
@@ -275,7 +282,7 @@ function IndexPage() {
                 <p className="text-2xl">
                   固定的控制台頁面：
                   <a
-                    href={`${location.origin}/obs/1/control`}
+                    href={`${location.origin}/v1/obs/1/control`}
                     target="_blank"
                     className="text-black"
                   >
@@ -285,7 +292,7 @@ function IndexPage() {
                 <div className="pt-16">
                   <img
                     className="mx-auto block w-64 h-64"
-                    src={getQrCodeImgSrc(`${location.origin}/obs/1/control`)}
+                    src={getQrCodeImgSrc(`${location.origin}/v1/obs/1/control`)}
                     alt=""
                   />
                 </div>
@@ -358,7 +365,7 @@ function IndexPage() {
                         </a>
 
                         <a
-                          href={`/match/${match._id}/nameplates`}
+                          href={`/v1/match/${match._id}/nameplates`}
                           target="_blank"
                         >
                           <i className="bi bi-person-badge"></i> 名牌
@@ -367,7 +374,7 @@ function IndexPage() {
 
                       <div className="space-x-2">
                         <a
-                          href={`/match/${match._id}/forecast?startAt=${
+                          href={`/v1/match/${match._id}/forecast?startAt=${
                             match.name.endsWith('2') ? '21' : '19'
                           }:30`}
                           target="_blank"
@@ -376,13 +383,16 @@ function IndexPage() {
                         </a>
 
                         <a
-                          href={`/match/${match._id}/introduction`}
+                          href={`/v1/match/${match._id}/introduction`}
                           target="_blank"
                         >
                           <i className="bi bi-person-vcard"></i> 介紹
                         </a>
 
-                        <a href={`/match/${match._id}/summary`} target="_blank">
+                        <a
+                          href={`/v1/match/${match._id}/summary`}
+                          target="_blank"
+                        >
                           <i className="bi bi-trophy"></i> 結果
                         </a>
 
@@ -392,7 +402,7 @@ function IndexPage() {
                           </span>
                         ) : (
                           <a
-                            href={`/match/${match._id}/control`}
+                            href={`/v1/match/${match._id}/control`}
                             target="_blank"
                             className="text-red-600"
                           >
