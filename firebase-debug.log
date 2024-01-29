@@ -1,0 +1,86 @@
+[debug] [2024-01-29T18:09:13.251Z] ----------------------------------------------------------------------
+[debug] [2024-01-29T18:09:13.252Z] Command:       /usr/local/bin/node /usr/local/bin/firebase emulators:start
+[debug] [2024-01-29T18:09:13.252Z] CLI Version:   12.7.0
+[debug] [2024-01-29T18:09:13.252Z] Platform:      darwin
+[debug] [2024-01-29T18:09:13.253Z] Node Version:  v18.18.2
+[debug] [2024-01-29T18:09:13.253Z] Time:          Tue Jan 30 2024 02:09:13 GMT+0800 (香港標準時間)
+[debug] [2024-01-29T18:09:13.253Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2024-01-29T18:09:13.287Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2024-01-29T18:09:13.288Z] > authorizing via signed-in user (silwolf1121@gmail.com)
+[debug] [2024-01-29T18:09:13.446Z] java version "19.0.2" 2023-01-17
+
+[debug] [2024-01-29T18:09:13.447Z] Java(TM) SE Runtime Environment (build 19.0.2+7-44)
+Java HotSpot(TM) 64-Bit Server VM (build 19.0.2+7-44, mixed mode, sharing)
+
+[debug] [2024-01-29T18:09:13.450Z] Parsed Java major version: 19
+[info] i  emulators: Starting emulators: database, hosting {"metadata":{"emulator":{"name":"hub"},"message":"Starting emulators: database, hosting"}}
+[debug] [2024-01-29T18:09:14.035Z] [logging] Logging Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2024-01-29T18:09:14.036Z] [database] Database Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[warn] ⚠  hosting: Hosting Emulator unable to start on port 5000, starting on 5002 instead. {"metadata":{"emulator":{"name":"hosting"},"message":"Hosting Emulator unable to start on port 5000, starting on 5002 instead."}}
+[debug] [2024-01-29T18:09:14.036Z] [hosting] Hosting Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2024-01-29T18:09:14.036Z] assigned listening specs for emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400},{"address":"::1","family":"IPv6","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000},{"address":"::1","family":"IPv6","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}],"database":[{"address":"127.0.0.1","family":"IPv4","port":9000}],"hosting":[{"address":"127.0.0.1","family":"IPv4","port":5002}]},"metadata":{"message":"assigned listening specs for emulators"}}
+[debug] [2024-01-29T18:09:14.041Z] [hub] writing locator at /var/folders/cm/zgxs9b6d7ts6sk938r213bx40000gp/T/hub-hkmjbs-streaming.json
+[debug] [2024-01-29T18:09:14.043Z] > refreshing access token with scopes: []
+[debug] [2024-01-29T18:09:14.044Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2024-01-29T18:09:14.044Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2024-01-29T18:09:14.156Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2024-01-29T18:09:14.156Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2024-01-29T18:09:14.171Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/hkmjbs-streaming [none]
+[debug] [2024-01-29T18:09:14.429Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/hkmjbs-streaming 200
+[debug] [2024-01-29T18:09:14.429Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/hkmjbs-streaming {"projectId":"hkmjbs-streaming","projectNumber":"537815456325","displayName":"hkmjbs-streaming","name":"projects/hkmjbs-streaming","resources":{"hostingSite":"hkmjbs-streaming","realtimeDatabaseInstance":"hkmjbs-streaming-default-rtdb","storageBucket":"hkmjbs-streaming.appspot.com","locationId":"asia-east2"},"state":"ACTIVE","etag":"1_f4c3ba2d-ee2f-4301-9ac0-906cfad0fb85"}
+[debug] [2024-01-29T18:09:14.429Z] database rules config:  [{"instance":"hkmjbs-streaming-default-rtdb","rules":"/Users/silwolf/Desktop/mj-streaming-web/database.rules.json"}]
+[debug] [2024-01-29T18:09:14.430Z] Ignoring unsupported arg: projectId {"metadata":{"emulator":{"name":"database"},"message":"Ignoring unsupported arg: projectId"}}
+[debug] [2024-01-29T18:09:14.430Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"database"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2024-01-29T18:09:14.430Z] Ignoring unsupported arg: rules {"metadata":{"emulator":{"name":"database"},"message":"Ignoring unsupported arg: rules"}}
+[debug] [2024-01-29T18:09:14.430Z] Starting Database Emulator with command {"binary":"java","args":["-Duser.language=en","-jar","/Users/silwolf/.cache/firebase/emulators/firebase-database-emulator-v4.11.2.jar","--host","127.0.0.1","--port",9000,"--single_project_mode","Warning"],"optionalArgs":["port","host","functions_emulator_port","functions_emulator_host","single_project_mode"],"joinArgs":false} {"metadata":{"emulator":{"name":"database"},"message":"Starting Database Emulator with command {\"binary\":\"java\",\"args\":[\"-Duser.language=en\",\"-jar\",\"/Users/silwolf/.cache/firebase/emulators/firebase-database-emulator-v4.11.2.jar\",\"--host\",\"127.0.0.1\",\"--port\",9000,\"--single_project_mode\",\"Warning\"],\"optionalArgs\":[\"port\",\"host\",\"functions_emulator_port\",\"functions_emulator_host\",\"single_project_mode\"],\"joinArgs\":false}"}}
+[info] i  database: Database Emulator logging to database-debug.log {"metadata":{"emulator":{"name":"database"},"message":"Database Emulator logging to \u001b[1mdatabase-debug.log\u001b[22m"}}
+[debug] [2024-01-29T18:09:15.160Z] 02:09:15.159 [NamespaceSystem-akka.actor.default-dispatcher-4] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started
+ {"metadata":{"emulator":{"name":"database"},"message":"02:09:15.159 [NamespaceSystem-akka.actor.default-dispatcher-4] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started\n"}}
+[debug] [2024-01-29T18:09:15.265Z] 02:09:15.265 [main] INFO com.firebase.server.forge.App$ - Listening at 127.0.0.1:9000
+ {"metadata":{"emulator":{"name":"database"},"message":"02:09:15.265 [main] INFO com.firebase.server.forge.App$ - Listening at 127.0.0.1:9000\n"}}
+[debug] [2024-01-29T18:09:15.443Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/hkmjbs-streaming/sites 
+[debug] [2024-01-29T18:09:15.967Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/hkmjbs-streaming/sites 200
+[debug] [2024-01-29T18:09:15.967Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/hkmjbs-streaming/sites {"sites":[{"name":"projects/hkmjbs-streaming/sites/hkmjbs-streaming","defaultUrl":"https://hkmjbs-streaming.web.app","type":"DEFAULT_SITE"}]}
+[debug] [2024-01-29T18:09:15.967Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/hkmjbs-streaming/webApps/-/config [none]
+[debug] [2024-01-29T18:09:17.123Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/hkmjbs-streaming/webApps/-/config 200
+[debug] [2024-01-29T18:09:17.124Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/hkmjbs-streaming/webApps/-/config {"projectId":"hkmjbs-streaming","appId":"1:537815456325:web:c387796326f9db2726a12c","databaseURL":"https://hkmjbs-streaming-default-rtdb.asia-southeast1.firebasedatabase.app","storageBucket":"hkmjbs-streaming.appspot.com","locationId":"asia-east2","apiKey":"AIzaSyCa4jaiAOgH5H8B6hSo4DU49WnkpGPeavA","authDomain":"hkmjbs-streaming.firebaseapp.com","messagingSenderId":"537815456325"}
+[debug] [2024-01-29T18:09:17.138Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/hkmjbs-streaming [none]
+[debug] [2024-01-29T18:09:17.417Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/hkmjbs-streaming 200
+[debug] [2024-01-29T18:09:17.417Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/hkmjbs-streaming {"projectId":"hkmjbs-streaming","projectNumber":"537815456325","displayName":"hkmjbs-streaming","name":"projects/hkmjbs-streaming","resources":{"hostingSite":"hkmjbs-streaming","realtimeDatabaseInstance":"hkmjbs-streaming-default-rtdb","storageBucket":"hkmjbs-streaming.appspot.com","locationId":"asia-east2"},"state":"ACTIVE","etag":"1_f4c3ba2d-ee2f-4301-9ac0-906cfad0fb85"}
+[info] i  hosting[hkmjbs-streaming]: Serving hosting files from: dist {"metadata":{"emulator":{"name":"hosting"},"message":"Serving hosting files from: \u001b[1mdist\u001b[22m"}}
+[info] ✔  hosting[hkmjbs-streaming]: Local server: http://127.0.0.1:5002 {"metadata":{"emulator":{"name":"hosting"},"message":"Local server: \u001b[4m\u001b[1mhttp://127.0.0.1:5002\u001b[22m\u001b[24m"}}
+[debug] [2024-01-29T18:09:17.581Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"ui"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2024-01-29T18:09:17.581Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"ui"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2024-01-29T18:09:17.581Z] Starting Emulator UI with command {"binary":"node","args":["/Users/silwolf/.cache/firebase/emulators/ui-v1.11.7/server/server.js"],"optionalArgs":[],"joinArgs":false} {"metadata":{"emulator":{"name":"ui"},"message":"Starting Emulator UI with command {\"binary\":\"node\",\"args\":[\"/Users/silwolf/.cache/firebase/emulators/ui-v1.11.7/server/server.js\"],\"optionalArgs\":[],\"joinArgs\":false}"}}
+[info] i  ui: Emulator UI logging to ui-debug.log {"metadata":{"emulator":{"name":"ui"},"message":"Emulator UI logging to \u001b[1mui-debug.log\u001b[22m"}}
+[debug] [2024-01-29T18:09:17.646Z] Web / API server started at 127.0.0.1:4000
+ {"metadata":{"emulator":{"name":"ui"},"message":"Web / API server started at 127.0.0.1:4000\n"}}
+[debug] [2024-01-29T18:09:17.647Z] Web / API server started at ::1:4000
+ {"metadata":{"emulator":{"name":"ui"},"message":"Web / API server started at ::1:4000\n"}}
+[debug] [2024-01-29T18:09:17.843Z] >>> [apiv2][query] PUT http://127.0.0.1:9000/.settings/rules.json ns=hkmjbs-streaming-default-rtdb
+[debug] [2024-01-29T18:09:17.844Z] >>> [apiv2][body] PUT http://127.0.0.1:9000/.settings/rules.json "{\n  \"rules\": {\n    \".read\": \"now < 2704000666000\",\n    \".write\": \"now < 2704000666000\"\n  }\n}\n"
+[debug] [2024-01-29T18:09:18.022Z] 02:09:18.021 [NamespaceSystem-akka.actor.default-dispatcher-4] INFO com.firebase.core.namespace.NamespaceActor - hkmjbs-streaming-default-rtdb successfully activated FBKV (SurveyIdle(0)) wait: 74ms, init: 0ms
+ {"metadata":{"emulator":{"name":"database"},"message":"02:09:18.021 [NamespaceSystem-akka.actor.default-dispatcher-4] INFO com.firebase.core.namespace.NamespaceActor - hkmjbs-streaming-default-rtdb successfully activated FBKV (SurveyIdle(0)) wait: 74ms, init: 0ms\n"}}
+[debug] [2024-01-29T18:09:18.069Z] 02:09:18.069 [NamespaceSystem-blocking-namespace-operation-dispatcher-6] INFO com.firebase.core.namespace.StateManager - Namespace hkmjbs-streaming-default-rtdb status Active to Active
+ {"metadata":{"emulator":{"name":"database"},"message":"02:09:18.069 [NamespaceSystem-blocking-namespace-operation-dispatcher-6] INFO com.firebase.core.namespace.StateManager - Namespace hkmjbs-streaming-default-rtdb status Active to Active\n"}}
+[debug] [2024-01-29T18:09:18.082Z] <<< [apiv2][status] PUT http://127.0.0.1:9000/.settings/rules.json 200
+[debug] [2024-01-29T18:09:18.082Z] <<< [apiv2][body] PUT http://127.0.0.1:9000/.settings/rules.json {"status":"ok"}
+[info] 
+┌─────────────────────────────────────────────────────────────┐
+│ ✔  All emulators ready! It is now safe to connect your app. │
+│ i  View Emulator UI at http://127.0.0.1:4000/               │
+└─────────────────────────────────────────────────────────────┘
+
+┌──────────┬────────────────┬────────────────────────────────┐
+│ Emulator │ Host:Port      │ View in Emulator UI            │
+├──────────┼────────────────┼────────────────────────────────┤
+│ Database │ 127.0.0.1:9000 │ http://127.0.0.1:4000/database │
+├──────────┼────────────────┼────────────────────────────────┤
+│ Hosting  │ 127.0.0.1:5002 │ n/a                            │
+└──────────┴────────────────┴────────────────────────────────┘
+  Emulator Hub running at 127.0.0.1:4400
+  Other reserved ports: 4500
+
+Issues? Report them at https://github.com/firebase/firebase-tools/issues and attach the *-debug.log files.
+ 

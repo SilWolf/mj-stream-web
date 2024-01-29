@@ -38,6 +38,7 @@ import RealtimeSummaryPage from './pages/realtime-summary/index.page'
 import ObsRoomIntroductionPage from './pages/obs/[obsRoomId]/introduction.page'
 import MatchSummaryPage from './pages/match/[id]/summary.page'
 import ObsRoomSummaryPage from './pages/obs/[obsRoomId]/summary.page'
+import ObsRoomPPTPage from './pages/obs/[obsRoomId]/ppt/index.page'
 
 // Import the functions you need from the SDKs you need
 // TODO: Add SDKs for Firebase products that you want to use
@@ -97,6 +98,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <Route path="/v1/match/:matchId/stat" component={MatchStatPage} />
 
             <Route path="/v1/obs/:obsRoomId" component={ObsRoomPage} />
+            <Route path="/v1/obs/:obsRoomId/ppt" component={ObsRoomPPTPage} />
             <Route
               path="/v1/obs/:obsRoomId/overlay"
               component={ObsOverviewOverlayPage}
