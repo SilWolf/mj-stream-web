@@ -95,7 +95,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
     <>
       <div
         className={
-          'relativew-screen h-screen mx-auto py-8 overflow-hidden text-[4.8rem] transition-opacity'
+          'absolute inset-0 mx-auto py-8 overflow-hidden text-[4.8rem] transition-opacity'
         }
         style={{
           background:
@@ -167,12 +167,12 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
 
         <div className="flex items-center justify-center mt-20">
           <div className="body-hidden mx-20 text-[16px]">
-            <OBSInstructionDiv matchId={matchId} />
+            {/* <OBSInstructionDiv matchId={matchId} /> */}
           </div>
         </div>
 
         <div
-          className="fixed bottom-0 left-0 right-0 px-10 pb-6 grid grid-cols-4 items-end gap-x-8 text-white animate-[fadeInFromBottom_1s_ease-in-out]"
+          className="absolute bottom-0 left-0 right-0 px-10 pb-6 grid grid-cols-4 items-end gap-x-8 text-white animate-[fadeInFromBottom_1s_ease-in-out]"
           style={{
             opacity: match.activeResultDetail ? 0 : 1,
             bottom: match.activeResultDetail ? '-150px' : 0,
@@ -208,7 +208,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
         </div>
 
         {match.activeResultDetail && (
-          <div className="fixed bottom-0 left-0 right-0 px-10 pb-6 grid grid-cols-4 gap-x-8 text-white transition-opacity animate-[fadeInFromBottom_1s_ease-in-out]">
+          <div className="absolute bottom-0 left-0 right-0 px-10 pb-6 grid grid-cols-4 gap-x-8 text-white transition-opacity animate-[fadeInFromBottom_1s_ease-in-out]">
             <div className="w-[5.35em]">
               <MJPlayerCardDiv
                 player={
@@ -246,7 +246,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
         )}
       </div>
 
-      <div className="fixed inset-0 pointer-events-none">
+      <div className="absolute top-0 bottom-0 left-0 right-0 pointer-events-none">
         <MJReachAnimationDiv
           active={currentRiichiPlayerIndex !== null}
           color={

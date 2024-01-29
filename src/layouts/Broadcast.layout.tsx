@@ -7,7 +7,7 @@ export default function BroadcastLayout({
 }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={`w-screen h-screen mx-auto py-8 ${className} overflow-hidden text-[4.8rem]`}
+      className={`w-full h-full mx-auto py-8 ${className} overflow-hidden text-[4.8rem]`}
       style={{
         background:
           'linear-gradient(transparent, transparent 73%, rgba(0, 0, 0, 0.25))',
