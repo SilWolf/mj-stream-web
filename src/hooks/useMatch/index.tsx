@@ -8,7 +8,7 @@ const useMatch = (matchId: string) => {
     Match,
     Match,
     Partial<Match>
-  >(`/v1/matches/${matchId}`)
+  >(`/matches/${matchId}`)
 
   const {
     data: matchRounds,
