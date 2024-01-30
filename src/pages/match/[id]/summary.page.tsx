@@ -1,5 +1,5 @@
 import { renderPoint, renderRanking, renderScore } from '@/utils/string.util'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import cns from 'classnames'
 import MJMatchHistoryChart from '@/components/MJMatchHistoryChart'
 import useMatch from '@/hooks/useMatch'
@@ -14,6 +14,9 @@ import { useQuery } from '@tanstack/react-query'
 
 type Props = {
   params: { matchId: string }
+  forwardFlag?: number
+  resetFlag?: number
+  disableClick?: boolean
 }
 
 type Slide =
@@ -479,7 +482,12 @@ const MatchSummarySlide = ({
   return <></>
 }
 
-const MatchSummaryPage = ({ params: { matchId } }: Props) => {
+const MatchSummaryPage = ({
+  params: { matchId },
+  forwardFlag,
+  resetFlag,
+  disableClick,
+}: Props) => {
   const { match, matchRounds } = useMatch(matchId)
   const { data: matchDTO } = useDbMatch(matchId)
 
@@ -751,6 +759,11 @@ const MatchSummaryPage = ({ params: { matchId } }: Props) => {
   const [subSlideIndex, setSubSlideIndex] = useState<number>(0)
   const [isSlideChanging, setIsSlideChanging] = useState<boolean>(false)
 
+  const [prevForwardFlag, setPrevForwardFlag] = useState<number>(
+    forwardFlag ?? 0
+  )
+  const [prevResetFlag, setPrevResetFlag] = useState<number>(resetFlag ?? 0)
+
   const handleSlideForward = useCallback(() => {
     if (isSlideChanging) {
       return
@@ -784,6 +797,33 @@ const MatchSummaryPage = ({ params: { matchId } }: Props) => {
     }
   }, [isSlideChanging, slideIndex, slides, subSlideIndex])
 
+  const handleClickScreen = useCallback(() => {
+    if (!disableClick) {
+      handleSlideForward
+    }
+  }, [disableClick, handleSlideForward])
+
+  useEffect(() => {
+    if (typeof forwardFlag !== 'undefined' && forwardFlag !== prevForwardFlag) {
+      handleSlideForward()
+      setPrevForwardFlag(forwardFlag)
+    }
+  }, [forwardFlag, handleSlideForward, prevForwardFlag])
+
+  useEffect(() => {
+    if (typeof resetFlag !== 'undefined' && resetFlag !== prevResetFlag) {
+      setSlideIndex(0)
+      setSubSlideIndex(0)
+      setPrevResetFlag(resetFlag)
+    }
+  }, [
+    forwardFlag,
+    handleSlideForward,
+    prevForwardFlag,
+    prevResetFlag,
+    resetFlag,
+  ])
+
   if (!match || !matchRounds || !matchDTO || !tournament) {
     return <></>
   }
@@ -795,7 +835,7 @@ const MatchSummaryPage = ({ params: { matchId } }: Props) => {
         background:
           'linear-gradient(to bottom, rgb(30, 34, 59), rgb(16, 18, 33))',
       }}
-      onClick={handleSlideForward}
+      onClick={handleClickScreen}
     >
       <div className="absolute py-16 px-24 inset-0">
         <div className="flex items-end gap-x-[0.25em] mi-title-in">

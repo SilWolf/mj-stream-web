@@ -1,22 +1,20 @@
 export default function ObsRoomEndPage() {
   return (
     <div
-      className="fixed inset-0 text-white flex flex-col justify-center items-center"
+      className="relative w-full h-full text-white flex flex-col justify-center items-center"
       style={{
         background:
           'linear-gradient(to bottom, rgb(30, 34, 59), rgb(16, 18, 33))',
       }}
     >
-      <div className="w-[80vw]">
-        <div className="flex justify-between">
+      <div className="w-[80%]">
+        <div className="flex justify-between items-center">
           <img
             src="/images/tournament-long-logo.png"
             className="w-[50%]"
             alt=""
           />
-          <div>
-            <img src="/images/logo-hkma.webp" className="w-[12vw]" alt="" />
-          </div>
+          <img src="/images/logo-hkma.webp" className="w-[20%]" alt="" />
         </div>
         <div className="flex flex-col justify-center items-center h-[70vh]">
           <p className="text-[100px] text-center">
@@ -25,7 +23,7 @@ export default function ObsRoomEndPage() {
           <div className="text-center mt-[5vh]">
             <img
               src="/images/homepage-qr.png"
-              className="w-[12vw] mx-auto"
+              className="w-[20%] mx-auto"
               alt=""
             />
           </div>

@@ -4,11 +4,13 @@ import MatchSummaryPage from '@/pages/match/[id]/summary.page'
 import RealtimeSummaryPage from '@/pages/realtime-summary/index.page'
 import { useFirebaseDatabaseByKey } from '@/providers/firebaseDatabase.provider'
 import { ChangeEvent, useCallback, useMemo, useState } from 'react'
+import ObsRoomEndPage from '../ended.page'
+import MJUIButton from '@/components/MJUI/MJUIButton'
 
 type OBSInfo = {
   matchId: string
   activeSceneId: string
-  activeSceneProps: Record<string, number>
+  activeSceneProps: Record<string, string | number>
 }
 
 type Scene = {
@@ -19,6 +21,7 @@ type Scene = {
     compiledProps: Record<string, string | number>
   ) => React.ReactNode
   props?: SceneProp[]
+  actions?: SceneAction[]
 }
 
 type SceneProp = {
@@ -29,6 +32,14 @@ type SceneProp = {
   description?: string
 }
 
+type SceneAction = {
+  key: string
+  label: React.ReactNode
+  perform: (
+    oldProp: Record<string, string | number>
+  ) => Record<string, string | number>
+}
+
 const SCENES: Scene[] = [
   {
     id: 'scoring',
@@ -37,7 +48,7 @@ const SCENES: Scene[] = [
   },
   {
     id: 'introduction',
-    name: '下一場對局介紹',
+    name: '賽前介紹',
     render: (obsInfo) => (
       <MatchIntroductionPage params={{ matchId: obsInfo.matchId }} />
     ),
@@ -46,8 +57,43 @@ const SCENES: Scene[] = [
     id: 'result',
     name: '對局結果',
     render: (obsInfo) => (
-      <MatchSummaryPage params={{ matchId: obsInfo.matchId }} />
+      <MatchSummaryPage
+        params={{ matchId: obsInfo.matchId }}
+        disableClick
+        forwardFlag={obsInfo.activeSceneProps?.forwardFlag as number}
+        resetFlag={obsInfo.activeSceneProps?.resetFlag as number}
+      />
     ),
+    actions: [
+      {
+        key: 'forward',
+        label: (
+          <span>
+            <i className="bi bi-forward"></i> 下一頁
+          </span>
+        ),
+        perform: (oldProp) => {
+          return {
+            ...oldProp,
+            forwardFlag: 1 - ((oldProp.forwardFlag as number) ?? 0),
+          }
+        },
+      },
+      {
+        key: 'reset',
+        label: (
+          <span>
+            <i className="bi bi-arrow-clockwise"></i> 重新整理及刷新
+          </span>
+        ),
+        perform: (oldProp) => {
+          return {
+            ...oldProp,
+            resetFlag: 1 - ((oldProp.resetFlag as number) ?? 0),
+          }
+        },
+      },
+    ],
   },
   {
     id: 'realtime-stat',
@@ -67,6 +113,11 @@ const SCENES: Scene[] = [
         description: '倒數多少分鐘，會顯示在畫面左下角。',
       },
     ],
+  },
+  {
+    id: 'ended',
+    name: '本日已結束',
+    render: () => <ObsRoomEndPage />,
   },
 ]
 
@@ -110,6 +161,15 @@ const ObsRoomSceneControlPage = ({ params: { obsRoomId } }: Props) => {
     })
   }, [selectedScene.id, updateObsInfo])
 
+  const handleClickAction = useCallback(
+    (fn: SceneAction['perform']) => () => {
+      updateObsInfo({
+        activeSceneProps: fn(obsInfo?.activeSceneProps ?? {}),
+      })
+    },
+    [obsInfo?.activeSceneProps, updateObsInfo]
+  )
+
   if (!obsInfo) {
     return <></>
   }
@@ -126,6 +186,21 @@ const ObsRoomSceneControlPage = ({ params: { obsRoomId } }: Props) => {
             <ObsRoomScenePage params={{ obsRoomId }} />
           </div>
         </div>
+        {activeScene.actions && (
+          <div className="flex flex-wrap items-center gap-4 mt-4">
+            <p className="font-bold">
+              <i className="bi bi-hand-index-thumb"></i> 場景動作：
+            </p>
+            {activeScene.actions.map((action) => (
+              <MJUIButton
+                key={action.key}
+                onClick={handleClickAction(action.perform)}
+              >
+                {action.label}
+              </MJUIButton>
+            ))}
+          </div>
+        )}
       </div>
 
       <hr />
