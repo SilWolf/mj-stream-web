@@ -16,7 +16,7 @@ type Props = {
 
 function MJTeamHistoryChart({ teams }: Props) {
   const data = useMemo(() => {
-    const count = teams[0].matchCount
+    const count = Math.max(...teams.map(({ matchCount }) => matchCount))
     const result = Array(count + 1)
       .fill(undefined)
       .map(

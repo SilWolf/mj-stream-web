@@ -490,11 +490,29 @@ const TournamentDetailSlide = ({
   return <></>
 }
 
-const RealtimeSummaryPage = () => {
-  const mInSearch = useSearchParam('m')
-  const autoInSearch = useSearchParam('auto')
+type Props = {
+  forwardFlag?: number
+  refetchFlag?: number
+  resetFlag?: number
+  disableClick?: boolean
+  auto?: boolean
+  minute?: number
+  params: unknown
+}
 
-  const { data: tournament } = useQuery({
+const RealtimeSummaryPage = ({
+  forwardFlag,
+  refetchFlag,
+  resetFlag,
+  disableClick,
+  auto,
+  minute,
+  params,
+}: Props) => {
+  const mInSearch = useSearchParam('m') || minute?.toString()
+  const autoInSearch = useSearchParam('auto') || auto
+
+  const { data: tournament, refetch: refetchTournament } = useQuery({
     queryKey: ['tournament', TOURNAMENT_ID],
     queryFn: () =>
       apiGetTournament(TOURNAMENT_ID as string).then((tournament) => ({
@@ -529,6 +547,14 @@ const RealtimeSummaryPage = () => {
   const [slideIndex, setSlideIndex] = useState<number>(0)
   const [subSlideIndex, setSubSlideIndex] = useState<number>(0)
   const [isSlideChanging, setIsSlideChanging] = useState<boolean>(false)
+
+  const [prevForwardFlag, setPrevForwardFlag] = useState<number>(
+    forwardFlag ?? 0
+  )
+  const [prevRefetchFlag, setPrevRefetchFlag] = useState<number>(
+    refetchFlag ?? 0
+  )
+  const [prevResetFlag, setPrevResetFlag] = useState<number>(resetFlag ?? 0)
 
   const slides = useMemo<Slide[]>(() => {
     if (!tournament || !teamPlayers) {
@@ -670,6 +696,40 @@ const RealtimeSummaryPage = () => {
     }
   }, [autoInSearch, handleSlideForward])
 
+  const handleClickScreen = useCallback(() => {
+    if (!disableClick) {
+      handleSlideForward()
+    }
+  }, [disableClick, handleSlideForward])
+
+  useEffect(() => {
+    if (typeof forwardFlag !== 'undefined' && forwardFlag !== prevForwardFlag) {
+      handleSlideForward()
+      setPrevForwardFlag(forwardFlag)
+    }
+  }, [forwardFlag, handleSlideForward, prevForwardFlag])
+
+  useEffect(() => {
+    if (typeof refetchFlag !== 'undefined' && refetchFlag !== prevRefetchFlag) {
+      refetchTournament()
+      setPrevRefetchFlag(refetchFlag)
+    }
+  }, [prevRefetchFlag, prevResetFlag, refetchFlag, refetchTournament])
+
+  useEffect(() => {
+    if (typeof resetFlag !== 'undefined' && resetFlag !== prevResetFlag) {
+      setSlideIndex(0)
+      setSubSlideIndex(0)
+      setPrevResetFlag(resetFlag)
+    }
+  }, [
+    forwardFlag,
+    handleSlideForward,
+    prevForwardFlag,
+    prevResetFlag,
+    resetFlag,
+  ])
+
   if (!tournament) {
     return <></>
   }
@@ -681,7 +741,7 @@ const RealtimeSummaryPage = () => {
         background:
           'linear-gradient(to bottom, rgb(30, 34, 59), rgb(16, 18, 33))',
       }}
-      onClick={handleSlideForward}
+      onClick={handleClickScreen}
     >
       <div className="absolute inset-0 tournament-weekly-report text-white text-[36px] flex py-[1em] px-[1em] gap-x-[1em]">
         <div className="twr-title flex flex-col justify-start gap-[1em] items-center relative">

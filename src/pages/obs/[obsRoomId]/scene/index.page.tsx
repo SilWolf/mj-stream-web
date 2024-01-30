@@ -3,7 +3,7 @@ import ObsPage from '@/pages/match/[id]/obs.page'
 import MatchSummaryPage from '@/pages/match/[id]/summary.page'
 import RealtimeSummaryPage from '@/pages/realtime-summary/index.page'
 import { useFirebaseDatabaseByKey } from '@/providers/firebaseDatabase.provider'
-import { ChangeEvent, useCallback, useMemo, useState } from 'react'
+import { MouseEvent, useCallback, useMemo } from 'react'
 import ObsRoomEndPage from '../ended.page'
 import MJUIButton from '@/components/MJUI/MJUIButton'
 
@@ -16,20 +16,8 @@ type OBSInfo = {
 type Scene = {
   id: string
   name: string
-  render: (
-    obsInfo: OBSInfo,
-    compiledProps: Record<string, string | number>
-  ) => React.ReactNode
-  props?: SceneProp[]
+  render: (obsInfo: OBSInfo) => React.ReactNode
   actions?: SceneAction[]
-}
-
-type SceneProp = {
-  key: string
-  label: string
-  type?: 'text' | 'number'
-  defaultValue?: string | number
-  description?: string
 }
 
 type SceneAction = {
@@ -50,8 +38,43 @@ const SCENES: Scene[] = [
     id: 'introduction',
     name: '賽前介紹',
     render: (obsInfo) => (
-      <MatchIntroductionPage params={{ matchId: obsInfo.matchId }} />
+      <MatchIntroductionPage
+        params={{ matchId: obsInfo.matchId }}
+        disableClick
+        forwardFlag={obsInfo.activeSceneProps?.forwardFlag as number}
+        resetFlag={obsInfo.activeSceneProps?.resetFlag as number}
+      />
     ),
+    actions: [
+      {
+        key: 'forward',
+        label: (
+          <span>
+            <i className="bi bi-forward"></i> 下一頁
+          </span>
+        ),
+        perform: (oldProp) => {
+          return {
+            ...oldProp,
+            forwardFlag: 1 - ((oldProp.forwardFlag as number) ?? 0),
+          }
+        },
+      },
+      {
+        key: 'reset',
+        label: (
+          <span>
+            <i className="bi bi-skip-backward-fill"></i> 回到第一頁
+          </span>
+        ),
+        perform: (oldProp) => {
+          return {
+            ...oldProp,
+            resetFlag: 1 - ((oldProp.resetFlag as number) ?? 0),
+          }
+        },
+      },
+    ],
   },
   {
     id: 'result',
@@ -83,7 +106,7 @@ const SCENES: Scene[] = [
         key: 'reset',
         label: (
           <span>
-            <i className="bi bi-arrow-clockwise"></i> 重新整理及刷新
+            <i className="bi bi-skip-backward-fill"></i> 回到第一頁
           </span>
         ),
         perform: (oldProp) => {
@@ -98,19 +121,149 @@ const SCENES: Scene[] = [
   {
     id: 'realtime-stat',
     name: '現時數據',
-    render: (_, props) => <RealtimeSummaryPage {...props} />,
+    render: (obsInfo) => (
+      <RealtimeSummaryPage
+        disableClick
+        forwardFlag={obsInfo.activeSceneProps?.forwardFlag as number}
+        resetFlag={obsInfo.activeSceneProps?.resetFlag as number}
+        refetchFlag={obsInfo.activeSceneProps?.refetchFlag as number}
+      />
+    ),
+    actions: [
+      {
+        key: 'forward',
+        label: (
+          <span>
+            <i className="bi bi-forward"></i> 下一頁
+          </span>
+        ),
+        perform: (oldProp) => {
+          return {
+            ...oldProp,
+            forwardFlag: 1 - ((oldProp.forwardFlag as number) ?? 0),
+          }
+        },
+      },
+      {
+        key: 'reset',
+        label: (
+          <span>
+            <i className="bi bi-skip-backward-fill"></i> 回到第一頁
+          </span>
+        ),
+        perform: (oldProp) => {
+          return {
+            ...oldProp,
+            resetFlag: 1 - ((oldProp.resetFlag as number) ?? 0),
+          }
+        },
+      },
+      {
+        key: 'refetch',
+        label: (
+          <span>
+            <i className="bi bi-cloud-download"></i> 下載最新數據
+          </span>
+        ),
+        perform: (oldProp) => {
+          return {
+            ...oldProp,
+            refetchFlag: 1 - ((oldProp.refetchFlag as number) ?? 0),
+          }
+        },
+      },
+    ],
   },
   {
     id: 'realtime-stat-with-countdown',
     name: '現時數據(+下一場對局倒數＆自動播放)',
-    render: (_, props) => <RealtimeSummaryPage {...props} />,
-    props: [
+    render: (obsInfo) => (
+      <RealtimeSummaryPage
+        disableClick
+        auto
+        minute={(obsInfo.activeSceneProps.minute as number) ?? 0}
+        refetchFlag={obsInfo.activeSceneProps?.refetchFlag as number}
+      />
+    ),
+    actions: [
       {
-        key: 'm',
-        label: '倒數分鐘',
-        type: 'number',
-        defaultValue: 15,
-        description: '倒數多少分鐘，會顯示在畫面左下角。',
+        key: 'p5m',
+        label: (
+          <span>
+            <i className="bi bi-caret-up-fill"></i> +5 分鐘
+          </span>
+        ),
+        perform: (oldProp) => {
+          return {
+            minute: ((oldProp.minute as number) ?? 0) + 5,
+          }
+        },
+      },
+      {
+        key: 'p1m',
+        label: (
+          <span>
+            <i className="bi bi-caret-up"></i> +1 分鐘
+          </span>
+        ),
+        perform: (oldProp) => {
+          return {
+            minute: ((oldProp.minute as number) ?? 0) + 1,
+          }
+        },
+      },
+      {
+        key: 'm1m',
+        label: (
+          <span>
+            <i className="bi bi-caret-down"></i> -1 分鐘
+          </span>
+        ),
+        perform: (oldProp) => {
+          return {
+            minute: Math.max(((oldProp.minute as number) ?? 0) - 1, 0),
+          }
+        },
+      },
+      {
+        key: 'm5m',
+        label: (
+          <span>
+            <i className="bi bi-caret-down-fill"></i> -5 分鐘
+          </span>
+        ),
+        perform: (oldProp) => {
+          return {
+            minute: Math.max(((oldProp.minute as number) ?? 0) - 5, 0),
+          }
+        },
+      },
+      {
+        key: 'reset-10m',
+        label: (
+          <span>
+            <i className="bi bi-arrow-clockwise"></i> 重設成 10 分鐘
+          </span>
+        ),
+        perform: () => {
+          return {
+            minute: 10,
+          }
+        },
+      },
+      {
+        key: 'refetch',
+        label: (
+          <span>
+            <i className="bi bi-cloud-download"></i> 下載最新數據
+          </span>
+        ),
+        perform: (oldProp) => {
+          return {
+            ...oldProp,
+            refetchFlag: 1 - ((oldProp.refetchFlag as number) ?? 0),
+          }
+        },
       },
     ],
   },
@@ -132,15 +285,14 @@ const ObsRoomSceneControlPage = ({ params: { obsRoomId } }: Props) => {
     Partial<OBSInfo>
   >(`obs/${obsRoomId}`)
 
-  const [selectedScene, setSelectedScene] = useState<Scene>(SCENES[0])
   const activeScene = useMemo(
     () => SCENES.find(({ id }) => id === obsInfo?.activeSceneId) ?? SCENES[0],
     [obsInfo?.activeSceneId]
   )
 
-  const handleChangeSelectScene = useCallback(
-    (e: ChangeEvent<HTMLSelectElement>) => {
-      const newValue = e.currentTarget.value
+  const handleClickChangeScene = useCallback(
+    (e: MouseEvent<HTMLButtonElement>) => {
+      const newValue = e.currentTarget.getAttribute('data-id')
       if (!newValue) {
         return
       }
@@ -150,16 +302,12 @@ const ObsRoomSceneControlPage = ({ params: { obsRoomId } }: Props) => {
         return
       }
 
-      setSelectedScene(foundScene)
+      updateObsInfo({
+        activeSceneId: foundScene.id,
+      })
     },
-    []
+    [updateObsInfo]
   )
-
-  const handleSubmitSelectScene = useCallback(() => {
-    updateObsInfo({
-      activeSceneId: selectedScene.id,
-    })
-  }, [selectedScene.id, updateObsInfo])
 
   const handleClickAction = useCallback(
     (fn: SceneAction['perform']) => () => {
@@ -175,81 +323,66 @@ const ObsRoomSceneControlPage = ({ params: { obsRoomId } }: Props) => {
   }
 
   return (
-    <div className="container px-6 max-w-screen-md mx-auto space-y-6">
-      <div>
-        <p className="font-bold text-red-600">
-          <i className="bi bi-record-circle"></i> 目前場景：
-          {activeScene?.name ?? '(沒有)'}
-        </p>
-        <div className="relative aspect-video ring ring-red-500 mt-2">
-          <div className="absolute overflow-hidden w-[1920px] h-[1080px] origin-top-left scale-[.167] sm:scale-[.375]">
-            <ObsRoomScenePage params={{ obsRoomId }} />
-          </div>
-        </div>
-        {activeScene.actions && (
-          <div className="flex flex-wrap items-center gap-4 mt-4">
-            <p className="font-bold">
-              <i className="bi bi-hand-index-thumb"></i> 場景動作：
-            </p>
-            {activeScene.actions.map((action) => (
-              <MJUIButton
-                key={action.key}
-                onClick={handleClickAction(action.perform)}
-              >
-                {action.label}
-              </MJUIButton>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <hr />
-
-      <div>
-        <p className="font-bold">切換場景</p>
-        <select
-          className="border border-gray-200 bg-gray-100 rounded-lg p-4 text-lg w-full"
-          value={selectedScene.id}
-          onChange={handleChangeSelectScene}
-        >
-          {SCENES.map((ppt) => (
-            <option key={ppt.id} value={ppt.id}>
-              {ppt.name}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {selectedScene.props && (
+    <main>
+      <a
+        href="/v1/obs/1/control"
+        className="block text-center py-4 bg-neutral-300"
+      >
+        切換到入分控制台 <i className="bi bi-arrow-right-circle-fill"></i>
+      </a>
+      <div className="py-8 container px-6 max-w-screen-md mx-auto space-y-6">
         <div>
-          <p className="font-bold mb-2">參數</p>
-          <div className="space-y-6">
-            {selectedScene.props?.map((prop) => (
-              <div key={prop.key}>
-                <p>
-                  <label htmlFor={`prop-${prop.key}`}>{prop.label}</label>
-                </p>
-                <input
-                  name={`prop-${prop.key}`}
-                  type={prop.type ?? 'text'}
-                  defaultValue={prop.defaultValue}
-                />
-                <p className="text-sm text-neutral-800">{prop.description}</p>
-              </div>
+          <p className="font-bold text-red-600">
+            <i className="bi bi-record-circle"></i> 目前場景：
+            {activeScene?.name ?? '(沒有)'}
+          </p>
+          <div className="relative aspect-video ring ring-red-500 mt-2">
+            <div className="absolute overflow-hidden w-[1920px] h-[1080px] origin-top-left scale-[.167] sm:scale-[.375]">
+              <ObsRoomScenePage params={{ obsRoomId }} />
+            </div>
+          </div>
+          <div className="text-center">
+            <a href="/v1/obs/1/scene" target="_blank">
+              打開連結 <i className="bi bi-box-arrow-up-right"></i>
+            </a>
+          </div>
+          {activeScene.actions && (
+            <div className="flex flex-wrap items-center gap-2 mt-4">
+              <p className="font-bold">
+                <i className="bi bi-hand-index-thumb"></i> 場景動作：
+              </p>
+              {activeScene.actions.map((action) => (
+                <MJUIButton
+                  key={action.key}
+                  onClick={handleClickAction(action.perform)}
+                >
+                  {action.label}
+                </MJUIButton>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <hr />
+
+        <div>
+          <p className="font-bold mb-2">切換場景（雙點擊以防誤觸）</p>
+          <div className="flex flex-wrap gap-2">
+            {SCENES.map((scene) => (
+              <button
+                key={scene.id}
+                data-id={scene.id}
+                data-active={scene.id === activeScene.id}
+                className="bg-green-300 border-green-400 rounded-lg text-green-800 text-lg py-4 px-6 data-[active=true]:ring data-[active=true]:ring-red-500"
+                onDoubleClick={handleClickChangeScene}
+              >
+                {scene.name}
+              </button>
             ))}
           </div>
         </div>
-      )}
-
-      <div className="text-center">
-        <button
-          className="bg-green-300 border-green-400 rounded-lg text-green-800 text-lg py-4 px-16"
-          onClick={handleSubmitSelectScene}
-        >
-          <i className="bi bi-play text-xl"></i> 切換場景
-        </button>
       </div>
-    </div>
+    </main>
   )
 }
 
@@ -271,9 +404,5 @@ export const ObsRoomScenePage = ({ params: { obsRoomId } }: Props) => {
     return <></>
   }
 
-  return (
-    <div className="absolute inset-0">
-      {activeScene.render(obsInfo, obsInfo.activeSceneProps)}
-    </div>
-  )
+  return <div className="absolute inset-0">{activeScene.render(obsInfo)}</div>
 }

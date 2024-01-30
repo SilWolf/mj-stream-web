@@ -10,11 +10,14 @@ import {
   renderRanking,
 } from '@/utils/string.util'
 import { useQuery } from '@tanstack/react-query'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import cns from 'classnames'
 
 type Props = {
   params: { matchId: string }
+  forwardFlag?: number
+  resetFlag?: number
+  disableClick?: boolean
 }
 
 type Slide =
@@ -447,7 +450,12 @@ const MatchIntroductionSlide = ({
   return <></>
 }
 
-const MatchIntroductionPage = ({ params: { matchId } }: Props) => {
+const MatchIntroductionPage = ({
+  params: { matchId },
+  forwardFlag,
+  resetFlag,
+  disableClick,
+}: Props) => {
   const { data: matchDTO } = useDbMatch(matchId, true)
   const teamIds = useMemo(
     () =>
@@ -525,6 +533,11 @@ const MatchIntroductionPage = ({ params: { matchId } }: Props) => {
   const [subSlideIndex, setSubSlideIndex] = useState<number>(0)
   const [isSlideChanging, setIsSlideChanging] = useState<boolean>(false)
 
+  const [prevForwardFlag, setPrevForwardFlag] = useState<number>(
+    forwardFlag ?? 0
+  )
+  const [prevResetFlag, setPrevResetFlag] = useState<number>(resetFlag ?? 0)
+
   const handleSlideForward = useCallback(() => {
     if (isSlideChanging) {
       return
@@ -558,6 +571,33 @@ const MatchIntroductionPage = ({ params: { matchId } }: Props) => {
     }
   }, [isSlideChanging, slideIndex, slides, subSlideIndex])
 
+  const handleClickScreen = useCallback(() => {
+    if (!disableClick) {
+      handleSlideForward()
+    }
+  }, [disableClick, handleSlideForward])
+
+  useEffect(() => {
+    if (typeof forwardFlag !== 'undefined' && forwardFlag !== prevForwardFlag) {
+      handleSlideForward()
+      setPrevForwardFlag(forwardFlag)
+    }
+  }, [forwardFlag, handleSlideForward, prevForwardFlag])
+
+  useEffect(() => {
+    if (typeof resetFlag !== 'undefined' && resetFlag !== prevResetFlag) {
+      setSlideIndex(0)
+      setSubSlideIndex(0)
+      setPrevResetFlag(resetFlag)
+    }
+  }, [
+    forwardFlag,
+    handleSlideForward,
+    prevForwardFlag,
+    prevResetFlag,
+    resetFlag,
+  ])
+
   if (!matchDTO || !playersGroupedByTeamIds) {
     return <></>
   }
@@ -569,7 +609,7 @@ const MatchIntroductionPage = ({ params: { matchId } }: Props) => {
         background:
           'linear-gradient(to bottom, rgb(30, 34, 59), rgb(16, 18, 33))',
       }}
-      onClick={handleSlideForward}
+      onClick={handleClickScreen}
     >
       <div className="absolute py-16 px-24 inset-0">
         <div className="flex gap-x-[0.25em] mi-title-in">

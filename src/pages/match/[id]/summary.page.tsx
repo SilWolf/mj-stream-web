@@ -799,7 +799,7 @@ const MatchSummaryPage = ({
 
   const handleClickScreen = useCallback(() => {
     if (!disableClick) {
-      handleSlideForward
+      handleSlideForward()
     }
   }, [disableClick, handleSlideForward])
 
