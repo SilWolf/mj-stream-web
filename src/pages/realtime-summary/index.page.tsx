@@ -497,7 +497,7 @@ type Props = {
   disableClick?: boolean
   auto?: boolean
   minute?: number
-  params: unknown
+  params?: unknown
 }
 
 const RealtimeSummaryPage = ({

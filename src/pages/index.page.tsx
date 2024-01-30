@@ -119,134 +119,146 @@ function IndexPage() {
             </a>
           </div> */}
           <div className="grid grid-cols-3 gap-x-4">
-            <div>
+            <div className="col-span-2">
               <div className="px-8 py-4 bg-green-300 border-2 border-green-600 text-center space-y-4">
                 <p className="text-3xl font-bold text-green-900">OBS設定</p>
 
-                <div className="grid grid-cols-3 gap-4">
-                  <a
-                    href={`${location.origin}/v1/obs/1/realtime-summary`}
-                    target="_blank"
-                    className="text-black bg-black bg-opacity-20 p-2 rounded hover:text-black"
-                  >
-                    現時數據
-                  </a>
-                  <a
-                    href={`${location.origin}/v1/obs/1/weekly-summary`}
-                    target="_blank"
-                    className="text-black bg-black bg-opacity-20 p-2 rounded hover:text-black"
-                  >
-                    每週結算
-                  </a>
-                </div>
+                <div className="grid grid-cols-2 gap-x-4">
+                  <div>
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-3 gap-4">
+                        <a
+                          href={`${location.origin}/v1/obs/1/scene`}
+                          target="_blank"
+                          className="block text-black bg-white bg-opacity-40 p-2 rounded hover:text-black"
+                        >
+                          <span className="text-red-600 font-bold">
+                            *01/30新增*
+                          </span>
+                          <br />
+                          多合一場景
+                        </a>
+                        <a
+                          href={`${location.origin}/v1/obs/1/realtime-summary`}
+                          target="_blank"
+                          className="block text-black bg-white bg-opacity-40 p-2 rounded hover:text-black"
+                        >
+                          現時數據
+                        </a>
+                        <a
+                          href={`${location.origin}/v1/obs/1/end`}
+                          target="_blank"
+                          className="text-black bg-white bg-opacity-40 p-2 rounded hover:text-black"
+                        >
+                          今日賽事已完結
+                        </a>
+                      </div>
 
-                <div className="bg-white rounded p-4 space-y-4">
-                  {!liveMatch && (
-                    <p className="text-center">請在下方表格直播一場新的賽事</p>
-                  )}
+                      <div className="bg-white rounded p-4 space-y-4">
+                        <p className="text-center">
+                          請在下方表格點擊“直播“來切換賽事
+                        </p>
 
-                  {liveMatch && (
-                    <p className="text-center font-bold text-red-500">
-                      LIVE 直播中
-                    </p>
-                  )}
+                        {liveMatch && (
+                          <div>
+                            <div className="grid grid-cols-2 gap-2">
+                              <DBTeamPlayerDiv
+                                teamPlayer={liveMatch.playerEast}
+                              />
+                              <DBTeamPlayerDiv
+                                teamPlayer={liveMatch.playerSouth}
+                              />
+                              <DBTeamPlayerDiv
+                                teamPlayer={liveMatch.playerWest}
+                              />
+                              <DBTeamPlayerDiv
+                                teamPlayer={liveMatch.playerNorth}
+                              />
+                            </div>
+                          </div>
+                        )}
 
-                  {liveMatch && (
-                    <div>
-                      <div className="grid grid-cols-2 gap-2">
-                        <DBTeamPlayerDiv teamPlayer={liveMatch.playerEast} />
-                        <DBTeamPlayerDiv teamPlayer={liveMatch.playerSouth} />
-                        <DBTeamPlayerDiv teamPlayer={liveMatch.playerWest} />
-                        <DBTeamPlayerDiv teamPlayer={liveMatch.playerNorth} />
+                        <div className="flex items-center gap-4">
+                          <p>開始前倒數</p>
+                          <div className="flex-1 grid grid-cols-3 gap-2">
+                            <a
+                              href={`${location.origin}/v1/obs/1/forecast?m=0`}
+                              target="_blank"
+                              className="text-black bg-red-800 bg-opacity-50 p-2 rounded hover:text-black"
+                            >
+                              即將開始
+                            </a>
+                            <a
+                              href={`${location.origin}/v1/obs/1/forecast?m=5`}
+                              target="_blank"
+                              className="text-black bg-red-800 bg-opacity-50 p-2 rounded hover:text-black"
+                            >
+                              5分鐘
+                            </a>
+                            <a
+                              href={`${location.origin}/v1/obs/1/forecast?m=10`}
+                              target="_blank"
+                              className="text-black bg-red-800 bg-opacity-50 p-2 rounded hover:text-black"
+                            >
+                              10分鐘
+                            </a>
+                            <a
+                              href={`${location.origin}/v1/obs/1/forecast?m=15`}
+                              target="_blank"
+                              className="text-black bg-red-800 bg-opacity-50 p-2 rounded hover:text-black"
+                            >
+                              15分鐘
+                            </a>
+                            <a
+                              href={`${location.origin}/v1/obs/1/forecast?m=20`}
+                              target="_blank"
+                              className="text-black bg-red-800 bg-opacity-50 p-2 rounded hover:text-black"
+                            >
+                              20分鐘
+                            </a>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-4">
+                          <a
+                            href={`${location.origin}/v1/obs/1/introduction`}
+                            target="_blank"
+                            className="text-black bg-white bg-opacity-40 p-2 rounded hover:text-black"
+                          >
+                            賽前介紹
+                          </a>
+                          <a
+                            href={`${location.origin}/v1/obs/1`}
+                            target="_blank"
+                            className="text-black bg-white bg-opacity-40 p-2 rounded hover:text-black"
+                          >
+                            直播頁面
+                          </a>
+                          <a
+                            href={`${location.origin}/v1/obs/1/summary`}
+                            target="_blank"
+                            className="text-black bg-white bg-opacity-40 p-2 rounded hover:text-black"
+                          >
+                            賽後結果
+                          </a>
+                        </div>
                       </div>
                     </div>
-                  )}
-
-                  <div className="flex items-center gap-4">
-                    <p>開始前倒數</p>
-                    <div className="flex-1 grid grid-cols-3 gap-2">
-                      <a
-                        href={`${location.origin}/v1/obs/1/forecast?m=0`}
-                        target="_blank"
-                        className="text-black bg-red-800 bg-opacity-50 p-2 rounded hover:text-black"
-                      >
-                        即將開始
-                      </a>
-                      <a
-                        href={`${location.origin}/v1/obs/1/forecast?m=5`}
-                        target="_blank"
-                        className="text-black bg-red-800 bg-opacity-50 p-2 rounded hover:text-black"
-                      >
-                        5分鐘
-                      </a>
-                      <a
-                        href={`${location.origin}/v1/obs/1/forecast?m=10`}
-                        target="_blank"
-                        className="text-black bg-red-800 bg-opacity-50 p-2 rounded hover:text-black"
-                      >
-                        10分鐘
-                      </a>
-                      <a
-                        href={`${location.origin}/v1/obs/1/forecast?m=15`}
-                        target="_blank"
-                        className="text-black bg-red-800 bg-opacity-50 p-2 rounded hover:text-black"
-                      >
-                        15分鐘
-                      </a>
-                      <a
-                        href={`${location.origin}/v1/obs/1/forecast?m=20`}
-                        target="_blank"
-                        className="text-black bg-red-800 bg-opacity-50 p-2 rounded hover:text-black"
-                      >
-                        20分鐘
-                      </a>
+                  </div>
+                  <div>
+                    <div className="text-left">
+                      <OBSInstructionDivV2 />
                     </div>
                   </div>
-
-                  <div className="grid grid-cols-3 gap-4">
-                    <a
-                      href={`${location.origin}/v1/obs/1/introduction`}
-                      target="_blank"
-                      className="text-black bg-black bg-opacity-20 p-2 rounded hover:text-black"
-                    >
-                      賽前介紹
-                    </a>
-                    <a
-                      href={`${location.origin}/v1/obs/1`}
-                      target="_blank"
-                      className="text-black bg-black bg-opacity-20 p-2 rounded hover:text-black"
-                    >
-                      直播頁面
-                    </a>
-                    <a
-                      href={`${location.origin}/v1/obs/1/summary`}
-                      target="_blank"
-                      className="text-black bg-black bg-opacity-20 p-2 rounded hover:text-black"
-                    >
-                      賽後結果
-                    </a>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-3 gap-4">
-                  <a
-                    href={`${location.origin}/v1/obs/1/end`}
-                    target="_blank"
-                    className="text-black bg-black bg-opacity-20 p-2 rounded hover:text-black"
-                  >
-                    今日賽事已完結
-                  </a>
-                </div>
-
-                <div className="text-left">
-                  <OBSInstructionDivV2 />
                 </div>
               </div>
             </div>
 
-            <div>
+            {/* <div>
               <div className="px-8 py-4 bg-blue-300 border-2 border-blue-600 text-center space-y-4">
-                <p className="text-3xl font-bold text-blue-900">主播</p>
+                <p className="text-3xl font-bold text-blue-900">
+                  主播 + 控制台
+                </p>
                 <p className="text-2xl">
                   固定的紀錄頁面：
                   <a
@@ -275,12 +287,14 @@ function IndexPage() {
                   />
                 </div>
               </div>
-            </div>
+            </div> */}
             <div>
               <div className="px-8 py-4 bg-yellow-300 border-2 border-yellow-600 text-center space-y-4">
-                <p className="text-3xl font-bold text-yellow-900">控制台</p>
+                <p className="text-3xl font-bold text-yellow-900">
+                  主播＋控制台
+                </p>
                 <p className="text-2xl">
-                  固定的控制台頁面：
+                  分數控制台：
                   <a
                     href={`${location.origin}/v1/obs/1/control`}
                     target="_blank"
@@ -289,10 +303,30 @@ function IndexPage() {
                     {location.origin}/obs/1/control
                   </a>
                 </p>
-                <div className="pt-16">
+                <div>
                   <img
-                    className="mx-auto block w-64 h-64"
+                    className="mx-auto block w-48 h-48"
                     src={getQrCodeImgSrc(`${location.origin}/v1/obs/1/control`)}
+                    alt=""
+                  />
+                </div>
+
+                <p className="text-2xl">
+                  多合一場景控制台：
+                  <a
+                    href={`${location.origin}/v1/obs/1/scene-control`}
+                    target="_blank"
+                    className="text-black"
+                  >
+                    {location.origin}/obs/1/scene-control
+                  </a>
+                </p>
+                <div>
+                  <img
+                    className="mx-auto block w-48 h-48"
+                    src={getQrCodeImgSrc(
+                      `${location.origin}/v1/obs/1/scene-control`
+                    )}
                     alt=""
                   />
                 </div>
