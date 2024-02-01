@@ -1,11 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import React, {
-  MouseEvent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import React, { MouseEvent, useCallback, useMemo, useState } from 'react'
 import useMatch from '@/hooks/useMatch'
 import {
   Match,
@@ -1005,7 +999,9 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
       doras: {},
     }
 
-    pushMatchRound(newMatchRound)
+    pushMatchRound(newMatchRound).then(() => {
+      setClickedDoraIndex(-1)
+    })
   }, [matchCurrentRound, matchId, pushMatchRound])
 
   const handleClickStartOBS = useCallback(() => {
@@ -1189,12 +1185,6 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
   const handleClickShowHeader = useCallback(() => {
     setMatchHideHeaderDisplay(false)
   }, [setMatchHideHeaderDisplay])
-
-  useEffect(() => {
-    if (!!matchCurrentRound && matchCurrentRoundDoras.length === 0) {
-      setClickedDoraIndex(-1)
-    }
-  }, [matchCurrentRound, matchCurrentRoundDoras.length])
 
   if ((!match || !matchCurrentRound) && matchDTO) {
     return <ControlNewMatch matchDTO={matchDTO} />
