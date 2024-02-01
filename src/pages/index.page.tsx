@@ -330,6 +330,24 @@ function IndexPage() {
                     alt=""
                   />
                 </div>
+
+                <p className="text-2xl">
+                  OBS遙控控制台(要連上牌藝Wifi)
+                  <a
+                    href={`http://192.168.1.8:88/obs-control`}
+                    target="_blank"
+                    className="text-black"
+                  >
+                    http://192.168.1.8:88/obs-control
+                  </a>
+                </p>
+                <div>
+                  <img
+                    className="mx-auto block w-48 h-48"
+                    src={getQrCodeImgSrc(`http://192.168.1.8:88/obs-control`)}
+                    alt=""
+                  />
+                </div>
               </div>
             </div>
           </div>

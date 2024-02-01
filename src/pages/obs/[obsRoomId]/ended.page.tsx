@@ -1,7 +1,7 @@
 export default function ObsRoomEndPage() {
   return (
     <div
-      className="relative w-full h-full text-white flex flex-col justify-center items-center"
+      className="absolute inset-0 text-white flex flex-col justify-center items-center"
       style={{
         background:
           'linear-gradient(to bottom, rgb(30, 34, 59), rgb(16, 18, 33))',

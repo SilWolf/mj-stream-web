@@ -3,9 +3,10 @@ import ObsPage from '@/pages/match/[id]/obs.page'
 import MatchSummaryPage from '@/pages/match/[id]/summary.page'
 import RealtimeSummaryPage from '@/pages/realtime-summary/index.page'
 import { useFirebaseDatabaseByKey } from '@/providers/firebaseDatabase.provider'
-import { MouseEvent, useCallback, useMemo } from 'react'
+import { MouseEvent, useCallback, useEffect, useMemo, useRef } from 'react'
 import ObsRoomEndPage from '../ended.page'
 import MJUIButton from '@/components/MJUI/MJUIButton'
+import useWindowResize from '@/hooks/useWindowResize'
 
 type OBSInfo = {
   matchId: string
@@ -47,20 +48,6 @@ const SCENES: Scene[] = [
     ),
     actions: [
       {
-        key: 'forward',
-        label: (
-          <span>
-            <i className="bi bi-forward"></i> 下一頁
-          </span>
-        ),
-        perform: (oldProp) => {
-          return {
-            ...oldProp,
-            forwardFlag: 1 - ((oldProp.forwardFlag as number) ?? 0),
-          }
-        },
-      },
-      {
         key: 'reset',
         label: (
           <span>
@@ -71,6 +58,20 @@ const SCENES: Scene[] = [
           return {
             ...oldProp,
             resetFlag: 1 - ((oldProp.resetFlag as number) ?? 0),
+          }
+        },
+      },
+      {
+        key: 'forward',
+        label: (
+          <span>
+            <i className="bi bi-forward"></i> 下一頁
+          </span>
+        ),
+        perform: (oldProp) => {
+          return {
+            ...oldProp,
+            forwardFlag: 1 - ((oldProp.forwardFlag as number) ?? 0),
           }
         },
       },
@@ -89,20 +90,6 @@ const SCENES: Scene[] = [
     ),
     actions: [
       {
-        key: 'forward',
-        label: (
-          <span>
-            <i className="bi bi-forward"></i> 下一頁
-          </span>
-        ),
-        perform: (oldProp) => {
-          return {
-            ...oldProp,
-            forwardFlag: 1 - ((oldProp.forwardFlag as number) ?? 0),
-          }
-        },
-      },
-      {
         key: 'reset',
         label: (
           <span>
@@ -113,6 +100,20 @@ const SCENES: Scene[] = [
           return {
             ...oldProp,
             resetFlag: 1 - ((oldProp.resetFlag as number) ?? 0),
+          }
+        },
+      },
+      {
+        key: 'forward',
+        label: (
+          <span>
+            <i className="bi bi-forward"></i> 下一頁
+          </span>
+        ),
+        perform: (oldProp) => {
+          return {
+            ...oldProp,
+            forwardFlag: 1 - ((oldProp.forwardFlag as number) ?? 0),
           }
         },
       },
@@ -131,16 +132,16 @@ const SCENES: Scene[] = [
     ),
     actions: [
       {
-        key: 'forward',
+        key: 'refetch',
         label: (
           <span>
-            <i className="bi bi-forward"></i> 下一頁
+            <i className="bi bi-cloud-download"></i> 下載最新數據
           </span>
         ),
         perform: (oldProp) => {
           return {
             ...oldProp,
-            forwardFlag: 1 - ((oldProp.forwardFlag as number) ?? 0),
+            refetchFlag: 1 - ((oldProp.refetchFlag as number) ?? 0),
           }
         },
       },
@@ -159,16 +160,16 @@ const SCENES: Scene[] = [
         },
       },
       {
-        key: 'refetch',
+        key: 'forward',
         label: (
           <span>
-            <i className="bi bi-cloud-download"></i> 下載最新數據
+            <i className="bi bi-forward"></i> 下一頁
           </span>
         ),
         perform: (oldProp) => {
           return {
             ...oldProp,
-            refetchFlag: 1 - ((oldProp.refetchFlag as number) ?? 0),
+            forwardFlag: 1 - ((oldProp.forwardFlag as number) ?? 0),
           }
         },
       },
@@ -181,7 +182,7 @@ const SCENES: Scene[] = [
       <RealtimeSummaryPage
         disableClick
         auto
-        minute={(obsInfo.activeSceneProps.minute as number) ?? 0}
+        minute={(obsInfo.activeSceneProps?.minute as number) ?? 0}
         refetchFlag={obsInfo.activeSceneProps?.refetchFlag as number}
       />
     ),
@@ -279,6 +280,9 @@ type Props = {
 }
 
 const ObsRoomSceneControlPage = ({ params: { obsRoomId } }: Props) => {
+  const previewWrapperRef = useRef<HTMLDivElement>(null)
+  const [windowWidth] = useWindowResize()
+
   const { data: obsInfo, update: updateObsInfo } = useFirebaseDatabaseByKey<
     string,
     OBSInfo,
@@ -318,6 +322,20 @@ const ObsRoomSceneControlPage = ({ params: { obsRoomId } }: Props) => {
     [obsInfo?.activeSceneProps, updateObsInfo]
   )
 
+  useEffect(() => {
+    if (!previewWrapperRef.current) {
+      return
+    }
+
+    const scale = Math.min(
+      0.375,
+      Math.max(0, ((windowWidth - 48) / 720) * 0.375)
+    )
+
+    previewWrapperRef.current.style.transform = `scale(${scale})`
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [previewWrapperRef.current, windowWidth])
+
   if (!obsInfo) {
     return <></>
   }
@@ -337,7 +355,10 @@ const ObsRoomSceneControlPage = ({ params: { obsRoomId } }: Props) => {
             {activeScene?.name ?? '(沒有)'}
           </p>
           <div className="relative aspect-video ring ring-red-500 mt-2">
-            <div className="absolute overflow-hidden w-[1920px] h-[1080px] origin-top-left scale-[.167] sm:scale-[.375]">
+            <div
+              className="absolute overflow-hidden w-[1920px] h-[1080px] origin-top-left scale-[.375]"
+              ref={previewWrapperRef}
+            >
               <ObsRoomScenePage params={{ obsRoomId }} />
             </div>
           </div>
@@ -353,6 +374,7 @@ const ObsRoomSceneControlPage = ({ params: { obsRoomId } }: Props) => {
               </p>
               {activeScene.actions.map((action) => (
                 <MJUIButton
+                  size="xlarge"
                   key={action.key}
                   onClick={handleClickAction(action.perform)}
                 >

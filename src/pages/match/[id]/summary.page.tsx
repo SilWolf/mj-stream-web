@@ -830,7 +830,7 @@ const MatchSummaryPage = ({
 
   return (
     <div
-      className="match-introduction fixed inset-0 text-white text-[36px]"
+      className="match-introduction absolute inset-0 text-white text-[36px]"
       style={{
         background:
           'linear-gradient(to bottom, rgb(30, 34, 59), rgb(16, 18, 33))',

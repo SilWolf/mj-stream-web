@@ -736,7 +736,7 @@ const RealtimeSummaryPage = ({
 
   return (
     <div
-      className="fixed inset-0"
+      className="absolute inset-0"
       style={{
         background:
           'linear-gradient(to bottom, rgb(30, 34, 59), rgb(16, 18, 33))',

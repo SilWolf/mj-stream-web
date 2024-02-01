@@ -150,7 +150,7 @@ const ControlNewMatch = ({ matchDTO }: Props) => {
     }
 
     await fb.push(`matchRounds`, matchRound)
-    await fb.set(`obs/1`, { matchId: matchDTO._id })
+    await fb.update(`obs/1`, { matchId: matchDTO._id })
   }, [
     matchDTO._id,
     matchDTO.name,

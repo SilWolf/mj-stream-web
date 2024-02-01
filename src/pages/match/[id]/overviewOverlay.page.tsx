@@ -88,7 +88,7 @@ const MatchOverviewOverlayPage = ({ params: { matchId } }: Props) => {
   }
 
   return (
-    <div className="fixed inset-0 grid grid-cols-8">
+    <div className="absolute inset-0 grid grid-cols-8">
       <div className="col-span-5">
         <PlayerHand player={players[0]} />
       </div>

@@ -78,7 +78,7 @@ const MatchForecastPage = ({ params: { matchId } }: Props) => {
 
   return (
     <div
-      className="fixed inset-0 text-white flex flex-col justify-center items-center"
+      className="absolute inset-0 text-white flex flex-col justify-center items-center"
       style={{
         background:
           'linear-gradient(to bottom, rgb(30, 34, 59), rgb(16, 18, 33))',
@@ -117,7 +117,7 @@ const MatchForecastPage = ({ params: { matchId } }: Props) => {
         </div>
       </div>
 
-      <div className="fixed bottom-[5vh] left-[10vw]">
+      <div className="absolute bottom-[5vh] left-[10vw]">
         <div>
           <img src="/images/homepage-qr.png" className="w-[8vw]" alt="" />
         </div>
