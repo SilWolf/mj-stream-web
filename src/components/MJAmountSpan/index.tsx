@@ -79,6 +79,9 @@ function MJAmountSpan({
 
         setTimeout(() => {
           setStoredValue(value)
+          if (ref.current) {
+            ref.current.innerText = Math.floor(value).toLocaleString('en-US')
+          }
         }, animationMs + msPerFrame)
       } else {
         setStoredValue(value)

@@ -9,7 +9,6 @@ import {
   getIsPlayerEast,
 } from '@/helpers/mahjong.helper'
 import MJPlayerCardDiv from '@/components/MJPlayerCardDiv'
-import OBSInstructionDiv from './components/OBSInstructionDiv'
 import MJHanFuTextSpecialSpan from '@/components/MJHanFuTextSpecialSpan'
 import MJReachAnimationDiv from '@/components/MJReachAnimationDiv'
 
