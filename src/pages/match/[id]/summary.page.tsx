@@ -655,7 +655,9 @@ const MatchSummaryPage = ({
       type: 'players',
       _id: 'players',
       teamPlayers: sortedTeamPlayers,
-      roundCount: exportedMatch.rounds?.length ?? 0,
+      roundCount:
+        exportedMatch.rounds?.filter((round) => round.type !== 'hotfix')
+          .length ?? 0,
       exhaustedRoundCount:
         exportedMatch.rounds?.filter((round) => round.type === 'exhausted')
           .length ?? 0,
