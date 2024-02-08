@@ -113,6 +113,13 @@ const useMatch = (matchId: string) => {
     [updateMatch]
   )
 
+  const setMatchHidePlayersDisplay = useCallback(
+    (newHidePlayers: Match['hidePlayers'] | null) => {
+      updateMatch({ hidePlayers: newHidePlayers })
+    },
+    [updateMatch]
+  )
+
   const setMatchRoundHasBroadcastedToTrue = useCallback(
     (matchRoundId: string) => {
       updateMatchRounds({
@@ -134,6 +141,7 @@ const useMatch = (matchId: string) => {
     setMatchPlayers,
     setMatchPointDisplay,
     setMatchHideHeaderDisplay,
+    setMatchHidePlayersDisplay,
     setMatchActiveResultDetail,
     setMatchRoundHasBroadcastedToTrue,
     setCurrentRoundDoras,

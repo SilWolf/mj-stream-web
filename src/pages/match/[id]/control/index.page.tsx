@@ -174,6 +174,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
     setMatchPlayers,
     setMatchPointDisplay,
     setMatchHideHeaderDisplay,
+    setMatchHidePlayersDisplay,
     setMatchActiveResultDetail,
     setMatchRoundHasBroadcastedToTrue,
   } = useMatch(matchId)
@@ -1186,6 +1187,14 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
     setMatchHideHeaderDisplay(false)
   }, [setMatchHideHeaderDisplay])
 
+  const handleClickHidePlayers = useCallback(() => {
+    setMatchHidePlayersDisplay(true)
+  }, [setMatchHidePlayersDisplay])
+
+  const handleClickShowPlayers = useCallback(() => {
+    setMatchHidePlayersDisplay(false)
+  }, [setMatchHidePlayersDisplay])
+
   if ((!match || !matchCurrentRound) && matchDTO) {
     return <ControlNewMatch matchDTO={matchDTO} />
   }
@@ -2037,6 +2046,22 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                 className="relative rounded-full py-2 px-4 shadow shadow-neutral-700 text-center bg-red-600 border border-red-500 leading-6 text-white"
               >
                 <i className="bi bi-eye-slash"></i> 標題：隱藏中
+              </button>
+            )}
+            {!match.hidePlayers && (
+              <button
+                onClick={handleClickHidePlayers}
+                className="relative rounded-full py-2 px-4 shadow shadow-neutral-700 text-center bg-neutral-200 border border-neutral-300 leading-6 text-neutral-600"
+              >
+                <i className="bi bi-people-fill"></i> 玩家：顯示中
+              </button>
+            )}
+            {match.hidePlayers && (
+              <button
+                onClick={handleClickShowPlayers}
+                className="relative rounded-full py-2 px-4 shadow shadow-neutral-700 text-center bg-red-600 border border-red-500 leading-6 text-white"
+              >
+                <i className="bi bi-people"></i> 玩家：隱藏中
               </button>
             )}
             {!match.showPoints && (

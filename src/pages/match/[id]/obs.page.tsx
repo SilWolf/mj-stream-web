@@ -173,8 +173,9 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
         <div
           className="absolute bottom-0 left-0 right-0 px-10 pb-6 grid grid-cols-4 items-end gap-x-8 text-white animate-[fadeInFromBottom_1s_ease-in-out]"
           style={{
-            opacity: match.activeResultDetail ? 0 : 1,
-            bottom: match.activeResultDetail ? '-150px' : 0,
+            opacity: match.activeResultDetail || match.hidePlayers ? 0 : 1,
+            bottom:
+              match.activeResultDetail || match.hidePlayers ? '-150px' : 0,
             transition: 'opacity 0.5s, bottom 0.5s',
           }}
         >

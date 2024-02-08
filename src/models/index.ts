@@ -37,6 +37,7 @@ export type Match = {
   } | null
   showPoints?: boolean | null
   hideHeader?: boolean | null
+  hidePlayers?: boolean | null
 }
 
 export type RawPlayer = {

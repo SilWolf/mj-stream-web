@@ -604,7 +604,7 @@ const MatchIntroductionPage = ({
 
   return (
     <div
-      className="match-introduction absolute inset-0 text-white text-[36px]"
+      className="match-introduction absolute inset-0 text-white text-[36px] -z-50 overflow-hidden"
       style={{
         background:
           'linear-gradient(to bottom, rgb(30, 34, 59), rgb(16, 18, 33))',
