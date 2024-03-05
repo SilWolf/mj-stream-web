@@ -121,11 +121,14 @@ export default function MJMatchExhaustedForm({
 
     for (let i = 0; i < playerIndexes.length; i += 1) {
       const currentPlayerIndex = playerIndexes[i]
+      newPreviewPlayerResults[currentPlayerIndex].type = playersChecked[
+        currentPlayerIndex
+      ]
+        ? PlayerResultWinnerOrLoserEnum.Win
+        : PlayerResultWinnerOrLoserEnum.Lose
 
       if (win && lose) {
         if (playersChecked[currentPlayerIndex]) {
-          newPreviewPlayerResults[currentPlayerIndex].type =
-            PlayerResultWinnerOrLoserEnum.Win
           if (
             currentMatchRound.playerResults[currentPlayerIndex].isRonDisallowed
           ) {
@@ -136,8 +139,6 @@ export default function MJMatchExhaustedForm({
             newPreviewPlayerResults[currentPlayerIndex].scoreChanges = [win]
           }
         } else {
-          newPreviewPlayerResults[currentPlayerIndex].type =
-            PlayerResultWinnerOrLoserEnum.Lose
           newPreviewPlayerResults[currentPlayerIndex].afterScore -= lose
           newPreviewPlayerResults[currentPlayerIndex].scoreChanges = [-lose]
         }
