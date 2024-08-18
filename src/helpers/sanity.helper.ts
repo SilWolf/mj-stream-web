@@ -204,9 +204,9 @@ export const apiGetPlayersForIntroduction = async (
 
 export const apiGetMatches = (): Promise<MatchDTO[]> => {
   return client
-    .fetch<DB_Match[]>(
-      `*[_type == "match" && !(_id in path("drafts.**")) && (status == "initialized" || status == "streaming")] | order(startAt asc)[0...10]{ _id, name, playerEast->{${TEAM_PLAYER_PROJECTION}}, playerSouth->{${TEAM_PLAYER_PROJECTION}}, playerWest->{${TEAM_PLAYER_PROJECTION}}, playerNorth->{${TEAM_PLAYER_PROJECTION}}, playerEastTeam->{${TEAM_PROJECTION}}, playerSouthTeam->{${TEAM_PROJECTION}}, playerWestTeam->{${TEAM_PROJECTION}}, playerNorthTeam->{${TEAM_PROJECTION}}, startAt, tournament->{_id, name, "logoUrl": logo.asset->url, startingScore, isManganRoundUp, yakuMax, yakumanMax}}`
-    )
+    .fetch<
+      DB_Match[]
+    >(`*[_type == "match" && !(_id in path("drafts.**")) && (status == "initialized" || status == "streaming")] | order(startAt asc)[0...10]{ _id, name, playerEast->{${TEAM_PLAYER_PROJECTION}}, playerSouth->{${TEAM_PLAYER_PROJECTION}}, playerWest->{${TEAM_PLAYER_PROJECTION}}, playerNorth->{${TEAM_PLAYER_PROJECTION}}, playerEastTeam->{${TEAM_PROJECTION}}, playerSouthTeam->{${TEAM_PROJECTION}}, playerWestTeam->{${TEAM_PROJECTION}}, playerNorthTeam->{${TEAM_PROJECTION}}, startAt, tournament->{_id, name, "logoUrl": logo.asset->url, startingScore, isManganRoundUp, yakuMax, yakumanMax}}`)
     .then((matches) =>
       matches.map((match) => {
         const {
@@ -275,9 +275,9 @@ export const apiGetMatchById = async (
   withStatistics?: boolean
 ): Promise<MatchDTO | undefined> => {
   const match = await client
-    .fetch<DB_Match[]>(
-      `*[_type == "match" && _id == "${matchId}"]{ _id, name, playerEast->{${TEAM_PLAYER_PROJECTION}}, playerSouth->{${TEAM_PLAYER_PROJECTION}}, playerWest->{${TEAM_PLAYER_PROJECTION}}, playerNorth->{${TEAM_PLAYER_PROJECTION}}, playerEastTeam->{${TEAM_PROJECTION}}, playerSouthTeam->{${TEAM_PROJECTION}}, playerWestTeam->{${TEAM_PROJECTION}}, playerNorthTeam->{${TEAM_PROJECTION}}, startAt, youtubeUrl, bilibiliUrl, result, rounds, tournament->{_id, name, "logoUrl": logo.asset->url, startingScore, isManganRoundUp, yakuMax, yakumanMax, teams[]{ "_id": team._ref, matchCount, ranking, point }}}`
-    )
+    .fetch<
+      DB_Match[]
+    >(`*[_type == "match" && _id == "${matchId}"]{ _id, name, playerEast->{${TEAM_PLAYER_PROJECTION}}, playerSouth->{${TEAM_PLAYER_PROJECTION}}, playerWest->{${TEAM_PLAYER_PROJECTION}}, playerNorth->{${TEAM_PLAYER_PROJECTION}}, playerEastTeam->{${TEAM_PROJECTION}}, playerSouthTeam->{${TEAM_PROJECTION}}, playerWestTeam->{${TEAM_PROJECTION}}, playerNorthTeam->{${TEAM_PROJECTION}}, startAt, youtubeUrl, bilibiliUrl, result, rounds, tournament->{_id, name, "logoUrl": logo.asset->url, startingScore, isManganRoundUp, yakuMax, yakumanMax, teams[]{ "_id": team._ref, matchCount, ranking, point }}}`)
     .then((matches: DB_Match[]) => {
       const {
         playerEast,
@@ -386,13 +386,9 @@ export const getStatisticsByPlayerIds = async (
   tournamentId: string
 ) =>
   client
-    .fetch<{ _id: string; statistics: DB_PlayerStatistics }[]>(
-      `*[_type=="player" && _id in [${playerIds
-        .map((playerId) => `"${playerId}"`)
-        .join(
-          ','
-        )}]]{ _id, "statistics": statistics[_key=="${tournamentId}"][0] }`
-    )
+    .fetch<
+      { _id: string; statistics: DB_PlayerStatistics }[]
+    >(`*[_type=="player" && _id in [${playerIds.map((playerId) => `"${playerId}"`).join(',')}]]{ _id, "statistics": statistics[_key=="${tournamentId}"][0] }`)
     .then((thisResult) =>
       thisResult.reduce(
         (prev, player) => {
@@ -661,10 +657,8 @@ export const apiGetTeamPlayersOfTournament = async (tournamentId: string) => {
       teamId: string
     })[]
   >(
-    `*[_type=="teamPlayer" && !(_id in path("drafts.**")) && defined(player->statistics[_key=="${tournamentId}"])]{"teamId": team._ref, player->{${PLAYER_PROJECTION}, "statistics": statistics[_key=="${tournamentId}"][0]}, overridedDesignation, overridedName, overridedNickname, "overridedColor": overridedColor.hex, "overridedPortraitImage": overridedPortraitImage.asset->url}`
+    `*[_type=="teamPlayer" && !(_id in path("drafts.**")) && count(player->statistics[_key=="${tournamentId}"]) > 0]{"teamId": team._ref, player->{${PLAYER_PROJECTION}, "statistics": statistics[_key=="${tournamentId}"][0]}, overridedDesignation, overridedName, overridedNickname, "overridedColor": overridedColor.hex, "overridedPortraitImage": overridedPortraitImage.asset->url}`
   )
 
   return teamPlayers
 }
-
-apiGetTournament('b6908027-9179-485a-8bce-822c42114371')

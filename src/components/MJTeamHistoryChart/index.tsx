@@ -27,9 +27,9 @@ function MJTeamHistoryChart({ teams }: Props) {
       )
 
     for (const team of teams) {
-      result[0][team.team._id] = 0
+      // result[0][team.team._id] = 0
       for (let i = 0; i < count; i++) {
-        result[i + 1][team.team._id] = team.pointHistories[i]
+        result[i][team.team._id] = team.pointHistories[i]
       }
     }
 

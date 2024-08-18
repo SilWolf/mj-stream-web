@@ -470,7 +470,7 @@ const MatchSummarySlide = ({
               </p>
               <p className="flex-1 text-right">
                 {team.newResult?.matchCount || team.matchCount}
-                <span className="text-[0.75em]">/60</span>
+                <span className="text-[0.75em]">/24</span>
               </p>
             </div>
           ))}
