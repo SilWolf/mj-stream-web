@@ -475,7 +475,7 @@ const MatchIntroductionPage = ({
     queryFn: () =>
       apiGetPlayersForIntroduction(
         teamIds as string[],
-        matchDTO?.tournament._id as string
+        '27a1a61b-4829-4371-8fbe-15cbef1bfcee'
       ),
     enabled: !!matchDTO && !!teamIds,
   })

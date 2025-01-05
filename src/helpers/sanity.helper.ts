@@ -188,6 +188,8 @@ export const apiGetPlayersForIntroduction = async (
       )}]] | { "teamId": team._ref, player->{${PLAYER_PROJECTION}, "statistics": statistics[_key=="${tournamentId}"][0] } }`
   )
 
+  console.log(teamPlayers)
+
   const result: Record<string, TeamPlayerDTO[]> = {}
 
   for (let i = 0; i < teamPlayers.length; i++) {
@@ -272,7 +274,8 @@ export const apiGetMatches = (): Promise<MatchDTO[]> => {
 
 export const apiGetMatchById = async (
   matchId: string,
-  withStatistics?: boolean
+  withStatistics?: boolean,
+  statisticTournamentId?: string
 ): Promise<MatchDTO | undefined> => {
   const match = await client
     .fetch<
@@ -348,7 +351,7 @@ export const apiGetMatchById = async (
     if (playerIds.length > 0) {
       const playerStatisticMap = await getStatisticsByPlayerIds(
         playerIds,
-        match.tournament._id
+        statisticTournamentId || match.tournament._id
       )
       match.playerEast.playerStatistic =
         playerStatisticMap[match.playerEast.playerId]

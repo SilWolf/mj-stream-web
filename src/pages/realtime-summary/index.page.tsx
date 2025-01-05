@@ -76,7 +76,7 @@ type Slide =
       subslide: 1 | 2
     }
 
-const TOURNAMENT_ID = '4e6f9a24-9e8a-4816-ae4c-b75ca16a7540'
+const TOURNAMENT_ID = '27a1a61b-4829-4371-8fbe-15cbef1bfcee'
 
 const sortPlayersAndConvertToTeamPlayerDTOByKey = (
   teamPlayers: Awaited<ReturnType<typeof apiGetTeamPlayersOfTournament>>,
@@ -170,7 +170,7 @@ const TournamentDetailSlide = ({
             </p>
             <p className="flex-1 text-center">
               {team.matchCount}
-              <span className="text-[0.75em]">/24</span>
+              <span className="text-[0.75em]">/16</span>
             </p>
           </div>
         ))}
@@ -408,7 +408,7 @@ const TournamentDetailSlide = ({
             代表高分、
             <span className="bg-red-500 px-1">紅色</span>代表低分
           </p>
-          <div className="grid grid-cols-6 flex-1 text-center text-[.8em]">
+          <div className="grid grid-cols-4 flex-1 text-center text-[.8em]">
             {slide.teams.map((team, teamIndex) => (
               <div
                 className="h-20 twr-heatmap-cell"
