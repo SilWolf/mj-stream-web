@@ -61,7 +61,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <FirebaseDatabaseProvider>
         <ConfirmDialogProvider>
           <Switch>
-            <Route path="/v1/" component={IndexPage} />
+            <Route path="/v1" component={IndexPage} />
             <Route path="/v1/match/:matchId" component={MatchDetailPage} />
             <Route path="/v1/match/:matchId/obs" component={MatchOBSPage} />
             <Route
