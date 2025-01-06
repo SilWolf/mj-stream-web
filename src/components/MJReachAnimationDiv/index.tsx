@@ -1,11 +1,11 @@
-import { Player } from '@/models'
+import { RealtimePlayer } from '@/models'
 
 const MJReachAnimationDiv = ({
   active,
   color = '#000000',
-  largeTeamPicUrl,
+  largeLogoUrl,
 }: {
-  largeTeamPicUrl: Player['largeTeamPicUrl']
+  largeLogoUrl: RealtimePlayer['largeLogoUrl']
   color: string | null
   active: boolean
 }) => {
@@ -28,7 +28,7 @@ const MJReachAnimationDiv = ({
           ></div>
           <div
             className="reach-animation-logo"
-            style={{ backgroundImage: `url("${largeTeamPicUrl}")` }}
+            style={{ backgroundImage: `url("${largeLogoUrl}")` }}
           ></div>
           <div
             className="reach-animation-bar"

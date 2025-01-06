@@ -10,26 +10,26 @@ type Props = {
 }
 
 const MatchStatPage = ({ params: { matchId } }: Props) => {
-  const { match, matchRounds } = useRealtimeMatch(matchId)
+  const { rtMatch, rtMatchRounds } = useRealtimeMatch(matchId)
 
   const matchRoundsWithDetail = useMemo(
     () =>
-      Object.entries(matchRounds ?? {})
+      Object.entries(rtMatchRounds ?? {})
         .filter(([, matchRound]) => !!matchRound.resultDetail)
         .map(([matchRoundId, matchRound]) => ({
           id: matchRoundId,
           ...matchRound,
         })) ?? [],
-    [matchRounds]
+    [rtMatchRounds]
   )
 
-  if (!match || !matchRounds) {
+  if (!rtMatch || !rtMatchRounds) {
     return <></>
   }
 
   return (
     <div className="container mx-auto my-8 px-8 space-y-8">
-      <h1 className="text-4xl text-center">{match.name}</h1>
+      <h1 className="text-4xl text-center">{rtMatch.name}</h1>
 
       <div className="space-y-6">
         <h4 className="text-3xl">
@@ -40,8 +40,8 @@ const MatchStatPage = ({ params: { matchId } }: Props) => {
         </h4>
 
         <MJMatchHistoryTable
-          players={match.players}
-          matchRounds={matchRounds ?? {}}
+          players={rtMatch.players}
+          matchRounds={rtMatchRounds ?? {}}
           className="w-full table-auto"
         />
       </div>
@@ -73,13 +73,14 @@ const MatchStatPage = ({ params: { matchId } }: Props) => {
                   className="text-center py-1"
                   style={{
                     background:
-                      match.players[matchRound.resultDetail!.winnerPlayerIndex]
-                        .color,
+                      rtMatch.players[
+                        matchRound.resultDetail!.winnerPlayerIndex
+                      ].color,
                   }}
                 >
                   {
-                    match.players[matchRound.resultDetail!.winnerPlayerIndex]
-                      .name
+                    rtMatch.players[matchRound.resultDetail!.winnerPlayerIndex]
+                      .primaryName
                   }
                 </td>
                 <td className="text-center py-1 text-xl">
@@ -109,7 +110,7 @@ const MatchStatPage = ({ params: { matchId } }: Props) => {
                       han={matchRound.resultDetail!.han}
                       fu={matchRound.resultDetail!.fu}
                       yakumanCount={matchRound.resultDetail!.yakumanCount}
-                      isManganRoundUp={match.setting.isManganRoundUp === '1'}
+                      isManganRoundUp={rtMatch.setting.isManganRoundUp === '1'}
                     />
                   </p>
                 </td>

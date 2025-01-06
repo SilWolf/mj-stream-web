@@ -161,7 +161,7 @@ const MJPlayersForm = ({ defaultPlayers, onSubmit }: Props) => {
                                 className="aspect-[18/25] w-full cursor-pointer"
                                 src={imageUrls[2 * index] as string}
                                 onClick={handleClickImage}
-                                data-type="proPicUrl"
+                                data-type="propicUrl"
                                 data-index={index}
                                 alt=""
                               />

@@ -7,6 +7,7 @@ import {
   Player,
   RealtimeMatch,
   RealtimeMatchRound,
+  RealtimePlayer,
   Team,
 } from '@/models'
 import { useFirebaseDatabase } from '@/providers/firebaseDatabase.provider'
@@ -26,16 +27,14 @@ const DBTeamPlayerDiv = ({
   if (!team || !player) {
     return <></>
   }
+
+  const realtimePlayer: RealtimePlayer = convertDbTeamPlayerToRealtimePlayer(
+    team,
+    player
+  )
+
   return (
-    <MJPlayerCardDiv
-      primaryName={player.name!}
-      secondaryName={team.name!}
-      nickname={player.nickname!}
-      logoUrl={team.squareLogoImage}
-      propicUrl={player.portraitImage}
-      color={team.color}
-      score={25000}
-    />
+    <MJPlayerCardDiv player={realtimePlayer} playerIndex="0" score={25000} />
   )
 }
 

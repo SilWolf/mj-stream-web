@@ -12,10 +12,14 @@ type Props = {
 }
 
 export default function MatchControlPage({ params: { matchId } }: Props) {
-  const { match, matchRounds, matchCurrentRound, matchCurrentRoundDoras } =
-    useRealtimeMatch(matchId)
+  const {
+    rtMatch,
+    rtMatchRounds,
+    rtMatchCurrentRound,
+    rtMatchCurrentRoundDoras,
+  } = useRealtimeMatch(matchId)
 
-  if (!match || !matchCurrentRound) {
+  if (!rtMatch || !rtMatchCurrentRound) {
     return <div>對局讀取失敗。</div>
   }
 
@@ -26,7 +30,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
           <div className="shrink-0 rounded-[1rem] bg-black bg-opacity-50 p-2 flex items-stretch gap-x-4">
             <div className="text-[2.5rem] leading-none border-[.25rem] rounded-[.75rem] pb-[0.3em] pt-[0.2em] px-4 border-current flex items-center justify-center">
               <MJMatchCounterSpan
-                roundCount={matchCurrentRound.roundCount}
+                roundCount={rtMatchCurrentRound.roundCount}
                 max={8}
               />
             </div>
@@ -39,7 +43,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                     className="h-4"
                   />
                 </div>
-                <div>{matchCurrentRound.extendedRoundCount ?? 0}</div>
+                <div>{rtMatchCurrentRound.extendedRoundCount ?? 0}</div>
               </div>
               <div className="flex-1 flex flex-row items-center gap-x-2">
                 <div className="flex-1">
@@ -49,11 +53,11 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                     className="h-4"
                   />
                 </div>
-                <div>{matchCurrentRound.cumulatedThousands ?? 0}</div>
+                <div>{rtMatchCurrentRound.cumulatedThousands ?? 0}</div>
               </div>
             </div>
             <div className="flex items-center gap-x-2">
-              {matchCurrentRoundDoras.map((dora, index) => (
+              {rtMatchCurrentRoundDoras.map((dora, index) => (
                 <MJTileDiv
                   key={dora}
                   className="w-9 cursor-pointer"
@@ -72,18 +76,22 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
             <div className="flex gap-x-2 items-center">
               <div className="flex-1 text-[2.5rem]">
                 <MJPlayerCardDiv
-                  player={match.players[index]}
-                  score={matchCurrentRound.playerResults[index].beforeScore}
+                  player={rtMatch.players[index]}
+                  playerIndex="0"
+                  score={rtMatchCurrentRound.playerResults[index].beforeScore}
                   scoreChanges={
-                    matchCurrentRound.playerResults[index].prevScoreChanges
+                    rtMatchCurrentRound.playerResults[index].prevScoreChanges
                   }
-                  isEast={getIsPlayerEast(index, matchCurrentRound.roundCount)}
-                  isRiichi={matchCurrentRound.playerResults[index].isRiichi}
+                  isEast={getIsPlayerEast(
+                    index,
+                    rtMatchCurrentRound.roundCount
+                  )}
+                  isRiichi={rtMatchCurrentRound.playerResults[index].isRiichi}
                   isYellowCarded={
-                    matchCurrentRound.playerResults[index].isYellowCarded
+                    rtMatchCurrentRound.playerResults[index].isYellowCarded
                   }
                   isRedCarded={
-                    matchCurrentRound.playerResults[index].isRedCarded
+                    rtMatchCurrentRound.playerResults[index].isRedCarded
                   }
                 />
               </div>
@@ -92,8 +100,8 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         </div>
 
         <MJMatchHistoryTable
-          players={match.players}
-          matchRounds={matchRounds}
+          players={rtMatch.players}
+          matchRounds={rtMatchRounds}
           className="w-full table-auto"
         />
       </div>

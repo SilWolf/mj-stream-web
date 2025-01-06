@@ -9,24 +9,25 @@ type Props = {
 }
 
 export default function MatchExportPage({ params: { matchId } }: Props) {
-  const { match, matchRounds, matchCurrentRound } = useRealtimeMatch(matchId)
+  const { rtMatch, rtMatchRounds, rtMatchCurrentRound } =
+    useRealtimeMatch(matchId)
 
   const [isExported, setIsExported] = useState<boolean>(false)
   const [isExporting, setIsExporting] = useState<boolean>(false)
 
   const handleClickExport = useCallback(() => {
-    if (!match || !matchRounds) {
+    if (!rtMatch || !rtMatchRounds) {
       return
     }
 
     const exportedMatch = {
       _id: matchId,
-      ...convertMatchToExportedMatch(Object.values(matchRounds)),
+      ...convertMatchToExportedMatch(Object.values(rtMatchRounds)),
     }
 
     setIsExporting(true)
     fetch(
-      `${import.meta.env.VITE_HOMEPAGE_HOST}/api/match/${
+      `${import.meta.env.VITE_HOMEPAGE_HOST}/api/rtMatch/${
         exportedMatch._id
       }/result`,
       {
@@ -41,9 +42,9 @@ export default function MatchExportPage({ params: { matchId } }: Props) {
       setIsExporting(false)
       alert('上傳完畢，請在資料庫上查看。')
     })
-  }, [match, matchId, matchRounds])
+  }, [rtMatch, matchId, rtMatchRounds])
 
-  if (!match || !matchCurrentRound) {
+  if (!rtMatch || !rtMatchCurrentRound) {
     return <div>對局讀取失敗。</div>
   }
 
@@ -52,12 +53,12 @@ export default function MatchExportPage({ params: { matchId } }: Props) {
       <div className="container mx-auto my-8 px-8 space-y-6">
         <div>
           <h6 className="text-center text-sm">{matchId}</h6>
-          <h3 className="text-2xl text-center">{match.name}</h3>
+          <h3 className="text-2xl text-center">{rtMatch.name}</h3>
         </div>
 
         <MJMatchHistoryTable
-          players={match.players}
-          matchRounds={matchRounds}
+          players={rtMatch.players}
+          matchRounds={rtMatchRounds}
           className="w-full table-auto"
         />
 

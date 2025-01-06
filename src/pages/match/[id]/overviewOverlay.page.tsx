@@ -1,12 +1,12 @@
 import { getIsPlayerEast } from '@/helpers/mahjong.helper'
 import useRealtimeMatch from '@/hooks/useRealtimeMatch'
-import { Player, PlayerIndex, PlayerResult } from '@/models'
+import { RealtimePlayer, PlayerIndex, PlayerResult } from '@/models'
 import { useMemo } from 'react'
 
 const PlayerHand = ({
   player,
 }: {
-  player: Player & { currentStatus: PlayerResult }
+  player: RealtimePlayer & { currentStatus: PlayerResult }
 }) => {
   return (
     <div
@@ -22,7 +22,7 @@ const PlayerHand = ({
         }}
       >
         <p>
-          {player.name} ({player.nickname})
+          {player.primaryName} ({player.nickname})
         </p>
         <p>{player.currentStatus.afterScore}</p>
       </div>
@@ -35,10 +35,10 @@ type Props = {
 }
 
 const MatchOverviewOverlayPage = ({ params: { matchId } }: Props) => {
-  const { match, matchCurrentRound } = useRealtimeMatch(matchId)
+  const { rtMatch, rtMatchCurrentRound } = useRealtimeMatch(matchId)
 
   const players = useMemo(() => {
-    if (!match || !matchCurrentRound) {
+    if (!rtMatch || !rtMatchCurrentRound) {
       return []
     }
 
@@ -49,7 +49,7 @@ const MatchOverviewOverlayPage = ({ params: { matchId } }: Props) => {
       { ranking: 4, point: -30.0 },
     ]
 
-    const playersRanking = Object.entries(matchCurrentRound.playerResults)
+    const playersRanking = Object.entries(rtMatchCurrentRound.playerResults)
       .map(([key, value]) => ({
         playerIndex: key,
         score: value.afterScore,
@@ -73,17 +73,17 @@ const MatchOverviewOverlayPage = ({ params: { matchId } }: Props) => {
       )
 
     return (['0', '1', '2', '3'] as PlayerIndex[]).map((index) => ({
-      ...match.players[index],
-      color: match.players[index].color,
+      ...rtMatch.players[index],
+      color: rtMatch.players[index].color,
       currentStatus: {
-        ...matchCurrentRound.playerResults[index],
-        isEast: getIsPlayerEast(index, matchCurrentRound.roundCount),
+        ...rtMatchCurrentRound.playerResults[index],
+        isEast: getIsPlayerEast(index, rtMatchCurrentRound.roundCount),
         ...playersRanking[index],
       },
     }))
-  }, [match, matchCurrentRound])
+  }, [rtMatch, rtMatchCurrentRound])
 
-  if (!match || players.length === 0) {
+  if (!rtMatch || players.length === 0) {
     return <></>
   }
 

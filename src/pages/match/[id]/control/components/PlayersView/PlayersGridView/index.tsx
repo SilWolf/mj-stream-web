@@ -54,17 +54,17 @@ const PlayersGridView = ({
               >
                 <img
                   className="w-8 h-8 inline-block"
-                  src={players[order[0]].teamPicUrl as string}
-                  alt={players[order[0]].title}
+                  src={players[order[0]].logoUrl as string}
+                  alt={players[order[0]].primaryName}
                 />
                 <img
                   className="w-[1.44rem] h-8 inline-block"
-                  src={players[order[0]].proPicUrl as string}
-                  alt={players[order[0]].name}
+                  src={players[order[0]].propicUrl as string}
+                  alt={players[order[0]].primaryName}
                 />
                 <div className="inline-block align-middle">
-                  <p>{players[order[0]].title}</p>
-                  <p>{players[order[0]].name}</p>
+                  <p>{players[order[0]].secondaryName}</p>
+                  <p>{players[order[0]].primaryName}</p>
                 </div>
               </td>
               <td
@@ -235,17 +235,17 @@ const PlayersGridView = ({
               >
                 <img
                   className="w-8 h-8 inline-block"
-                  src={players[order[1]].teamPicUrl as string}
-                  alt={players[order[1]].title}
+                  src={players[order[1]].logoUrl as string}
+                  alt={players[order[1]].secondaryName}
                 />
                 <img
                   className="w-[1.44rem] h-8 inline-block"
-                  src={players[order[1]].proPicUrl as string}
-                  alt={players[order[1]].name}
+                  src={players[order[1]].propicUrl as string}
+                  alt={players[order[1]].primaryName}
                 />
                 <div className="inline-block align-middle">
-                  <p>{players[order[1]].title}</p>
-                  <p>{players[order[1]].name}</p>
+                  <p>{players[order[1]].secondaryName}</p>
+                  <p>{players[order[1]].primaryName}</p>
                 </div>
               </td>
               <td
@@ -565,17 +565,17 @@ const PlayersGridView = ({
               >
                 <img
                   className="w-8 h-8 inline-block"
-                  src={players[order[2]].teamPicUrl as string}
-                  alt={players[order[2]].title}
+                  src={players[order[2]].logoUrl as string}
+                  alt={players[order[2]].secondaryName}
                 />
                 <img
                   className="w-[1.44rem] h-8 inline-block"
-                  src={players[order[2]].proPicUrl as string}
-                  alt={players[order[2]].name}
+                  src={players[order[2]].propicUrl as string}
+                  alt={players[order[2]].primaryName}
                 />
                 <div className="inline-block align-middle">
-                  <p>{players[order[2]].title}</p>
-                  <p>{players[order[2]].name}</p>
+                  <p>{players[order[2]].secondaryName}</p>
+                  <p>{players[order[2]].primaryName}</p>
                 </div>
               </td>
               <td
@@ -746,17 +746,17 @@ const PlayersGridView = ({
               >
                 <img
                   className="w-8 h-8 inline-block"
-                  src={players[order[3]].teamPicUrl as string}
-                  alt={players[order[3]].title}
+                  src={players[order[3]].logoUrl as string}
+                  alt={players[order[3]].secondaryName}
                 />
                 <img
                   className="w-[1.44rem] h-8 inline-block"
-                  src={players[order[3]].proPicUrl as string}
-                  alt={players[order[3]].name}
+                  src={players[order[3]].propicUrl as string}
+                  alt={players[order[3]].primaryName}
                 />
                 <div className="inline-block align-middle">
-                  <p>{players[order[3]].title}</p>
-                  <p>{players[order[3]].name}</p>
+                  <p>{players[order[3]].secondaryName}</p>
+                  <p>{players[order[3]].primaryName}</p>
                 </div>
               </td>
               <td

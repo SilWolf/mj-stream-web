@@ -8,7 +8,7 @@ const MatchNameplateNarrow = ({
   team,
   player,
 }: {
-  team: Team
+  team: Omit<Team, 'players'>
   player: Player
 }) => {
   const lightenedColor = useMemo(
@@ -89,7 +89,13 @@ const MatchNameplateNarrow = ({
   )
 }
 
-const MatchNameplate = ({ team, player }: { team: Team; player: Player }) => {
+const MatchNameplate = ({
+  team,
+  player,
+}: {
+  team: Omit<Team, 'players'>
+  player: Player
+}) => {
   const lightenedColor = useMemo(
     () => getLightColorOfColor(team.color),
     [team.color]

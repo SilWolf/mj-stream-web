@@ -9,9 +9,11 @@ type Props = {
 export default function ObsChartPage({ params: { obsRoomId } }: Props) {
   const { data: obsInfo } = useFirebaseDatabaseByKey<string>(`obs/${obsRoomId}`)
 
-  const { match, matchCurrentRound } = useRealtimeMatch(obsInfo?.matchId ?? '')
+  const { rtMatch, rtMatchCurrentRound } = useRealtimeMatch(
+    obsInfo?.matchId ?? ''
+  )
 
-  if (!match || !matchCurrentRound) {
+  if (!rtMatch || !rtMatchCurrentRound) {
     return <div>對局讀取失敗。</div>
   }
 

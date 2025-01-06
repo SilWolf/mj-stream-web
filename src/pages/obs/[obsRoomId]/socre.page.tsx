@@ -10,11 +10,11 @@ type Props = {
 export default function ObsScorePage({ params: { obsRoomId } }: Props) {
   const { data: obsInfo } = useFirebaseDatabaseByKey<string>(`obs/${obsRoomId}`)
 
-  const { match, matchRounds, matchCurrentRound } = useRealtimeMatch(
+  const { rtMatch, rtMatchRounds, rtMatchCurrentRound } = useRealtimeMatch(
     obsInfo?.matchId ?? ''
   )
 
-  if (!match || !matchCurrentRound) {
+  if (!rtMatch || !rtMatchCurrentRound) {
     return <div>對局讀取失敗。</div>
   }
 
@@ -22,8 +22,8 @@ export default function ObsScorePage({ params: { obsRoomId } }: Props) {
     <div>
       <div className="container mx-auto my-8 px-8 space-y-6">
         <MJMatchHistoryTable
-          players={match.players}
-          matchRounds={matchRounds}
+          players={rtMatch.players}
+          matchRounds={rtMatchRounds}
           className="w-full table-auto"
         />
       </div>

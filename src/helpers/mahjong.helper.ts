@@ -1,5 +1,5 @@
 import {
-  MatchRound,
+  RealtimeMatchRound,
   PlayerIndex,
   PlayerPositionEnum,
   PlayerResult,
@@ -512,7 +512,7 @@ export class MahjongRenderer {
   }
 }
 
-export const mapRoundType: Record<MatchRound['resultType'], string> = {
+export const mapRoundType: Record<RealtimeMatchRound['resultType'], string> = {
   [RoundResultTypeEnum.Ron]: 'ron',
   [RoundResultTypeEnum.SelfDrawn]: 'tsumo',
   [RoundResultTypeEnum.Exhausted]: 'exhausted',

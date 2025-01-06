@@ -41,20 +41,20 @@ type Props = {
 }
 
 const MatchForecastPage = ({ params: { matchId } }: Props) => {
-  const { data: matchDTO } = useDbMatch(matchId)
+  const { data: match } = useDbMatch(matchId)
 
-  const players = useMemo(() => {
-    if (!matchDTO) {
+  const teams = useMemo(() => {
+    if (!match) {
       return []
     }
 
     return [
-      matchDTO[matchDTO._order[0]],
-      matchDTO[matchDTO._order[1]],
-      matchDTO[matchDTO._order[2]],
-      matchDTO[matchDTO._order[3]],
+      match.playerEastTeam,
+      match.playerSouthTeam,
+      match.playerWestTeam,
+      match.playerNorthTeam,
     ]
-  }, [matchDTO])
+  }, [match])
 
   const startAt = useSearchParam('startAt')
   const m = useSearchParam('m')
@@ -107,10 +107,10 @@ const MatchForecastPage = ({ params: { matchId } }: Props) => {
             </p>
           </div>
           <div className="grid grid-cols-2 gap-[2vw]">
-            {players.map((player) => (
+            {teams.map((team) => (
               <img
                 className="w-[16vw] aspect-square"
-                src={player.teamLogoImageUrl + '?w=500&h=500'}
+                src={team?.squareLogoImage + '?w=500&h=500'}
               />
             ))}
           </div>

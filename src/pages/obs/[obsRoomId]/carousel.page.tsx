@@ -10,7 +10,7 @@ type Props = {
 export default function ObsCarouselPage({ params: { obsRoomId } }: Props) {
   const { data: obsInfo } = useFirebaseDatabaseByKey<string>(`obs/${obsRoomId}`)
 
-  const { match, matchRounds, matchCurrentRound } = useRealtimeMatch(
+  const { rtMatch, rtMatchRounds, rtMatchCurrentRound } = useRealtimeMatch(
     obsInfo?.matchId ?? ''
   )
 
@@ -27,7 +27,7 @@ export default function ObsCarouselPage({ params: { obsRoomId } }: Props) {
     }
   }, [])
 
-  if (!match || !matchCurrentRound) {
+  if (!rtMatch || !rtMatchCurrentRound) {
     return <div>對局讀取失敗。</div>
   }
 
@@ -35,8 +35,8 @@ export default function ObsCarouselPage({ params: { obsRoomId } }: Props) {
     <div>
       <div className={screen === 0 ? 'block' : 'hidden'}>
         <MJMatchHistoryTable
-          players={match.players}
-          matchRounds={matchRounds}
+          players={rtMatch.players}
+          matchRounds={rtMatchRounds}
           className="w-full table-auto"
         />
       </div>
