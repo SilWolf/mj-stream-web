@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import useMatch from '@/hooks/useMatch'
+import useRealtimeMatch from '@/hooks/useRealtimeMatch'
 import MJMatchHistoryTable from '@/components/MJMatchHistoryTable'
 import { useFirebaseDatabaseByKey } from '@/providers/firebaseDatabase.provider'
 
@@ -10,7 +10,7 @@ type Props = {
 export default function ObsCarouselPage({ params: { obsRoomId } }: Props) {
   const { data: obsInfo } = useFirebaseDatabaseByKey<string>(`obs/${obsRoomId}`)
 
-  const { match, matchRounds, matchCurrentRound } = useMatch(
+  const { match, matchRounds, matchCurrentRound } = useRealtimeMatch(
     obsInfo?.matchId ?? ''
   )
 

@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react'
-import useMatch from '@/hooks/useMatch'
+import useRealtimeMatch from '@/hooks/useRealtimeMatch'
 import { convertMatchToExportedMatch } from '@/helpers/mahjong.helper'
 import MJMatchHistoryTable from '@/components/MJMatchHistoryTable'
 import MJUIButton from '@/components/MJUI/MJUIButton'
@@ -9,7 +9,7 @@ type Props = {
 }
 
 export default function MatchExportPage({ params: { matchId } }: Props) {
-  const { match, matchRounds, matchCurrentRound } = useMatch(matchId)
+  const { match, matchRounds, matchCurrentRound } = useRealtimeMatch(matchId)
 
   const [isExported, setIsExported] = useState<boolean>(false)
   const [isExporting, setIsExporting] = useState<boolean>(false)

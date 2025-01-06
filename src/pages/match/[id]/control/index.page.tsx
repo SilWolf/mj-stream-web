@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import React, { MouseEvent, useCallback, useMemo, useState } from 'react'
-import useMatch from '@/hooks/useMatch'
+import useRealtimeMatch from '@/hooks/useRealtimeMatch'
 import {
   RealtimeMatch,
   RealtimeMatchRound,
@@ -177,7 +177,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
     setMatchHidePlayersDisplay,
     setMatchActiveResultDetail,
     setMatchRoundHasBroadcastedToTrue,
-  } = useMatch(matchId)
+  } = useRealtimeMatch(matchId)
 
   const matchRoundsWithDetail = useMemo(
     () =>
@@ -1209,9 +1209,6 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
   const handleClickShowPlayers = useCallback(() => {
     setMatchHidePlayersDisplay(false)
   }, [setMatchHidePlayersDisplay])
-
-  console.log(rtMatch)
-  console.log(rtMatchCurrentRound)
 
   if ((!rtMatch || !rtMatchCurrentRound) && match) {
     return <ControlNewMatch match={match} />

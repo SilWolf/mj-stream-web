@@ -2,7 +2,7 @@ import MJAmountSpan from '@/components/MJAmountSpan'
 import MJHanFuTextSpan from '@/components/MJHanFuTextSpan'
 import MJMatchCounterSpan from '@/components/MJMatchCounterSpan'
 import MJMatchHistoryTable from '@/components/MJMatchHistoryTable'
-import useMatch from '@/hooks/useMatch'
+import useRealtimeMatch from '@/hooks/useRealtimeMatch'
 import { useMemo } from 'react'
 
 type Props = {
@@ -10,7 +10,7 @@ type Props = {
 }
 
 const MatchStatPage = ({ params: { matchId } }: Props) => {
-  const { match, matchRounds } = useMatch(matchId)
+  const { match, matchRounds } = useRealtimeMatch(matchId)
 
   const matchRoundsWithDetail = useMemo(
     () =>

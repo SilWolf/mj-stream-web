@@ -178,8 +178,6 @@ const MatchNameplatesPage = () => {
     return <></>
   }
 
-  console.log(tournamentTeams)
-
   // return (
   //   <>
   //     {tournamentTeams.map(({ team, players }) => (

@@ -1,5 +1,5 @@
 import React from 'react'
-import useMatch from '@/hooks/useMatch'
+import useRealtimeMatch from '@/hooks/useRealtimeMatch'
 import { PlayerIndex } from '@/models'
 import { getIsPlayerEast } from '@/helpers/mahjong.helper'
 import MJPlayerCardDiv from '@/components/MJPlayerCardDiv'
@@ -13,7 +13,7 @@ type Props = {
 
 export default function MatchControlPage({ params: { matchId } }: Props) {
   const { match, matchRounds, matchCurrentRound, matchCurrentRoundDoras } =
-    useMatch(matchId)
+    useRealtimeMatch(matchId)
 
   if (!match || !matchCurrentRound) {
     return <div>對局讀取失敗。</div>

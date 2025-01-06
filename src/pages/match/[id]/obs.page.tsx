@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import MJMatchCounterSpan from '@/components/MJMatchCounterSpan'
 import MJTileDiv from '@/components/MJTileDiv'
-import useMatch from '@/hooks/useMatch'
+import useRealtimeMatch from '@/hooks/useRealtimeMatch'
 
 import { PlayerIndex, RoundResultTypeEnum } from '@/models'
 import {
@@ -17,7 +17,8 @@ type Props = {
 }
 
 export default function MatchDetailPage({ params: { matchId } }: Props) {
-  const { match, matchCurrentRound, matchCurrentRoundDoras } = useMatch(matchId)
+  const { match, matchCurrentRound, matchCurrentRoundDoras } =
+    useRealtimeMatch(matchId)
 
   const players = useMemo(() => {
     if (!match || !matchCurrentRound) {

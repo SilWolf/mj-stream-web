@@ -1,5 +1,5 @@
 import React from 'react'
-import useMatch from '@/hooks/useMatch'
+import useRealtimeMatch from '@/hooks/useRealtimeMatch'
 import { useFirebaseDatabaseByKey } from '@/providers/firebaseDatabase.provider'
 
 type Props = {
@@ -9,7 +9,7 @@ type Props = {
 export default function ObsChartPage({ params: { obsRoomId } }: Props) {
   const { data: obsInfo } = useFirebaseDatabaseByKey<string>(`obs/${obsRoomId}`)
 
-  const { match, matchCurrentRound } = useMatch(obsInfo?.matchId ?? '')
+  const { match, matchCurrentRound } = useRealtimeMatch(obsInfo?.matchId ?? '')
 
   if (!match || !matchCurrentRound) {
     return <div>對局讀取失敗。</div>

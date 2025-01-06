@@ -1,5 +1,5 @@
 import { getIsPlayerEast } from '@/helpers/mahjong.helper'
-import useMatch from '@/hooks/useMatch'
+import useRealtimeMatch from '@/hooks/useRealtimeMatch'
 import { Player, PlayerIndex, PlayerResult } from '@/models'
 import { useMemo } from 'react'
 
@@ -35,7 +35,7 @@ type Props = {
 }
 
 const MatchOverviewOverlayPage = ({ params: { matchId } }: Props) => {
-  const { match, matchCurrentRound } = useMatch(matchId)
+  const { match, matchCurrentRound } = useRealtimeMatch(matchId)
 
   const players = useMemo(() => {
     if (!match || !matchCurrentRound) {

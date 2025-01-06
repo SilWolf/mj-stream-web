@@ -593,8 +593,6 @@ const MatchIntroductionPage = ({
     resetFlag,
   ])
 
-  console.log(match)
-
   if (!match) {
     return <></>
   }

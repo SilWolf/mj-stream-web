@@ -292,7 +292,7 @@ export const apiGetMatchById = async (matchId: string) => {
   return client
     .fetch<
       RawMatch[]
-    >(`*[_type == "match" && _id == "${matchId}"]{ _id, name, playerEast, playerSouth, playerWest, playerNorth, playerEastTeam, playerSouthTeam, playerWestTeam, playerNorthTeam, startAt }`)
+    >(`*[_type == "match" && _id == "${matchId}"]{ tournament->{_id, name, "logoUrl": logo.asset->url}, _id, name, playerEast, playerSouth, playerWest, playerNorth, playerEastTeam, playerSouthTeam, playerWestTeam, playerNorthTeam, startAt }`)
     .then((rawMatches) => {
       const rawMatch = rawMatches[0]
 
@@ -701,6 +701,25 @@ export const apiGetTeamPlayersOfTournament = async (tournamentId: string) => {
 
   return teamPlayers
 }
+
+export const getRegularTeamsWithStatistics = async () =>
+  client
+    .fetch(
+      `*[_type == "matchTournament" && _id == "62e7d07d-f59f-421d-a000-2e4d28ab89db"]{ teams[]{ _key, "statistics": statistics{ranking}, ref->{${[
+        '_id',
+        ...TEAM_META_FIELDS,
+      ].join(', ')}}, "overrided": overrided{${[...TEAM_META_FIELDS].join(
+        ', '
+      )}} } }`
+    )
+    .then((tournaments) => {
+      return (
+        tournaments[0]?.teams as TournamentTeamWithPlayersWithStatistics[]
+      ).map(({ ref, overrided, ...team }) => ({
+        ...team,
+        team: mergeObject(ref, overrided),
+      }))
+    })
 
 export const getRegularTeamsWithPlayers = () =>
   client

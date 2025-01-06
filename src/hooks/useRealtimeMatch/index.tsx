@@ -3,7 +3,7 @@ import { useCallback, useMemo } from 'react'
 import { RealtimeMatch, RealtimeMatchRound } from '../../models'
 import { useFirebaseDatabaseByKey } from '../../providers/firebaseDatabase.provider'
 
-const useMatch = (matchId: string) => {
+const useRealtimeMatch = (matchId: string) => {
   const { data: rtMatch, update: updateMatch } = useFirebaseDatabaseByKey<
     RealtimeMatch,
     RealtimeMatch,
@@ -45,7 +45,7 @@ const useMatch = (matchId: string) => {
         [id]: {
           ...oldMatchRound,
           ...payload,
-        } as MatchRound,
+        } as RealtimeMatchRound,
       })
     },
     [rtMatchRounds, updateMatchRounds]
@@ -151,4 +151,4 @@ const useMatch = (matchId: string) => {
   }
 }
 
-export default useMatch
+export default useRealtimeMatch
