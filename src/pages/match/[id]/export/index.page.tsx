@@ -27,7 +27,7 @@ export default function MatchExportPage({ params: { matchId } }: Props) {
 
     setIsExporting(true)
     fetch(
-      `${import.meta.env.VITE_HOMEPAGE_HOST}/api/rtMatch/${
+      `${import.meta.env.VITE_HOMEPAGE_HOST}/api/match/${
         exportedMatch._id
       }/result`,
       {

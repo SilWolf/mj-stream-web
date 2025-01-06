@@ -444,7 +444,7 @@ function IndexPage() {
                         </a>
 
                         <a
-                          href={`/match/${match._id}/nameplates`}
+                          href={`/v1/match/${match._id}/nameplates`}
                           target="_blank"
                         >
                           <i className="bi bi-person-badge"></i> 名牌
@@ -453,7 +453,7 @@ function IndexPage() {
 
                       <div className="space-x-2">
                         <a
-                          href={`/match/${match._id}/forecast?startAt=${
+                          href={`/v1/match/${match._id}/forecast?startAt=${
                             match.name.endsWith('2') ? '21' : '19'
                           }:30`}
                           target="_blank"
@@ -462,23 +462,32 @@ function IndexPage() {
                         </a>
 
                         <a
-                          href={`/match/${match._id}/introduction`}
+                          href={`/v1/match/${match._id}/introduction`}
                           target="_blank"
                         >
                           <i className="bi bi-person-vcard"></i> 介紹
                         </a>
 
-                        <a href={`/match/${match._id}/summary`} target="_blank">
+                        <a
+                          href={`/v1/match/${match._id}/summary`}
+                          target="_blank"
+                        >
                           <i className="bi bi-trophy"></i> 結果
                         </a>
 
                         {match._id === obsInfo?.matchId ? (
-                          <span className="bg-red-600 px-2 py-1 rounded text-white">
-                            <i className="bi bi-record-circle"></i> LIVE 直播中
-                          </span>
+                          <a
+                            href={`/v1/match/${match._id}/control`}
+                            target="_blank"
+                          >
+                            <span className="bg-red-600 px-2 py-1 rounded text-white">
+                              <i className="bi bi-record-circle"></i> LIVE
+                              直播中
+                            </span>
+                          </a>
                         ) : (
                           <a
-                            href={`/match/${match._id}/control`}
+                            href={`/v1/match/${match._id}/control`}
                             target="_blank"
                             className="text-red-600"
                           >

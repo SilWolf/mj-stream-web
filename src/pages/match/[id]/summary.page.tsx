@@ -354,6 +354,7 @@ const MatchSummarySlide = ({
           <div className="flex-1 flex flex-col pb-[1em]">
             {[0, 1, 2, 3].map((index) => (
               <div
+                key={index}
                 className={cns(
                   'relative overflow-hidden flex-1 pl-[.5em] flex flex-col justify-center',
                   {
@@ -408,106 +409,107 @@ const MatchSummarySlide = ({
       >
         <div className="flex-1"></div>
         <div
-          className={cns('flex-[5]', {
+          className={cns('flex-[5] flex flex-col', {
             'mi-ranking-ranking-in': status === 0,
             'mi-ranking-ranking-out': status > 0,
           })}
         >
-          <div className="grid grid-cols-2 gap-x-8 h-full">
-            {[
-              [
-                slide.teams[0],
-                slide.teams[1],
-                slide.teams[2],
-                slide.teams[3],
-                slide.teams[4],
-                slide.teams[5],
-                slide.teams[6],
-                slide.teams[7],
-              ],
-              [
-                slide.teams[8],
-                slide.teams[9],
-                slide.teams[10],
-                slide.teams[11],
-                slide.teams[12],
-                slide.teams[13],
-                slide.teams[14],
-                slide.teams[15],
-              ],
-            ].map((teamGroup, gi) => (
-              <div key={gi} className="flex flex-col">
-                <div className="flex-1 flex items-center text-[0.75em] gap-6">
-                  <p className="flex-1 text-center">排名</p>
-                  <p className="flex-[2]">隊伍</p>
-                  <p className="flex-1 text-right">積分</p>
-                  <p className="flex-1 text-right">差距</p>
-                  <p className="flex-1 text-right">半莊數</p>
-                </div>
-                {teamGroup.map((team, index) => (
-                  <div
-                    key={team._id}
-                    className={cns(
-                      'relative flex-1 flex items-center gap-6 overflow-hidden',
-                      {
-                        'mi-ranking-ranking-in': status === 0,
-                        'mi-ranking-ranking-out': status > 0,
-                      }
+          <div className="grid grid-flow-col grid-rows-1 gap-x-8">
+            <div className="flex-1 flex items-center text-[0.75em]">
+              <p className="flex-1 text-center">排名</p>
+              <p className="flex-[2.5]">隊伍</p>
+              <p className="flex-1 text-right">積分</p>
+              <p className="flex-1 text-right">差距</p>
+              <p className="flex-1 text-right">半莊數</p>
+            </div>
+            <div className="flex-1 flex items-center text-[0.75em]">
+              <p className="flex-1 text-center">排名</p>
+              <p className="flex-[2.5]">隊伍</p>
+              <p className="flex-1 text-right">積分</p>
+              <p className="flex-1 text-right">差距</p>
+              <p className="flex-1 text-right">半莊數</p>
+            </div>
+          </div>
+          <div className="flex-1 grid grid-cols-2 gap-x-8 h-full">
+            {[0, 8, 1, 9, 2, 10, 3, 11, 4, 12, 5, 13, 6, 14, 7, 15].map(
+              (ranking) => (
+                <div
+                  key={ranking}
+                  className={cns(
+                    'relative flex-1 flex items-center overflow-hidden',
+                    {
+                      'mi-ranking-ranking-in': status === 0,
+                      'mi-ranking-ranking-out': status > 0,
+                    }
+                  )}
+                  style={{
+                    background: `linear-gradient(to right, ${slide.teams[ranking].team.color}C0, transparent 105%)`,
+                    animationDelay: `${ranking * 0.05}s`,
+                    opacity: slide.teams[ranking].newResult ? 1 : 0.3,
+                  }}
+                >
+                  <img
+                    src={
+                      slide.teams[ranking].team.squareLogoImage + '?w=320&h=320'
+                    }
+                    alt={slide.teams[ranking].team._id}
+                    className="absolute left-0 opacity-25 -z-10"
+                  />
+                  <div className="absolute left-[0em]">
+                    {/* {slide.teams[ranking].ranking > ranking + 1 && (
+                      <span>
+                        <i className="bi bi-caret-up-fill text-green-500"></i>
+                      </span>
                     )}
-                    style={{
-                      background: `linear-gradient(to right, ${team.team.color}C0, transparent 105%)`,
-                      animationDelay: `${index * 0.05}s`,
-                      opacity: team.newResult ? 1 : 0.3,
-                    }}
-                  >
-                    <img
-                      src={team.team.squareLogoImage + '?w=320&h=320'}
-                      alt={team.team._id}
-                      className="absolute left-0 opacity-25 -z-10"
-                    />
-                    <div className="absolute left-[0em]">
-                      {team.ranking > index + gi * 8 + 1 && (
-                        <span>
-                          <i className="bi bi-caret-up-fill text-green-500"></i>
-                        </span>
-                      )}
-                      {team.ranking < index + gi * 8 + 1 && (
-                        <span>
-                          <i className="bi bi-caret-down-fill text-red-500"></i>
-                        </span>
-                      )}
-                    </div>
-                    <p className="flex-1 text-center space-x-1">
-                      <span>{renderRanking(index + gi * 8 + 1)}</span>
-                    </p>
-                    <p className="flex-[2]">{team.team.name}</p>
-                    <p
-                      className={cns('flex-1 text-right', {
-                        'text-green-500':
-                          team.newResult && team.newResult.point > team.point,
-                        'text-red-500':
-                          team.newResult && team.newResult.point < team.point,
-                      })}
-                    >
-                      {renderPoint(team.newResult?.point || team.point)}
-                    </p>
-                    <p className="flex-1 text-right">
-                      {index + gi * 8 > 0
-                        ? (
-                            (slide.teams[index + gi * 8 - 1].newResult?.point ||
-                              slide.teams[index + gi * 8 - 1].point ||
-                              0) - (team.newResult?.point || team.point || 0)
-                          ).toFixed(1)
-                        : '-'}
-                    </p>
-                    <p className="flex-1 text-right">
-                      {team.newResult?.matchCount || team.matchCount}
-                      <span className="text-[0.75em]">/60</span>
-                    </p>
+                    {slide.teams[ranking].ranking < ranking + 1 && (
+                      <span>
+                        <i className="bi bi-caret-down-fill text-red-500"></i>
+                      </span>
+                    )} */}
                   </div>
-                ))}
-              </div>
-            ))}
+                  <p className="flex-1 text-center space-x-1">
+                    <span>{ranking + 1}</span>
+                  </p>
+                  <p className="flex-[2.5] overflow-hidden">
+                    <span>{slide.teams[ranking].team.name}</span>
+                  </p>
+                  <p
+                    className={cns('flex-1 text-right', {
+                      'text-green-500':
+                        slide.teams[ranking].newResult &&
+                        slide.teams[ranking].newResult!.point >
+                          slide.teams[ranking].point,
+                      'text-red-500':
+                        slide.teams[ranking].newResult &&
+                        slide.teams[ranking].newResult!.point <
+                          slide.teams[ranking].point,
+                    })}
+                  >
+                    {renderPoint(
+                      slide.teams[ranking].newResult?.point ||
+                        slide.teams[ranking].point
+                    )}
+                  </p>
+                  <p className="flex-1 text-right">
+                    {ranking > 0
+                      ? (
+                          (slide.teams[ranking - 1].newResult?.point ||
+                            slide.teams[ranking - 1].point ||
+                            0) -
+                          (slide.teams[ranking].newResult?.point ||
+                            slide.teams[ranking].point ||
+                            0)
+                        ).toFixed(1)
+                      : '-'}
+                  </p>
+                  <p className="flex-1 text-right">
+                    {slide.teams[ranking].newResult?.matchCount ||
+                      slide.teams[ranking].matchCount}
+                    <span className="text-[0.75em]">/60</span>
+                  </p>
+                </div>
+              )
+            )}
           </div>
         </div>
       </div>
@@ -539,8 +541,6 @@ const MatchSummaryPage = ({
       }),
     enabled: !!match?.tournament._id,
   })
-
-  console.log(regularTeams)
 
   const slides = useMemo<Slide[]>(() => {
     if (!rtMatch || !rtMatchRounds || !match || !regularTeams) {
@@ -814,7 +814,8 @@ const MatchSummaryPage = ({
       type: 'ranking',
       teams: newTeams.sort(
         (a, b) =>
-          (b.newResult?.point || b.point) - (a.newResult?.point || a.point)
+          (b.newResult?.point || b.point || 0) -
+          (a.newResult?.point || a.point || 0)
       ),
       subslide: 1,
     })

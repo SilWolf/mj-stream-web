@@ -705,7 +705,7 @@ export const apiGetTeamPlayersOfTournament = async (tournamentId: string) => {
 export const getRegularTeamsWithStatistics = async () =>
   client
     .fetch(
-      `*[_type == "matchTournament" && _id == "62e7d07d-f59f-421d-a000-2e4d28ab89db"]{ teams[]{ _key, "statistics": statistics{ranking}, ref->{${[
+      `*[_type == "matchTournament" && _id == "62e7d07d-f59f-421d-a000-2e4d28ab89db"]{ teams[]{ _key, "statistics": statistics{ranking, point, matchCount}, ref->{${[
         '_id',
         ...TEAM_META_FIELDS,
       ].join(', ')}}, "overrided": overrided{${[...TEAM_META_FIELDS].join(
