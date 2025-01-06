@@ -1,4 +1,4 @@
-import { Player, PlayerIndex } from '@/models'
+import { RealtimePlayer, PlayerIndex } from '@/models'
 import { MouseEvent, useCallback, useEffect } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import {
@@ -12,8 +12,8 @@ import MJUIButton from '../MJUI/MJUIButton'
 const indexes = ['0', '1', '2', '3'] as const
 
 type Props = {
-  defaultPlayers: Record<PlayerIndex, Player>
-  onSubmit?: (newValue: Record<PlayerIndex, Player>) => unknown
+  defaultPlayers: Record<PlayerIndex, RealtimePlayer>
+  onSubmit?: (newValue: Record<PlayerIndex, RealtimePlayer>) => unknown
 }
 
 const MJPlayersForm = ({ defaultPlayers, onSubmit }: Props) => {
@@ -25,14 +25,14 @@ const MJPlayersForm = ({ defaultPlayers, onSubmit }: Props) => {
   const imageUrls = useWatch({
     control,
     name: [
-      '0.proPicUrl',
-      '0.teamPicUrl',
-      '1.proPicUrl',
-      '1.teamPicUrl',
-      '2.proPicUrl',
-      '2.teamPicUrl',
-      '3.proPicUrl',
-      '3.teamPicUrl',
+      '0.propicUrl',
+      '0.logoUrl',
+      '1.propicUrl',
+      '1.logoUrl',
+      '2.propicUrl',
+      '2.logoUrl',
+      '3.propicUrl',
+      '3.logoUrl',
     ],
   })
   const colors = useWatch({
@@ -70,8 +70,8 @@ const MJPlayersForm = ({ defaultPlayers, onSubmit }: Props) => {
         | '2'
         | '3'
       const type = e.currentTarget.getAttribute('data-type') as
-        | 'proPicUrl'
-        | 'teamPicUrl'
+        | 'propicUrl'
+        | 'logoUrl'
 
       const oldValue = getValues(`${index}.${type}`)
       const newValue = prompt('新的圖片網址', oldValue ?? '')
@@ -179,13 +179,13 @@ const MJPlayersForm = ({ defaultPlayers, onSubmit }: Props) => {
                             <div className="flex-[5]">
                               <input
                                 className="w-full"
-                                {...register(`${playerIndex}.title`)}
+                                {...register(`${playerIndex}.secondaryName`)}
                               />
                             </div>
                             <div className="flex-[5]">
                               <input
                                 className="w-full"
-                                {...register(`${playerIndex}.name`)}
+                                {...register(`${playerIndex}.primaryName`)}
                               />
                             </div>
                             <div className="flex-[3]">

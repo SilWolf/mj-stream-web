@@ -2,14 +2,14 @@
 import React, { MouseEvent, useCallback, useMemo, useState } from 'react'
 import useMatch from '@/hooks/useMatch'
 import {
-  Match,
-  MatchRound,
+  RealtimeMatch,
+  RealtimeMatchRound,
   NextRoundTypeEnum,
-  Player,
   PlayerIndex,
   PlayerResult,
   PlayerResultWinnerOrLoserEnum,
   RoundResultTypeEnum,
+  RealtimePlayer,
 } from '@/models'
 import { useConfirmDialog } from '@/components/ConfirmDialog/provider'
 import {
@@ -93,52 +93,52 @@ function MJMatchHistoryAmountSpan({ value }: { value: number }) {
 }
 
 const PlayerResultMetadata = ({
-  match,
-  matchRound,
+  rtMatch,
+  rtMatchRound,
   playerIndex,
 }: {
-  match: Match
-  matchRound: MatchRound
+  rtMatch: RealtimeMatch
+  rtMatchRound: RealtimeMatchRound
   playerIndex: PlayerIndex
 }) => {
   return (
     <div className="text-xs">
       <p>
-        {matchRound.playerResults[playerIndex].isRiichi && <span>立</span>}
-        {matchRound.resultType === RoundResultTypeEnum.Ron &&
-          matchRound.playerResults[playerIndex].type ===
+        {rtMatchRound.playerResults[playerIndex].isRiichi && <span>立</span>}
+        {rtMatchRound.resultType === RoundResultTypeEnum.Ron &&
+          rtMatchRound.playerResults[playerIndex].type ===
             PlayerResultWinnerOrLoserEnum.Lose && <span>統</span>}
-        {matchRound.resultType === RoundResultTypeEnum.Ron &&
-          matchRound.playerResults[playerIndex].type ===
+        {rtMatchRound.resultType === RoundResultTypeEnum.Ron &&
+          rtMatchRound.playerResults[playerIndex].type ===
             PlayerResultWinnerOrLoserEnum.Win && <span>和</span>}
-        {matchRound.resultType === RoundResultTypeEnum.SelfDrawn &&
-          matchRound.playerResults[playerIndex].type ===
+        {rtMatchRound.resultType === RoundResultTypeEnum.SelfDrawn &&
+          rtMatchRound.playerResults[playerIndex].type ===
             PlayerResultWinnerOrLoserEnum.Win && <span>摸</span>}
-        {matchRound.resultType === RoundResultTypeEnum.Exhausted &&
-          matchRound.playerResults[playerIndex].type ===
+        {rtMatchRound.resultType === RoundResultTypeEnum.Exhausted &&
+          rtMatchRound.playerResults[playerIndex].type ===
             PlayerResultWinnerOrLoserEnum.Win && <span>聽</span>}
       </p>
-      {matchRound.playerResults[playerIndex].isRonDisallowed && (
+      {rtMatchRound.playerResults[playerIndex].isRonDisallowed && (
         <p className="text-red-500 font-semibold">和了禁止</p>
       )}
-      {(matchRound.resultType === RoundResultTypeEnum.Ron ||
-        matchRound.resultType === RoundResultTypeEnum.SelfDrawn) &&
-        matchRound.playerResults[playerIndex].type ===
+      {(rtMatchRound.resultType === RoundResultTypeEnum.Ron ||
+        rtMatchRound.resultType === RoundResultTypeEnum.SelfDrawn) &&
+        rtMatchRound.playerResults[playerIndex].type ===
           PlayerResultWinnerOrLoserEnum.Win && (
           <div className="bg-black bg-opacity-10 rounded py-1 px-2 mx-auto inline-block">
             <p className="font-bold">
               <MJHanFuTextSpan
                 className="text-xs text-neutral-600"
-                han={matchRound.playerResults[playerIndex].detail.han}
-                fu={matchRound.playerResults[playerIndex].detail.fu}
+                han={rtMatchRound.playerResults[playerIndex].detail.han}
+                fu={rtMatchRound.playerResults[playerIndex].detail.fu}
                 yakumanCount={
-                  matchRound.playerResults[playerIndex].detail.yakumanCount
+                  rtMatchRound.playerResults[playerIndex].detail.yakumanCount
                 }
-                isManganRoundUp={match.setting.isManganRoundUp === '1'}
+                isManganRoundUp={rtMatch.setting.isManganRoundUp === '1'}
               />
             </p>
             <p>
-              {matchRound.playerResults[playerIndex].detail.yakus
+              {rtMatchRound.playerResults[playerIndex].detail.yakus
                 ?.map(({ label }) => label)
                 .join(' ')}
             </p>
@@ -156,16 +156,16 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
   const { data: obsInfo, set: setObsInfo } =
     useFirebaseDatabaseByKey<string>('obs/1')
 
-  const { data: matchDTO } = useQuery({
+  const { data: match } = useQuery({
     queryKey: ['matches', matchId],
     queryFn: ({ queryKey }) => apiGetMatchById(queryKey[1]),
   })
 
   const {
-    match,
-    matchRounds,
-    matchCurrentRound,
-    matchCurrentRoundDoras,
+    rtMatch,
+    rtMatchRounds,
+    rtMatchCurrentRound,
+    rtMatchCurrentRoundDoras,
     updateMatchRoundById,
     updateCurrentMatchRound,
     pushMatchRound,
@@ -181,11 +181,13 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
 
   const matchRoundsWithDetail = useMemo(
     () =>
-      Object.entries(matchRounds ?? {}).map(([matchRoundId, matchRound]) => ({
-        id: matchRoundId,
-        ...matchRound,
-      })) ?? [],
-    [matchRounds]
+      Object.entries(rtMatchRounds ?? {}).map(
+        ([rtMatchRoundId, rtMatchRound]) => ({
+          id: rtMatchRoundId,
+          ...rtMatchRound,
+        })
+      ) ?? [],
+    [rtMatchRounds]
   )
 
   const unboardcastedMatchRounds = useMemo(
@@ -219,7 +221,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
     toggleEditPlayersDialog(true)
   }, [toggleEditPlayersDialog])
   const handleSubmitPlayersForm = useCallback(
-    (newPlayers: Record<PlayerIndex, Player>) => {
+    (newPlayers: Record<PlayerIndex, RealtimePlayer>) => {
       setMatchPlayers(newPlayers)
       toggleEditPlayersDialog(false)
     },
@@ -230,8 +232,8 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
 
   const [isShowingEditDialog, toggleEditDialog] = useBoolean(false)
   const [editDialogProps, setEditDialogProps] = useState<
-    Pick<MJMatchRoundEditFormProps, 'matchRound'> & { id: string | null }
-  >({ id: null, matchRound: null })
+    Pick<MJMatchRoundEditFormProps, 'rtMatchRound'> & { id: string | null }
+  >({ id: null, rtMatchRound: null })
 
   const handleClickEditMatchRound = useCallback(
     (e: MouseEvent<HTMLButtonElement>) => {
@@ -240,19 +242,19 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         return
       }
 
-      const matchRound = matchRounds?.[matchRoundId]
-      if (!matchRound) {
+      const rtMatchRound = rtMatchRounds?.[matchRoundId]
+      if (!rtMatchRound) {
         return
       }
 
-      setEditDialogProps({ id: matchRoundId, matchRound })
+      setEditDialogProps({ id: matchRoundId, rtMatchRound })
       toggleEditDialog(true)
     },
-    [matchRounds, toggleEditDialog]
+    [rtMatchRounds, toggleEditDialog]
   )
 
   const handleSubmitRoundEdit = useCallback(
-    (newMatchRound: MatchRound) => {
+    (newMatchRound: RealtimeMatchRound) => {
       if (!matchRoundsWithDetail || !editDialogProps.id) {
         return
       }
@@ -271,7 +273,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { id: oldNextMatchId, ...oldNextMatchRound } =
           matchRoundsWithDetail[i]
-        const newNextMatchRound: MatchRound = {
+        const newNextMatchRound: RealtimeMatchRound = {
           ...oldNextMatchRound,
           playerResults: {
             '0': {
@@ -337,30 +339,30 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         return
       }
 
-      const player = match?.players[playerIndex]
+      const player = rtMatch?.players[playerIndex]
       if (!player) {
         return
       }
 
       const isDoingRiichi =
-        !matchCurrentRound?.playerResults[playerIndex].isRiichi
+        !rtMatchCurrentRound?.playerResults[playerIndex].isRiichi
 
       confirmDialog.showConfirmDialog({
         title: isDoingRiichi ? '確定要立直嗎？' : '取消立直？',
         content: isDoingRiichi
-          ? `一旦點擊確定，就會播出立直動畫，請確定立直的是 ${player.name}！`
-          : `你是否想取消 ${player.name} 的立直？`,
+          ? `一旦點擊確定，就會播出立直動畫，請確定立直的是 ${player.primaryName}！`
+          : `你是否想取消 ${player.primaryName} 的立直？`,
         onClickOk: async () => {
           updateCurrentMatchRound({
             playerResults: {
-              ...(matchCurrentRound?.playerResults as Record<
+              ...(rtMatchCurrentRound?.playerResults as Record<
                 PlayerIndex,
                 PlayerResult
               >),
               [playerIndex]: {
-                ...matchCurrentRound?.playerResults[playerIndex],
+                ...rtMatchCurrentRound?.playerResults[playerIndex],
                 isRiichi:
-                  !matchCurrentRound?.playerResults[playerIndex].isRiichi,
+                  !rtMatchCurrentRound?.playerResults[playerIndex].isRiichi,
               },
             },
           })
@@ -369,8 +371,8 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
     },
     [
       confirmDialog,
-      match?.players,
-      matchCurrentRound?.playerResults,
+      rtMatch?.players,
+      rtMatchCurrentRound?.playerResults,
       updateCurrentMatchRound,
     ]
   )
@@ -397,7 +399,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
           return
         }
 
-        const newDoras = [...matchCurrentRoundDoras]
+        const newDoras = [...rtMatchCurrentRoundDoras]
 
         if (clickedDoraIndex === -1) {
           newDoras.push(tileKey)
@@ -409,12 +411,12 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         setClickedDoraIndex(undefined)
       }
     },
-    [clickedDoraIndex, matchCurrentRoundDoras, setCurrentRoundDoras]
+    [clickedDoraIndex, rtMatchCurrentRoundDoras, setCurrentRoundDoras]
   )
 
   const handleRemoveDoraKeyboard = useCallback(() => {
     if (typeof clickedDoraIndex !== 'undefined') {
-      const newDoras = [...matchCurrentRoundDoras]
+      const newDoras = [...rtMatchCurrentRoundDoras]
 
       if (clickedDoraIndex > -1) {
         newDoras.splice(clickedDoraIndex, 1)
@@ -422,7 +424,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         setClickedDoraIndex(undefined)
       }
     }
-  }, [clickedDoraIndex, matchCurrentRoundDoras, setCurrentRoundDoras])
+  }, [clickedDoraIndex, rtMatchCurrentRoundDoras, setCurrentRoundDoras])
 
   const handleCloseDoraKeyboard = useCallback(() => {
     setClickedDoraIndex(undefined)
@@ -456,26 +458,26 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
 
   const handlePlayerListViewAction = useCallback(
     (playerIndex: PlayerIndex, action: PlayersViewAction) => {
-      if (!match || !matchCurrentRound) {
+      if (!rtMatch || !rtMatchCurrentRound) {
         return
       }
 
-      const player = match.players[playerIndex]
-      const playerResult = matchCurrentRound.playerResults[playerIndex]
+      const player = rtMatch.players[playerIndex]
+      const playerResult = rtMatchCurrentRound.playerResults[playerIndex]
 
       switch (action) {
         case 'reveal':
           return updateCurrentMatchRound({
             playerResults: {
-              ...matchCurrentRound.playerResults,
+              ...rtMatchCurrentRound.playerResults,
               [playerIndex]: {
-                ...matchCurrentRound.playerResults[playerIndex],
+                ...rtMatchCurrentRound.playerResults[playerIndex],
                 isRevealed:
-                  !matchCurrentRound.playerResults[playerIndex].isRevealed,
+                  !rtMatchCurrentRound.playerResults[playerIndex].isRevealed,
                 detail: {
-                  ...matchCurrentRound.playerResults[playerIndex].detail,
+                  ...rtMatchCurrentRound.playerResults[playerIndex].detail,
                   isRevealed:
-                    !matchCurrentRound.playerResults[playerIndex].isRevealed,
+                    !rtMatchCurrentRound.playerResults[playerIndex].isRevealed,
                 },
               },
             },
@@ -485,28 +487,29 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
           return confirmDialog.showConfirmDialog({
             title: !playerResult.isRiichi ? '確定要立直嗎？' : '取消立直？',
             content: !playerResult.isRiichi
-              ? `一旦點擊確定，就會播出立直動畫，請確定立直的是 ${player.name}！`
-              : `你是否想取消 ${player.name} 的立直？`,
+              ? `一旦點擊確定，就會播出立直動畫，請確定立直的是 ${player.primaryName}！`
+              : `你是否想取消 ${player.primaryName} 的立直？`,
             onClickOk: async () => {
               updateCurrentMatchRound({
                 playerResults: {
-                  ...(matchCurrentRound?.playerResults as Record<
+                  ...(rtMatchCurrentRound?.playerResults as Record<
                     PlayerIndex,
                     PlayerResult
                   >),
                   [playerIndex]: {
-                    ...matchCurrentRound?.playerResults[playerIndex],
+                    ...rtMatchCurrentRound?.playerResults[playerIndex],
                     isRiichi:
-                      !matchCurrentRound?.playerResults[playerIndex].isRiichi,
+                      !rtMatchCurrentRound?.playerResults[playerIndex].isRiichi,
                     detail: {
-                      ...matchCurrentRound.playerResults[playerIndex].detail,
+                      ...rtMatchCurrentRound.playerResults[playerIndex].detail,
                       isRiichied:
-                        !matchCurrentRound.playerResults[playerIndex].isRiichi,
+                        !rtMatchCurrentRound.playerResults[playerIndex]
+                          .isRiichi,
                       raw: {
-                        ...matchCurrentRound.playerResults[playerIndex].detail
+                        ...rtMatchCurrentRound.playerResults[playerIndex].detail
                           .raw,
                         riichi:
-                          !matchCurrentRound.playerResults[playerIndex]
+                          !rtMatchCurrentRound.playerResults[playerIndex]
                             .isRiichi,
                       },
                     },
@@ -526,18 +529,19 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         case 'ron-self':
           updateCurrentMatchRound({
             playerResults: {
-              ...(matchCurrentRound?.playerResults as Record<
+              ...(rtMatchCurrentRound?.playerResults as Record<
                 PlayerIndex,
                 PlayerResult
               >),
               [playerIndex]: {
-                ...matchCurrentRound?.playerResults[playerIndex],
+                ...rtMatchCurrentRound?.playerResults[playerIndex],
                 detail: {
-                  ...matchCurrentRound.playerResults[playerIndex].detail,
+                  ...rtMatchCurrentRound.playerResults[playerIndex].detail,
                   raw: {
-                    ...matchCurrentRound.playerResults[playerIndex].detail.raw,
+                    ...rtMatchCurrentRound.playerResults[playerIndex].detail
+                      .raw,
                     'menzenchin-tsumohou':
-                      !matchCurrentRound?.playerResults[playerIndex].detail
+                      !rtMatchCurrentRound?.playerResults[playerIndex].detail
                         .isRevealed,
                   },
                 },
@@ -554,16 +558,17 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         case 'ron-before':
           updateCurrentMatchRound({
             playerResults: {
-              ...(matchCurrentRound?.playerResults as Record<
+              ...(rtMatchCurrentRound?.playerResults as Record<
                 PlayerIndex,
                 PlayerResult
               >),
               [playerIndex]: {
-                ...matchCurrentRound?.playerResults[playerIndex],
+                ...rtMatchCurrentRound?.playerResults[playerIndex],
                 detail: {
-                  ...matchCurrentRound.playerResults[playerIndex].detail,
+                  ...rtMatchCurrentRound.playerResults[playerIndex].detail,
                   raw: {
-                    ...matchCurrentRound.playerResults[playerIndex].detail.raw,
+                    ...rtMatchCurrentRound.playerResults[playerIndex].detail
+                      .raw,
                     'menzenchin-tsumohou': false,
                   },
                 },
@@ -580,16 +585,17 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         case 'ron-after':
           updateCurrentMatchRound({
             playerResults: {
-              ...(matchCurrentRound?.playerResults as Record<
+              ...(rtMatchCurrentRound?.playerResults as Record<
                 PlayerIndex,
                 PlayerResult
               >),
               [playerIndex]: {
-                ...matchCurrentRound?.playerResults[playerIndex],
+                ...rtMatchCurrentRound?.playerResults[playerIndex],
                 detail: {
-                  ...matchCurrentRound.playerResults[playerIndex].detail,
+                  ...rtMatchCurrentRound.playerResults[playerIndex].detail,
                   raw: {
-                    ...matchCurrentRound.playerResults[playerIndex].detail.raw,
+                    ...rtMatchCurrentRound.playerResults[playerIndex].detail
+                      .raw,
                     'menzenchin-tsumohou': false,
                   },
                 },
@@ -606,16 +612,17 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         case 'ron-opposite':
           updateCurrentMatchRound({
             playerResults: {
-              ...(matchCurrentRound?.playerResults as Record<
+              ...(rtMatchCurrentRound?.playerResults as Record<
                 PlayerIndex,
                 PlayerResult
               >),
               [playerIndex]: {
-                ...matchCurrentRound?.playerResults[playerIndex],
+                ...rtMatchCurrentRound?.playerResults[playerIndex],
                 detail: {
-                  ...matchCurrentRound.playerResults[playerIndex].detail,
+                  ...rtMatchCurrentRound.playerResults[playerIndex].detail,
                   raw: {
-                    ...matchCurrentRound.playerResults[playerIndex].detail.raw,
+                    ...rtMatchCurrentRound.playerResults[playerIndex].detail
+                      .raw,
                     'menzenchin-tsumohou': false,
                   },
                 },
@@ -632,13 +639,13 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         case 'dora-normal-plus':
           return updateCurrentMatchRound({
             playerResults: {
-              ...matchCurrentRound.playerResults,
+              ...rtMatchCurrentRound.playerResults,
               [playerIndex]: {
-                ...matchCurrentRound.playerResults[playerIndex],
+                ...rtMatchCurrentRound.playerResults[playerIndex],
                 detail: {
-                  ...matchCurrentRound.playerResults[playerIndex].detail,
+                  ...rtMatchCurrentRound.playerResults[playerIndex].detail,
                   dora:
-                    matchCurrentRound.playerResults[playerIndex].detail.dora +
+                    rtMatchCurrentRound.playerResults[playerIndex].detail.dora +
                     1,
                 },
               },
@@ -648,13 +655,13 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         case 'dora-normal-minus':
           return updateCurrentMatchRound({
             playerResults: {
-              ...matchCurrentRound.playerResults,
+              ...rtMatchCurrentRound.playerResults,
               [playerIndex]: {
-                ...matchCurrentRound.playerResults[playerIndex],
+                ...rtMatchCurrentRound.playerResults[playerIndex],
                 detail: {
-                  ...matchCurrentRound.playerResults[playerIndex].detail,
+                  ...rtMatchCurrentRound.playerResults[playerIndex].detail,
                   dora: Math.max(
-                    matchCurrentRound.playerResults[playerIndex].detail.dora -
+                    rtMatchCurrentRound.playerResults[playerIndex].detail.dora -
                       1,
                     0
                   ),
@@ -666,13 +673,13 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         case 'dora-red-plus':
           return updateCurrentMatchRound({
             playerResults: {
-              ...matchCurrentRound.playerResults,
+              ...rtMatchCurrentRound.playerResults,
               [playerIndex]: {
-                ...matchCurrentRound.playerResults[playerIndex],
+                ...rtMatchCurrentRound.playerResults[playerIndex],
                 detail: {
-                  ...matchCurrentRound.playerResults[playerIndex].detail,
+                  ...rtMatchCurrentRound.playerResults[playerIndex].detail,
                   redDora:
-                    matchCurrentRound.playerResults[playerIndex].detail
+                    rtMatchCurrentRound.playerResults[playerIndex].detail
                       .redDora + 1,
                 },
               },
@@ -682,13 +689,13 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         case 'dora-red-minus':
           return updateCurrentMatchRound({
             playerResults: {
-              ...matchCurrentRound.playerResults,
+              ...rtMatchCurrentRound.playerResults,
               [playerIndex]: {
-                ...matchCurrentRound.playerResults[playerIndex],
+                ...rtMatchCurrentRound.playerResults[playerIndex],
                 detail: {
-                  ...matchCurrentRound.playerResults[playerIndex].detail,
+                  ...rtMatchCurrentRound.playerResults[playerIndex].detail,
                   redDora: Math.max(
-                    matchCurrentRound.playerResults[playerIndex].detail
+                    rtMatchCurrentRound.playerResults[playerIndex].detail
                       .redDora - 1,
                     0
                   ),
@@ -701,7 +708,8 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
           return setActiveWaitingTilesData({
             index: playerIndex,
             tiles:
-              matchCurrentRound?.playerResults[playerIndex].waitingTiles ?? [],
+              rtMatchCurrentRound?.playerResults[playerIndex].waitingTiles ??
+              [],
           })
 
         case 'yaku':
@@ -715,19 +723,19 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
               ? '確定要給予這名玩家黃牌嗎？'
               : '取消黃牌？',
             content: !playerResult.isYellowCarded
-              ? `一旦點擊確定，就會播出黃牌動畫，請確定要黃牌的是 ${player.name}！`
-              : `你是否想取消 ${player.name} 的黃牌？`,
+              ? `一旦點擊確定，就會播出黃牌動畫，請確定要黃牌的是 ${player.primaryName}！`
+              : `你是否想取消 ${player.primaryName} 的黃牌？`,
             onClickOk: async () => {
               updateCurrentMatchRound({
                 playerResults: {
-                  ...(matchCurrentRound?.playerResults as Record<
+                  ...(rtMatchCurrentRound?.playerResults as Record<
                     PlayerIndex,
                     PlayerResult
                   >),
                   [playerIndex]: {
-                    ...matchCurrentRound?.playerResults[playerIndex],
+                    ...rtMatchCurrentRound?.playerResults[playerIndex],
                     isYellowCarded:
-                      !matchCurrentRound?.playerResults[playerIndex]
+                      !rtMatchCurrentRound?.playerResults[playerIndex]
                         .isYellowCarded,
                   },
                 },
@@ -741,19 +749,19 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
               ? '確定要給予這名玩家紅牌嗎？'
               : '取消紅牌？',
             content: !playerResult.isRedCarded
-              ? `一旦點擊確定，就會播出紅牌動畫，請確定要紅牌的是 ${player.name}！`
-              : `你是否想取消 ${player.name} 的紅牌？`,
+              ? `一旦點擊確定，就會播出紅牌動畫，請確定要紅牌的是 ${player.primaryName}！`
+              : `你是否想取消 ${player.primaryName} 的紅牌？`,
             onClickOk: async () => {
               updateCurrentMatchRound({
                 playerResults: {
-                  ...(matchCurrentRound?.playerResults as Record<
+                  ...(rtMatchCurrentRound?.playerResults as Record<
                     PlayerIndex,
                     PlayerResult
                   >),
                   [playerIndex]: {
-                    ...matchCurrentRound?.playerResults[playerIndex],
+                    ...rtMatchCurrentRound?.playerResults[playerIndex],
                     isRedCarded:
-                      !matchCurrentRound?.playerResults[playerIndex]
+                      !rtMatchCurrentRound?.playerResults[playerIndex]
                         .isRedCarded,
                   },
                 },
@@ -767,19 +775,19 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
               ? '確定要給予這名玩家和了禁止嗎？'
               : '取消和了禁止？',
             content: !playerResult.isRedCarded
-              ? `一旦點擊確定，就會播出紅牌動畫，請確定要和了禁止的是 ${player.name}！`
-              : `你是否想取消 ${player.name} 的和了禁止？`,
+              ? `一旦點擊確定，就會播出紅牌動畫，請確定要和了禁止的是 ${player.primaryName}！`
+              : `你是否想取消 ${player.primaryName} 的和了禁止？`,
             onClickOk: async () => {
               updateCurrentMatchRound({
                 playerResults: {
-                  ...(matchCurrentRound?.playerResults as Record<
+                  ...(rtMatchCurrentRound?.playerResults as Record<
                     PlayerIndex,
                     PlayerResult
                   >),
                   [playerIndex]: {
-                    ...matchCurrentRound?.playerResults[playerIndex],
+                    ...rtMatchCurrentRound?.playerResults[playerIndex],
                     isRonDisallowed:
-                      !matchCurrentRound?.playerResults[playerIndex]
+                      !rtMatchCurrentRound?.playerResults[playerIndex]
                         .isRonDisallowed,
                   },
                 },
@@ -790,17 +798,17 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
     },
     [
       confirmDialog,
-      match,
-      matchCurrentRound,
+      rtMatch,
+      rtMatchCurrentRound,
       toggleRonDialog,
       updateCurrentMatchRound,
     ]
   )
 
   const handleSubmitMatchRonDialog = useCallback(
-    (updatedMatchRound: MatchRound) => {
+    (updatedMatchRound: RealtimeMatchRound) => {
       try {
-        // Check if match is over
+        // Check if rtMatch is over
         const eastPlayerIndex = getPlayerIndexOfEastByRound(
           updatedMatchRound.roundCount
         )
@@ -837,7 +845,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
   )
 
   const handleSubmitMatchExhaustedDialog = useCallback(
-    (updatedMatchRound: MatchRound) => {
+    (updatedMatchRound: RealtimeMatchRound) => {
       try {
         const eastPlayerIndex = getPlayerIndexOfEastByRound(
           updatedMatchRound.roundCount
@@ -917,14 +925,14 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
   )
 
   const handleSubmitMatchHotfixDialog = useCallback(
-    (updatedMatchRound: MatchRound) => {
+    (updatedMatchRound: RealtimeMatchRound) => {
       try {
         updateCurrentMatchRound({
           playerResults: updatedMatchRound.playerResults,
           resultType: RoundResultTypeEnum.Hotfix,
         })
 
-        const newMatchRound: MatchRound = {
+        const newMatchRound: RealtimeMatchRound = {
           matchId,
           code: generateMatchRoundCode(
             matchId,
@@ -940,7 +948,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
           playerResults: formatPlayerResultsByPreviousPlayerResults(
             updatedMatchRound.playerResults
           ),
-          doras: matchCurrentRound?.doras ?? [],
+          doras: rtMatchCurrentRound?.doras ?? [],
         }
 
         pushMatchRound(newMatchRound)
@@ -956,7 +964,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
       }
     },
     [
-      matchCurrentRound?.doras,
+      rtMatchCurrentRound?.doras,
       matchId,
       pushMatchRound,
       toggleHotfixDialog,
@@ -965,23 +973,25 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
   )
 
   const handleClickGoNextRound = useCallback(() => {
-    if (!matchCurrentRound) {
+    if (!rtMatchCurrentRound) {
       return
     }
 
     const newRoundCount =
-      matchCurrentRound.nextRoundType === NextRoundTypeEnum.NextRound ||
-      matchCurrentRound.nextRoundType === NextRoundTypeEnum.NextRoundAndExtended
-        ? matchCurrentRound.roundCount + 1
-        : matchCurrentRound.roundCount
+      rtMatchCurrentRound.nextRoundType === NextRoundTypeEnum.NextRound ||
+      rtMatchCurrentRound.nextRoundType ===
+        NextRoundTypeEnum.NextRoundAndExtended
+        ? rtMatchCurrentRound.roundCount + 1
+        : rtMatchCurrentRound.roundCount
 
     const newExtendedRoundCount =
-      matchCurrentRound.nextRoundType === NextRoundTypeEnum.Extended ||
-      matchCurrentRound.nextRoundType === NextRoundTypeEnum.NextRoundAndExtended
-        ? matchCurrentRound.extendedRoundCount + 1
+      rtMatchCurrentRound.nextRoundType === NextRoundTypeEnum.Extended ||
+      rtMatchCurrentRound.nextRoundType ===
+        NextRoundTypeEnum.NextRoundAndExtended
+        ? rtMatchCurrentRound.extendedRoundCount + 1
         : 0
 
-    const newMatchRound: MatchRound = {
+    const newMatchRound: RealtimeMatchRound = {
       matchId,
       code: generateMatchRoundCode(
         matchId,
@@ -990,12 +1000,12 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
       ),
       roundCount: newRoundCount,
       extendedRoundCount: newExtendedRoundCount,
-      cumulatedThousands: matchCurrentRound.nextRoundCumulatedThousands,
+      cumulatedThousands: rtMatchCurrentRound.nextRoundCumulatedThousands,
       nextRoundCumulatedThousands: 0,
       resultType: RoundResultTypeEnum.Unknown,
       nextRoundType: NextRoundTypeEnum.Unknown,
       playerResults: formatPlayerResultsByPreviousPlayerResults(
-        matchCurrentRound.playerResults
+        rtMatchCurrentRound.playerResults
       ),
       doras: {},
     }
@@ -1003,7 +1013,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
     pushMatchRound(newMatchRound).then(() => {
       setClickedDoraIndex(-1)
     })
-  }, [matchCurrentRound, matchId, pushMatchRound])
+  }, [rtMatchCurrentRound, matchId, pushMatchRound])
 
   const handleClickStartOBS = useCallback(() => {
     setObsInfo({
@@ -1022,17 +1032,18 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
       ) as PlayerIndex
       if (
         typeof playerIndex === 'undefined' ||
-        !matchCurrentRound?.playerResults[playerIndex]
+        !rtMatchCurrentRound?.playerResults[playerIndex]
       ) {
         return
       }
 
       setActiveWaitingTilesData({
         index: playerIndex,
-        tiles: matchCurrentRound?.playerResults[playerIndex].waitingTiles ?? [],
+        tiles:
+          rtMatchCurrentRound?.playerResults[playerIndex].waitingTiles ?? [],
       })
     },
-    [matchCurrentRound?.playerResults]
+    [rtMatchCurrentRound?.playerResults]
   )
 
   const handleCloseWaitingTileDoraKeyboard = useCallback(() => {
@@ -1047,12 +1058,12 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
 
       updateCurrentMatchRound({
         playerResults: {
-          ...(matchCurrentRound?.playerResults as Record<
+          ...(rtMatchCurrentRound?.playerResults as Record<
             PlayerIndex,
             PlayerResult
           >),
           [activeWaitingTilesData.index]: {
-            ...matchCurrentRound?.playerResults[activeWaitingTilesData.index],
+            ...rtMatchCurrentRound?.playerResults[activeWaitingTilesData.index],
             waitingTiles: newTiles,
           },
         },
@@ -1061,7 +1072,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
     },
     [
       activeWaitingTilesData,
-      matchCurrentRound?.playerResults,
+      rtMatchCurrentRound?.playerResults,
       updateCurrentMatchRound,
     ]
   )
@@ -1073,12 +1084,12 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
 
     updateCurrentMatchRound({
       playerResults: {
-        ...(matchCurrentRound?.playerResults as Record<
+        ...(rtMatchCurrentRound?.playerResults as Record<
           PlayerIndex,
           PlayerResult
         >),
         [activeWaitingTilesData.index]: {
-          ...matchCurrentRound?.playerResults[activeWaitingTilesData.index],
+          ...rtMatchCurrentRound?.playerResults[activeWaitingTilesData.index],
           waitingTiles: [],
         },
       },
@@ -1086,7 +1097,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
     setActiveWaitingTilesData(null)
   }, [
     activeWaitingTilesData,
-    matchCurrentRound?.playerResults,
+    rtMatchCurrentRound?.playerResults,
     updateCurrentMatchRound,
   ])
 
@@ -1100,17 +1111,17 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
 
   const handleSubmitPredictYakusDialog = useCallback(
     (newDetail: MJYakuKeyboardResult) => {
-      if (!matchCurrentRound || !activePredictYakusData) {
+      if (!rtMatchCurrentRound || !activePredictYakusData) {
         return
       }
 
       updateCurrentMatchRound({
         playerResults: {
-          ...matchCurrentRound.playerResults,
+          ...rtMatchCurrentRound.playerResults,
           [activePredictYakusData.index]: {
-            ...matchCurrentRound.playerResults[activePredictYakusData.index],
+            ...rtMatchCurrentRound.playerResults[activePredictYakusData.index],
             detail: {
-              ...matchCurrentRound.playerResults[activePredictYakusData.index]
+              ...rtMatchCurrentRound.playerResults[activePredictYakusData.index]
                 .detail,
               ...newDetail,
             },
@@ -1120,37 +1131,37 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
 
       setActivePredictYakusData(null)
     },
-    [activePredictYakusData, matchCurrentRound, updateCurrentMatchRound]
+    [activePredictYakusData, rtMatchCurrentRound, updateCurrentMatchRound]
   )
 
   const handleClickEditMatchName = useCallback(
     (e: MouseEvent) => {
       e.preventDefault()
 
-      if (!match) {
+      if (!rtMatch) {
         return
       }
 
-      const newName = prompt('對局名稱', match.name)
+      const newName = prompt('對局名稱', rtMatch.name)
       if (newName) {
         setMatchName(newName)
       }
     },
-    [match, setMatchName]
+    [rtMatch, setMatchName]
   )
 
   const handleClickBroadcastRonDetail = useCallback(
     (e: React.MouseEvent) => {
-      if (!matchRounds) {
+      if (!rtMatchRounds) {
         return
       }
 
-      const matchRoundId = e.currentTarget.getAttribute('data-match-round-id')
+      const matchRoundId = e.currentTarget.getAttribute('data-rtMatch-round-id')
       if (!matchRoundId) {
         return
       }
 
-      const newResultDetail = matchRounds[matchRoundId].resultDetail
+      const newResultDetail = rtMatchRounds[matchRoundId].resultDetail
       if (!newResultDetail) {
         return
       }
@@ -1164,7 +1175,11 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         setActiveAnimationMessage(null)
       }, 10000)
     },
-    [matchRounds, setMatchActiveResultDetail, setMatchRoundHasBroadcastedToTrue]
+    [
+      rtMatchRounds,
+      setMatchActiveResultDetail,
+      setMatchRoundHasBroadcastedToTrue,
+    ]
   )
 
   const handleClickClearActiveResult = useCallback(() => {
@@ -1195,11 +1210,14 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
     setMatchHidePlayersDisplay(false)
   }, [setMatchHidePlayersDisplay])
 
-  if ((!match || !matchCurrentRound) && matchDTO) {
-    return <ControlNewMatch matchDTO={matchDTO} />
+  console.log(rtMatch)
+  console.log(rtMatchCurrentRound)
+
+  if ((!rtMatch || !rtMatchCurrentRound) && match) {
+    return <ControlNewMatch match={match} />
   }
 
-  if (!match || !matchCurrentRound) {
+  if (!rtMatch || !rtMatchCurrentRound) {
     return <div>對局讀取失敗。</div>
   }
 
@@ -1217,13 +1235,13 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
               <div className="text-[0.5em] relative">
                 <div className="text-[0.5em]">
                   <button type="button" onClick={handleClickEditMatchName}>
-                    {match.name} <i className="bi bi-pencil"></i>
+                    {rtMatch.name} <i className="bi bi-pencil"></i>
                   </button>
                 </div>
                 <div className="flex gap-x-8 items-center">
                   <div>
                     <MJMatchCounterSpan
-                      roundCount={matchCurrentRound.roundCount}
+                      roundCount={rtMatchCurrentRound.roundCount}
                       max={8}
                     />
                   </div>
@@ -1238,7 +1256,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                         />
                       </div>
                       <div className="text-[0.4em] pb-1.5 leading-none">
-                        {matchCurrentRound.extendedRoundCount ?? 0}
+                        {rtMatchCurrentRound.extendedRoundCount ?? 0}
                       </div>
                     </div>
                     <div className="flex-1 flex flex-row items-center gap-x-3">
@@ -1250,12 +1268,12 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                         />
                       </div>
                       <div className="text-[0.4em] pb-1.5 leading-none">
-                        {matchCurrentRound.cumulatedThousands ?? 0}
+                        {rtMatchCurrentRound.cumulatedThousands ?? 0}
                       </div>
                     </div>
                   </div>
                 </div>
-                {match.hideHeader && (
+                {rtMatch.hideHeader && (
                   <div className="absolute inset-0 opacity-100 bg-red-800 text-center">
                     隱藏中
                   </div>
@@ -1263,7 +1281,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
               </div>
 
               <div className="flex items-center gap-x-2">
-                {matchCurrentRoundDoras.map((dora, index) => (
+                {rtMatchCurrentRoundDoras.map((dora, index) => (
                   <button
                     data-index={index}
                     onClick={handleClickDora}
@@ -1281,10 +1299,12 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                 <MJUIButton
                   type="button"
                   color={
-                    matchCurrentRoundDoras.length === 0 ? 'danger' : 'secondary'
+                    rtMatchCurrentRoundDoras.length === 0
+                      ? 'danger'
+                      : 'secondary'
                   }
                   className={`${
-                    matchCurrentRoundDoras.length === 0 && 'animate-bounce'
+                    rtMatchCurrentRoundDoras.length === 0 && 'animate-bounce'
                   }`}
                   data-index="-1"
                   onClick={handleClickDora}
@@ -1320,7 +1340,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
             </div>
 
             <div className="text-right space-x-4">
-              {match.activeResultDetail && (
+              {rtMatch.activeResultDetail && (
                 <MJUIButton
                   color="secondary"
                   type="button"
@@ -1331,8 +1351,9 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                   <span className="text-xs">(或最多10秒後自動結束)</span>
                 </MJUIButton>
               )}
-              {matchCurrentRound.nextRoundType !== NextRoundTypeEnum.Unknown &&
-                matchCurrentRound.nextRoundType !== NextRoundTypeEnum.End && (
+              {rtMatchCurrentRound.nextRoundType !==
+                NextRoundTypeEnum.Unknown &&
+                rtMatchCurrentRound.nextRoundType !== NextRoundTypeEnum.End && (
                   <MJUIButton
                     color="success"
                     type="button"
@@ -1342,19 +1363,19 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                     進入
                     <MJMatchCounterSpan
                       roundCount={
-                        matchCurrentRound.nextRoundType ===
+                        rtMatchCurrentRound.nextRoundType ===
                           NextRoundTypeEnum.NextRound ||
-                        matchCurrentRound.nextRoundType ===
+                        rtMatchCurrentRound.nextRoundType ===
                           NextRoundTypeEnum.NextRoundAndExtended
-                          ? matchCurrentRound.roundCount + 1
-                          : matchCurrentRound.roundCount
+                          ? rtMatchCurrentRound.roundCount + 1
+                          : rtMatchCurrentRound.roundCount
                       }
                       extendedRoundCount={
-                        matchCurrentRound.nextRoundType ===
+                        rtMatchCurrentRound.nextRoundType ===
                           NextRoundTypeEnum.Extended ||
-                        matchCurrentRound.nextRoundType ===
+                        rtMatchCurrentRound.nextRoundType ===
                           NextRoundTypeEnum.NextRoundAndExtended
-                          ? matchCurrentRound.extendedRoundCount + 1
+                          ? rtMatchCurrentRound.extendedRoundCount + 1
                           : 0
                       }
                     />
@@ -1377,42 +1398,46 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                 <div className="flex gap-x-2 items-center">
                   <div className="flex-1 text-[2.5rem]">
                     <MJPlayerCardDiv
-                      player={match.players[index]}
+                      player={rtMatch.players[index]}
                       playerIndex={index}
-                      score={matchCurrentRound.playerResults[index].afterScore}
+                      score={
+                        rtMatchCurrentRound.playerResults[index].afterScore
+                      }
                       scoreChanges={
-                        matchCurrentRound.playerResults[index].scoreChanges
+                        rtMatchCurrentRound.playerResults[index].scoreChanges
                       }
                       isEast={getIsPlayerEast(
                         index,
-                        matchCurrentRound.roundCount
+                        rtMatchCurrentRound.roundCount
                       )}
-                      isRiichi={matchCurrentRound.playerResults[index].isRiichi}
+                      isRiichi={
+                        rtMatchCurrentRound.playerResults[index].isRiichi
+                      }
                       waitingTiles={
-                        matchCurrentRound.playerResults[index].waitingTiles
+                        rtMatchCurrentRound.playerResults[index].waitingTiles
                       }
                       onClickWaitingTiles={handleClickWaitingTiles}
                       isYellowCarded={
-                        matchCurrentRound.playerResults[index].isYellowCarded
+                        rtMatchCurrentRound.playerResults[index].isYellowCarded
                       }
                       isRedCarded={
-                        matchCurrentRound.playerResults[index].isRedCarded
+                        rtMatchCurrentRound.playerResults[index].isRedCarded
                       }
-                      showPointAndRanking={match.showPoints}
+                      showPointAndRanking={rtMatch.showPoints}
                     />
                   </div>
                   {/* <div>
             <button
               type="button"
               className={`${
-                matchCurrentRound.playerResults[index].isRevealed
+                rtMatchCurrentRound.playerResults[index].isRevealed
                   ? 'bg-blue-600 text-white'
                   : 'bg-white text-blue-600 opacity-30'
               } h-16 w-16 border-2 border-blue-600  rounded-full text-lg`}
               onClick={handleClickReveal}
               data-player-index={index}
             >
-              {matchCurrentRound.playerResults[index].isRevealed
+              {rtMatchCurrentRound.playerResults[index].isRevealed
                 ? '已副露'
                 : '副露?'}
             </button>
@@ -1421,14 +1446,14 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                     <button
                       type="button"
                       className={`${
-                        matchCurrentRound.playerResults[index].isRiichi
+                        rtMatchCurrentRound.playerResults[index].isRiichi
                           ? 'bg-orange-600 text-white'
                           : 'bg-white text-orange-600 opacity-30'
                       } h-16 w-16 border-2 border-orange-600  rounded-full text-lg`}
                       onClick={handleClickRiichi}
                       data-player-index={index}
                     >
-                      {matchCurrentRound.playerResults[index].isRiichi
+                      {rtMatchCurrentRound.playerResults[index].isRiichi
                         ? '已立直'
                         : '立直?'}
                     </button>
@@ -1450,16 +1475,16 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
 
           {viewTabValue === 'listView-new' && (
             <PlayersListView
-              players={match.players}
-              currentRound={matchCurrentRound}
+              players={rtMatch.players}
+              currentRound={rtMatchCurrentRound}
               onAction={handlePlayerListViewAction}
             />
           )}
 
           {viewTabValue === 'gridView' && (
             <PlayersGridView
-              players={match.players}
-              currentRound={matchCurrentRound}
+              players={rtMatch.players}
+              currentRound={rtMatchCurrentRound}
               onAction={handlePlayerListViewAction}
             />
           )}
@@ -1490,56 +1515,56 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
               </tr>
             </thead>
             <tbody>
-              {matchRoundsWithDetail.map((matchRound) => (
-                <tr className="odd:bg-neutral-200" key={matchRound.id}>
+              {matchRoundsWithDetail.map((rtMatchRound) => (
+                <tr className="odd:bg-neutral-200" key={rtMatchRound.id}>
                   <td className="text-center py-1">
                     <MJMatchCounterSpan
-                      roundCount={matchRound.roundCount}
-                      extendedRoundCount={matchRound.extendedRoundCount}
+                      roundCount={rtMatchRound.roundCount}
+                      extendedRoundCount={rtMatchRound.extendedRoundCount}
                     />
                   </td>
                   <td
                     className="text-center py-1"
                     style={{
                       background:
-                        match.players[
-                          matchRound.resultDetail!.winnerPlayerIndex
+                        rtMatch.players[
+                          rtMatchRound.resultDetail!.winnerPlayerIndex
                         ].color,
                     }}
                   >
                     {
-                      match.players[matchRound.resultDetail!.winnerPlayerIndex]
-                        .name
+                      rtMatch.players[rtMatchRound.resultDetail!.winnerPlayerIndex]
+                        .primaryName
                     }
                   </td>
                   <td className="text-center py-1">
                     <p>
-                      {matchRound
+                      {rtMatchRound
                         .resultDetail!.yakus.map(({ label }) => label)
                         .join(' ')}
                     </p>
                     <p>
                       <MJHanFuTextSpan
-                        han={matchRound.resultDetail!.han}
-                        fu={matchRound.resultDetail!.fu}
-                        yakumanCount={matchRound.resultDetail!.yakumanCount}
+                        han={rtMatchRound.resultDetail!.han}
+                        fu={rtMatchRound.resultDetail!.fu}
+                        yakumanCount={rtMatchRound.resultDetail!.yakumanCount}
                         yakumanCountMax={convertYakumanMaxToCountMax(
-                          match.setting.yakumanMax
+                          rtMatch.setting.yakumanMax
                         )}
-                        isManganRoundUp={match.setting.isManganRoundUp === '1'}
+                        isManganRoundUp={rtMatch.setting.isManganRoundUp === '1'}
                       />
                     </p>
                   </td>
                   <td className="text-right py-1 px-2">
                     <MJUIButton
-                      color={matchRound.hasBroadcasted ? 'secondary' : 'danger'}
+                      color={rtMatchRound.hasBroadcasted ? 'secondary' : 'danger'}
                       type="button"
-                      className={matchRound.hasBroadcasted ? 'opacity-50' : ''}
+                      className={rtMatchRound.hasBroadcasted ? 'opacity-50' : ''}
                       onClick={handleClickBroadcastRonDetail}
-                      data-match-round-id={matchRound.id}
+                      data-rtMatch-round-id={rtMatchRound.id}
                     >
                       <i className="bi bi-camera-reels"></i>{' '}
-                      {matchRound.hasBroadcasted ? '再次播放' : '播放和牌詳情'}
+                      {rtMatchRound.hasBroadcasted ? '再次播放' : '播放和牌詳情'}
                     </MJUIButton>
                   </td>
                 </tr>
@@ -1560,10 +1585,10 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
             <thead>
               <tr className="border-b border-gray-400 [&>th]:p-2">
                 <th className="whitespace-nowrap px-16">局數</th>
-                <th>{match.players['0'].nickname}</th>
-                <th>{match.players['1'].nickname}</th>
-                <th>{match.players['2'].nickname}</th>
-                <th>{match.players['3'].nickname}</th>
+                <th>{rtMatch.players['0'].nickname}</th>
+                <th>{rtMatch.players['1'].nickname}</th>
+                <th>{rtMatch.players['2'].nickname}</th>
+                <th>{rtMatch.players['3'].nickname}</th>
                 <th className="text-right">操作</th>
               </tr>
             </thead>
@@ -1602,27 +1627,27 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                   <td></td>
                 </tr>
               )}
-              {matchRoundsWithDetail.map((matchRound) => {
-                if (matchRound.resultType === RoundResultTypeEnum.Hotfix) {
+              {matchRoundsWithDetail.map((rtMatchRound) => {
+                if (rtMatchRound.resultType === RoundResultTypeEnum.Hotfix) {
                   return (
                     <tr
-                      key={matchRound.id}
+                      key={rtMatchRound.id}
                       className="even:bg-gray-200 [&>td]:p-2"
                     >
                       <td className="text-center whitespace-nowrap px-16">
                         手動調整
                       </td>
                       <td className="text-center">
-                        {matchRound.playerResults['0'].afterScore}
+                        {rtMatchRound.playerResults['0'].afterScore}
                       </td>
                       <td className="text-center">
-                        {matchRound.playerResults['1'].afterScore}
+                        {rtMatchRound.playerResults['1'].afterScore}
                       </td>
                       <td className="text-center">
-                        {matchRound.playerResults['2'].afterScore}
+                        {rtMatchRound.playerResults['2'].afterScore}
                       </td>
                       <td className="text-center">
-                        {matchRound.playerResults['3'].afterScore}
+                        {rtMatchRound.playerResults['3'].afterScore}
                       </td>
                       <td></td>
                     </tr>
@@ -1631,13 +1656,13 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
 
                 return (
                   <tr
-                    key={matchRound.id}
+                    key={rtMatchRound.id}
                     className="even:bg-gray-200 [&>td]:p-2"
                   >
                     <td className="text-center whitespace-nowrap">
                       <MJMatchCounterSpan
-                        roundCount={matchRound.roundCount}
-                        extendedRoundCount={matchRound.extendedRoundCount}
+                        roundCount={rtMatchRound.roundCount}
+                        extendedRoundCount={rtMatchRound.extendedRoundCount}
                         max={8}
                         className="px-4"
                       />
@@ -1645,84 +1670,86 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                     <td className="text-center">
                       <MJMatchHistoryAmountSpan
                         value={
-                          matchRound.playerResults['0'].afterScore -
-                          matchRound.playerResults['0'].beforeScore
+                          rtMatchRound.playerResults['0'].afterScore -
+                          rtMatchRound.playerResults['0'].beforeScore
                         }
                       />
                       <PlayerResultMetadata
-                        match={match}
-                        matchRound={matchRound}
+                        rtMatch={rtMatch}
+                        rtMatchRound={rtMatchRound}
                         playerIndex="0"
                       />
                     </td>
                     <td className="text-center">
                       <MJMatchHistoryAmountSpan
                         value={
-                          matchRound.playerResults['1'].afterScore -
-                          matchRound.playerResults['1'].beforeScore
+                          rtMatchRound.playerResults['1'].afterScore -
+                          rtMatchRound.playerResults['1'].beforeScore
                         }
                       />
                       <PlayerResultMetadata
-                        match={match}
-                        matchRound={matchRound}
+                        rtMatch={rtMatch}
+                        rtMatchRound={rtMatchRound}
                         playerIndex="1"
                       />
                     </td>
                     <td className="text-center">
                       <MJMatchHistoryAmountSpan
                         value={
-                          matchRound.playerResults['2'].afterScore -
-                          matchRound.playerResults['2'].beforeScore
+                          rtMatchRound.playerResults['2'].afterScore -
+                          rtMatchRound.playerResults['2'].beforeScore
                         }
                       />
                       <PlayerResultMetadata
-                        match={match}
-                        matchRound={matchRound}
+                        rtMatch={rtMatch}
+                        rtMatchRound={rtMatchRound}
                         playerIndex="2"
                       />
                     </td>
                     <td className="text-center">
                       <MJMatchHistoryAmountSpan
                         value={
-                          matchRound.playerResults['3'].afterScore -
-                          matchRound.playerResults['3'].beforeScore
+                          rtMatchRound.playerResults['3'].afterScore -
+                          rtMatchRound.playerResults['3'].beforeScore
                         }
                       />
                       <PlayerResultMetadata
-                        match={match}
-                        matchRound={matchRound}
+                        rtMatch={rtMatch}
+                        rtMatchRound={rtMatchRound}
                         playerIndex="3"
                       />
                     </td>
                     <td className="text-right space-x-2">
-                      {(matchRound.resultType === RoundResultTypeEnum.Ron ||
-                        matchRound.resultType ===
+                      {(rtMatchRound.resultType === RoundResultTypeEnum.Ron ||
+                        rtMatchRound.resultType ===
                           RoundResultTypeEnum.SelfDrawn) && (
                         <MJUIButton
                           color={
-                            matchRound.hasBroadcasted ? 'secondary' : 'success'
+                            rtMatchRound.hasBroadcasted
+                              ? 'secondary'
+                              : 'success'
                           }
                           type="button"
                           variant="text"
                           className={
-                            matchRound.hasBroadcasted ? 'opacity-50' : ''
+                            rtMatchRound.hasBroadcasted ? 'opacity-50' : ''
                           }
                           onClick={handleClickBroadcastRonDetail}
-                          data-match-round-id={matchRound.id}
+                          data-rtMatch-round-id={rtMatchRound.id}
                         >
                           <i className="bi bi-camera-reels"></i>{' '}
-                          {matchRound.hasBroadcasted
+                          {rtMatchRound.hasBroadcasted
                             ? '已播放過'
                             : '播放和牌詳情'}
                         </MJUIButton>
                       )}
 
-                      {matchRound.resultType !==
+                      {rtMatchRound.resultType !==
                         RoundResultTypeEnum.Unknown && (
                         <MJUIButton
                           variant="text"
                           color="danger"
-                          data-matchRoundId={matchRound.id}
+                          data-matchRoundId={rtMatchRound.id}
                           onClick={handleClickEditMatchRound}
                         >
                           <i className="bi bi-pencil"></i> 修改
@@ -1807,7 +1834,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
           }
           defaultValue={
             typeof clickedDoraIndex !== 'undefined'
-              ? [matchCurrentRoundDoras[clickedDoraIndex]]
+              ? [rtMatchCurrentRoundDoras[clickedDoraIndex]]
               : undefined
           }
         />
@@ -1829,15 +1856,16 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
       </MJUIDialogV2>
 
       <MJYakuKeyboardDialog
-        round={matchCurrentRound.roundCount}
+        round={rtMatchCurrentRound.roundCount}
         activePlayerIndex={activePredictYakusData?.index ?? '0'}
         targetPlayerIndex={'-1'}
         open={!!activePredictYakusData}
         onClose={handleClosePredictYakusDialog}
         onSubmit={handleSubmitPredictYakusDialog}
         defaultValue={
-          matchCurrentRound.playerResults[activePredictYakusData?.index ?? '0']
-            .detail
+          rtMatchCurrentRound.playerResults[
+            activePredictYakusData?.index ?? '0'
+          ].detail
         }
       />
 
@@ -1847,8 +1875,8 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         onClose={() => toggleRonDialog(false)}
       >
         <MJMatchRonForm
-          match={match}
-          currentMatchRound={matchCurrentRound}
+          rtMatch={rtMatch}
+          currentMatchRound={rtMatchCurrentRound}
           onSubmit={handleSubmitMatchRonDialog}
           {...ronDialogProps}
         />
@@ -1860,8 +1888,8 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         onClose={() => toggleExhaustedDialog(false)}
       >
         <MJMatchExhaustedForm
-          match={match}
-          currentMatchRound={matchCurrentRound}
+          rtMatch={rtMatch}
+          currentMatchRound={rtMatchCurrentRound}
           onSubmit={handleSubmitMatchExhaustedDialog}
           {...ronDialogProps}
         />
@@ -1873,7 +1901,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         onClose={() => toggleEditPlayersDialog(false)}
       >
         <MJPlayersForm
-          defaultPlayers={match.players}
+          defaultPlayers={rtMatch.players}
           onSubmit={handleSubmitPlayersForm}
         />
       </MJUIDialogV2>
@@ -1884,8 +1912,8 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         onClose={() => toggleHotfixDialog(false)}
       >
         <MJMatchHotfixForm
-          match={match}
-          currentMatchRound={matchCurrentRound}
+          rtMatch={rtMatch}
+          currentMatchRound={rtMatchCurrentRound}
           onSubmit={handleSubmitMatchHotfixDialog}
           {...ronDialogProps}
         />
@@ -1897,8 +1925,8 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         onClose={() => toggleEditDialog(false)}
       >
         <MJMatchRoundEditForm
-          match={match}
-          matchRound={editDialogProps.matchRound}
+          rtMatch={rtMatch}
+          rtMatchRound={editDialogProps.rtMatchRound}
           onSubmit={handleSubmitRoundEdit}
         />
       </MJUIDialogV2>
@@ -1921,42 +1949,42 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                 </tr>
               </thead>
               <tbody>
-                {unboardcastedMatchRounds.map((matchRound) => (
-                  <tr className="odd:bg-neutral-200" key={matchRound.id}>
+                {unboardcastedMatchRounds.map((rtMatchRound) => (
+                  <tr className="odd:bg-neutral-200" key={rtMatchRound.id}>
                     <td className="text-center py-1">
                       <MJMatchCounterSpan
-                        roundCount={matchRound.roundCount}
-                        extendedRoundCount={matchRound.extendedRoundCount}
+                        roundCount={rtMatchRound.roundCount}
+                        extendedRoundCount={rtMatchRound.extendedRoundCount}
                       />
                     </td>
                     <td
                       className="text-center py-1"
                       style={{
                         background:
-                          match.players[
-                            matchRound.resultDetail!.winnerPlayerIndex
+                          rtMatch.players[
+                            rtMatchRound.resultDetail!.winnerPlayerIndex
                           ].color,
                       }}
                     >
                       {
-                        match.players[
-                          matchRound.resultDetail!.winnerPlayerIndex
-                        ].name
+                        rtMatch.players[
+                          rtMatchRound.resultDetail!.winnerPlayerIndex
+                        ].primaryName
                       }
                     </td>
                     <td className="text-center py-1">
                       <p>
-                        {matchRound
+                        {rtMatchRound
                           .resultDetail!.yakus.map(({ label }) => label)
                           .join(' ')}
                       </p>
                       <p>
                         <MJHanFuTextSpan
-                          han={matchRound.resultDetail!.han}
-                          fu={matchRound.resultDetail!.fu}
-                          yakumanCount={matchRound.resultDetail!.yakumanCount}
+                          han={rtMatchRound.resultDetail!.han}
+                          fu={rtMatchRound.resultDetail!.fu}
+                          yakumanCount={rtMatchRound.resultDetail!.yakumanCount}
                           isManganRoundUp={
-                            match.setting.isManganRoundUp === '1'
+                            rtMatch.setting.isManganRoundUp === '1'
                           }
                         />
                       </p>
@@ -1964,18 +1992,18 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                     <td className="text-right py-1 px-2">
                       <MJUIButton
                         color={
-                          matchRound.hasBroadcasted ? 'secondary' : 'success'
+                          rtMatchRound.hasBroadcasted ? 'secondary' : 'success'
                         }
                         type="button"
                         className={
-                          matchRound.hasBroadcasted
+                          rtMatchRound.hasBroadcasted
                             ? 'opacity-50'
                             : 'animate-pulse'
                         }
                         onClick={handleClickBroadcastRonDetail}
-                        data-match-round-id={matchRound.id}
+                        data-rtMatch-round-id={rtMatchRound.id}
                       >
-                        {matchRound.hasBroadcasted
+                        {rtMatchRound.hasBroadcasted
                           ? '已播放過'
                           : '播放和牌詳情'}
                       </MJUIButton>
@@ -1993,8 +2021,8 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
 
         <div>
           <div className="text-right mb-4">
-            {matchCurrentRound.nextRoundType !== NextRoundTypeEnum.Unknown &&
-              matchCurrentRound.nextRoundType !== NextRoundTypeEnum.End && (
+            {rtMatchCurrentRound.nextRoundType !== NextRoundTypeEnum.Unknown &&
+              rtMatchCurrentRound.nextRoundType !== NextRoundTypeEnum.End && (
                 <button
                   className="text-6xl p-4 text-green-800 bg-green-400 border-4 border-green-600 rounded-lg"
                   onClick={handleClickGoNextRound}
@@ -2002,19 +2030,19 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                   進入
                   <MJMatchCounterSpan
                     roundCount={
-                      matchCurrentRound.nextRoundType ===
+                      rtMatchCurrentRound.nextRoundType ===
                         NextRoundTypeEnum.NextRound ||
-                      matchCurrentRound.nextRoundType ===
+                      rtMatchCurrentRound.nextRoundType ===
                         NextRoundTypeEnum.NextRoundAndExtended
-                        ? matchCurrentRound.roundCount + 1
-                        : matchCurrentRound.roundCount
+                        ? rtMatchCurrentRound.roundCount + 1
+                        : rtMatchCurrentRound.roundCount
                     }
                     extendedRoundCount={
-                      matchCurrentRound.nextRoundType ===
+                      rtMatchCurrentRound.nextRoundType ===
                         NextRoundTypeEnum.Extended ||
-                      matchCurrentRound.nextRoundType ===
+                      rtMatchCurrentRound.nextRoundType ===
                         NextRoundTypeEnum.NextRoundAndExtended
-                        ? matchCurrentRound.extendedRoundCount + 1
+                        ? rtMatchCurrentRound.extendedRoundCount + 1
                         : 0
                     }
                   />{' '}
@@ -2022,8 +2050,8 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                 </button>
               )}
 
-            {matchCurrentRound.nextRoundType === NextRoundTypeEnum.End && (
-              <a href={`/v1/match/${matchId}/export`} target="_blank">
+            {rtMatchCurrentRound.nextRoundType === NextRoundTypeEnum.End && (
+              <a href={`/match/${matchId}/export`} target="_blank">
                 <button className="text-6xl p-4 text-yellow-800 bg-yellow-400 border-4 border-yellow-600 rounded-lg">
                   上傳成績
                   <i className="bi bi-cloud-upload"></i>
@@ -2032,7 +2060,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
             )}
           </div>
           <div className="flex gap-x-6 items-end justify-end">
-            {!match.hideHeader && (
+            {!rtMatch.hideHeader && (
               <button
                 onClick={handleClickHideHeader}
                 className="relative rounded-full py-2 px-4 shadow shadow-neutral-700 text-center bg-neutral-200 border border-neutral-300 leading-6 text-neutral-600"
@@ -2040,7 +2068,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                 <i className="bi bi-eye"></i> 標題：顯示中
               </button>
             )}
-            {match.hideHeader && (
+            {rtMatch.hideHeader && (
               <button
                 onClick={handleClickShowHeader}
                 className="relative rounded-full py-2 px-4 shadow shadow-neutral-700 text-center bg-red-600 border border-red-500 leading-6 text-white"
@@ -2048,7 +2076,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                 <i className="bi bi-eye-slash"></i> 標題：隱藏中
               </button>
             )}
-            {!match.hidePlayers && (
+            {!rtMatch.hidePlayers && (
               <button
                 onClick={handleClickHidePlayers}
                 className="relative rounded-full py-2 px-4 shadow shadow-neutral-700 text-center bg-neutral-200 border border-neutral-300 leading-6 text-neutral-600"
@@ -2056,7 +2084,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                 <i className="bi bi-people-fill"></i> 玩家：顯示中
               </button>
             )}
-            {match.hidePlayers && (
+            {rtMatch.hidePlayers && (
               <button
                 onClick={handleClickShowPlayers}
                 className="relative rounded-full py-2 px-4 shadow shadow-neutral-700 text-center bg-red-600 border border-red-500 leading-6 text-white"
@@ -2064,7 +2092,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                 <i className="bi bi-people"></i> 玩家：隱藏中
               </button>
             )}
-            {!match.showPoints && (
+            {!rtMatch.showPoints && (
               <button
                 onClick={handleClickDisplayPoint}
                 className="relative rounded-full py-2 px-4 shadow shadow-neutral-700 text-center bg-neutral-200 border border-neutral-300 leading-6 text-neutral-600"
@@ -2072,7 +2100,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                 <i className="bi bi-list-ol"></i> 切換播放馬點＆名次
               </button>
             )}
-            {match.showPoints && (
+            {rtMatch.showPoints && (
               <button
                 onClick={handleClickDisplayScore}
                 className="relative rounded-full py-2 px-4 shadow shadow-neutral-700 text-center bg-green-300 border border-green-300 leading-6 text-green-800"
@@ -2081,15 +2109,15 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
               </button>
             )}
 
-            {unboardcastedMatchRounds.map((matchRound) => (
+            {unboardcastedMatchRounds.map((rtMatchRound) => (
               <button
                 onClick={handleClickBroadcastRonDetail}
-                data-match-round-id={matchRound.id}
+                data-rtMatch-round-id={rtMatchRound.id}
                 className="relative rounded-full py-2 px-4 shadow shadow-neutral-700 text-center bg-red-200 border border-red-300 leading-6 text-red-800 animate-bounce"
               >
                 <p>
-                  <i className="bi bi-trophy"></i> {matchRound.roundCount}.
-                  {matchRound.extendedRoundCount} 和牌動畫：待播放
+                  <i className="bi bi-trophy"></i> {rtMatchRound.roundCount}.
+                  {rtMatchRound.extendedRoundCount} 和牌動畫：待播放
                 </p>
               </button>
             ))}

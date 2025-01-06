@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import MJUIButton from '@/components/MJUI/MJUIButton'
 import {
-  Match,
-  MatchRound,
+  RealtimeMatch,
+  RealtimeMatchRound,
   PlayerIndex,
   PlayerPositionEnum,
   PlayerResultWinnerOrLoserEnum,
@@ -23,16 +23,16 @@ import MJYakuKeyboardDiv, {
 import MJUIFormGroup from '../MJUI/MJUIFormGroup'
 
 export type MJMatchRonFormProps = {
-  match: Match
-  currentMatchRound: MatchRound
+  rtMatch: RealtimeMatch
+  currentMatchRound: RealtimeMatchRound
   initialActivePlayerIndex?: PlayerIndex
   initialTargetPlayerIndex?: PlayerIndex | '-1'
   submitNode?: React.ReactNode
-  onSubmit?: (resultMatchRound: MatchRound) => unknown
+  onSubmit?: (resultMatchRound: RealtimeMatchRound) => unknown
 }
 
 export default function MJMatchRonForm({
-  match,
+  rtMatch,
   currentMatchRound,
   initialActivePlayerIndex = '0',
   initialTargetPlayerIndex = '-1',
@@ -62,15 +62,15 @@ export default function MJMatchRonForm({
 
   const players = useMemo(() => {
     const _players = (
-      Object.keys(match.players) as unknown as PlayerIndex[]
+      Object.keys(rtMatch.players) as unknown as PlayerIndex[]
     ).map((index) => ({
       index: index.toString(),
-      name: `${match.players[index].name} (${match.players[index].nickname})`,
+      name: `${rtMatch.players[index].primaryName} (${rtMatch.players[index].nickname})`,
       position: getPlayerPosition(index, currentMatchRound.roundCount),
     }))
 
     return _players
-  }, [match.players, currentMatchRound.roundCount])
+  }, [rtMatch.players, currentMatchRound.roundCount])
 
   const [activePlayerIndex, setActivePlayerIndex] = useState<string>(
     initialActivePlayerIndex ?? '0'
@@ -95,8 +95,8 @@ export default function MJMatchRonForm({
       activePlayer?.position === PlayerPositionEnum.East,
       targetPlayerIndex !== '-1',
       {
-        roundUp: match.setting.isManganRoundUp === '1',
-        yakumanMax: match.setting.yakumanMax,
+        roundUp: rtMatch.setting.isManganRoundUp === '1',
+        yakumanMax: rtMatch.setting.yakumanMax,
       }
     )
 
@@ -128,8 +128,8 @@ export default function MJMatchRonForm({
     yakuResult.yakumanCount,
     activePlayer?.position,
     targetPlayerIndex,
-    match.setting.isManganRoundUp,
-    match.setting.yakumanMax,
+    rtMatch.setting.isManganRoundUp,
+    rtMatch.setting.yakumanMax,
     currentMatchRound.extendedRoundCount,
     currentMatchRound.cumulatedThousands,
   ])
@@ -175,7 +175,7 @@ export default function MJMatchRonForm({
       currentMatchRound.playerResults
     ) as unknown as PlayerIndex[]
 
-    const newPreviewPlayerResults: MatchRound['playerResults'] = {
+    const newPreviewPlayerResults: RealtimeMatchRound['playerResults'] = {
       '0': {
         ...currentMatchRound.playerResults['0'],
         beforeScore: currentMatchRound.playerResults['0'].beforeScore,
@@ -305,8 +305,8 @@ export default function MJMatchRonForm({
             ),
             targetPlayerIndex !== '-1',
             {
-              roundUp: match.setting.isManganRoundUp === '1',
-              yakumanMax: match.setting.yakumanMax,
+              roundUp: rtMatch.setting.isManganRoundUp === '1',
+              yakumanMax: rtMatch.setting.yakumanMax,
             }
           )
 
@@ -473,8 +473,8 @@ export default function MJMatchRonForm({
     isDaisangenTriggered,
     isDaisuushiiTriggered,
     isSuukantsuTriggered,
-    match.setting.isManganRoundUp,
-    match.setting.yakumanMax,
+    rtMatch.setting.isManganRoundUp,
+    rtMatch.setting.yakumanMax,
     targetPlayerIndex,
     yakuResult,
     yakumanDaisangenTriggerPlayerIndex,
@@ -487,7 +487,7 @@ export default function MJMatchRonForm({
       return
     }
 
-    const updatedMatchRound: MatchRound = {
+    const updatedMatchRound: RealtimeMatchRound = {
       ...currentMatchRound,
       resultType: getRoundResultTypeByCompiledScore(compiledScore),
       playerResults: previewPlayerResults,
@@ -569,7 +569,7 @@ export default function MJMatchRonForm({
 
           <MJYakuKeyboardResultDiv
             result={yakuResult}
-            matchSetting={match.setting}
+            matchSetting={rtMatch.setting}
           />
 
           <div className="text-3xl font-bold text-center bg-teal-400 py-2">
@@ -654,14 +654,14 @@ export default function MJMatchRonForm({
             </tr>
           </thead>
           <tbody>
-            {(Object.keys(match.players) as unknown as PlayerIndex[]).map(
+            {(Object.keys(rtMatch.players) as unknown as PlayerIndex[]).map(
               (index) => (
                 <tr key={index}>
                   <th
                     className="text-white py-1"
-                    style={{ background: match.players[index].color }}
+                    style={{ background: rtMatch.players[index].color }}
                   >
-                    {match.players[index].name}
+                    {rtMatch.players[index].primaryName}
                   </th>
                   <td className="px-2 text-center w-32">
                     {previewPlayerResults[index].beforeScore}

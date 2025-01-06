@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import MJUIButton from '@/components/MJUI/MJUIButton'
 import {
-  Match,
-  MatchRound,
+  RealtimeMatch,
+  RealtimeMatchRound,
   PlayerIndex,
   PlayerResultWinnerOrLoserEnum,
   RoundResultTypeEnum,
@@ -11,14 +11,14 @@ import MJUISwitch from '../MJUI/MJUISwitch'
 import MJAmountSpan from '../MJAmountSpan'
 
 export type MJMatchExhaustedFormProps = {
-  match: Match
-  currentMatchRound: MatchRound
+  rtMatch: RealtimeMatch
+  currentMatchRound: RealtimeMatchRound
   submitNode?: React.ReactNode
-  onSubmit?: (resultMatchRound: MatchRound) => unknown
+  onSubmit?: (resultMatchRound: RealtimeMatchRound) => unknown
 }
 
 export default function MJMatchExhaustedForm({
-  match,
+  rtMatch,
   currentMatchRound,
   submitNode = (
     <span>
@@ -60,7 +60,7 @@ export default function MJMatchExhaustedForm({
       currentMatchRound.playerResults
     ) as unknown as PlayerIndex[]
 
-    const newPreviewPlayerResults: MatchRound['playerResults'] = {
+    const newPreviewPlayerResults: RealtimeMatchRound['playerResults'] = {
       '0': {
         ...currentMatchRound.playerResults['0'],
         beforeScore: currentMatchRound.playerResults['0'].beforeScore,
@@ -158,7 +158,7 @@ export default function MJMatchExhaustedForm({
       return
     }
 
-    const updatedMatchRound: MatchRound = {
+    const updatedMatchRound: RealtimeMatchRound = {
       ...currentMatchRound,
       resultType: RoundResultTypeEnum.Exhausted,
       playerResults: previewPlayerResults,
@@ -205,14 +205,14 @@ export default function MJMatchExhaustedForm({
             </tr>
           </thead>
           <tbody>
-            {(Object.keys(match.players) as unknown as PlayerIndex[]).map(
+            {(Object.keys(rtMatch.players) as unknown as PlayerIndex[]).map(
               (index) => (
                 <tr key={index}>
                   <th
                     className="text-white py-1"
-                    style={{ background: match.players[index].color }}
+                    style={{ background: rtMatch.players[index].color }}
                   >
-                    {match.players[index].name}
+                    {rtMatch.players[index].primaryName}
                   </th>
                   <td
                     className="text-center bg-yellow-200"

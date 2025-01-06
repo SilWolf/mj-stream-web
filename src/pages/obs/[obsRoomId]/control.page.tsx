@@ -20,7 +20,7 @@ export default function ObsRoomControlPage({ params: { obsRoomId } }: Props) {
   return (
     <main>
       <a
-        href="/v1/obs/1/scene-control"
+        href="/obs/1/scene-control"
         className="block text-center py-4 bg-neutral-300"
       >
         <i className="bi bi-arrow-left-circle-fill"></i> 切換到場景控制台

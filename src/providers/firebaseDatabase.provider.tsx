@@ -33,7 +33,7 @@ import firebaseApp from '@/firebaseApp'
 const firebaseDatabase = getDatabase(firebaseApp)
 if (window.location.hostname === 'localhost') {
   // Point to the RTDB emulator running on localhost.
-  // connectDatabaseEmulator(firebaseDatabase, 'localhost', 9000)
+  connectDatabaseEmulator(firebaseDatabase, 'localhost', 9000)
 }
 
 type FirebaseDatabaseContextProps = {

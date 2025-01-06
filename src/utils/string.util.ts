@@ -9,7 +9,7 @@ export const getYearString = () => {
 }
 
 export const getQrCodeImgSrc = (value: string) =>
-  `https://api.qrserver.com/v1/create-qr-code/?size=512x512&data=${value}`
+  `https://api.qrserver.com/create-qr-code/?size=512x512&data=${value}`
 
 export const getLightColorOfColor = (color: string) => {
   let R = parseInt(color.substring(1, 3), 16)

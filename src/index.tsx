@@ -13,7 +13,6 @@ import MatchOBSPage from './pages/match/[id]/obs.page'
 import MatchControlPage from './pages/match/[id]/control/index.page'
 import PlayersPage from './pages/players/index.page'
 import ConfirmDialogProvider from './components/ConfirmDialog/provider'
-import CreateMatchPage from './pages/create-match/index.page'
 import TeamsPage from './pages/teams/index.page'
 import ObsRoomPage from './pages/obs/[obsRoomId]/index.page'
 import ObsScorePage from './pages/obs/[obsRoomId]/socre.page'
@@ -38,6 +37,7 @@ import RealtimeSummaryPage from './pages/realtime-summary/index.page'
 import ObsRoomIntroductionPage from './pages/obs/[obsRoomId]/introduction.page'
 import MatchSummaryPage from './pages/match/[id]/summary.page'
 import ObsRoomSummaryPage from './pages/obs/[obsRoomId]/summary.page'
+import AllNameplatesPage from './pages/nameplaces/index.page'
 import ObsRoomSceneControlPage, {
   ObsRoomScenePage,
 } from './pages/obs/[obsRoomId]/scene/index.page'
@@ -65,106 +65,94 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <FirebaseDatabaseProvider>
         <ConfirmDialogProvider>
           <Switch>
-            <Route path="/v1" component={IndexPage} />
-            <Route path="/v1/create-match" component={CreateMatchPage} />
-            <Route path="/v1/match/:matchId" component={MatchDetailPage} />
-            <Route path="/v1/match/:matchId/obs" component={MatchOBSPage} />
+            <Route path="/" component={IndexPage} />
+            <Route path="/match/:matchId" component={MatchDetailPage} />
+            <Route path="/match/:matchId/obs" component={MatchOBSPage} />
             <Route
-              path="/v1/match/:matchId/overlay"
+              path="/match/:matchId/overlay"
               component={MatchOverviewOverlayPage}
             />
             <Route
-              path="/v1/match/:matchId/control"
+              path="/match/:matchId/control"
               component={MatchControlPage}
             />
+            <Route path="/match/:matchId/export" component={MatchExportPage} />
             <Route
-              path="/v1/match/:matchId/export"
-              component={MatchExportPage}
-            />
-            <Route
-              path="/v1/match/:matchId/forecast"
+              path="/match/:matchId/forecast"
               component={MatchForecastPage}
             />
             <Route
-              path="/v1/match/:matchId/introduction"
+              path="/match/:matchId/introduction"
               component={MatchIntroductionPage}
             />
             <Route
-              path="/v1/match/:matchId/summary"
+              path="/match/:matchId/summary"
               component={MatchSummaryPage}
             />
             <Route
-              path="/v1/match/:matchId/nameplates"
+              path="/match/:matchId/nameplates"
               component={MatchNameplatesPage}
             />
-            <Route path="/v1/match/:matchId/stat" component={MatchStatPage} />
+            <Route path="/match/:matchId/stat" component={MatchStatPage} />
 
-            <Route path="/v1/obs/:obsRoomId" component={ObsRoomPage} />
+            <Route path="/obs/:obsRoomId" component={ObsRoomPage} />
+            <Route path="/obs/:obsRoomId/scene" component={ObsRoomScenePage} />
             <Route
-              path="/v1/obs/:obsRoomId/scene"
-              component={ObsRoomScenePage}
-            />
-            <Route
-              path="/v1/obs/:obsRoomId/scene-control"
+              path="/obs/:obsRoomId/scene-control"
               component={ObsRoomSceneControlPage}
             />
             <Route
-              path="/v1/obs/:obsRoomId/overlay"
+              path="/obs/:obsRoomId/overlay"
               component={ObsOverviewOverlayPage}
             />
             <Route
-              path="/v1/obs/:obsRoomId/control"
+              path="/obs/:obsRoomId/control"
               component={ObsRoomControlPage}
             />
             <Route
-              path="/v1/obs/:obsRoomId/export"
+              path="/obs/:obsRoomId/export"
               component={ObsRoomExportPage}
             />
             <Route
-              path="/v1/obs/:obsRoomId/forecast"
+              path="/obs/:obsRoomId/forecast"
               component={ObsRoomForecastPage}
             />
             <Route
-              path="/v1/obs/:obsRoomId/introduction"
+              path="/obs/:obsRoomId/introduction"
               component={ObsRoomIntroductionPage}
             />
             <Route
-              path="/v1/obs/:obsRoomId/summary"
+              path="/obs/:obsRoomId/summary"
               component={ObsRoomSummaryPage}
             />
             <Route
-              path="/v1/obs/:obsRoomId/weekly-summary"
+              path="/obs/:obsRoomId/weekly-summary"
               component={WeeklySummaryAutoPage}
             />
             <Route
-              path="/v1/obs/:obsRoomId/realtime-summary"
+              path="/obs/:obsRoomId/realtime-summary"
               component={RealtimeSummaryPage}
             />
-            <Route path="/v1/obs/:obsRoomId/end" component={ObsRoomEndPage} />
-            <Route path="/v1/obs/:obsRoomId/score" component={ObsScorePage} />
-            <Route path="/v1/obs/:obsRoomId/chart" component={ObsChartPage} />
+            <Route path="/obs/:obsRoomId/end" component={ObsRoomEndPage} />
+            <Route path="/obs/:obsRoomId/score" component={ObsScorePage} />
+            <Route path="/obs/:obsRoomId/chart" component={ObsChartPage} />
             <Route
-              path="/v1/obs/:obsRoomId/carousel"
+              path="/obs/:obsRoomId/carousel"
               component={ObsCarouselPage}
             />
-            <Route path="/v1/obs/:obsRoomId/stat" component={ObsStatPage} />
+            <Route path="/obs/:obsRoomId/stat" component={ObsStatPage} />
 
-            <Route path="/v1/players" component={PlayersPage} />
-            <Route path="/v1/teams" component={TeamsPage} />
-            <Route path="/v1/matches" component={MatchesPage} />
+            <Route path="/players" component={PlayersPage} />
+            <Route path="/teams" component={TeamsPage} />
+            <Route path="/matches" component={MatchesPage} />
 
-            <Route
-              path="/v1/weekly-summary/"
-              component={WeeklySummaryAutoPage}
-            />
-            <Route
-              path="/v1/weekly-summary/:week"
-              component={WeeklySummaryPage}
-            />
+            <Route path="/weekly-summary/" component={WeeklySummaryAutoPage} />
+            <Route path="/weekly-summary/:week" component={WeeklySummaryPage} />
 
+            <Route path="/realtime-summary/" component={RealtimeSummaryPage} />
             <Route
-              path="/v1/realtime-summary/"
-              component={RealtimeSummaryPage}
+              path="/tournament/nameplates"
+              component={AllNameplatesPage}
             />
           </Switch>
         </ConfirmDialogProvider>

@@ -533,7 +533,10 @@ export const mapPlayerWinOrLose = {
   [PlayerResultWinnerOrLoserEnum.Lose]: 'lose',
 }
 
-const mapPlayerResult = (matchRound: MatchRound, playerIndex: PlayerIndex) => ({
+const mapPlayerResult = (
+  matchRound: RealtimeMatchRound,
+  playerIndex: PlayerIndex
+) => ({
   position:
     mapPlayerPosition[getPlayerPosition(playerIndex, matchRound.roundCount)],
   type: mapPlayerWinOrLose[matchRound.playerResults[playerIndex].type],
@@ -561,7 +564,9 @@ const mapPlayerResult = (matchRound: MatchRound, playerIndex: PlayerIndex) => ({
   pureScore: 0,
 })
 
-export const convertMatchToExportedMatch = (matchRounds: MatchRound[]) => {
+export const convertMatchToExportedMatch = (
+  matchRounds: RealtimeMatchRound[]
+) => {
   const lastRound = matchRounds.at(-1)!
   const pointsAndRankings = convertScoresToPointsAndRankings([
     lastRound.playerResults[0].afterScore,

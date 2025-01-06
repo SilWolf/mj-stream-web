@@ -343,7 +343,7 @@ const ObsRoomSceneControlPage = ({ params: { obsRoomId } }: Props) => {
   return (
     <main>
       <a
-        href="/v1/obs/1/control"
+        href="/obs/1/control"
         className="block text-center py-4 bg-neutral-300"
       >
         切換到入分控制台 <i className="bi bi-arrow-right-circle-fill"></i>
@@ -363,7 +363,7 @@ const ObsRoomSceneControlPage = ({ params: { obsRoomId } }: Props) => {
             </div>
           </div>
           <div className="text-center">
-            <a href="/v1/obs/1/scene" target="_blank">
+            <a href="/obs/1/scene" target="_blank">
               打開連結 <i className="bi bi-box-arrow-up-right"></i>
             </a>
           </div>

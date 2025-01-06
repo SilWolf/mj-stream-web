@@ -13,31 +13,47 @@ export type Database = {
  */
 export type DatabaseV1 = {
   matches: Record<string, Match>
-  matchRounds: Record<string, Record<string, MatchRound>>
+  matchRounds: Record<string, Record<string, RealtimeMatchRound>>
   players: Record<string, Player>
   teams: Record<string, Team>
 }
 
-export type Match = {
+export type RawMatch = {
+  _id: string
   name: string
-  code: string
-  remark: string
-  createdAt: string
-  createdBy: string
-  updatedAt: string
-  updatedBy: string
-  setting: MatchSetting
-  players: Record<PlayerIndex, Player>
-  activeResultDetail: {
-    winnerPlayerIndex: PlayerIndex
-    han: number
-    fu: number
-    yakumanCount: number
-    yakus: { id: string; label: string; han: number; yakumanCount: number }[]
-  } | null
-  showPoints?: boolean | null
-  hideHeader?: boolean | null
-  hidePlayers?: boolean | null
+  startAt: string
+  playerEastTeam?: { _ref: string }
+  playerEast?: { _ref: string }
+  playerSouthTeam?: { _ref: string }
+  playerSouth?: { _ref: string }
+  playerWestTeam?: { _ref: string }
+  playerWest?: { _ref: string }
+  playerNorthTeam?: { _ref: string }
+  playerNorth?: { _ref: string }
+  tournament: {
+    _id: string
+    name: string
+    logoUrl: string
+  }
+}
+
+export type Match = {
+  _id: string
+  name: string
+  startAt: string
+  playerEastTeam?: Team
+  playerEast?: Player
+  playerSouthTeam?: Team
+  playerSouth?: Player
+  playerWestTeam?: Team
+  playerWest?: Player
+  playerNorthTeam?: Team
+  playerNorth?: Player
+  tournament: {
+    _id: string
+    name: string
+    logoUrl: string
+  }
 }
 
 export type RawPlayer = {
@@ -50,37 +66,71 @@ export type RawPlayer = {
 }
 
 export type Player = {
-  id?: string
-  title: string
-  name: string
-  nickname?: string | null
-  proPicUrl?: string | null
-  teamPicUrl?: string | null
-  largeTeamPicUrl?: string | null
-  color: string
-  createdAt?: number
-  updatedAt?: number
+  _id: string
+  name: string | null
+  nickname: string | null
+  designation: string | null
+  portraitImage: string | null
+  introduction: string
+  statistics?: PlayerStatistic
 }
 
-export type MatchRound = {
-  matchId: string
-  code: string
+export type PlayerStatistic = {
+  matchCount: number
   roundCount: number
-  extendedRoundCount: number
-  cumulatedThousands: number
-  nextRoundCumulatedThousands: number
-  resultType: RoundResultTypeEnum
-  resultDetail?: {
-    winnerPlayerIndex: PlayerIndex
-    han: number
-    fu: number
-    yakumanCount: number
-    yakus: { id: string; label: string; han: number; yakumanCount: number }[]
-  }
-  hasBroadcasted?: boolean
-  nextRoundType: NextRoundTypeEnum
-  playerResults: Record<PlayerIndex, PlayerResult>
-  doras: Record<number, string>
+  point: number
+  scoreMax: number
+  scoreMin: number
+  firstCount: number
+  secondCount: number
+  thirdCount: number
+  fourthCount: number
+  riichiCount: number
+  riichiCountWhenEast: number
+  riichiCountWhenNonEast: number
+  revealCount: number
+  revealCountWhenEast: number
+  revealCountWhenNonEast: number
+  waitingCount: number
+  ronCount: number
+  ronCountWhenEast: number
+  ronCountWhenNonEast: number
+  waitingWhenExhaustedCount: number
+  ronPureScoreAvg: number
+  ronPureScoreAvgWhenEast: number
+  ronPureScoreAvgWhenNonEast: number
+  ronHighYakuCount: number
+  chuckCount: number
+  chuckCountWhenEast: number
+  chuckCountWhenNonEast: number
+  chuckPureScoreAvg: number
+  chuckPureScoreAvgWhenEast: number
+  chuckPureScoreAvgWhenNonEast: number
+  chuckHighYakuCount: number
+  ronAfterRiichiCount: number
+  ronAfterRiichiPureScoreAvg: number
+  ronAfterRevealCount: number
+  ronAfterRevealPureScoreAvg: number
+  chuckAfterRiichiCount: number
+  chuckAfterRiichiPureScoreAvg: number
+  chuckAfterRevealCount: number
+  chuckAfterRevealPureScoreAvg: number
+
+  pointRanking: number
+  nonFourthP: number
+  nonFourthPRanking: number
+  firstAndSecondP: number
+  firstAndSecondPRanking: number
+  riichiP: number
+  riichiPRanking: number
+  ronP: number
+  ronPRanking: number
+  chuckP: number
+  chuckPRanking: number
+  revealP: number
+  revealPRanking: number
+  ronPureScoreAvgRanking: number
+  chuckPureScoreAvgRanking: number
 }
 
 export const enum RoundResultTypeEnum {
@@ -149,8 +199,81 @@ export type MatchSetting = {
 }
 
 export type Team = {
-  _id?: string
-  name: string
+  _id: string
+  slug: string
+  name: string | null
+  secondaryName: string | null
+  thirdName: string | null
+  squareLogoImage: string | null
   color: string
-  logoUrl?: string
+  introduction: string
+  players: Player[]
+  statistics?: {
+    ranking: number
+    point: number
+    matchCount: number
+    firstP: number
+    secondP: number
+    thirdP: number
+    fourthP: number
+    rankingAvg: number
+    pointAvg: number
+    ronP: number
+    chuckP: number
+    riichiP: number
+    revealP: number
+  }
+}
+
+export type RealtimeMatch = {
+  name: string
+  code: string
+  remark: string
+  createdAt: string
+  createdBy: string
+  updatedAt: string
+  updatedBy: string
+  setting: MatchSetting
+  players: Record<PlayerIndex, RealtimePlayer>
+  activeResultDetail: {
+    winnerPlayerIndex: PlayerIndex
+    han: number
+    fu: number
+    yakumanCount: number
+    yakus: { id: string; label: string; han: number; yakumanCount: number }[]
+  } | null
+  showPoints?: boolean | null
+  hideHeader?: boolean | null
+  hidePlayers?: boolean | null
+}
+
+export type RealtimePlayer = {
+  primaryName: string
+  secondaryName: string
+  nickname: string
+  color: string
+  logoUrl: string | null
+  propicUrl: string | null
+  largeLogoUrl: string | null
+}
+
+export type RealtimeMatchRound = {
+  matchId: string
+  code: string
+  roundCount: number
+  extendedRoundCount: number
+  cumulatedThousands: number
+  nextRoundCumulatedThousands: number
+  resultType: RoundResultTypeEnum
+  resultDetail?: {
+    winnerPlayerIndex: PlayerIndex
+    han: number
+    fu: number
+    yakumanCount: number
+    yakus: { id: string; label: string; han: number; yakumanCount: number }[]
+  }
+  hasBroadcasted?: boolean
+  nextRoundType: NextRoundTypeEnum
+  playerResults: Record<PlayerIndex, PlayerResult>
+  doras: Record<number, string>
 }

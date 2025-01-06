@@ -1,20 +1,20 @@
 import { convertArrayToObject, getLastItemOfArray } from '@/utils/array.util'
 import { useCallback, useMemo } from 'react'
-import { Match, MatchRound } from '../../models'
+import { RealtimeMatch, RealtimeMatchRound } from '../../models'
 import { useFirebaseDatabaseByKey } from '../../providers/firebaseDatabase.provider'
 
 const useMatch = (matchId: string) => {
-  const { data: match, update: updateMatch } = useFirebaseDatabaseByKey<
-    Match,
-    Match,
-    Partial<Match>
+  const { data: rtMatch, update: updateMatch } = useFirebaseDatabaseByKey<
+    RealtimeMatch,
+    RealtimeMatch,
+    Partial<RealtimeMatch>
   >(`/matches/${matchId}`)
 
   const {
-    data: matchRounds,
+    data: rtMatchRounds,
     update: updateMatchRounds,
     push: pushMatchRound,
-  } = useFirebaseDatabaseByKey<MatchRound>(`matchRounds`, {
+  } = useFirebaseDatabaseByKey<RealtimeMatchRound>(`matchRounds`, {
     order: {
       byChild: 'matchId',
     },
@@ -23,19 +23,19 @@ const useMatch = (matchId: string) => {
     },
   })
 
-  const matchCurrentRound = useMemo(
-    () => getLastItemOfArray(Object.values(matchRounds ?? {})) ?? undefined,
-    [matchRounds]
+  const rtMatchCurrentRound = useMemo(
+    () => getLastItemOfArray(Object.values(rtMatchRounds ?? {})) ?? undefined,
+    [rtMatchRounds]
   )
 
-  const matchCurrentRoundDoras = useMemo(
-    () => Object.values(matchCurrentRound?.doras ?? {}),
-    [matchCurrentRound]
+  const rtMatchCurrentRoundDoras = useMemo(
+    () => Object.values(rtMatchCurrentRound?.doras ?? {}),
+    [rtMatchCurrentRound]
   )
 
   const updateMatchRoundById = useCallback(
-    (id: string, payload: Partial<MatchRound>) => {
-      const oldMatchRound = matchRounds?.[id]
+    (id: string, payload: Partial<RealtimeMatchRound>) => {
+      const oldMatchRound = rtMatchRounds?.[id]
 
       if (!oldMatchRound) {
         return
@@ -48,13 +48,13 @@ const useMatch = (matchId: string) => {
         } as MatchRound,
       })
     },
-    [matchRounds, updateMatchRounds]
+    [rtMatchRounds, updateMatchRounds]
   )
 
   const updateCurrentMatchRound = useCallback(
-    (payload: Partial<MatchRound>) => {
+    (payload: Partial<RealtimeMatchRound>) => {
       const currentMatchRoundId = getLastItemOfArray(
-        Object.keys(matchRounds ?? {})
+        Object.keys(rtMatchRounds ?? {})
       )
 
       if (!currentMatchRoundId) {
@@ -63,12 +63,12 @@ const useMatch = (matchId: string) => {
 
       updateMatchRounds({
         [currentMatchRoundId]: {
-          ...matchCurrentRound,
+          ...rtMatchCurrentRound,
           ...payload,
-        } as MatchRound,
+        } as RealtimeMatchRound,
       })
     },
-    [matchCurrentRound, matchRounds, updateMatchRounds]
+    [rtMatchCurrentRound, rtMatchRounds, updateMatchRounds]
   )
 
   const setCurrentRoundDoras = useCallback(
@@ -86,35 +86,35 @@ const useMatch = (matchId: string) => {
   )
 
   const setMatchPlayers = useCallback(
-    (newPlayers: Match['players']) => {
+    (newPlayers: RealtimeMatch['players']) => {
       updateMatch({ players: newPlayers })
     },
     [updateMatch]
   )
 
   const setMatchActiveResultDetail = useCallback(
-    (newResultDetail: Match['activeResultDetail'] | null) => {
+    (newResultDetail: RealtimeMatch['activeResultDetail'] | null) => {
       updateMatch({ activeResultDetail: newResultDetail })
     },
     [updateMatch]
   )
 
   const setMatchPointDisplay = useCallback(
-    (newShowPoints: Match['showPoints'] | null) => {
+    (newShowPoints: RealtimeMatch['showPoints'] | null) => {
       updateMatch({ showPoints: newShowPoints })
     },
     [updateMatch]
   )
 
   const setMatchHideHeaderDisplay = useCallback(
-    (newHideHeader: Match['hideHeader'] | null) => {
+    (newHideHeader: RealtimeMatch['hideHeader'] | null) => {
       updateMatch({ hideHeader: newHideHeader })
     },
     [updateMatch]
   )
 
   const setMatchHidePlayersDisplay = useCallback(
-    (newHidePlayers: Match['hidePlayers'] | null) => {
+    (newHidePlayers: RealtimeMatch['hidePlayers'] | null) => {
       updateMatch({ hidePlayers: newHidePlayers })
     },
     [updateMatch]
@@ -124,19 +124,19 @@ const useMatch = (matchId: string) => {
     (matchRoundId: string) => {
       updateMatchRounds({
         [matchRoundId]: {
-          ...matchRounds?.[matchRoundId],
+          ...rtMatchRounds?.[matchRoundId],
           hasBroadcasted: true,
         },
       })
     },
-    [matchRounds, updateMatchRounds]
+    [rtMatchRounds, updateMatchRounds]
   )
 
   return {
-    match,
-    matchRounds,
-    matchCurrentRound,
-    matchCurrentRoundDoras,
+    rtMatch,
+    rtMatchRounds,
+    rtMatchCurrentRound,
+    rtMatchCurrentRoundDoras,
     setMatchName,
     setMatchPlayers,
     setMatchPointDisplay,

@@ -1,9 +1,26 @@
-import { Player } from '@/models'
+import { Match, Player, RawMatch, RealtimePlayer, Team } from '@/models'
+import { mergeObject } from '@/utils/object.util'
 import { createClient } from '@sanity/client'
 
-const PLAYER_PROJECTION = `_id, name, nickname, designation, "portraitImage": portraitImage.asset->url`
-const TEAM_PROJECTION = `_id, "slug": slug.current, name, secondaryName, thirdName, "squareLogoImage": squareLogoImage.asset->url, "color": color.hex, description`
-const TEAM_PLAYER_PROJECTION = `team->{${TEAM_PROJECTION}}, player->{${PLAYER_PROJECTION}}, overridedDesignation, overridedName, overridedNickname, "overridedColor": overridedColor.hex, "overridedPortraitImage": overridedPortraitImage.asset->url`
+const PLAYER_PROJECTION = `_id, name, nickname, designation, "portraitImage": portraitImage.asset->url, introduction`
+const PLAYER_META_FIELDS = [
+  'name',
+  'nickname',
+  '"portraitImage": portraitImage.asset->url',
+  'designation',
+  'introduction',
+]
+
+const TEAM_PROJECTION = `{_id, "slug": slug.current, name, secondaryName, thirdName, "squareLogoImage": squareLogoImage.asset->url, "color": color.hex, introduction}`
+const TEAM_META_FIELDS = [
+  '"slug": slug.current',
+  'name',
+  'secondaryName',
+  'thirdName',
+  '"squareLogoImage": squareLogoImage.asset->url',
+  '"color": color.hex',
+  'introduction',
+]
 
 export const client = createClient({
   projectId: '0a9a4r26',
@@ -169,219 +186,244 @@ export type DB_MatchTournament = {
   }[]
 }
 
+export type TournamentTeam = {
+  _key: string
+  ref: Team
+  overrided: Team
+  players: {
+    _key: string
+    ref: Player
+    overrided: Player
+  }[]
+
+  statistics?: {
+    ranking: number
+    point: number
+    matchCount: number
+    firstP: number
+    secondP: number
+    thirdP: number
+    fourthP: number
+    rankingAvg: number
+    pointAvg: number
+    ronP: number
+    chuckP: number
+    riichiP: number
+    revealP: number
+  }
+}
+
+export type TournamentTeamWithPlayers = TournamentTeam & {
+  players: {
+    ref: Player
+    overrided: Player
+  }[]
+}
+
+export type TournamentTeamWithPlayersWithStatistics = TournamentTeam & {
+  players: {
+    ref: Player
+    overrided: Player
+  }[]
+  statistics: {
+    matchCount: number
+    point: number
+    ranking: number
+    pointHistories: []
+  }
+}
+
 export const apiGetPlayers = (): Promise<DB_Player[]> => {
   return client.fetch<DB_Player[]>('*[_type == "player"]')
 }
 
-type DB_TeamPlayer_WithoutTeam = DB_TeamPlayer & {
-  teamId: string
-}
-export const apiGetPlayersForIntroduction = async (
-  teamIds: string[],
-  tournamentId: string
-): Promise<Record<string, TeamPlayerDTO[]>> => {
-  const teamPlayers = await client.fetch<DB_TeamPlayer_WithoutTeam[]>(
-    `*[_type == "teamPlayer" && team._ref in [${teamIds
-      .map((teamId) => `"${teamId}"`)
-      .join(
-        ','
-      )}]] | { "teamId": team._ref, player->{${PLAYER_PROJECTION}, "statistics": statistics[_key=="${tournamentId}"][0] } }`
-  )
-
-  console.log(teamPlayers)
-
-  const result: Record<string, TeamPlayerDTO[]> = {}
-
-  for (let i = 0; i < teamPlayers.length; i++) {
-    const teamPlayer = teamPlayers[i]
-
-    if (!result[teamPlayer.teamId]) {
-      result[teamPlayer.teamId] = []
-    }
-    result[teamPlayer.teamId].push(formatTeamPlayerDTO(null, teamPlayer))
-  }
-
-  return result
-}
-
-export const apiGetMatches = (): Promise<MatchDTO[]> => {
+export const apiGetMatches = async () => {
+  const regularTeams = await getRegularTeamsWithPlayers()
   return client
     .fetch<
-      DB_Match[]
-    >(`*[_type == "match" && !(_id in path("drafts.**")) && (status == "initialized" || status == "streaming")] | order(startAt asc)[0...10]{ _id, name, playerEast->{${TEAM_PLAYER_PROJECTION}}, playerSouth->{${TEAM_PLAYER_PROJECTION}}, playerWest->{${TEAM_PLAYER_PROJECTION}}, playerNorth->{${TEAM_PLAYER_PROJECTION}}, playerEastTeam->{${TEAM_PROJECTION}}, playerSouthTeam->{${TEAM_PROJECTION}}, playerWestTeam->{${TEAM_PROJECTION}}, playerNorthTeam->{${TEAM_PROJECTION}}, startAt, tournament->{_id, name, "logoUrl": logo.asset->url, startingScore, isManganRoundUp, yakuMax, yakumanMax}}`)
+      RawMatch[]
+    >(`*[_type == "match" && !(_id in path("drafts.**")) && (status == "initialized" || status == "streaming")] | order(startAt asc)[0...10]{ _id, name, playerEast, playerSouth, playerWest, playerNorth, playerEastTeam, playerSouthTeam, playerWestTeam, playerNorthTeam, startAt, tournament->{_id, name, "logoUrl": logo.asset->url} }`)
     .then((matches) =>
-      matches.map((match) => {
-        const {
+      matches.map((rawMatch) => {
+        const teamEast = regularTeams.find(
+          ({ team }) => rawMatch.playerEastTeam?._ref === team._id
+        )
+        const playerEast = teamEast?.players.find(
+          ({ _id }) => _id === rawMatch.playerEast?._ref
+        )
+        const teamSouth = regularTeams.find(
+          ({ team }) => rawMatch.playerSouthTeam?._ref === team._id
+        )
+        const playerSouth = teamSouth?.players.find(
+          ({ _id }) => _id === rawMatch.playerSouth?._ref
+        )
+        const teamWest = regularTeams.find(
+          ({ team }) => rawMatch.playerWestTeam?._ref === team._id
+        )
+        const playerWest = teamWest?.players.find(
+          ({ _id }) => _id === rawMatch.playerWest?._ref
+        )
+        const teamNorth = regularTeams.find(
+          ({ team }) => rawMatch.playerNorthTeam?._ref === team._id
+        )
+        const playerNorth = teamNorth?.players.find(
+          ({ _id }) => _id === rawMatch.playerNorth?._ref
+        )
+
+        const match: Match = {
+          ...rawMatch,
           playerEast,
-          playerEastTeam,
           playerSouth,
-          playerSouthTeam,
           playerWest,
-          playerWestTeam,
           playerNorth,
-          playerNorthTeam,
-          ...matchRest
-        } = match
-
-        const newMatch: MatchDTO = {
-          ...matchRest,
-          nameAlt: matchRest.name.startsWith('常規賽 #23Pre')
-            ? `常規賽 ${matchRest.startAt.substring(0, 10)} 第${
-                matchRest.name[matchRest.name.length - 1]
-              }回戰`
-            : matchRest.name,
-          playerEast: formatTeamPlayerDTO(playerEastTeam, playerEast),
-          playerSouth: formatTeamPlayerDTO(playerSouthTeam, playerSouth),
-          playerWest: formatTeamPlayerDTO(playerWestTeam, playerWest),
-          playerNorth: formatTeamPlayerDTO(playerNorthTeam, playerNorth),
-          _order: ['playerEast', 'playerSouth', 'playerWest', 'playerNorth'],
+          playerEastTeam: teamEast?.team,
+          playerSouthTeam: teamSouth?.team,
+          playerWestTeam: teamWest?.team,
+          playerNorthTeam: teamNorth?.team,
         }
 
-        if (
-          playerEast &&
-          playerEastTeam &&
-          playerSouth &&
-          playerSouthTeam &&
-          playerWest &&
-          playerWestTeam &&
-          playerNorth &&
-          playerNorthTeam
-        ) {
-          // assume both player and placeholder team exist
-
-          const playersMap: Record<
-            string,
-            'playerEast' | 'playerSouth' | 'playerWest' | 'playerNorth'
-          > = {
-            [playerEast.team._id]: 'playerEast',
-            [playerSouth.team._id]: 'playerSouth',
-            [playerWest.team._id]: 'playerWest',
-            [playerNorth.team._id]: 'playerNorth',
-          }
-
-          newMatch._order = [
-            playersMap[playerEastTeam._id],
-            playersMap[playerSouthTeam._id],
-            playersMap[playerWestTeam._id],
-            playersMap[playerNorthTeam._id],
-          ]
-        }
-
-        return newMatch
+        return match
       })
     )
 }
 
-export const apiGetMatchById = async (
-  matchId: string,
-  withStatistics?: boolean,
-  statisticTournamentId?: string
-): Promise<MatchDTO | undefined> => {
-  const match = await client
+export const apiGetMatchById = async (matchId: string) => {
+  const regularTeams = await getRegularTeamsWithPlayers()
+  return client
     .fetch<
-      DB_Match[]
-    >(`*[_type == "match" && _id == "${matchId}"]{ _id, name, playerEast->{${TEAM_PLAYER_PROJECTION}}, playerSouth->{${TEAM_PLAYER_PROJECTION}}, playerWest->{${TEAM_PLAYER_PROJECTION}}, playerNorth->{${TEAM_PLAYER_PROJECTION}}, playerEastTeam->{${TEAM_PROJECTION}}, playerSouthTeam->{${TEAM_PROJECTION}}, playerWestTeam->{${TEAM_PROJECTION}}, playerNorthTeam->{${TEAM_PROJECTION}}, startAt, youtubeUrl, bilibiliUrl, result, rounds, tournament->{_id, name, "logoUrl": logo.asset->url, startingScore, isManganRoundUp, yakuMax, yakumanMax, teams[]{ "_id": team._ref, matchCount, ranking, point }}}`)
-    .then((matches: DB_Match[]) => {
-      const {
-        playerEast,
-        playerEastTeam,
-        playerSouth,
-        playerSouthTeam,
-        playerWest,
-        playerWestTeam,
-        playerNorth,
-        playerNorthTeam,
-        ...match
-      } = matches[0]
+      RawMatch[]
+    >(`*[_type == "match" && _id == "${matchId}"]{ _id, name, playerEast, playerSouth, playerWest, playerNorth, playerEastTeam, playerSouthTeam, playerWestTeam, playerNorthTeam, startAt }`)
+    .then((rawMatches) => {
+      const rawMatch = rawMatches[0]
 
-      const newMatch: MatchDTO = {
-        ...match,
-        nameAlt: match.name.startsWith('常規賽 #23Pre')
-          ? `常規賽 ${match.startAt.substring(0, 10)} 第${
-              match.name[match.name.length - 1]
-            }回戰`
-          : match.name,
-        playerEast: formatTeamPlayerDTO(playerEastTeam, playerEast),
-        playerSouth: formatTeamPlayerDTO(playerSouthTeam, playerSouth),
-        playerWest: formatTeamPlayerDTO(playerWestTeam, playerWest),
-        playerNorth: formatTeamPlayerDTO(playerNorthTeam, playerNorth),
-        _order: ['playerEast', 'playerSouth', 'playerWest', 'playerNorth'],
-      }
-
-      if (
-        playerEast &&
-        playerEastTeam &&
-        playerSouth &&
-        playerSouthTeam &&
-        playerWest &&
-        playerWestTeam &&
-        playerNorth &&
-        playerNorthTeam
-      ) {
-        // assume both player and placeholder team exist
-
-        const playersMap: Record<
-          string,
-          'playerEast' | 'playerSouth' | 'playerWest' | 'playerNorth'
-        > = {
-          [playerEast.team._id]: 'playerEast',
-          [playerSouth.team._id]: 'playerSouth',
-          [playerWest.team._id]: 'playerWest',
-          [playerNorth.team._id]: 'playerNorth',
-        }
-
-        newMatch._order = [
-          playersMap[playerEastTeam._id],
-          playersMap[playerSouthTeam._id],
-          playersMap[playerWestTeam._id],
-          playersMap[playerNorthTeam._id],
-        ]
-      }
-
-      return newMatch
-    })
-
-  if (withStatistics) {
-    const playerIds = [
-      match.playerEast.playerId,
-      match.playerSouth.playerId,
-      match.playerWest.playerId,
-      match.playerNorth.playerId,
-    ].filter((item) => item !== '')
-    if (playerIds.length > 0) {
-      const playerStatisticMap = await getStatisticsByPlayerIds(
-        playerIds,
-        statisticTournamentId || match.tournament._id
+      const teamEast = regularTeams.find(
+        ({ team }) => rawMatch.playerEastTeam?._ref === team._id
       )
-      match.playerEast.playerStatistic =
-        playerStatisticMap[match.playerEast.playerId]
-      match.playerSouth.playerStatistic =
-        playerStatisticMap[match.playerSouth.playerId]
-      match.playerWest.playerStatistic =
-        playerStatisticMap[match.playerWest.playerId]
-      match.playerNorth.playerStatistic =
-        playerStatisticMap[match.playerNorth.playerId]
-    }
+      const playerEast = teamEast?.players.find(
+        ({ _id }) => _id === rawMatch.playerEast?._ref
+      )
+      const teamSouth = regularTeams.find(
+        ({ team }) => rawMatch.playerSouthTeam?._ref === team._id
+      )
+      const playerSouth = teamSouth?.players.find(
+        ({ _id }) => _id === rawMatch.playerSouth?._ref
+      )
+      const teamWest = regularTeams.find(
+        ({ team }) => rawMatch.playerWestTeam?._ref === team._id
+      )
+      const playerWest = teamWest?.players.find(
+        ({ _id }) => _id === rawMatch.playerWest?._ref
+      )
+      const teamNorth = regularTeams.find(
+        ({ team }) => rawMatch.playerNorthTeam?._ref === team._id
+      )
+      const playerNorth = teamNorth?.players.find(
+        ({ _id }) => _id === rawMatch.playerNorth?._ref
+      )
 
-    match.playerEast.teamStatistic =
-      match.tournament.teams.find(
-        ({ _id }) => _id === match.playerEast.teamId
-      ) || null
-    match.playerSouth.teamStatistic =
-      match.tournament.teams.find(
-        ({ _id }) => _id === match.playerSouth.teamId
-      ) || null
-    match.playerWest.teamStatistic =
-      match.tournament.teams.find(
-        ({ _id }) => _id === match.playerWest.teamId
-      ) || null
-    match.playerNorth.teamStatistic =
-      match.tournament.teams.find(
-        ({ _id }) => _id === match.playerNorth.teamId
-      ) || null
+      const match: Match = {
+        ...rawMatch,
+        playerEast,
+        playerSouth,
+        playerWest,
+        playerNorth,
+        playerEastTeam: teamEast?.team,
+        playerSouthTeam: teamSouth?.team,
+        playerWestTeam: teamWest?.team,
+        playerNorthTeam: teamNorth?.team,
+      }
+
+      return match
+    })
+}
+
+export const apiGetMatchByIdWithStatistics = async (
+  matchId: string,
+  statisticTournamentId?: string
+) => {
+  const regularTeams = await getRegularTeamsWithPlayersWithStatistics()
+  const rawMatch = await client
+    .fetch<
+      RawMatch[]
+    >(`*[_type == "match" && _id == "${matchId}"]{ tournament->{_id, name, "logoUrl": logo.asset->url}, _id, name, playerEast, playerSouth, playerWest, playerNorth, playerEastTeam, playerSouthTeam, playerWestTeam, playerNorthTeam, startAt }`)
+    .then((rawMatches) => rawMatches[0])
+
+  const teamEast = regularTeams.find(
+    ({ team }) => rawMatch.playerEastTeam?._ref === team._id
+  )
+  const playerEast = teamEast?.players.find(
+    ({ _id }) => _id === rawMatch.playerEast?._ref
+  )
+  const teamSouth = regularTeams.find(
+    ({ team }) => rawMatch.playerSouthTeam?._ref === team._id
+  )
+  const playerSouth = teamSouth?.players.find(
+    ({ _id }) => _id === rawMatch.playerSouth?._ref
+  )
+  const teamWest = regularTeams.find(
+    ({ team }) => rawMatch.playerWestTeam?._ref === team._id
+  )
+  const playerWest = teamWest?.players.find(
+    ({ _id }) => _id === rawMatch.playerWest?._ref
+  )
+  const teamNorth = regularTeams.find(
+    ({ team }) => rawMatch.playerNorthTeam?._ref === team._id
+  )
+  const playerNorth = teamNorth?.players.find(
+    ({ _id }) => _id === rawMatch.playerNorth?._ref
+  )
+
+  const playerIds = [
+    playerEast!._id,
+    playerSouth!._id,
+    playerWest!._id,
+    playerNorth!._id,
+  ]
+
+  const playerStatisticMap = await getStatisticsByPlayerIds(
+    playerIds,
+    statisticTournamentId || rawMatch.tournament._id
+  )
+
+  return {
+    ...rawMatch,
+    playerEast: {
+      ...playerEast!,
+      statistic: playerStatisticMap[playerEast!._id],
+    },
+    playerSouth: {
+      ...playerSouth!,
+      statistic: playerStatisticMap[playerSouth!._id],
+    },
+    playerWest: {
+      ...playerWest!,
+      statistic: playerStatisticMap[playerWest!._id],
+    },
+    playerNorth: {
+      ...playerNorth!,
+      statistic: playerStatisticMap[playerNorth!._id],
+    },
+    playerEastTeam: {
+      ...teamEast!.team,
+      statistic: teamEast!.statistics,
+      players: teamEast!.players,
+    },
+    playerSouthTeam: {
+      ...teamSouth!.team,
+      statistic: teamSouth!.statistics,
+      players: teamSouth!.players,
+    },
+    playerWestTeam: {
+      ...teamWest!.team,
+      statistic: teamWest!.statistics,
+      players: teamWest!.players,
+    },
+    playerNorthTeam: {
+      ...teamNorth!.team,
+      statistic: teamNorth!.statistics,
+      players: teamNorth!.players,
+    },
   }
-
-  return match
 }
 
 export const getStatisticsByPlayerIds = async (
@@ -425,28 +467,22 @@ export const getStatisticsByPlayerIds = async (
           prev[player._id] = statisticsDTO
           return prev
         },
-        {} as Record<string, PlayerStatisticDTO>
+        {} as Record<string, PlayerStatistic>
       )
     )
 
-export const convertDbTeamPlayerToPlayer = (
-  teamPlayer: TeamPlayerDTO
-): Player => {
-  const portraitImage = `${teamPlayer.playerPortraitImageUrl}?w=360&h=500`
-  const squareLogoImage = `${teamPlayer.teamLogoImageUrl}?w=500&h=500`
-  const largeSquareLogoImage = `${teamPlayer.teamLogoImageUrl}?w=1000&h=1000`
-  const designation = teamPlayer.playerDesignation
-  const name = teamPlayer.playerName
-  const color = teamPlayer.color
-
+export const convertDbTeamPlayerToRealtimePlayer = (
+  team: Team,
+  player: Player
+): RealtimePlayer => {
   return {
-    name,
-    nickname: teamPlayer.playerNickname,
-    color,
-    title: designation,
-    teamPicUrl: squareLogoImage,
-    largeTeamPicUrl: largeSquareLogoImage,
-    proPicUrl: portraitImage,
+    primaryName: player.name!,
+    secondaryName: team.name!,
+    nickname: player.nickname!,
+    color: team.color,
+    logoUrl: `${team.squareLogoImage}?w=500&h=500`,
+    propicUrl: `${player.portraitImage}?w=360&h=500`,
+    largeLogoUrl: `${team.squareLogoImage}?w=1000&h=1000`,
   }
 }
 
@@ -464,11 +500,11 @@ export type TeamPlayerDTO = {
   teamThirdName: string
   color: string
   teamLogoImageUrl: string
-  playerStatistic: PlayerStatisticDTO | null
+  playerStatistic: PlayerStatistic | null
   teamStatistic: TeamStatisticDTO | null
 }
 
-export type PlayerStatisticDTO = {
+export type PlayerStatistic = {
   point: number
   pointRanking: number
   matchCount: number
@@ -526,7 +562,7 @@ export const formatTeamPlayerDTO = (
     playerNickname: '',
     playerDesignation: '',
     playerPortraitImageUrl:
-      'https://hkleague2024.hkmahjong.org/images/empty.png',
+      'https://hkleague2025.hkmahjong.org/images/empty.png',
     playerFullname: '',
     playerStatistic: null,
     teamId: '',
@@ -536,7 +572,7 @@ export const formatTeamPlayerDTO = (
     teamFullname: '',
     teamStatistic: null,
     color: '#000000',
-    teamLogoImageUrl: 'https://hkleague2024.hkmahjong.org/images/empty.png',
+    teamLogoImageUrl: 'https://hkleague2025.hkmahjong.org/images/empty.png',
   }
 
   if (teamPlayer) {
@@ -665,3 +701,51 @@ export const apiGetTeamPlayersOfTournament = async (tournamentId: string) => {
 
   return teamPlayers
 }
+
+export const getRegularTeamsWithPlayers = () =>
+  client
+    .fetch(
+      `*[_type == "matchTournament" && _id == "62e7d07d-f59f-421d-a000-2e4d28ab89db"]{ teams[]{ _key, ref->{${[
+        '_id',
+        ...TEAM_META_FIELDS,
+      ].join(', ')}}, "overrided": overrided{${[...TEAM_META_FIELDS].join(
+        ', '
+      )}}, players[]{ref->{${['_id', ...PLAYER_META_FIELDS].join(
+        ', '
+      )}}, "overrided": overrided{${[...PLAYER_META_FIELDS].join(', ')}} } } }`
+    )
+    .then((tournaments) => {
+      return (tournaments[0]?.teams as TournamentTeamWithPlayers[]).map(
+        ({ ref, overrided, ...team }) => ({
+          ...team,
+          team: mergeObject(ref, overrided),
+          players: team.players.map((player) =>
+            mergeObject(player.ref, player.overrided)
+          ),
+        })
+      )
+    })
+
+export const getRegularTeamsWithPlayersWithStatistics = () =>
+  client
+    .fetch(
+      `*[_type == "matchTournament" && _id == "62e7d07d-f59f-421d-a000-2e4d28ab89db"]{ teams[]{ _key, statistics, ref->{${[
+        '_id',
+        ...TEAM_META_FIELDS,
+      ].join(', ')}}, "overrided": overrided{${[...TEAM_META_FIELDS].join(
+        ', '
+      )}}, players[]{ref->{${['_id', ...PLAYER_META_FIELDS].join(
+        ', '
+      )}}, "overrided": overrided{${[...PLAYER_META_FIELDS].join(', ')}} } } }`
+    )
+    .then((tournaments) => {
+      return (
+        tournaments[0]?.teams as TournamentTeamWithPlayersWithStatistics[]
+      ).map(({ ref, overrided, ...team }) => ({
+        ...team,
+        team: mergeObject(ref, overrided),
+        players: team.players.map((player) =>
+          mergeObject(player.ref, player.overrided)
+        ),
+      }))
+    })

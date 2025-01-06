@@ -1,19 +1,24 @@
 import React, { useEffect, useMemo } from 'react'
 import MJUIButton from '@/components/MJUI/MJUIButton'
-import { Match, MatchRound, PlayerIndex, RoundResultTypeEnum } from '@/models'
+import {
+  PlayerIndex,
+  RealtimeMatch,
+  RealtimeMatchRound,
+  RoundResultTypeEnum,
+} from '@/models'
 import { getPlayerPosition } from '@/helpers/mahjong.helper'
 import { Controller, useForm } from 'react-hook-form'
 import MJPlayerInfoCardDiv from '../MJPlayerInfoCardDiv'
 import MJUIInput from '../MJUI/MJUIInput'
 
 export type MJMatchHotfixFormProps = {
-  match: Match
-  currentMatchRound: MatchRound
-  onSubmit?: (resultMatchRound: MatchRound) => unknown
+  rtMatch: RealtimeMatch
+  currentMatchRound: RealtimeMatchRound
+  onSubmit?: (resultMatchRound: RealtimeMatchRound) => unknown
 }
 
 export default function MJMatchHotfixForm({
-  match,
+  rtMatch,
   currentMatchRound,
   onSubmit,
 }: MJMatchHotfixFormProps) {
@@ -35,15 +40,15 @@ export default function MJMatchHotfixForm({
 
   const players = useMemo(() => {
     const _players = (
-      Object.keys(match.players) as unknown as PlayerIndex[]
+      Object.keys(rtMatch.players) as unknown as PlayerIndex[]
     ).map((index) => ({
-      ...match.players[index],
+      ...rtMatch.players[index],
       index: index.toString(),
       position: getPlayerPosition(index, currentMatchRound.roundCount),
     }))
 
     return _players
-  }, [match.players, currentMatchRound.roundCount])
+  }, [rtMatch.players, currentMatchRound.roundCount])
 
   const handleSubmitForm = useMemo(
     () =>
@@ -52,7 +57,7 @@ export default function MJMatchHotfixForm({
           return
         }
 
-        const updatedMatchRound: MatchRound = {
+        const updatedMatchRound: RealtimeMatchRound = {
           ...currentMatchRound,
           resultType: RoundResultTypeEnum.Hotfix,
           playerResults: {

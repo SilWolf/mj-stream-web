@@ -1,5 +1,5 @@
 import firebaseApp from '@/firebaseApp'
-import { Player } from '@/models'
+import { RealtimePlayer } from '@/models'
 import { getRandomId } from '@/utils/string.util'
 
 import {
@@ -18,11 +18,11 @@ export const getPlayersFromDatabase = async () => {
     .then((snapshot) => snapshot.docs.map((doc) => doc.data()))
     .catch(console.log)
 
-  return result as Player[]
+  return result as RealtimePlayer[]
 }
 
-export const createPlayerToDatabase = async (player: Player) => {
-  const completedPlayer: Player = {
+export const createPlayerToDatabase = async (player: RealtimePlayer) => {
+  const completedPlayer: RealtimePlayer = {
     ...player,
     id: getRandomId(),
     createdAt: new Date().getTime(),
@@ -37,8 +37,11 @@ export const createPlayerToDatabase = async (player: Player) => {
   return completedPlayer
 }
 
-export const updatePlayerToDatabase = async (id: string, player: Player) => {
-  const completedPlayer: Player = {
+export const updatePlayerToDatabase = async (
+  id: string,
+  player: RealtimePlayer
+) => {
+  const completedPlayer: RealtimePlayer = {
     ...player,
     updatedAt: new Date().getTime(),
   }

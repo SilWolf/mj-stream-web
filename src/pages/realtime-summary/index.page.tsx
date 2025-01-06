@@ -76,7 +76,7 @@ type Slide =
       subslide: 1 | 2
     }
 
-const TOURNAMENT_ID = '27a1a61b-4829-4371-8fbe-15cbef1bfcee'
+const TOURNAMENT_ID = '62e7d07d-f59f-421d-a000-2e4d28ab89db'
 
 const sortPlayersAndConvertToTeamPlayerDTOByKey = (
   teamPlayers: Awaited<ReturnType<typeof apiGetTeamPlayersOfTournament>>,

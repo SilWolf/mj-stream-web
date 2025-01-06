@@ -116,20 +116,21 @@ const PlayersListView = ({
                     <div className="flex gap-x-1 items-center w-32">
                       <img
                         className="shrink-0 w-8 h-8 inline-block"
-                        src={players[index].teamPicUrl as string}
-                        alt={players[index].title}
+                        src={players[index].logoUrl as string}
+                        alt={players[index].secondaryName}
                       />
                       <img
                         className="shrink-0 w-[1.44rem] h-8 inline-block"
-                        src={players[index].proPicUrl as string}
-                        alt={players[index].name}
+                        src={players[index].propicUrl as string}
+                        alt={players[index].primaryName}
                       />
                       <div className="flex-1 align-middle overflow-hidden">
                         <p className="whitespace-nowrap overflow-ellipsis">
-                          {players[index].title}
+                          {players[index].secondaryName}
                         </p>
                         <p className="whitespace-nowrap overflow-ellipsis">
-                          {players[index].nickname || players[index].name}
+                          {players[index].nickname ||
+                            players[index].primaryName}
                         </p>
                       </div>
                     </div>

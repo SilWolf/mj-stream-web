@@ -1,17 +1,13 @@
 import {
-  TeamPlayerDTO,
-  apiGetPlayersForIntroduction,
-} from '@/helpers/sanity.helper'
-import useDbMatch from '@/hooks/useDbMatch'
-import {
   getLightColorOfColor,
   renderPercentage,
   renderPoint,
   renderRanking,
 } from '@/utils/string.util'
-import { useQuery } from '@tanstack/react-query'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import cns from 'classnames'
+import useDbMatchWithStatistics from '@/hooks/useDbMatchWithStatistics'
+import { Player, Team } from '@/models'
 
 type Props = {
   params: { matchId: string }
@@ -29,26 +25,27 @@ type Slide =
   | {
       _id: string
       type: 'teams'
-      teams: TeamPlayerDTO[]
+      teamAndPlayers: { team: Team; player: Player }[]
       subslide: 1 | 2
     }
   | {
       _id: string
       type: 'team'
-      team: TeamPlayerDTO
-      teamPlayers: TeamPlayerDTO[]
+      team: Team
+      players: Player[]
+      focusPlayer: Player
       subslide: 1 | 2
     }
 
 const MatchTeamPlayerDiv = ({
-  teamPlayer,
   team,
+  player,
   fadeIn,
   fadeOut,
   delay,
 }: {
-  teamPlayer: TeamPlayerDTO
-  team: TeamPlayerDTO
+  team: Team
+  player: Player
   fadeIn: boolean
   fadeOut: boolean
   delay: number
@@ -57,7 +54,7 @@ const MatchTeamPlayerDiv = ({
 
   return (
     <div
-      key={teamPlayer.playerName}
+      key={player.name}
       className={cns('relative aspect-[18/25] rounded-[1em] overflow-hidden', {
         'mi-team-player-in': fadeIn,
         'mi-team-player-out': fadeOut,
@@ -71,7 +68,7 @@ const MatchTeamPlayerDiv = ({
         className="absolute inset-0"
         style={{
           background: `url(${
-            team.teamLogoImageUrl + '?w=500&h=500&auto=format'
+            team.squareLogoImage + '?w=500&h=500&auto=format'
           })`,
           backgroundRepeat: 'no-repeat',
           backgroundPosition: 'center',
@@ -81,10 +78,9 @@ const MatchTeamPlayerDiv = ({
       <img
         className="relative z-10 block mx-auto w-full"
         src={
-          teamPlayer.playerPortraitImageUrl +
-          '?h=500&w=360&auto=format&fit=crop&crop=top'
+          player.portraitImage + '?h=500&w=360&auto=format&fit=crop&crop=top'
         }
-        alt={teamPlayer.playerName}
+        alt={player.name!}
       />
       <div
         className="absolute z-20 bottom-0 left-0 right-0 text-center py-[0.25em]"
@@ -94,9 +90,9 @@ const MatchTeamPlayerDiv = ({
       >
         <div>
           <p className="text-[1.5em] leading-[1em] font-semibold">
-            {teamPlayer.playerNickname}
+            {player.nickname}
           </p>
-          <p className="text-[0.8em]">{teamPlayer.playerName}</p>
+          <p className="text-[0.8em]">{player.name}</p>
         </div>
       </div>
     </div>
@@ -122,9 +118,9 @@ const MatchIntroductionSlide = ({
       >
         <div className="flex-1"></div>
         <div className="flex-[2] grid grid-cols-4 items-center">
-          {slide.teams.map((team, index) => (
+          {slide.teamAndPlayers.map(({ team, player }, index) => (
             <div
-              key={team.teamId}
+              key={team._id}
               className={cns('relative h-full overflow-hidden', {
                 'mi-teams-in': status === 0,
                 'mi-teams-out': status > 0,
@@ -134,7 +130,7 @@ const MatchIntroductionSlide = ({
               }}
             >
               <div
-                key={team.teamId}
+                key={team._id}
                 className="absolute inset-0 -z-10"
                 style={{
                   background: `linear-gradient(to bottom, transparent, ${team.color})`,
@@ -145,7 +141,7 @@ const MatchIntroductionSlide = ({
                 className="absolute inset-0 -z-10"
                 style={{
                   background: `url(${
-                    team.teamLogoImageUrl + '?w=800&h=800&auto=format'
+                    team.squareLogoImage + '?w=800&h=800&auto=format'
                   })`,
                   backgroundRepeat: 'no-repeat',
                   backgroundPosition: 'center center',
@@ -158,15 +154,15 @@ const MatchIntroductionSlide = ({
                 })}
               >
                 <img
-                  src={team.teamLogoImageUrl + '?w=800&h=800&auto=format'}
+                  src={team.squareLogoImage + '?w=800&h=800&auto=format'}
                   className="aspect-square w-full"
                   alt=""
                 />
                 <h3 className="text-[1.5em] font-semibold text-center">
-                  {team.teamName}
+                  {team.name}
                 </h3>
                 <h3 className="text-[1em] font-semibold text-center">
-                  {team.teamSecondaryName}
+                  {team.secondaryName}
                 </h3>
               </div>
               <div
@@ -179,13 +175,13 @@ const MatchIntroductionSlide = ({
                 }}
               >
                 <img
-                  src={team.playerPortraitImageUrl + '?w=360&h=500&auto=format'}
+                  src={player.portraitImage + '?w=360&h=500&auto=format'}
                   className="aspect-[18/25] w-full"
                   alt=""
                 />
                 <div className="font-semibold text-center">
-                  <p className="text-[1em]">{team.playerNickname}</p>
-                  <p className="text-[.8em]">{team.playerName}</p>
+                  <p className="text-[1em]">{player.nickname}</p>
+                  <p className="text-[.8em]">{player.name}</p>
                 </div>
               </div>
             </div>
@@ -218,7 +214,7 @@ const MatchIntroductionSlide = ({
           })}
           style={{
             background: `url(${
-              slide.team.teamLogoImageUrl + '?w=800&h=800&auto=format'
+              slide.team.squareLogoImage + '?w=800&h=800&auto=format'
             })`,
             backgroundRepeat: 'no-repeat',
             backgroundPosition: 'center center',
@@ -238,7 +234,7 @@ const MatchIntroductionSlide = ({
                 <p>隊伍積分</p>
                 <p>
                   <span className="font-numeric">
-                    {renderPoint(slide.team.teamStatistic?.point)}
+                    {renderPoint(slide.team.statistics?.point)}
                   </span>
                 </p>
               </div>
@@ -246,14 +242,14 @@ const MatchIntroductionSlide = ({
                 <p>隊伍排名</p>
                 <p>
                   <span className="font-numeric">
-                    {renderRanking(slide.team.teamStatistic?.ranking)}
+                    {renderRanking(slide.team.statistics?.ranking)}
                   </span>
                 </p>
               </div>
             </div>
             <img
-              src={slide.team.teamLogoImageUrl + '?w=512&h=512&auto=format'}
-              alt={slide.team.teamFullname}
+              src={slide.team.squareLogoImage + '?w=512&h=512&auto=format'}
+              alt={slide.team.name!}
               className="aspect-square"
               style={{
                 width: 256,
@@ -263,7 +259,7 @@ const MatchIntroductionSlide = ({
           </div>
 
           <h3 className="inline-block font-semibold text-right text-[1.5em]">
-            {slide.team.teamFullname}
+            {slide.team.name} {slide.team.secondaryName}
           </h3>
         </div>
         <div className="flex-[2] relative">
@@ -273,14 +269,14 @@ const MatchIntroductionSlide = ({
               opacity: status === 0 && subslide >= 0 && subslide < 1 ? 1 : 0,
             }}
           >
-            {slide.teamPlayers.map((teamPlayer, index) => (
+            {slide.players.map((player, index) => (
               <MatchTeamPlayerDiv
-                key={teamPlayer.playerName}
+                key={player._id}
                 team={slide.team}
-                teamPlayer={teamPlayer}
+                player={player}
                 fadeIn={status === 0 && subslide <= 0}
                 fadeOut={status === 0 && subslide > 0}
-                delay={(subslide <= 0 ? 1.7 : 0) + index * 0.25}
+                delay={(subslide <= 0 ? 0 : 0) + index * 0.25}
               />
             ))}
           </div>
@@ -295,7 +291,7 @@ const MatchIntroductionSlide = ({
           >
             <MatchTeamPlayerDiv
               team={slide.team}
-              teamPlayer={slide.team}
+              player={slide.focusPlayer}
               fadeIn={status === 0 && subslide === 1}
               fadeOut={status > 0}
               delay={0}
@@ -311,16 +307,16 @@ const MatchIntroductionSlide = ({
                   <p className="text-[2em] flex items-center">
                     <span>個人總分</span>
                     <span className="font-numeric">
-                      {renderPoint(slide.team.playerStatistic?.point)}
+                      {renderPoint(slide.focusPlayer.statistics?.point)}
                     </span>
                     <span className="ml-4 font-numeric text-[.75em] min-w-[2.5em] text-right text-cyan-400">
-                      {slide.team.playerStatistic?.pointRanking ?? '-'}名
+                      {slide.focusPlayer.statistics?.pointRanking ?? '-'}名
                     </span>
                   </p>
                   <p className="text-[2em]">
                     半莊數{' '}
                     <span className="font-numeric">
-                      {slide.team.playerStatistic?.matchCount ?? '-'}
+                      {slide.focusPlayer.statistics?.matchCount ?? '-'}
                     </span>
                   </p>
                 </div>
@@ -331,12 +327,13 @@ const MatchIntroductionSlide = ({
                     <p className="flex items-center">
                       <span className="font-numeric">
                         {renderPercentage(
-                          slide.team.playerStatistic?.nonFourthP
+                          slide.focusPlayer.statistics?.nonFourthP
                         )}
                       </span>
                       <span className="font-numeric ml-2 text-[.75em] min-w-[2.5em] text-right text-cyan-400">
                         {' '}
-                        {slide.team.playerStatistic?.nonFourthPRanking ?? '-'}名
+                        {slide.focusPlayer.statistics?.nonFourthPRanking ?? '-'}
+                        名
                       </span>
                     </p>
                   </div>
@@ -345,12 +342,12 @@ const MatchIntroductionSlide = ({
                     <p className="flex items-center">
                       <span className="font-numeric">
                         {renderPercentage(
-                          slide.team.playerStatistic?.firstAndSecondP
+                          slide.focusPlayer.statistics?.firstAndSecondP
                         )}
                       </span>
                       <span className="font-numeric ml-2 text-[.75em] min-w-[2.5em] text-right text-cyan-400">
                         {' '}
-                        {slide.team.playerStatistic?.firstAndSecondPRanking ??
+                        {slide.focusPlayer.statistics?.firstAndSecondPRanking ??
                           '-'}
                         名
                       </span>
@@ -360,11 +357,13 @@ const MatchIntroductionSlide = ({
                     <p className="text-[.9em]">立直率</p>
                     <p className="flex items-center">
                       <span className="font-numeric">
-                        {renderPercentage(slide.team.playerStatistic?.riichiP)}
+                        {renderPercentage(
+                          slide.focusPlayer.statistics?.riichiP
+                        )}
                       </span>
                       <span className="font-numeric ml-2 text-[.75em] min-w-[2.5em] text-right text-cyan-400">
                         {' '}
-                        {slide.team.playerStatistic?.riichiPRanking ?? '-'}名
+                        {slide.focusPlayer.statistics?.riichiPRanking ?? '-'}名
                       </span>
                     </p>
                   </div>
@@ -372,11 +371,11 @@ const MatchIntroductionSlide = ({
                     <p className="text-[.9em]">和了率</p>
                     <p className="flex items-center">
                       <span className="font-numeric">
-                        {renderPercentage(slide.team.playerStatistic?.ronP)}
+                        {renderPercentage(slide.focusPlayer.statistics?.ronP)}
                       </span>
                       <span className="font-numeric ml-2 text-[.75em] min-w-[2.5em] text-right text-cyan-400">
                         {' '}
-                        {slide.team.playerStatistic?.ronPRanking ?? '-'}名
+                        {slide.focusPlayer.statistics?.ronPRanking ?? '-'}名
                       </span>
                     </p>
                   </div>
@@ -384,11 +383,11 @@ const MatchIntroductionSlide = ({
                     <p className="text-[.9em]">銃和率</p>
                     <p className="flex items-center">
                       <span className="font-numeric">
-                        {renderPercentage(slide.team.playerStatistic?.chuckP)}
+                        {renderPercentage(slide.focusPlayer.statistics?.chuckP)}
                       </span>
                       <span className="font-numeric ml-2 text-[.75em] min-w-[2.5em] text-right text-cyan-400">
                         {' '}
-                        {slide.team.playerStatistic?.chuckPRanking ?? '-'}名
+                        {slide.focusPlayer.statistics?.chuckPRanking ?? '-'}名
                       </span>
                     </p>
                   </div>
@@ -396,11 +395,13 @@ const MatchIntroductionSlide = ({
                     <p className="text-[.9em]">副露率</p>
                     <p className="flex items-center">
                       <span className="font-numeric">
-                        {renderPercentage(slide.team.playerStatistic?.revealP)}
+                        {renderPercentage(
+                          slide.focusPlayer.statistics?.revealP
+                        )}
                       </span>
                       <span className="font-numeric ml-2 text-[.75em] min-w-[2.5em] text-right text-cyan-400">
                         {' '}
-                        {slide.team.playerStatistic?.revealPRanking ?? '-'}名
+                        {slide.focusPlayer.statistics?.revealPRanking ?? '-'}名
                       </span>
                     </p>
                   </div>
@@ -412,11 +413,11 @@ const MatchIntroductionSlide = ({
                     <div className="text-right">
                       <p className="font-numeric">
                         {renderPercentage(
-                          slide.team.playerStatistic?.ronPureScoreAvg
+                          slide.focusPlayer.statistics?.ronPureScoreAvg
                         )}
                       </p>
                       <p className="font-numeric text-[.75em] min-w-[2.5em] text-cyan-400 -mt-4">
-                        {slide.team.playerStatistic?.ronPureScoreAvgRanking ??
+                        {slide.focusPlayer.statistics?.ronPureScoreAvgRanking ??
                           '-'}
                         名
                       </p>
@@ -428,12 +429,12 @@ const MatchIntroductionSlide = ({
                     <div className="text-right">
                       <p className="font-numeric">
                         {renderPercentage(
-                          slide.team.playerStatistic?.chuckPureScoreAvg
+                          slide.focusPlayer.statistics?.chuckPureScoreAvg
                         )}
                       </p>
                       <p className="font-numeric text-[.75em] min-w-[2.5em] text-cyan-400 -mt-4">
-                        {slide.team.playerStatistic?.chuckPureScoreAvgRanking ??
-                          '-'}
+                        {slide.focusPlayer.statistics
+                          ?.chuckPureScoreAvgRanking ?? '-'}
                         名
                       </p>
                     </div>
@@ -456,32 +457,10 @@ const MatchIntroductionPage = ({
   resetFlag,
   disableClick,
 }: Props) => {
-  const { data: matchDTO } = useDbMatch(matchId, true)
-  const teamIds = useMemo(
-    () =>
-      matchDTO
-        ? [
-            matchDTO?.playerEast.teamId as string,
-            matchDTO?.playerSouth.teamId as string,
-            matchDTO?.playerWest.teamId as string,
-            matchDTO?.playerNorth.teamId as string,
-          ]
-        : null,
-    [matchDTO]
-  )
-
-  const { data: playersGroupedByTeamIds } = useQuery({
-    queryKey: ['match', matchId, 'groupedPlayers'],
-    queryFn: () =>
-      apiGetPlayersForIntroduction(
-        teamIds as string[],
-        '27a1a61b-4829-4371-8fbe-15cbef1bfcee'
-      ),
-    enabled: !!matchDTO && !!teamIds,
-  })
+  const { data: match } = useDbMatchWithStatistics(matchId)
 
   const slides = useMemo<Slide[]>(() => {
-    if (!matchDTO || !playersGroupedByTeamIds) {
+    if (!match) {
       return [{ type: 'empty', _id: 'empty', subslide: 0 }]
     }
 
@@ -490,44 +469,60 @@ const MatchIntroductionPage = ({
       {
         type: 'teams',
         _id: 'teams',
-        teams: [
-          matchDTO.playerEast,
-          matchDTO.playerSouth,
-          matchDTO.playerWest,
-          matchDTO.playerNorth,
+        teamAndPlayers: [
+          {
+            team: match.playerEastTeam,
+            player: match.playerEast,
+          },
+          {
+            team: match.playerSouthTeam,
+            player: match.playerSouth,
+          },
+          {
+            team: match.playerWestTeam,
+            player: match.playerWest,
+          },
+          {
+            team: match.playerNorthTeam,
+            player: match.playerNorth,
+          },
         ],
         subslide: 1,
       },
       {
         _id: 'team_playerEast',
         type: 'team',
-        team: matchDTO.playerEast,
-        teamPlayers: playersGroupedByTeamIds[matchDTO.playerEast.teamId],
+        team: match.playerEastTeam,
+        players: match.playerEastTeam.players,
+        focusPlayer: match.playerEast,
         subslide: 2,
       },
       {
         _id: 'team_playerSouth',
         type: 'team',
-        team: matchDTO.playerSouth,
-        teamPlayers: playersGroupedByTeamIds[matchDTO.playerSouth.teamId],
+        team: match.playerSouthTeam,
+        players: match.playerSouthTeam.players,
+        focusPlayer: match.playerSouth,
         subslide: 2,
       },
       {
         _id: 'team_playerWest',
         type: 'team',
-        team: matchDTO.playerWest,
-        teamPlayers: playersGroupedByTeamIds[matchDTO.playerWest.teamId],
+        team: match.playerWestTeam,
+        players: match.playerWestTeam.players,
+        focusPlayer: match.playerWest,
         subslide: 2,
       },
       {
         _id: 'team_playerNorth',
         type: 'team',
-        team: matchDTO.playerNorth,
-        teamPlayers: playersGroupedByTeamIds[matchDTO.playerNorth.teamId],
+        team: match.playerNorthTeam,
+        players: match.playerNorthTeam.players,
+        focusPlayer: match.playerNorth,
         subslide: 2,
       },
     ]
-  }, [matchDTO, playersGroupedByTeamIds])
+  }, [match])
 
   const [slideIndex, setSlideIndex] = useState<number>(0)
   const [subSlideIndex, setSubSlideIndex] = useState<number>(0)
@@ -598,7 +593,9 @@ const MatchIntroductionPage = ({
     resetFlag,
   ])
 
-  if (!matchDTO || !playersGroupedByTeamIds) {
+  console.log(match)
+
+  if (!match) {
     return <></>
   }
 
@@ -615,22 +612,22 @@ const MatchIntroductionPage = ({
         <div className="flex gap-x-[0.25em] mi-title-in">
           <div>
             <img
-              src={matchDTO.tournament.logoUrl + '?w=280&h=280&auto=format'}
-              alt={matchDTO.tournament.name}
+              src={match.tournament.logoUrl + '?w=280&h=280&auto=format'}
+              alt={match.tournament.name}
               style={{ width: '3.5em', height: '3.5em', marginTop: '0.15em' }}
             />
           </div>
           <div>
             <h3 className="text-[1.25em] leading-[1em]">
-              {matchDTO.tournament.name}
+              {match.tournament.name}
             </h3>
             <h1 className="text-[2em] leading-[1.2em] font-semibold">
-              {matchDTO.nameAlt}
+              {match.name}
             </h1>
           </div>
         </div>
         {/* <h1 className="text-[2.2em] leading-[1.2em] font-semibold mi-subbtitle-in">
-          {matchDTO.name}
+          {match.name}
         </h1> */}
       </div>
       {slides.map((slide, index) => (

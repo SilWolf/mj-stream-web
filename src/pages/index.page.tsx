@@ -1,17 +1,28 @@
 import MJUIButton from '@/components/MJUI/MJUIButton'
-import { TeamPlayerDTO, apiGetMatches } from '@/helpers/sanity.helper'
+import { apiGetMatches } from '@/helpers/sanity.helper'
 import { useQuery } from '@tanstack/react-query'
 import React, { useCallback, useMemo } from 'react'
 import OBSInstructionDivV2 from './obs/components/OBSInstructionDivV2'
 import { getQrCodeImgSrc } from '@/utils/string.util'
 import { useFirebaseDatabaseByKey } from '@/providers/firebaseDatabase.provider'
+import { Player, Team } from '@/models'
 
-const DBTeamPlayerDiv = ({ teamPlayer }: { teamPlayer: TeamPlayerDTO }) => {
-  const portraitImage = `${teamPlayer.playerPortraitImageUrl}?w=64&h=64&fit=crop&crop=top`
-  const squareLogoImage = `${teamPlayer.teamLogoImageUrl}?w=64&h=64`
-  const designation = teamPlayer.playerDesignation
-  const name = teamPlayer.playerName
-  const color = teamPlayer.color
+const DBTeamPlayerDiv = ({
+  team,
+  player,
+}: {
+  team: Team | undefined
+  player: Player | undefined
+}) => {
+  if (!team || !player) {
+    return <></>
+  }
+
+  const portraitImage = `${player.portraitImage}?w=64&h=64&fit=crop&crop=top`
+  const squareLogoImage = `${team.squareLogoImage}?w=64&h=64`
+  const designation = player.designation
+  const name = player.name
+  const color = team.color
 
   return (
     <div
@@ -19,14 +30,16 @@ const DBTeamPlayerDiv = ({ teamPlayer }: { teamPlayer: TeamPlayerDTO }) => {
       style={{ borderColor: color }}
     >
       <div className="w-8 h-8">
-        {squareLogoImage && <img src={squareLogoImage} alt={designation} />}
+        {squareLogoImage && (
+          <img src={squareLogoImage} alt={designation ?? ''} />
+        )}
       </div>
       <div className="w-8 h-8">
-        {portraitImage && <img src={portraitImage} alt={name} />}
+        {portraitImage && <img src={portraitImage} alt={name ?? ''} />}
       </div>
       <div className="flex-1">
-        <p className="text-sm text-neutral-600">{designation}</p>
         <p className="font-bold">{name}</p>
+        <p className="text-sm text-neutral-600">{player.nickname}</p>
       </div>
     </div>
   )
@@ -111,13 +124,6 @@ function IndexPage() {
           </ul>
         </div> */}
         <div className="shrink-0 space-y-4">
-          {/* <div>
-            <a href="/create-match">
-              <MJUIButton className="w-full" size="xlarge">
-                開新對局
-              </MJUIButton>
-            </a>
-          </div> */}
           <div className="grid grid-cols-3 gap-x-4">
             <div className="col-span-2">
               <div className="px-8 py-4 bg-green-300 border-2 border-green-600 text-center space-y-4">
@@ -128,7 +134,7 @@ function IndexPage() {
                     <div className="space-y-4">
                       <div className="grid grid-cols-3 gap-4">
                         <a
-                          href={`${location.origin}/v1/obs/1/scene`}
+                          href={`${location.origin}/obs/1/scene`}
                           target="_blank"
                           className="block text-black bg-white bg-opacity-40 p-2 rounded hover:text-black"
                         >
@@ -139,14 +145,14 @@ function IndexPage() {
                           多合一場景
                         </a>
                         <a
-                          href={`${location.origin}/v1/obs/1/realtime-summary`}
+                          href={`${location.origin}/obs/1/realtime-summary`}
                           target="_blank"
                           className="block text-black bg-white bg-opacity-40 p-2 rounded hover:text-black"
                         >
                           現時數據
                         </a>
                         <a
-                          href={`${location.origin}/v1/obs/1/end`}
+                          href={`${location.origin}/obs/1/end`}
                           target="_blank"
                           className="text-black bg-white bg-opacity-40 p-2 rounded hover:text-black"
                         >
@@ -163,16 +169,20 @@ function IndexPage() {
                           <div>
                             <div className="grid grid-cols-2 gap-2">
                               <DBTeamPlayerDiv
-                                teamPlayer={liveMatch.playerEast}
+                                team={liveMatch.playerEastTeam}
+                                player={liveMatch.playerEast}
                               />
                               <DBTeamPlayerDiv
-                                teamPlayer={liveMatch.playerSouth}
+                                team={liveMatch.playerSouthTeam}
+                                player={liveMatch.playerSouth}
                               />
                               <DBTeamPlayerDiv
-                                teamPlayer={liveMatch.playerWest}
+                                team={liveMatch.playerWestTeam}
+                                player={liveMatch.playerWest}
                               />
                               <DBTeamPlayerDiv
-                                teamPlayer={liveMatch.playerNorth}
+                                team={liveMatch.playerNorthTeam}
+                                player={liveMatch.playerNorth}
                               />
                             </div>
                           </div>
@@ -182,35 +192,35 @@ function IndexPage() {
                           <p>開始前倒數</p>
                           <div className="flex-1 grid grid-cols-3 gap-2">
                             <a
-                              href={`${location.origin}/v1/obs/1/forecast?m=0`}
+                              href={`${location.origin}/obs/1/forecast?m=0`}
                               target="_blank"
                               className="text-black bg-red-800 bg-opacity-50 p-2 rounded hover:text-black"
                             >
                               即將開始
                             </a>
                             <a
-                              href={`${location.origin}/v1/obs/1/forecast?m=5`}
+                              href={`${location.origin}/obs/1/forecast?m=5`}
                               target="_blank"
                               className="text-black bg-red-800 bg-opacity-50 p-2 rounded hover:text-black"
                             >
                               5分鐘
                             </a>
                             <a
-                              href={`${location.origin}/v1/obs/1/forecast?m=10`}
+                              href={`${location.origin}/obs/1/forecast?m=10`}
                               target="_blank"
                               className="text-black bg-red-800 bg-opacity-50 p-2 rounded hover:text-black"
                             >
                               10分鐘
                             </a>
                             <a
-                              href={`${location.origin}/v1/obs/1/forecast?m=15`}
+                              href={`${location.origin}/obs/1/forecast?m=15`}
                               target="_blank"
                               className="text-black bg-red-800 bg-opacity-50 p-2 rounded hover:text-black"
                             >
                               15分鐘
                             </a>
                             <a
-                              href={`${location.origin}/v1/obs/1/forecast?m=20`}
+                              href={`${location.origin}/obs/1/forecast?m=20`}
                               target="_blank"
                               className="text-black bg-red-800 bg-opacity-50 p-2 rounded hover:text-black"
                             >
@@ -221,21 +231,21 @@ function IndexPage() {
 
                         <div className="grid grid-cols-3 gap-4">
                           <a
-                            href={`${location.origin}/v1/obs/1/introduction`}
+                            href={`${location.origin}/obs/1/introduction`}
                             target="_blank"
                             className="text-black bg-white bg-opacity-40 p-2 rounded hover:text-black"
                           >
                             賽前介紹
                           </a>
                           <a
-                            href={`${location.origin}/v1/obs/1`}
+                            href={`${location.origin}/obs/1`}
                             target="_blank"
                             className="text-black bg-white bg-opacity-40 p-2 rounded hover:text-black"
                           >
                             直播頁面
                           </a>
                           <a
-                            href={`${location.origin}/v1/obs/1/summary`}
+                            href={`${location.origin}/obs/1/summary`}
                             target="_blank"
                             className="text-black bg-white bg-opacity-40 p-2 rounded hover:text-black"
                           >
@@ -262,7 +272,7 @@ function IndexPage() {
                 <p className="text-2xl">
                   固定的紀錄頁面：
                   <a
-                    href={`${location.origin}/v1/obs/1/stat`}
+                    href={`${location.origin}/obs/1/stat`}
                     target="_blank"
                     className="text-black"
                   >
@@ -272,7 +282,7 @@ function IndexPage() {
                 <p className="text-2xl">
                   固定的Overlay頁面：
                   <a
-                    href={`${location.origin}/v1/obs/1/stat`}
+                    href={`${location.origin}/obs/1/stat`}
                     target="_blank"
                     className="text-black"
                   >
@@ -282,7 +292,7 @@ function IndexPage() {
                 <div className="pt-16">
                   <img
                     className="mx-auto block w-64 h-64"
-                    src={getQrCodeImgSrc(`${location.origin}/v1/obs/1/stat`)}
+                    src={getQrCodeImgSrc(`${location.origin}/obs/1/stat`)}
                     alt=""
                   />
                 </div>
@@ -296,7 +306,7 @@ function IndexPage() {
                 <p className="text-2xl">
                   分數控制台：
                   <a
-                    href={`${location.origin}/v1/obs/1/control`}
+                    href={`${location.origin}/obs/1/control`}
                     target="_blank"
                     className="text-black"
                   >
@@ -306,7 +316,7 @@ function IndexPage() {
                 <div>
                   <img
                     className="mx-auto block w-48 h-48"
-                    src={getQrCodeImgSrc(`${location.origin}/v1/obs/1/control`)}
+                    src={getQrCodeImgSrc(`${location.origin}/obs/1/control`)}
                     alt=""
                   />
                 </div>
@@ -314,7 +324,7 @@ function IndexPage() {
                 <p className="text-2xl">
                   多合一場景控制台：
                   <a
-                    href={`${location.origin}/v1/obs/1/scene-control`}
+                    href={`${location.origin}/obs/1/scene-control`}
                     target="_blank"
                     className="text-black"
                   >
@@ -325,7 +335,7 @@ function IndexPage() {
                   <img
                     className="mx-auto block w-48 h-48"
                     src={getQrCodeImgSrc(
-                      `${location.origin}/v1/obs/1/scene-control`
+                      `${location.origin}/obs/1/scene-control`
                     )}
                     alt=""
                   />
@@ -353,7 +363,12 @@ function IndexPage() {
           </div>
 
           <div>
-            <div className="text-right mb-2">
+            <div className="text-right mb-2 space-x-2">
+              <a href="https://hkmjbs.sanity.studio/" target="_blank">
+                <MJUIButton color="secondary">
+                  資料庫 <i className="bi bi-box-arrow-up-right"></i>
+                </MJUIButton>
+              </a>
               <MJUIButton color="secondary" onClick={() => refetchMatches()}>
                 <i className="bi bi-arrow-repeat"></i> 刷新
               </MJUIButton>
@@ -379,16 +394,28 @@ function IndexPage() {
                       </p>
                     </th>
                     <td>
-                      <DBTeamPlayerDiv teamPlayer={match.playerEast} />
+                      <DBTeamPlayerDiv
+                        team={match.playerEastTeam}
+                        player={match.playerEast}
+                      />
                     </td>
                     <td>
-                      <DBTeamPlayerDiv teamPlayer={match.playerSouth} />
+                      <DBTeamPlayerDiv
+                        team={match.playerSouthTeam}
+                        player={match.playerSouth}
+                      />
                     </td>
                     <td>
-                      <DBTeamPlayerDiv teamPlayer={match.playerWest} />
+                      <DBTeamPlayerDiv
+                        team={match.playerWestTeam}
+                        player={match.playerWest}
+                      />
                     </td>
                     <td>
-                      <DBTeamPlayerDiv teamPlayer={match.playerNorth} />
+                      <DBTeamPlayerDiv
+                        team={match.playerNorthTeam}
+                        player={match.playerNorth}
+                      />
                     </td>
                     <td className="space-x-2 text-right">
                       <div className="space-x-2">
@@ -417,7 +444,7 @@ function IndexPage() {
                         </a>
 
                         <a
-                          href={`/v1/match/${match._id}/nameplates`}
+                          href={`/match/${match._id}/nameplates`}
                           target="_blank"
                         >
                           <i className="bi bi-person-badge"></i> 名牌
@@ -426,7 +453,7 @@ function IndexPage() {
 
                       <div className="space-x-2">
                         <a
-                          href={`/v1/match/${match._id}/forecast?startAt=${
+                          href={`/match/${match._id}/forecast?startAt=${
                             match.name.endsWith('2') ? '21' : '19'
                           }:30`}
                           target="_blank"
@@ -435,16 +462,13 @@ function IndexPage() {
                         </a>
 
                         <a
-                          href={`/v1/match/${match._id}/introduction`}
+                          href={`/match/${match._id}/introduction`}
                           target="_blank"
                         >
                           <i className="bi bi-person-vcard"></i> 介紹
                         </a>
 
-                        <a
-                          href={`/v1/match/${match._id}/summary`}
-                          target="_blank"
-                        >
+                        <a href={`/match/${match._id}/summary`} target="_blank">
                           <i className="bi bi-trophy"></i> 結果
                         </a>
 
@@ -454,7 +478,7 @@ function IndexPage() {
                           </span>
                         ) : (
                           <a
-                            href={`/v1/match/${match._id}/control`}
+                            href={`/match/${match._id}/control`}
                             target="_blank"
                             className="text-red-600"
                           >
@@ -470,13 +494,7 @@ function IndexPage() {
           </div>
 
           <div>
-            <div className="text-center space-x-4">
-              <a href="https://hkmjbs.sanity.studio/" target="_blank">
-                <MJUIButton color="secondary">
-                  資料庫 <i className="bi bi-box-arrow-up-right"></i>
-                </MJUIButton>
-              </a>
-            </div>
+            <div className="text-center space-x-4"></div>
           </div>
           <div className="flex gap-x-4">
             {/* <div className="flex-1">

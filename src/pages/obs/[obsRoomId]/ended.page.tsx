@@ -28,7 +28,7 @@ export default function ObsRoomEndPage() {
             />
           </div>
           <p className="text-[48px] text-center">
-            <u>https://hkleague2024.hkmahjong.org/</u>
+            <u>https://hkleague2025.hkmahjong.org/</u>
           </p>
           <p className="text-[48px] text-center">
             賽程、賽事重溫、隊伍介紹、新手教程

@@ -122,7 +122,7 @@ const MatchForecastPage = ({ params: { matchId } }: Props) => {
           <img src="/images/homepage-qr.png" className="w-[8vw]" alt="" />
         </div>
         <p className="text-[32px]">
-          聯賽官網: <u>https://hkleague2024.hkmahjong.org/</u>
+          聯賽官網: <u>https://hkleague2025.hkmahjong.org/</u>
         </p>
       </div>
     </div>

@@ -1,7 +1,7 @@
 import React, { TableHTMLAttributes, useMemo } from 'react'
 import {
-  MatchRound,
-  Player,
+  RealtimeMatchRound,
+  RealtimePlayer,
   PlayerIndex,
   PlayerResultWinnerOrLoserEnum,
   RoundResultTypeEnum,
@@ -9,18 +9,18 @@ import {
 import MJMatchCounterSpan from '../MJMatchCounterSpan'
 import MJAmountSpan from '../MJAmountSpan'
 
-const PlayerDiv = ({ player }: { player: Player }) => {
+const PlayerDiv = ({ player }: { player: RealtimePlayer }) => {
   return (
     <div className="border-b-4 pb-1" style={{ borderColor: player.color }}>
-      <p className="text-sm text-neutral-600">{player.title}</p>
-      <p className="font-bold">{player.name}</p>
+      <p className="text-sm text-neutral-600">{player.secondaryName}</p>
+      <p className="font-bold">{player.primaryName}</p>
     </div>
   )
 }
 
 type Props = TableHTMLAttributes<HTMLTableElement> & {
-  players: Record<PlayerIndex, Player>
-  matchRounds: Record<string, MatchRound> | undefined
+  players: Record<PlayerIndex, RealtimePlayer>
+  matchRounds: Record<string, RealtimeMatchRound> | undefined
 }
 
 function MJMatchHistoryAmountSpan({ value }: { value: number }) {
@@ -39,7 +39,7 @@ const PlayerResultMetadata = ({
   matchRound,
   playerIndex,
 }: {
-  matchRound: MatchRound
+  matchRound: RealtimeMatchRound
   playerIndex: PlayerIndex
 }) => {
   return (

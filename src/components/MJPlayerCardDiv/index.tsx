@@ -5,12 +5,10 @@ import {
   renderPoint,
   renderRanking,
 } from '@/utils/string.util'
-import { Player, PlayerIndex } from '@/models'
 import MJTileDiv from '../MJTileDiv'
+import { PlayerIndex, RealtimePlayer } from '@/models'
 
 type Props = HTMLAttributes<HTMLDivElement> & {
-  player: Partial<Player>
-  playerIndex?: PlayerIndex
   score: number
   scoreChanges?: number[]
   point?: number
@@ -21,15 +19,16 @@ type Props = HTMLAttributes<HTMLDivElement> & {
   isRedCarded?: boolean
   isRonDisallowed?: boolean
   animated?: boolean
-  onAnimationEnd?: () => void
   waitingTiles?: string[]
-  onClickWaitingTiles?: (e: React.MouseEvent) => unknown
   showPointAndRanking?: boolean | null
+
+  player: RealtimePlayer
+  playerIndex: PlayerIndex
+
+  onClickWaitingTiles?: (e: React.MouseEvent) => unknown
 }
 
 export default function MJPlayerCardDiv({
-  player,
-  playerIndex,
   score,
   scoreChanges = [],
   point,
@@ -40,9 +39,14 @@ export default function MJPlayerCardDiv({
   isRedCarded,
   isRonDisallowed,
   waitingTiles,
-  onClickWaitingTiles,
   showPointAndRanking,
   className,
+
+  player,
+  playerIndex,
+
+  onClickWaitingTiles,
+
   ...props
 }: Props) {
   const [storedScore, setStoredScore] = useState<number>(score)
@@ -109,20 +113,20 @@ export default function MJPlayerCardDiv({
                 background: `linear-gradient(180deg, ${player.color}, ${lightenedColor})`,
               }}
             >
-              {player.teamPicUrl && (
+              {player.logoUrl && (
                 <div className="absolute inset-[0.085em] overflow-hidden">
                   <img
                     className="absolute max-w-[none] h-[2.2em] w-[2.2em] opacity-30 animate-[scrollFromRightToLeft_12s_linear_infinite]"
-                    src={player.teamPicUrl}
-                    alt={player.name}
+                    src={player.logoUrl}
+                    alt={player.primaryName}
                   />
                 </div>
               )}
-              {player.proPicUrl && (
+              {player.propicUrl && (
                 <img
                   className="relative z-10 w-full h-full rounded-[0.08em]"
-                  src={player.proPicUrl}
-                  alt={player.name}
+                  src={player.propicUrl}
+                  alt={player.primaryName}
                 />
               )}
               {player.nickname && (
@@ -185,19 +189,19 @@ export default function MJPlayerCardDiv({
           >
             <div className="flex flex-col justify-center gap-y-[0.075em] mt-[0.04em]">
               <div className="text-[0.1875em] ml-[0.1em] leading-none text-white hide-if-changing font-semibold whitespace-nowrap">
-                {player.title || '　'}
+                {player.secondaryName || '　'}
               </div>
               <div
                 className="text-[0.3125em] ml-[0.1em] leading-none text-white hide-if-changing font-semibold whitespace-nowrap"
                 style={{
                   transformOrigin: 'left',
                   transform:
-                    (player.name || '').length >= 17
+                    (player.primaryName || '').length >= 17
                       ? 'scaleX(0.9)'
                       : 'scaleX(1)',
                 }}
               >
-                {player.name}
+                {player.primaryName}
               </div>
             </div>
 

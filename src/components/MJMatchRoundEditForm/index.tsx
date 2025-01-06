@@ -1,6 +1,6 @@
 import {
-  Match,
-  MatchRound,
+  RealtimeMatch,
+  RealtimeMatchRound,
   PlayerIndex,
   PlayerResultWinnerOrLoserEnum,
   RoundResultTypeEnum,
@@ -13,10 +13,10 @@ import MJMatchExhaustedForm, {
 } from '../MJMatchExhaustedForm'
 
 export type MJMatchRoundEditFormProps = {
-  match: Match
-  matchRound: MatchRound | null
+  rtMatch: RealtimeMatch
+  rtMatchRound: RealtimeMatchRound | null
   showChainedWarning?: boolean
-  onSubmit?: (resultMatchRound: MatchRound) => unknown
+  onSubmit?: (resultMatchRound: RealtimeMatchRound) => unknown
 }
 
 type FormProps = {
@@ -28,8 +28,8 @@ type FormProps = {
 }
 
 const MJMatchRoundEditForm = ({
-  match,
-  matchRound,
+  rtMatch,
+  rtMatchRound,
   onSubmit,
 }: MJMatchRoundEditFormProps) => {
   const { control, register, reset } = useForm<FormProps>()
@@ -37,57 +37,57 @@ const MJMatchRoundEditForm = ({
   const myPlayerResults = useWatch({ name: '_playerResults', control })
   const myResultType = useWatch({ name: '_resultType', control })
 
-  const myMatchRound = useMemo<MatchRound | null>(() => {
-    if (!matchRound || !myPlayerResults) {
+  const myMatchRound = useMemo<RealtimeMatchRound | null>(() => {
+    if (!rtMatchRound || !myPlayerResults) {
       return null
     }
 
     return {
-      ...matchRound,
+      ...rtMatchRound,
       playerResults: {
         '0': {
-          ...matchRound.playerResults['0'],
+          ...rtMatchRound.playerResults['0'],
           isRiichi: myPlayerResults[0].status === 'isRiichied',
           isRevealed: myPlayerResults[0].status === 'isRevealed',
           detail: {
-            ...matchRound.playerResults['0'].detail,
+            ...rtMatchRound.playerResults['0'].detail,
             isRiichied: myPlayerResults[0].status === 'isRiichied',
             isRevealed: myPlayerResults[0].status === 'isRevealed',
           },
         },
         '1': {
-          ...matchRound.playerResults['1'],
+          ...rtMatchRound.playerResults['1'],
           isRiichi: myPlayerResults[1].status === 'isRiichied',
           isRevealed: myPlayerResults[1].status === 'isRevealed',
           detail: {
-            ...matchRound.playerResults['1'].detail,
+            ...rtMatchRound.playerResults['1'].detail,
             isRiichied: myPlayerResults[1].status === 'isRiichied',
             isRevealed: myPlayerResults[1].status === 'isRevealed',
           },
         },
         '2': {
-          ...matchRound.playerResults['2'],
+          ...rtMatchRound.playerResults['2'],
           isRiichi: myPlayerResults[2].status === 'isRiichied',
           isRevealed: myPlayerResults[2].status === 'isRevealed',
           detail: {
-            ...matchRound.playerResults['2'].detail,
+            ...rtMatchRound.playerResults['2'].detail,
             isRiichied: myPlayerResults[2].status === 'isRiichied',
             isRevealed: myPlayerResults[2].status === 'isRevealed',
           },
         },
         '3': {
-          ...matchRound.playerResults['3'],
+          ...rtMatchRound.playerResults['3'],
           isRiichi: myPlayerResults[3].status === 'isRiichied',
           isRevealed: myPlayerResults[3].status === 'isRevealed',
           detail: {
-            ...matchRound.playerResults['3'].detail,
+            ...rtMatchRound.playerResults['3'].detail,
             isRiichied: myPlayerResults[3].status === 'isRiichied',
             isRevealed: myPlayerResults[3].status === 'isRevealed',
           },
         },
       },
     }
-  }, [matchRound, myPlayerResults])
+  }, [rtMatchRound, myPlayerResults])
 
   const ronFormProps = useMemo<Omit<
     MJMatchRonFormProps,
@@ -98,7 +98,7 @@ const MJMatchRoundEditForm = ({
     }
 
     return {
-      match,
+      rtMatch,
       currentMatchRound: myMatchRound,
       initialActivePlayerIndex: (myMatchRound.resultType ===
         RoundResultTypeEnum.Ron ||
@@ -114,7 +114,7 @@ const MJMatchRoundEditForm = ({
           )?.[0] ?? '-1'
         : '-1') as PlayerIndex,
     }
-  }, [match, myMatchRound])
+  }, [rtMatch, myMatchRound])
 
   const exhaustedFormProps = useMemo<Omit<
     MJMatchExhaustedFormProps,
@@ -124,61 +124,66 @@ const MJMatchRoundEditForm = ({
       return null
     }
     return {
-      match,
+      rtMatch,
       currentMatchRound: myMatchRound,
     }
-  }, [match, myMatchRound])
+  }, [rtMatch, myMatchRound])
 
   const handleSubmitRonFormOrExhaustedForm = useCallback(
-    (newMatchRound: MatchRound) => {
+    (newMatchRound: RealtimeMatchRound) => {
       onSubmit?.(newMatchRound)
     },
     [onSubmit]
   )
 
   useEffect(() => {
-    if (!matchRound) {
+    if (!rtMatchRound) {
       return
     }
 
     reset({
       _resultType:
-        matchRound.resultType === RoundResultTypeEnum.Ron ||
-        matchRound.resultType === RoundResultTypeEnum.SelfDrawn
+        rtMatchRound.resultType === RoundResultTypeEnum.Ron ||
+        rtMatchRound.resultType === RoundResultTypeEnum.SelfDrawn
           ? 'ron'
           : 'exhausted',
       _playerResults: {
         '0': {
-          status: matchRound.playerResults['0'].isRevealed
+          status: rtMatchRound.playerResults['0'].isRevealed
             ? 'isRevealed'
-            : matchRound.playerResults['0'].isRiichi
-            ? 'isRiichied'
-            : 'none',
+            : rtMatchRound.playerResults['0'].isRiichi
+              ? 'isRiichied'
+              : 'none',
         },
         '1': {
-          status: matchRound.playerResults['1'].isRevealed
+          status: rtMatchRound.playerResults['1'].isRevealed
             ? 'isRevealed'
-            : matchRound.playerResults['1'].isRiichi
-            ? 'isRiichied'
-            : 'none',
+            : rtMatchRound.playerResults['1'].isRiichi
+              ? 'isRiichied'
+              : 'none',
         },
         '2': {
-          status: matchRound.playerResults['2'].isRevealed
+          status: rtMatchRound.playerResults['2'].isRevealed
             ? 'isRevealed'
-            : matchRound.playerResults['2'].isRiichi
-            ? 'isRiichied'
-            : 'none',
+            : rtMatchRound.playerResults['2'].isRiichi
+              ? 'isRiichied'
+              : 'none',
         },
         '3': {
-          status: matchRound.playerResults['3'].isRevealed
+          status: rtMatchRound.playerResults['3'].isRevealed
             ? 'isRevealed'
-            : matchRound.playerResults['3'].isRiichi
-            ? 'isRiichied'
-            : 'none',
+            : rtMatchRound.playerResults['3'].isRiichi
+              ? 'isRiichied'
+              : 'none',
         },
       },
     })
-  }, [matchRound, matchRound?.playerResults, matchRound?.resultType, reset])
+  }, [
+    rtMatchRound,
+    rtMatchRound?.playerResults,
+    rtMatchRound?.resultType,
+    reset,
+  ])
 
   return (
     <div className="space-y-6">
@@ -193,7 +198,7 @@ const MJMatchRoundEditForm = ({
         <tbody>
           {(['0', '1', '2', '3'] as const).map((playerIndex) => (
             <tr key={playerIndex}>
-              <td>{match.players[playerIndex].nickname}</td>
+              <td>{rtMatch.players[playerIndex].nickname}</td>
               <td>
                 <select {...register(`_playerResults.${playerIndex}.status`)}>
                   <option value="none">-</option>

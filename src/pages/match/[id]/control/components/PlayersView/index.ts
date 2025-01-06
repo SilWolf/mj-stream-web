@@ -1,4 +1,4 @@
-import { MatchRound, Player, PlayerIndex } from '@/models'
+import { PlayerIndex, RealtimeMatchRound, RealtimePlayer } from '@/models'
 
 export type PlayersViewAction =
   | 'waitingTile'
@@ -18,8 +18,8 @@ export type PlayersViewAction =
   | 'disallow-ron'
 
 export type PlayersViewProps = {
-  players: Record<PlayerIndex, Player>
-  currentRound: MatchRound
+  players: Record<PlayerIndex, RealtimePlayer>
+  currentRound: RealtimeMatchRound
 
   onAction: (playerIndex: PlayerIndex, action: PlayersViewAction) => unknown
 }

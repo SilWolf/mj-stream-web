@@ -1,18 +1,13 @@
-import { Player } from '@/models'
+import { RealtimePlayer } from '@/models'
 import React, { HTMLAttributes, useCallback } from 'react'
 import MJUIButton from '../MJUI/MJUIButton'
 
 type Props = HTMLAttributes<HTMLDivElement> & {
-  player: Player
-  onClickEdit?: (newPlayer: Player) => unknown
+  player: RealtimePlayer
+  onClickEdit?: (newPlayer: RealtimePlayer) => unknown
 }
 
-function MJPlayerInfoCardDiv({
-  player,
-  onClickEdit,
-  children,
-  ...divProps
-}: Props) {
+function MJPlayerInfoCardDiv({ player, onClickEdit, ...divProps }: Props) {
   const handleClickEdit = useCallback(() => {
     onClickEdit?.(player)
   }, [onClickEdit, player])
@@ -25,11 +20,11 @@ function MJPlayerInfoCardDiv({
       }}
       {...divProps}
     >
-      {player.teamPicUrl && (
+      {player.logoUrl && (
         <div
           className="absolute inset-0 opacity-10 bg-center bg-no-repeat bg-cover"
           style={{
-            backgroundImage: `url(${player.teamPicUrl})`,
+            backgroundImage: `url(${player.logoUrl})`,
           }}
         ></div>
       )}
@@ -38,14 +33,14 @@ function MJPlayerInfoCardDiv({
           className="w-14 h-14 bg-center bg-contain bg-no-repeat rounded"
           style={{
             backgroundImage: `url(${
-              player.proPicUrl || '/images/portrait-placeholder.jpeg'
+              player.logoUrl || '/images/portrait-placeholder.jpeg'
             })`,
           }}
         />
       </div>
       <div className="flex-1 relative z-10 ">
-        <div>{player.title ?? '(無頭銜)'}</div>
-        <div className="text-2xl">{player.name ?? '(無名稱)'}</div>
+        <div>{player.secondaryName ?? '(無頭銜)'}</div>
+        <div className="text-2xl">{player.primaryName ?? '(無名稱)'}</div>
       </div>
 
       {onClickEdit && (

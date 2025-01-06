@@ -1,30 +1,45 @@
 import MJPlayerCardDiv from '@/components/MJPlayerCardDiv'
 import MJUIButton from '@/components/MJUI/MJUIButton'
-import {
-  MatchDTO,
-  TeamPlayerDTO,
-  convertDbTeamPlayerToPlayer,
-} from '@/helpers/sanity.helper'
-import { getYakuMaxLabel, getYakumanMaxLabel } from '@/utils/string.util'
+import { convertDbTeamPlayerToRealtimePlayer } from '@/helpers/sanity.helper'
 import { useCallback } from 'react'
-import { Match, MatchRound } from '@/models'
+import {
+  Match,
+  Player,
+  RealtimeMatch,
+  RealtimeMatchRound,
+  Team,
+} from '@/models'
 import { useFirebaseDatabase } from '@/providers/firebaseDatabase.provider'
 import { generateMatchRoundCode } from '@/helpers/mahjong.helper'
 
 type Props = {
-  matchDTO: MatchDTO
+  match: Match
 }
 
-const DBTeamPlayerDiv = ({ teamPlayer }: { teamPlayer: TeamPlayerDTO }) => {
+const DBTeamPlayerDiv = ({
+  team,
+  player,
+}: {
+  team: Team | undefined
+  player: Player | undefined
+}) => {
+  if (!team || !player) {
+    return <></>
+  }
   return (
     <MJPlayerCardDiv
-      player={convertDbTeamPlayerToPlayer(teamPlayer)}
+      primaryName={player.name!}
+      secondaryName={team.name!}
+      nickname={player.nickname!}
+      logoUrl={team.squareLogoImage}
+      propicUrl={player.portraitImage}
+      color={team.color}
       score={25000}
     />
   )
 }
 
-const ControlNewMatch = ({ matchDTO }: Props) => {
+const ControlNewMatch = ({ match }: Props) => {
   const fb = useFirebaseDatabase()
 
   const handleClickStart = useCallback(async () => {
@@ -32,36 +47,48 @@ const ControlNewMatch = ({ matchDTO }: Props) => {
       return
     }
 
-    const newMatch: Match = {
-      code: matchDTO._id,
-      name: matchDTO.name,
+    const newMatch: RealtimeMatch = {
+      code: match._id,
+      name: match.name,
       remark: '',
       createdAt: new Date().toISOString(),
       createdBy: 'Dicky',
       updatedAt: new Date().toISOString(),
       updatedBy: 'Dicky',
       setting: {
-        startingScore: matchDTO.tournament.startingScore,
-        isManganRoundUp: matchDTO.tournament.startingScore ? '1' : '0',
-        yakuMax: matchDTO.tournament.yakuMax,
-        yakumanMax: matchDTO.tournament.yakumanMax,
+        startingScore: '25000',
+        isManganRoundUp: '1',
+        yakuMax: '12',
+        yakumanMax: '13',
       },
       players: {
-        '0': convertDbTeamPlayerToPlayer(matchDTO.playerEast),
-        '1': convertDbTeamPlayerToPlayer(matchDTO.playerSouth),
-        '2': convertDbTeamPlayerToPlayer(matchDTO.playerWest),
-        '3': convertDbTeamPlayerToPlayer(matchDTO.playerNorth),
+        '0': convertDbTeamPlayerToRealtimePlayer(
+          match.playerEastTeam!,
+          match.playerEast!
+        ),
+        '1': convertDbTeamPlayerToRealtimePlayer(
+          match.playerSouthTeam!,
+          match.playerSouth!
+        ),
+        '2': convertDbTeamPlayerToRealtimePlayer(
+          match.playerWestTeam!,
+          match.playerWest!
+        ),
+        '3': convertDbTeamPlayerToRealtimePlayer(
+          match.playerNorthTeam!,
+          match.playerNorth!
+        ),
       },
       activeResultDetail: null,
     }
 
-    await fb.set(`matches/${matchDTO._id}`, newMatch)
+    await fb.set(`matches/${match._id}`, newMatch)
 
-    const startingScore = parseInt(matchDTO.tournament.startingScore)
+    const startingScore = 25000
 
-    const matchRound: MatchRound = {
-      matchId: matchDTO._id,
-      code: generateMatchRoundCode(matchDTO._id, 1, 0),
+    const matchRound: RealtimeMatchRound = {
+      matchId: match._id,
+      code: generateMatchRoundCode(match._id, 1, 0),
       roundCount: 1,
       extendedRoundCount: 0,
       cumulatedThousands: 0,
@@ -150,18 +177,19 @@ const ControlNewMatch = ({ matchDTO }: Props) => {
     }
 
     await fb.push(`matchRounds`, matchRound)
-    await fb.update(`obs/1`, { matchId: matchDTO._id })
+    await fb.update(`obs/1`, { matchId: match._id })
   }, [
-    matchDTO._id,
-    matchDTO.name,
-    matchDTO.playerEast,
-    matchDTO.playerNorth,
-    matchDTO.playerSouth,
-    matchDTO.playerWest,
-    matchDTO.tournament.startingScore,
-    matchDTO.tournament.yakuMax,
-    matchDTO.tournament.yakumanMax,
     fb,
+    match._id,
+    match.name,
+    match.playerEast,
+    match.playerEastTeam,
+    match.playerNorth,
+    match.playerNorthTeam,
+    match.playerSouth,
+    match.playerSouthTeam,
+    match.playerWest,
+    match.playerWestTeam,
   ])
 
   return (
@@ -183,19 +211,25 @@ const ControlNewMatch = ({ matchDTO }: Props) => {
 
         <h4 className="text-3xl">
           <span className="text-neutral-600">對局名稱:</span>{' '}
-          <span className="font-bold">{matchDTO.name}</span>
+          <span className="font-bold">{match.name}</span>
         </h4>
 
         <div className="grid grid-cols-10 gap-x-2">
           <div className="col-span-4 col-start-4">
             <div className="text-[48px]">
-              <DBTeamPlayerDiv teamPlayer={matchDTO.playerWest} />
+              <DBTeamPlayerDiv
+                team={match.playerWestTeam}
+                player={match.playerWest}
+              />
             </div>
             <p className="text-center text-4xl">西</p>
           </div>
           <div className="col-span-4 col-start-1 flex items-center gap-x-2">
             <div className="flex-1 text-[48px]">
-              <DBTeamPlayerDiv teamPlayer={matchDTO.playerNorth} />
+              <DBTeamPlayerDiv
+                team={match.playerNorthTeam}
+                player={match.playerNorth}
+              />
             </div>
             <div className="shrink-0 text-4xl">北</div>
           </div>
@@ -203,47 +237,20 @@ const ControlNewMatch = ({ matchDTO }: Props) => {
           <div className="col-span-4 flex items-center gap-x-2">
             <div className="shrink-0 text-4xl">南</div>
             <div className="flex-1 text-[48px]">
-              <DBTeamPlayerDiv teamPlayer={matchDTO.playerSouth} />
+              <DBTeamPlayerDiv
+                team={match.playerSouthTeam}
+                player={match.playerSouth}
+              />
             </div>
           </div>
           <div className="col-span-4 col-start-4">
             <p className="text-center text-4xl">東</p>
             <div className="text-[48px]">
-              <DBTeamPlayerDiv teamPlayer={matchDTO.playerEast} />
+              <DBTeamPlayerDiv
+                team={match.playerEastTeam}
+                player={match.playerEast}
+              />
             </div>
-          </div>
-        </div>
-
-        <div className="text-2xl">
-          <span className="text-neutral-600">聯賽:</span>{' '}
-          <span className="font-bold">{matchDTO.tournament.name}</span>
-        </div>
-
-        <div className="grid grid-cols-3 gap-4">
-          <div className="border border-neutral-400 pt-2 py-4 rounded text-center bg-white">
-            <p className="text-neutral-600 font-bold text-sm">起始點數</p>
-            <p className="text-4xl">{matchDTO.tournament.startingScore}</p>
-          </div>
-
-          <div className="border border-neutral-400 pt-2 py-4 rounded text-center bg-white">
-            <p className="text-neutral-600 font-bold text-sm">切上滿貫</p>
-            <p className="text-4xl">
-              {matchDTO.tournament.isManganRoundUp ? '有' : '沒有'}
-            </p>
-          </div>
-
-          <div className="border border-neutral-400 pt-2 py-4 rounded text-center bg-white">
-            <p className="text-neutral-600 font-bold text-sm">翻數上限</p>
-            <p className="text-4xl">
-              {getYakuMaxLabel(matchDTO.tournament.yakuMax)}
-            </p>
-          </div>
-
-          <div className="border border-neutral-400 pt-2 py-4 rounded text-center bg-white">
-            <p className="text-neutral-600 font-bold text-sm">役滿上限</p>
-            <p className="text-4xl">
-              {getYakumanMaxLabel(matchDTO.tournament.yakumanMax)}
-            </p>
           </div>
         </div>
 
