@@ -115,56 +115,77 @@ const TournamentDetailSlide = ({
           opacity: status >= 0 && status < 1 ? 1 : 0,
         }}
       >
-        <div className="flex-1 flex items-center text-[0.75em] gap-6 twr-team-ranking-row">
-          <p className="flex-1 text-center">排名</p>
-          <p className="flex-[5]">隊伍</p>
-          <p className="flex-1 text-center">積分</p>
-          <p className="flex-1 text-center">與前名差距</p>
-          <p className="flex-1 text-center">半莊數</p>
+        <div className="grid grid-flow-col grid-rows-1 gap-x-8 twr-team-ranking-row">
+          <div className="flex-1 flex items-center text-[0.75em]">
+            <p className="flex-1 text-center">排名</p>
+            <p className="flex-[2.5]">隊伍</p>
+            <p className="flex-1 text-right">積分</p>
+            <p className="flex-1 text-right">差距</p>
+            <p className="flex-1 text-right">半莊數</p>
+          </div>
+          <div className="flex-1 flex items-center text-[0.75em]">
+            <p className="flex-1 text-center">排名</p>
+            <p className="flex-[2.5]">隊伍</p>
+            <p className="flex-1 text-right">積分</p>
+            <p className="flex-1 text-right">差距</p>
+            <p className="flex-1 text-right">半莊數</p>
+          </div>
         </div>
-        {slide.teams.map((team, index) => (
-          <div
-            key={team.team._id}
-            className="relative flex-1 flex items-center gap-6 overflow-hidden twr-team-ranking-row"
-            style={{
-              background: `linear-gradient(to right, ${team.team.color}C0, transparent 105%)`,
-              animationDelay: `${index * 0.05}s`,
-            }}
-          >
-            <img
-              src={team.team.squareLogoImage + '?w=320&h=320'}
-              alt={team.team._id}
-              className="absolute left-48 opacity-10 -z-10"
-            />
-            <p className="flex-1 text-center space-x-2">
-              <span>{renderRanking(team.statistics.ranking)}</span>
-              {/* <TeamRankingUpOrDownSpan
+
+        <div className="flex-1 grid grid-cols-2 gap-x-8 h-full">
+          {[0, 8, 1, 9, 2, 10, 3, 11, 4, 12, 5, 13, 6, 14, 7, 15].map(
+            (ranking) => (
+              <div
+                key={ranking}
+                className="relative flex-1 flex items-center overflow-hidden twr-team-ranking-row"
+                style={{
+                  background: `linear-gradient(to right, ${slide.teams[ranking].team.color}C0, transparent 105%)`,
+                  animationDelay: `${ranking * 0.05}s`,
+                }}
+              >
+                <img
+                  src={
+                    slide.teams[ranking].team.squareLogoImage + '?w=320&h=320'
+                  }
+                  alt={slide.teams[ranking].team._id}
+                  className="absolute left-48 opacity-10 -z-10"
+                />
+                <p className="flex-1 text-center space-x-2">
+                  <span>
+                    {renderRanking(slide.teams[ranking].statistics.ranking)}
+                  </span>
+                  {/* <TeamRankingUpOrDownSpan
                 value={
                   (team.rankingHistories.at(-1) ?? 0) -
                   (team.rankingHistories.at(-3) ?? 0)
                 }
               /> */}
-            </p>
-            <p className="flex-[5]">
-              {team.team.name} {team.team.secondaryName}
-            </p>
-            <p className="flex-1 text-center">
-              {renderPoint(team.statistics.point)}
-            </p>
-            <p className="flex-1 text-center">
-              {index > 0
-                ? (
-                    slide.teams[index - 1].statistics.point -
-                    team.statistics.point
-                  ).toFixed(1)
-                : '-'}
-            </p>
-            <p className="flex-1 text-center">
-              {team.statistics.matchCount}
-              <span className="text-[0.75em]">/60</span>
-            </p>
-          </div>
-        ))}
+                </p>
+                <div className="flex-[2.5]">
+                  <p>{slide.teams[ranking].team.name}</p>
+                  <p className="text-[24px] leading-[24px]">
+                    {slide.teams[ranking].team.secondaryName}
+                  </p>
+                </div>
+                <p className="flex-1 text-right">
+                  {renderPoint(slide.teams[ranking].statistics.point)}
+                </p>
+                <p className="flex-1 text-right">
+                  {ranking > 0
+                    ? (
+                        slide.teams[ranking - 1].statistics.point -
+                        slide.teams[ranking].statistics.point
+                      ).toFixed(1)
+                    : '-'}
+                </p>
+                <p className="flex-1 text-right">
+                  {slide.teams[ranking].statistics.matchCount}
+                  <span className="text-[0.75em]">/60</span>
+                </p>
+              </div>
+            )
+          )}
+        </div>
       </div>
     )
   } else if (slide.type === 'chart') {
