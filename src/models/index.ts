@@ -209,20 +209,10 @@ export type Team = {
   introduction: string
   players: Player[]
   statistics?: {
-    ranking: number
-    point: number
     matchCount: number
-    firstP: number
-    secondP: number
-    thirdP: number
-    fourthP: number
-    rankingAvg: number
-    pointAvg: number
-    ronP: number
-    chuckP: number
-    riichiP: number
-    revealP: number
-    pointHistories: number[]
+    point: number
+    ranking: number
+    pointHistories: []
   }
 }
 
