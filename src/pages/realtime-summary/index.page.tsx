@@ -413,100 +413,97 @@ const TournamentDetailSlide = ({
         </div>
       </div>
     )
-  }
+  } else if (slide.type === 'heatmap') {
+    return (
+      <div
+        className="absolute inset-0 flex gap-[1em] items-stretch twr-heatmap"
+        data-active={status === 0}
+        style={{
+          opacity: status >= 0 && status < 1 ? 1 : 0,
+        }}
+      >
+        <div className="flex-1 flex flex-col gap-y-[.5em]">
+          <h4 className="text-[2em] font-semibold text-center leading-[1em] twr-heatmap-title">
+            點數熱力圖
+          </h4>
+          <p className="text-center mb-8 twr-heatmap-title">
+            <span className="bg-green-500 px-1">綠色</span>
+            代表高分、
+            <span className="bg-red-500 px-1">紅色</span>代表低分
+          </p>
+          <div
+            className="grid flex-1 text-center text-[.65em]"
+            style={{
+              gridTemplateColumns: `repeat(${slide.teams.length}, minmax(0, 1fr))`,
+            }}
+          >
+            {slide.teams.map(({ team, statistics }, teamIndex) => (
+              <div
+                className="twr-heatmap-cell h-10"
+                key={team._id}
+                style={{
+                  animationDelay: teamIndex * 0.05 + 's',
+                }}
+              >
+                <div
+                  style={{
+                    background: `${team.color}80`,
+                  }}
+                >
+                  <img
+                    src={team.squareLogoImage + '?w=128&h=128'}
+                    alt={team.name!}
+                    className="h-24 w-24 my-2 inline-block"
+                  />
+                </div>
+                <p
+                  className="py-2"
+                  style={{
+                    background:
+                      statistics!.point > 0
+                        ? `rgba(23, 235, 0, ${
+                            statistics!.point / slide.highestTeamPoint
+                          })`
+                        : `rgba(235, 0, 0, ${
+                            statistics!.point / slide.lowestTeamPoint
+                          })`,
+                  }}
+                >
+                  {renderPoint(statistics!.point)}
+                </p>
+              </div>
+            ))}
 
-  // else if (slide.type === 'heatmap') {
-  //   return (
-  //     <div
-  //       className="absolute inset-0 flex gap-[1em] items-stretch twr-heatmap"
-  //       data-active={status === 0}
-  //       style={{
-  //         opacity: status >= 0 && status < 1 ? 1 : 0,
-  //       }}
-  //     >
-  //       <div className="flex-1 flex flex-col gap-y-[.5em]">
-  //         <h4 className="text-[2em] font-semibold text-center leading-[1em] twr-heatmap-title">
-  //           點數熱力圖
-  //         </h4>
-  //         <p className="text-center mb-8 twr-heatmap-title">
-  //           <span className="bg-green-500 px-1">綠色</span>
-  //           代表高分、
-  //           <span className="bg-red-500 px-1">紅色</span>代表低分
-  //         </p>
-  //         <div className="grid grid-cols-4 flex-1 text-center text-[.8em]">
-  //           {slide.teams.map(({ team, players, statistics }, teamIndex) => (
-  //             <div
-  //               className="h-20 twr-heatmap-cell"
-  //               key={team._id}
-  //               style={{
-  //                 animationDelay: teamIndex * 0.05 + 's',
-  //               }}
-  //             >
-  //               <div
-  //                 style={{
-  //                   background: `${team.color}80`,
-  //                 }}
-  //               >
-  //                 <img
-  //                   src={team.squareLogoImage + '?w=128&h=128'}
-  //                   alt={team.name!}
-  //                   className="h-24 w-24 my-2 inline-block"
-  //                 />
-  //               </div>
-  //               <p
-  //                 className="py-2"
-  //                 style={{
-  //                   background:
-  //                     statistics!.point > 0
-  //                       ? `rgba(23, 235, 0, ${
-  //                           statistics!.point / slide.highestTeamPoint
-  //                         })`
-  //                       : `rgba(235, 0, 0, ${
-  //                           statistics!.point / slide.lowestTeamPoint
-  //                         })`,
-  //                 }}
-  //               >
-  //                 {renderPoint(statistics!.point)}
-  //               </p>
-  //             </div>
-  //           ))}
-  //           {([0, 1, 2, 3] as const).map((index) =>
-  //             slide.teams.map(({ team }, teamIndex) => (
-  //               <div
-  //                 className="flex items-center justify-center twr-heatmap-cell"
-  //                 key={team._id}
-  //                 style={{
-  //                   background:
-  //                     typeof slide.teamPlayersGroupedByTeamIds[team._id][index]
-  //                       .player.statisticss?.point !== 'undefined'
-  //                       ? slide.teamPlayersGroupedByTeamIds[team._id][index]
-  //                           .player.statisticss!.point > 0
-  //                         ? `rgba(23, 235, 0, ${
-  //                             slide.teamPlayersGroupedByTeamIds[team._id][index]
-  //                               .player.statisticss!.point /
-  //                             slide.highestPlayerPoint
-  //                           })`
-  //                         : `rgba(235, 0, 0, ${
-  //                             slide.teamPlayersGroupedByTeamIds[team._id][index]
-  //                               .player.statisticss!.point /
-  //                             slide.lowestPlayerPoint
-  //                           })`
-  //                       : 'tranparent',
-  //                   animationDelay: (teamIndex + index + 1) * 0.05 + 's',
-  //                 }}
-  //               >
-  //                 {renderPoint(
-  //                   slide.teamPlayersGroupedByTeamIds[team._id][index].player
-  //                     .statistics?.point
-  //                 )}
-  //               </div>
-  //             ))
-  //           )}
-  //         </div>
-  //       </div>
-  //     </div>
-  //   )
-  // }
+            {([0, 1, 2, 3] as const).map((index) =>
+              slide.teams.map(({ team, players }, teamIndex) => (
+                <div
+                  className="content-center twr-heatmap-cell"
+                  key={team._id}
+                  style={{
+                    background:
+                      typeof players[index].statistics?.point !== 'undefined'
+                        ? players[index].statistics!.point > 0
+                          ? `rgba(23, 235, 0, ${
+                              players[index].statistics!.point /
+                              slide.highestPlayerPoint
+                            })`
+                          : `rgba(235, 0, 0, ${
+                              players[index].statistics!.point /
+                              slide.lowestPlayerPoint
+                            })`
+                        : 'tranparent',
+                    animationDelay: (teamIndex + index + 1) * 0.05 + 's',
+                  }}
+                >
+                  {renderPoint(players[index].statistics?.point)}
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return <></>
 }
@@ -537,9 +534,14 @@ const RealtimeSummaryPage = ({
     queryFn: () =>
       apiGetTournament(TOURNAMENT_ID as string).then((tournament) => ({
         ...tournament,
-        teams: tournament.teams.sort(
-          (a, b) => b.statistics.point - a.statistics.point
-        ),
+        teams: tournament.teams
+          .sort((a, b) => b.statistics.point - a.statistics.point)
+          .map(({ players, ...teamOthers }) => ({
+            ...teamOthers,
+            players: players.sort(
+              (a, b) => (b.statistics?.point ?? 0) - (a.statistics?.point ?? 0)
+            ),
+          })),
       })),
     enabled: !!TOURNAMENT_ID,
     staleTime: 5 * 60 * 1000,
@@ -630,18 +632,18 @@ const RealtimeSummaryPage = ({
         ),
         subslide: 1,
       },
-      // {
-      //   type: 'heatmap',
-      //   _id: 'heatmap',
-      //   teams: tournament.teams,
-      //   highestTeamPoint: tournament.teams[0].statistics.point,
-      //   lowestTeamPoint: tournament.teams.at(-1)!.statistics.point,
-      //   highestPlayerPoint:
-      //     playersSortedByPoint[0].player.statistics?.point ?? 0,
-      //   lowestPlayerPoint:
-      //     playersSortedByPoint.at(-1)!.player.statistics?.point ?? 0,
-      //   subslide: 1,
-      // },
+      {
+        type: 'heatmap',
+        _id: 'heatmap',
+        teams: tournament.teams,
+        highestTeamPoint: tournament.teams[0].statistics.point,
+        lowestTeamPoint: tournament.teams.at(-1)!.statistics.point,
+        highestPlayerPoint:
+          playersSortedByPoint[0].player.statistics?.point ?? 0,
+        lowestPlayerPoint:
+          playersSortedByPoint.at(-1)!.player.statistics?.point ?? 0,
+        subslide: 1,
+      },
     ]
 
     if (!autoInSearch) {
