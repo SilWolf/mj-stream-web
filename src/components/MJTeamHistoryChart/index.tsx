@@ -1,4 +1,5 @@
-import { DB_MatchTournament } from '@/helpers/sanity.helper'
+import { TournamentTeamStatistics } from '@/helpers/sanity.helper'
+import { Team } from '@/models'
 import React from 'react'
 import { useMemo } from 'react'
 import {
@@ -11,12 +12,14 @@ import {
 } from 'recharts'
 
 type Props = {
-  teams: DB_MatchTournament['teams']
+  teamAndStatistics: { team: Team; statistics: TournamentTeamStatistics }[]
 }
 
-function MJTeamHistoryChart({ teams }: Props) {
+function MJTeamHistoryChart({ teamAndStatistics }: Props) {
   const data = useMemo(() => {
-    const count = Math.max(...teams.map(({ matchCount }) => matchCount))
+    const count = Math.max(
+      ...teamAndStatistics.map(({ statistics }) => statistics!.matchCount)
+    )
     const result = Array(count + 1)
       .fill(undefined)
       .map(
@@ -26,15 +29,15 @@ function MJTeamHistoryChart({ teams }: Props) {
           }) as Record<string, number> & { name: string }
       )
 
-    for (const team of teams) {
+    for (const team of teamAndStatistics) {
       // result[0][team.team._id] = 0
       for (let i = 0; i < count; i++) {
-        result[i][team.team._id] = team.pointHistories[i]
+        result[i][team.team._id] = team.statistics!.pointHistories[i]
       }
     }
 
     return result
-  }, [teams])
+  }, [teamAndStatistics])
 
   return (
     <ResponsiveContainer width="100%" height="100%">
@@ -49,7 +52,7 @@ function MJTeamHistoryChart({ teams }: Props) {
         />
         {/* <Legend /> */}
 
-        {teams.map((team) => (
+        {teamAndStatistics.map((team) => (
           <Line
             key={team.team._id}
             type="linear"
@@ -60,14 +63,14 @@ function MJTeamHistoryChart({ teams }: Props) {
           />
         ))}
 
-        {teams.map((team) => (
+        {teamAndStatistics.map((team) => (
           <Line
             key={team.team._id}
             type="linear"
             stroke={team.team.color}
             strokeWidth={8}
             isAnimationActive={false}
-            name={team.team.name}
+            name={team.team.name!}
             dataKey={team.team._id}
           />
         ))}

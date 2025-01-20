@@ -27,8 +27,6 @@ import MatchIntroductionPage from './pages/match/[id]/introduction.page'
 import MatchOverviewOverlayPage from './pages/match/[id]/overviewOverlay.page'
 import ObsOverviewOverlayPage from './pages/obs/[obsRoomId]/overlay.page'
 import ObsRoomExportPage from './pages/obs/[obsRoomId]/export.page'
-import WeeklySummaryAutoPage from './pages/weekly-summary/index.page'
-import WeeklySummaryPage from './pages/weekly-summary/[week]/index.page'
 import RealtimeSummaryPage from './pages/realtime-summary/index.page'
 import ObsRoomIntroductionPage from './pages/obs/[obsRoomId]/introduction.page'
 import MatchSummaryPage from './pages/match/[id]/summary.page'
@@ -124,10 +122,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               component={ObsRoomSummaryPage}
             />
             <Route
-              path="/v1/obs/:obsRoomId/weekly-summary"
-              component={WeeklySummaryAutoPage}
-            />
-            <Route
               path="/v1/obs/:obsRoomId/realtime-summary"
               component={RealtimeSummaryPage}
             />
@@ -139,15 +133,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               component={ObsCarouselPage}
             />
             <Route path="/v1/obs/:obsRoomId/stat" component={ObsStatPage} />
-
-            <Route
-              path="/v1/weekly-summary/"
-              component={WeeklySummaryAutoPage}
-            />
-            <Route
-              path="/v1/weekly-summary/:week"
-              component={WeeklySummaryPage}
-            />
 
             <Route
               path="/v1/realtime-summary/"

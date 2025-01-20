@@ -222,6 +222,7 @@ export type Team = {
     chuckP: number
     riichiP: number
     revealP: number
+    pointHistories: number[]
   }
 }
 

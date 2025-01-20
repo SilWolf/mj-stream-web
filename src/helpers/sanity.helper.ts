@@ -1,4 +1,11 @@
-import { Match, Player, RawMatch, RealtimePlayer, Team } from '@/models'
+import {
+  Match,
+  Player,
+  PlayerStatistic,
+  RawMatch,
+  RealtimePlayer,
+  Team,
+} from '@/models'
 import { mergeObject } from '@/utils/object.util'
 import { createClient } from '@sanity/client'
 
@@ -11,7 +18,6 @@ const PLAYER_META_FIELDS = [
   'introduction',
 ]
 
-const TEAM_PROJECTION = `{_id, "slug": slug.current, name, secondaryName, thirdName, "squareLogoImage": squareLogoImage.asset->url, "color": color.hex, introduction}`
 const TEAM_META_FIELDS = [
   '"slug": slug.current',
   'name',
@@ -190,27 +196,13 @@ export type TournamentTeam = {
   _key: string
   ref: Team
   overrided: Team
-  players: {
-    _key: string
-    ref: Player
-    overrided: Player
-  }[]
+}
 
-  statistics?: {
-    ranking: number
-    point: number
-    matchCount: number
-    firstP: number
-    secondP: number
-    thirdP: number
-    fourthP: number
-    rankingAvg: number
-    pointAvg: number
-    ronP: number
-    chuckP: number
-    riichiP: number
-    revealP: number
-  }
+export type TournamentTeamStatistics = {
+  matchCount: number
+  point: number
+  ranking: number
+  pointHistories: []
 }
 
 export type TournamentTeamWithPlayers = TournamentTeam & {
@@ -225,12 +217,7 @@ export type TournamentTeamWithPlayersWithStatistics = TournamentTeam & {
     ref: Player
     overrided: Player
   }[]
-  statistics: {
-    matchCount: number
-    point: number
-    ranking: number
-    pointHistories: []
-  }
+  statistics: TournamentTeamStatistics
 }
 
 export const apiGetPlayers = (): Promise<DB_Player[]> => {
@@ -341,12 +328,15 @@ export const apiGetMatchByIdWithStatistics = async (
   matchId: string,
   statisticTournamentId?: string
 ) => {
-  const regularTeams = await getRegularTeamsWithPlayersWithStatistics()
   const rawMatch = await client
     .fetch<
       RawMatch[]
     >(`*[_type == "match" && _id == "${matchId}"]{ tournament->{_id, name, "logoUrl": logo.asset->url}, _id, name, playerEast, playerSouth, playerWest, playerNorth, playerEastTeam, playerSouthTeam, playerWestTeam, playerNorthTeam, startAt }`)
     .then((rawMatches) => rawMatches[0])
+
+  const regularTeams = await getRegularTeamsWithPlayersWithStatistics(
+    rawMatch.tournament._id
+  )
 
   const teamEast = regularTeams.find(
     ({ team }) => rawMatch.playerEastTeam?._ref === team._id
@@ -389,38 +379,38 @@ export const apiGetMatchByIdWithStatistics = async (
     ...rawMatch,
     playerEast: {
       ...playerEast!,
-      statistic: playerStatisticMap[playerEast!._id],
+      statistics: playerStatisticMap[playerEast!._id],
     },
     playerSouth: {
       ...playerSouth!,
-      statistic: playerStatisticMap[playerSouth!._id],
+      statistics: playerStatisticMap[playerSouth!._id],
     },
     playerWest: {
       ...playerWest!,
-      statistic: playerStatisticMap[playerWest!._id],
+      statistics: playerStatisticMap[playerWest!._id],
     },
     playerNorth: {
       ...playerNorth!,
-      statistic: playerStatisticMap[playerNorth!._id],
+      statistics: playerStatisticMap[playerNorth!._id],
     },
     playerEastTeam: {
       ...teamEast!.team,
-      statistic: teamEast!.statistics,
+      statistics: teamEast!.statistics,
       players: teamEast!.players,
     },
     playerSouthTeam: {
       ...teamSouth!.team,
-      statistic: teamSouth!.statistics,
+      statistics: teamSouth!.statistics,
       players: teamSouth!.players,
     },
     playerWestTeam: {
       ...teamWest!.team,
-      statistic: teamWest!.statistics,
+      statistics: teamWest!.statistics,
       players: teamWest!.players,
     },
     playerNorthTeam: {
       ...teamNorth!.team,
-      statistic: teamNorth!.statistics,
+      statistics: teamNorth!.statistics,
       players: teamNorth!.players,
     },
   }
@@ -432,7 +422,7 @@ export const getStatisticsByPlayerIds = async (
 ) =>
   client
     .fetch<
-      { _id: string; statistics: DB_PlayerStatistics }[]
+      { _id: string; statistics: PlayerStatistic }[]
     >(`*[_type=="player" && _id in [${playerIds.map((playerId) => `"${playerId}"`).join(',')}]]{ _id, "statistics": statistics[_key=="${tournamentId}"][0] }`)
     .then((thisResult) =>
       thisResult.reduce(
@@ -441,30 +431,7 @@ export const getStatisticsByPlayerIds = async (
             return prev
           }
 
-          const statisticsDTO = {
-            point: player.statistics.point,
-            matchCount: player.statistics.matchCount,
-            nonFourthP: player.statistics.nonFourthP,
-            firstAndSecondP: player.statistics.firstAndSecondP,
-            ronP: player.statistics.ronP,
-            riichiP: player.statistics.riichiP,
-            chuckP: player.statistics.chuckP,
-            revealP: player.statistics.revealP,
-            ronPureScoreAvg: player.statistics.ronPureScoreAvg,
-            chuckPureScoreAvg: player.statistics.chuckPureScoreAvg,
-            pointRanking: player.statistics.pointRanking,
-            nonFourthPRanking: player.statistics.nonFourthPRanking,
-            firstAndSecondPRanking: player.statistics.firstAndSecondPRanking,
-            ronPRanking: player.statistics.ronPRanking,
-            riichiPRanking: player.statistics.riichiPRanking,
-            chuckPRanking: player.statistics.chuckPRanking,
-            revealPRanking: player.statistics.revealPRanking,
-            ronPureScoreAvgRanking: player.statistics.ronPureScoreAvgRanking,
-            chuckPureScoreAvgRanking:
-              player.statistics.chuckPureScoreAvgRanking,
-          }
-
-          prev[player._id] = statisticsDTO
+          prev[player._id] = player.statistics
           return prev
         },
         {} as Record<string, PlayerStatistic>
@@ -504,28 +471,6 @@ export type TeamPlayerDTO = {
   teamStatistic: TeamStatisticDTO | null
 }
 
-export type PlayerStatistic = {
-  point: number
-  pointRanking: number
-  matchCount: number
-  nonFourthP: number
-  nonFourthPRanking: number
-  firstAndSecondP: number
-  firstAndSecondPRanking: number
-  riichiP: number
-  riichiPRanking: number
-  ronP: number
-  ronPRanking: number
-  chuckP: number
-  chuckPRanking: number
-  revealP: number
-  revealPRanking: number
-  ronPureScoreAvg: number
-  ronPureScoreAvgRanking: number
-  chuckPureScoreAvg: number
-  chuckPureScoreAvgRanking: number
-}
-
 export type TeamStatisticDTO = {
   point: number
   ranking: number
@@ -552,140 +497,30 @@ export type MatchDTO = Omit<
   _order: ('playerEast' | 'playerSouth' | 'playerWest' | 'playerNorth')[]
 }
 
-export const formatTeamPlayerDTO = (
-  placeholderTeam: DB_Team | null | undefined,
-  teamPlayer?: DB_TeamPlayer | null | undefined
-): TeamPlayerDTO => {
-  const newTeamPlayerDTO: TeamPlayerDTO = {
-    playerId: '',
-    playerName: '',
-    playerNickname: '',
-    playerDesignation: '',
-    playerPortraitImageUrl:
-      'https://hkleague2025.hkmahjong.org/images/empty.png',
-    playerFullname: '',
-    playerStatistic: null,
-    teamId: '',
-    teamName: '',
-    teamSecondaryName: '',
-    teamThirdName: '',
-    teamFullname: '',
-    teamStatistic: null,
-    color: '#000000',
-    teamLogoImageUrl: 'https://hkleague2025.hkmahjong.org/images/empty.png',
-  }
-
-  if (teamPlayer) {
-    if (teamPlayer.player) {
-      newTeamPlayerDTO.playerId = teamPlayer.player._id
-      newTeamPlayerDTO.playerName = teamPlayer.player.name
-      if (teamPlayer.player.nickname) {
-        newTeamPlayerDTO.playerNickname = teamPlayer.player.nickname
-      }
-      if (teamPlayer.player.designation) {
-        newTeamPlayerDTO.playerDesignation = teamPlayer.player.designation
-      }
-      if (teamPlayer.player.portraitImage) {
-        newTeamPlayerDTO.playerPortraitImageUrl =
-          teamPlayer.player.portraitImage
-      }
-
-      const stat = teamPlayer.player.statistics
-
-      newTeamPlayerDTO.playerStatistic =
-        stat && stat.matchCount > 0
-          ? {
-              point: stat.point,
-              pointRanking: stat.pointRanking,
-              matchCount: stat.matchCount,
-              nonFourthP: stat.nonFourthP,
-              nonFourthPRanking: stat.nonFourthPRanking,
-              firstAndSecondP: stat.firstAndSecondP,
-              firstAndSecondPRanking: stat.firstAndSecondPRanking,
-              riichiP: stat.riichiP,
-              riichiPRanking: stat.riichiPRanking,
-              ronP: stat.ronP,
-              ronPRanking: stat.ronPRanking,
-              chuckP: stat.chuckP,
-              chuckPRanking: stat.chuckPRanking,
-              revealP: stat.revealP,
-              revealPRanking: stat.revealPRanking,
-              ronPureScoreAvg: stat.ronPureScoreAvg,
-              ronPureScoreAvgRanking: stat.ronPureScoreAvgRanking,
-              chuckPureScoreAvg: stat.chuckPureScoreAvg,
-              chuckPureScoreAvgRanking: stat.chuckPureScoreAvgRanking,
-            }
-          : null
-    }
-
-    if (teamPlayer.team) {
-      newTeamPlayerDTO.teamId = teamPlayer.team._id
-      newTeamPlayerDTO.teamName = teamPlayer.team.name
-      newTeamPlayerDTO.teamSecondaryName = teamPlayer.team.secondaryName
-      newTeamPlayerDTO.teamThirdName = teamPlayer.team.thirdName
-      newTeamPlayerDTO.color = teamPlayer.team.color
-      if (teamPlayer.team.squareLogoImage) {
-        newTeamPlayerDTO.teamLogoImageUrl = teamPlayer.team.squareLogoImage
-      }
-    }
-
-    newTeamPlayerDTO.playerFullname =
-      newTeamPlayerDTO.playerName +
-      (newTeamPlayerDTO.playerNickname
-        ? ` (${newTeamPlayerDTO.playerNickname})`
-        : '')
-    newTeamPlayerDTO.teamFullname = [
-      newTeamPlayerDTO.teamName,
-      newTeamPlayerDTO.teamSecondaryName,
-      newTeamPlayerDTO.teamThirdName,
-    ]
-      .filter((item) => !!item)
-      .join(' ')
-
-    newTeamPlayerDTO.playerDesignation = newTeamPlayerDTO.teamFullname
-
-    if (teamPlayer.overridedDesignation) {
-      newTeamPlayerDTO.playerDesignation = teamPlayer.overridedDesignation
-    }
-    if (teamPlayer.overridedName) {
-      newTeamPlayerDTO.playerName = teamPlayer.overridedName
-    }
-    if (teamPlayer.overridedNickname) {
-      newTeamPlayerDTO.playerNickname = teamPlayer.overridedNickname
-    }
-    if (teamPlayer.overridedColor) {
-      newTeamPlayerDTO.color = teamPlayer.overridedColor
-    }
-    if (teamPlayer.overridedPortraitImage) {
-      newTeamPlayerDTO.playerPortraitImageUrl =
-        teamPlayer.overridedPortraitImage
-    }
-  } else if (placeholderTeam) {
-    newTeamPlayerDTO.teamId = placeholderTeam._id
-    newTeamPlayerDTO.teamName = placeholderTeam.name
-    newTeamPlayerDTO.teamSecondaryName = placeholderTeam.secondaryName
-    newTeamPlayerDTO.teamThirdName = placeholderTeam.thirdName
-    newTeamPlayerDTO.color = placeholderTeam.color
-    if (placeholderTeam.squareLogoImage) {
-      newTeamPlayerDTO.teamLogoImageUrl = placeholderTeam.squareLogoImage
-    }
-
-    newTeamPlayerDTO.teamFullname = [
-      newTeamPlayerDTO.teamName,
-      newTeamPlayerDTO.teamSecondaryName,
-      newTeamPlayerDTO.teamThirdName,
-    ]
-      .filter((item) => !!item)
-      .join(' ')
-  }
-
-  return newTeamPlayerDTO
-}
-
 export const apiGetTournament = async (tournamentId: string) => {
-  const tournament = await client.fetch<DB_MatchTournament>(
-    `*[_type == "matchTournament" && _id == "${tournamentId}"][0]{..., "logoUrl": logo.asset->url, teams[]{..., team->{${TEAM_PROJECTION}}}}`
-  )
+  const tournament = await client
+    .fetch<
+      {
+        _id: string
+        logoUrl: string
+        name: string
+        teams: TournamentTeamWithPlayersWithStatistics[]
+      }[]
+    >(
+      `*[_type == "matchTournament" && _id == "${tournamentId}"]{ _id, name, "logoUrl": logo.asset->url, teams[]{ _key, statistics, ref->{${['_id', ...TEAM_META_FIELDS].join(', ')}}, "overrided": overrided{${[...TEAM_META_FIELDS].join(', ')}}, players[]{ref->{${['_id', ...PLAYER_META_FIELDS, `"statistics": statistics[_key=="${tournamentId}"][0]`].join(', ')}}, "overrided": overrided{${[...PLAYER_META_FIELDS].join(', ')}} } } }`
+    )
+    .then((tournaments) => {
+      return {
+        ...tournaments[0],
+        teams: tournaments[0]?.teams?.map(({ ref, overrided, ...team }) => ({
+          ...team,
+          team: mergeObject(ref, overrided),
+          players: team.players.map((player) =>
+            mergeObject(player.ref, player.overrided)
+          ),
+        })),
+      }
+    })
 
   return tournament
 }
@@ -745,15 +580,21 @@ export const getRegularTeamsWithPlayers = () =>
       )
     })
 
-export const getRegularTeamsWithPlayersWithStatistics = () =>
+export const getRegularTeamsWithPlayersWithStatistics = (
+  tournamentId: string
+) =>
   client
     .fetch(
-      `*[_type == "matchTournament" && _id == "62e7d07d-f59f-421d-a000-2e4d28ab89db"]{ teams[]{ _key, statistics, ref->{${[
+      `*[_type == "matchTournament" && _id == "${tournamentId}"]{ teams[]{ _key, statistics, ref->{${[
         '_id',
         ...TEAM_META_FIELDS,
       ].join(', ')}}, "overrided": overrided{${[...TEAM_META_FIELDS].join(
         ', '
-      )}}, players[]{ref->{${['_id', ...PLAYER_META_FIELDS].join(
+      )}}, players[]{ref->{${[
+        '_id',
+        ...PLAYER_META_FIELDS,
+        `"statistics": statistics[_key=="${tournamentId}"][0]`,
+      ].join(
         ', '
       )}}, "overrided": overrided{${[...PLAYER_META_FIELDS].join(', ')}} } } }`
     )

@@ -1,16 +1,7 @@
 import CountdownSpan from '@/components/CountdownSpan'
 import MJTeamHistoryChart from '@/components/MJTeamHistoryChart'
-import { arrGroupBy } from '@/helpers/array.helper'
-import {
-  DB_MatchTournament,
-  DB_PlayerStatistics,
-  DB_Team,
-  DB_TeamPlayer,
-  TeamPlayerDTO,
-  apiGetTeamPlayersOfTournament,
-  apiGetTournament,
-  formatTeamPlayerDTO,
-} from '@/helpers/sanity.helper'
+import { apiGetTournament } from '@/helpers/sanity.helper'
+import { Player, PlayerStatistic, Team } from '@/models'
 import { renderPoint, renderRanking } from '@/utils/string.util'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -25,40 +16,40 @@ type Slide =
   | {
       _id: string
       type: 'teams'
-      teams: DB_MatchTournament['teams']
+      teams: Awaited<ReturnType<typeof apiGetTournament>>['teams']
       subslide: 1 | 2
     }
   | {
       _id: string
       type: 'chart'
-      teams: DB_MatchTournament['teams']
+      teams: Awaited<ReturnType<typeof apiGetTournament>>['teams']
       subslide: 1 | 2
     }
   | {
       _id: string
       type: 'players'
       highestPointPlayers: {
-        player: TeamPlayerDTO
+        teamAndPlayer: { team: Team; player: Player }
         value: number
         tieBreakValue: number
       }[]
       highestRonPPlayers: {
-        player: TeamPlayerDTO
+        teamAndPlayer: { team: Team; player: Player }
         value: number
         tieBreakValue: number
       }[]
       highestRonPurePointPlayers: {
-        player: TeamPlayerDTO
+        teamAndPlayer: { team: Team; player: Player }
         value: number
         tieBreakValue: number
       }[]
       lowestChuckPPlayers: {
-        player: TeamPlayerDTO
+        teamAndPlayer: { team: Team; player: Player }
         value: number
         tieBreakValue: number
       }[]
       highestScoreMax: {
-        player: TeamPlayerDTO
+        teamAndPlayer: { team: Team; player: Player }
         value: number
         tieBreakValue: number
       }[]
@@ -67,8 +58,7 @@ type Slide =
   | {
       _id: string
       type: 'heatmap'
-      teams: DB_MatchTournament['teams']
-      teamPlayersGroupedByTeamIds: Record<string, DB_TeamPlayer[]>
+      teams: Awaited<ReturnType<typeof apiGetTournament>>['teams']
       highestTeamPoint: number
       lowestTeamPoint: number
       highestPlayerPoint: number
@@ -79,25 +69,21 @@ type Slide =
 const TOURNAMENT_ID = '62e7d07d-f59f-421d-a000-2e4d28ab89db'
 
 const sortPlayersAndConvertToTeamPlayerDTOByKey = (
-  teamPlayers: Awaited<ReturnType<typeof apiGetTeamPlayersOfTournament>>,
-  teamsMap: Record<string, DB_Team>,
-  valueFn: (stat: DB_PlayerStatistics) => number,
-  tieBreakValueFn: (stat: DB_PlayerStatistics) => number,
+  teamAndPlayers: { team: Team; player: Player }[],
+  valueFn: (stat: PlayerStatistic) => number,
+  tieBreakValueFn: (stat: PlayerStatistic) => number,
   direction: 'asc' | 'desc',
   tieBreakDirection: 'asc' | 'desc'
 ): {
-  player: TeamPlayerDTO
+  teamAndPlayer: { team: Team; player: Player }
   value: number
   tieBreakValue: number
 }[] => {
-  return teamPlayers
-    .map((teamPlayer) => ({
-      player: formatTeamPlayerDTO(teamsMap[teamPlayer.teamId], {
-        ...teamPlayer,
-        team: teamsMap[teamPlayer.teamId],
-      }),
-      value: valueFn(teamPlayer.player.statistics!),
-      tieBreakValue: tieBreakValueFn(teamPlayer.player.statistics!),
+  return teamAndPlayers
+    .map((teamAndPlayer) => ({
+      teamAndPlayer,
+      value: valueFn(teamAndPlayer.player.statistics!),
+      tieBreakValue: tieBreakValueFn(teamAndPlayer.player.statistics!),
     }))
     .sort((a, b) => {
       if (a.value === b.value) {
@@ -138,7 +124,7 @@ const TournamentDetailSlide = ({
         </div>
         {slide.teams.map((team, index) => (
           <div
-            key={team._id}
+            key={team.team._id}
             className="relative flex-1 flex items-center gap-6 overflow-hidden twr-team-ranking-row"
             style={{
               background: `linear-gradient(to right, ${team.team.color}C0, transparent 105%)`,
@@ -151,7 +137,7 @@ const TournamentDetailSlide = ({
               className="absolute left-48 opacity-10 -z-10"
             />
             <p className="flex-1 text-center space-x-2">
-              <span>{renderRanking(team.ranking)}</span>
+              <span>{renderRanking(team.statistics.ranking)}</span>
               {/* <TeamRankingUpOrDownSpan
                 value={
                   (team.rankingHistories.at(-1) ?? 0) -
@@ -162,14 +148,19 @@ const TournamentDetailSlide = ({
             <p className="flex-[5]">
               {team.team.name} {team.team.secondaryName}
             </p>
-            <p className="flex-1 text-center">{renderPoint(team.point)}</p>
+            <p className="flex-1 text-center">
+              {renderPoint(team.statistics.point)}
+            </p>
             <p className="flex-1 text-center">
               {index > 0
-                ? (slide.teams[index - 1].point - team.point).toFixed(1)
+                ? (
+                    slide.teams[index - 1].statistics.point -
+                    team.statistics.point
+                  ).toFixed(1)
                 : '-'}
             </p>
             <p className="flex-1 text-center">
-              {team.matchCount}
+              {team.statistics.matchCount}
               <span className="text-[0.75em]">/60</span>
             </p>
           </div>
@@ -186,7 +177,7 @@ const TournamentDetailSlide = ({
         }}
       >
         <div className="flex-[3] twr-chart-chart">
-          <MJTeamHistoryChart teams={slide.teams} />
+          <MJTeamHistoryChart teamAndStatistics={slide.teams} />
         </div>
         <div
           className="flex-1 flex flex-col twr-team-ranking"
@@ -194,7 +185,7 @@ const TournamentDetailSlide = ({
         >
           {slide.teams.map((team, index) => (
             <div
-              key={team._id}
+              key={team.team._id}
               className="relative flex-1 flex items-center justify-between overflow-hidden twr-team-ranking-row px-2"
               style={{
                 background: `linear-gradient(to right, ${team.team.color}C0, transparent 105%)`,
@@ -210,7 +201,7 @@ const TournamentDetailSlide = ({
                 <p>{team.team.name}</p>
                 {/* <p className="text-sm">{team.team.secondaryName}</p> */}
               </div>
-              <div>{renderPoint(team.point)}</div>
+              <div>{renderPoint(team.statistics.point)}</div>
             </div>
           ))}
         </div>
@@ -232,28 +223,31 @@ const TournamentDetailSlide = ({
           <p className="text-center twr-player-ranking-row">積分最高選手</p>
           <div className="flex-1 flex flex-col">
             {slide.highestPointPlayers.map(
-              ({ player, value, tieBreakValue }, index) => (
+              (
+                { teamAndPlayer: { team, player }, value, tieBreakValue },
+                index
+              ) => (
                 <div
-                  key={player.playerId}
+                  key={player._id}
                   className="relative overflow-hidden flex-1 flex flex-col items-stretch justify-center twr-player-ranking-row"
                   style={{
-                    background: `linear-gradient(to right, ${player.color}C0, transparent 105%)`,
+                    background: `linear-gradient(to right, ${team.color}C0, transparent 105%)`,
                     animationDelay: `${index * 0.05}s`,
                   }}
                 >
                   <img
-                    src={player.teamLogoImageUrl + '?w=320&h=320'}
-                    alt={player.teamName}
+                    src={team.squareLogoImage + '?w=320&h=320'}
+                    alt={team.name!}
                     className="absolute left-[3em] opacity-25 -z-10"
                   />
                   <div className="flex items-center justify-between px-[.5em] gap-x-[.5em]">
                     <div className="w-[2.2em]">{renderRanking(index + 1)}</div>
                     <div className="flex-1">
                       <p className="text-[1.5em] leading-[1em]">
-                        {player.playerNickname}
+                        {player.nickname}
                       </p>
                       <p className="text-[.75em] leading-[1em]">
-                        {player.playerName}
+                        {player.name}
                       </p>
                     </div>
                     <div className="text-right">
@@ -275,217 +269,223 @@ const TournamentDetailSlide = ({
           <div className="space-y-[.5em]">
             <p className="text-center">和了率</p>
             <div className="flex-1 flex flex-col">
-              {slide.highestRonPPlayers.map(({ player, value }) => (
-                <div
-                  key={player.playerId}
-                  className="relative overflow-hidden flex-1 flex flex-col items-stretch justify-center"
-                  style={{
-                    background: `${player.color}20`,
-                  }}
-                >
-                  <img
-                    src={player.teamLogoImageUrl + '?w=320&h=320'}
-                    alt={player.teamName}
-                    className="absolute left-[3em] opacity-5 -z-10"
-                  />
-                  <div className="flex items-center justify-between px-[.5em] gap-x-[.5em] py-[.25em]">
-                    <div className="flex-1">
-                      <p className="leading-[1.2em]">{player.playerNickname}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="leading-[1.2em]">{value.toFixed(2)}</p>
+              {slide.highestRonPPlayers.map(
+                ({ teamAndPlayer: { team, player }, value }) => (
+                  <div
+                    key={player._id}
+                    className="relative overflow-hidden flex-1 flex flex-col items-stretch justify-center"
+                    style={{
+                      background: `${team.color}20`,
+                    }}
+                  >
+                    <img
+                      src={team.squareLogoImage + '?w=320&h=320'}
+                      alt={team.name!}
+                      className="absolute left-[3em] opacity-5 -z-10"
+                    />
+                    <div className="flex items-center justify-between px-[.5em] gap-x-[.5em] py-[.25em]">
+                      <div className="flex-1">
+                        <p className="leading-[1.2em]">{player.nickname}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="leading-[1.2em]">{value.toFixed(2)}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                )
+              )}
             </div>
           </div>
 
           <div className="space-y-[.5em]">
             <p className="text-center">平均打點</p>
             <div className="flex-1 flex flex-col">
-              {slide.highestRonPurePointPlayers.map(({ player, value }) => (
-                <div
-                  key={player.playerId}
-                  className="relative overflow-hidden flex-1 flex flex-col items-stretch justify-center"
-                  style={{
-                    background: `${player.color}20`,
-                  }}
-                >
-                  <img
-                    src={player.teamLogoImageUrl + '?w=320&h=320'}
-                    alt={player.teamName}
-                    className="absolute left-[3em] opacity-5 -z-10"
-                  />
-                  <div className="flex items-center justify-between px-[.5em] gap-x-[.5em] py-[.25em]">
-                    <div className="flex-1">
-                      <p className="leading-[1.2em]">{player.playerNickname}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="leading-[1.2em]">{value.toFixed(2)}</p>
+              {slide.highestRonPurePointPlayers.map(
+                ({ teamAndPlayer: { team, player }, value }) => (
+                  <div
+                    key={player._id}
+                    className="relative overflow-hidden flex-1 flex flex-col items-stretch justify-center"
+                    style={{
+                      background: `${team.color}20`,
+                    }}
+                  >
+                    <img
+                      src={team.squareLogoImage + '?w=320&h=320'}
+                      alt={team.name!}
+                      className="absolute left-[3em] opacity-5 -z-10"
+                    />
+                    <div className="flex items-center justify-between px-[.5em] gap-x-[.5em] py-[.25em]">
+                      <div className="flex-1">
+                        <p className="leading-[1.2em]">{player.nickname}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="leading-[1.2em]">{value.toFixed(2)}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                )
+              )}
             </div>
           </div>
 
           <div className="space-y-[.5em]">
             <p className="text-center">銃和率</p>
             <div className="flex-1 flex flex-col">
-              {slide.lowestChuckPPlayers.map(({ player, value }) => (
-                <div
-                  key={player.playerId}
-                  className="relative overflow-hidden flex-1 flex flex-col items-stretch justify-center"
-                  style={{
-                    background: `${player.color}20`,
-                  }}
-                >
-                  <img
-                    src={player.teamLogoImageUrl + '?w=320&h=320'}
-                    alt={player.teamName}
-                    className="absolute left-[3em] opacity-5 -z-10"
-                  />
-                  <div className="flex items-center justify-between px-[.5em] gap-x-[.5em] py-[.25em]">
-                    <div className="flex-1">
-                      <p className="leading-[1.2em]">{player.playerNickname}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="leading-[1.2em]">{value.toFixed(2)}</p>
+              {slide.lowestChuckPPlayers.map(
+                ({ teamAndPlayer: { team, player }, value }) => (
+                  <div
+                    key={player._id}
+                    className="relative overflow-hidden flex-1 flex flex-col items-stretch justify-center"
+                    style={{
+                      background: `${team.color}20`,
+                    }}
+                  >
+                    <img
+                      src={team.squareLogoImage + '?w=320&h=320'}
+                      alt={team.name!}
+                      className="absolute left-[3em] opacity-5 -z-10"
+                    />
+                    <div className="flex items-center justify-between px-[.5em] gap-x-[.5em] py-[.25em]">
+                      <div className="flex-1">
+                        <p className="leading-[1.2em]">{player.nickname}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="leading-[1.2em]">{value.toFixed(2)}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                )
+              )}
             </div>
           </div>
 
           <div className="space-y-[.5em]">
             <p className="text-center">最高得點</p>
             <div className="flex-1 flex flex-col">
-              {slide.highestScoreMax.map(({ player, value }) => (
-                <div
-                  key={player.playerId}
-                  className="relative overflow-hidden flex-1 flex flex-col items-stretch justify-center"
-                  style={{
-                    background: `${player.color}20`,
-                  }}
-                >
-                  <img
-                    src={player.teamLogoImageUrl + '?w=320&h=320'}
-                    alt={player.teamName}
-                    className="absolute left-[3em] opacity-5 -z-10"
-                  />
-                  <div className="flex items-center justify-between px-[.5em] gap-x-[.5em] py-[.25em]">
-                    <div className="flex-1">
-                      <p className="leading-[1.2em]">{player.playerNickname}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="leading-[1.2em]">{value.toFixed(0)}</p>
+              {slide.highestScoreMax.map(
+                ({ teamAndPlayer: { team, player }, value }) => (
+                  <div
+                    key={player._id}
+                    className="relative overflow-hidden flex-1 flex flex-col items-stretch justify-center"
+                    style={{
+                      background: `${team.color}20`,
+                    }}
+                  >
+                    <img
+                      src={team.squareLogoImage + '?w=320&h=320'}
+                      alt={team.name!}
+                      className="absolute left-[3em] opacity-5 -z-10"
+                    />
+                    <div className="flex items-center justify-between px-[.5em] gap-x-[.5em] py-[.25em]">
+                      <div className="flex-1">
+                        <p className="leading-[1.2em]">{player.nickname}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="leading-[1.2em]">{value.toFixed(0)}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                )
+              )}
             </div>
           </div>
         </div>
       </div>
     )
-  } else if (slide.type === 'heatmap') {
-    return (
-      <div
-        className="absolute inset-0 flex gap-[1em] items-stretch twr-heatmap"
-        data-active={status === 0}
-        style={{
-          opacity: status >= 0 && status < 1 ? 1 : 0,
-        }}
-      >
-        <div className="flex-1 flex flex-col gap-y-[.5em]">
-          <h4 className="text-[2em] font-semibold text-center leading-[1em] twr-heatmap-title">
-            點數熱力圖
-          </h4>
-          <p className="text-center mb-8 twr-heatmap-title">
-            <span className="bg-green-500 px-1">綠色</span>
-            代表高分、
-            <span className="bg-red-500 px-1">紅色</span>代表低分
-          </p>
-          <div className="grid grid-cols-4 flex-1 text-center text-[.8em]">
-            {slide.teams.map((team, teamIndex) => (
-              <div
-                className="h-20 twr-heatmap-cell"
-                key={team.team._id}
-                style={{
-                  animationDelay: teamIndex * 0.05 + 's',
-                }}
-              >
-                <div
-                  style={{
-                    background: `${team.team.color}80`,
-                  }}
-                >
-                  <img
-                    src={team.team.squareLogoImage + '?w=128&h=128'}
-                    alt={team.team.name}
-                    className="h-24 w-24 my-2 inline-block"
-                  />
-                </div>
-                <p
-                  className="py-2"
-                  style={{
-                    background:
-                      team.point > 0
-                        ? `rgba(23, 235, 0, ${
-                            team.point / slide.highestTeamPoint
-                          })`
-                        : `rgba(235, 0, 0, ${
-                            team.point / slide.lowestTeamPoint
-                          })`,
-                  }}
-                >
-                  {renderPoint(team.point)}
-                </p>
-              </div>
-            ))}
-            {([0, 1, 2, 3] as const).map((index) =>
-              slide.teams.map((team, teamIndex) => (
-                <div
-                  className="flex items-center justify-center twr-heatmap-cell"
-                  key={team.team._id}
-                  style={{
-                    background:
-                      typeof slide.teamPlayersGroupedByTeamIds[team.team._id][
-                        index
-                      ].player.statistics?.point !== 'undefined'
-                        ? slide.teamPlayersGroupedByTeamIds[team.team._id][
-                            index
-                          ].player.statistics!.point > 0
-                          ? `rgba(23, 235, 0, ${
-                              slide.teamPlayersGroupedByTeamIds[team.team._id][
-                                index
-                              ].player.statistics!.point /
-                              slide.highestPlayerPoint
-                            })`
-                          : `rgba(235, 0, 0, ${
-                              slide.teamPlayersGroupedByTeamIds[team.team._id][
-                                index
-                              ].player.statistics!.point /
-                              slide.lowestPlayerPoint
-                            })`
-                        : 'tranparent',
-                    animationDelay: (teamIndex + index + 1) * 0.05 + 's',
-                  }}
-                >
-                  {renderPoint(
-                    slide.teamPlayersGroupedByTeamIds[team.team._id][index]
-                      .player.statistics?.point
-                  )}
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-      </div>
-    )
   }
+
+  // else if (slide.type === 'heatmap') {
+  //   return (
+  //     <div
+  //       className="absolute inset-0 flex gap-[1em] items-stretch twr-heatmap"
+  //       data-active={status === 0}
+  //       style={{
+  //         opacity: status >= 0 && status < 1 ? 1 : 0,
+  //       }}
+  //     >
+  //       <div className="flex-1 flex flex-col gap-y-[.5em]">
+  //         <h4 className="text-[2em] font-semibold text-center leading-[1em] twr-heatmap-title">
+  //           點數熱力圖
+  //         </h4>
+  //         <p className="text-center mb-8 twr-heatmap-title">
+  //           <span className="bg-green-500 px-1">綠色</span>
+  //           代表高分、
+  //           <span className="bg-red-500 px-1">紅色</span>代表低分
+  //         </p>
+  //         <div className="grid grid-cols-4 flex-1 text-center text-[.8em]">
+  //           {slide.teams.map(({ team, players, statistics }, teamIndex) => (
+  //             <div
+  //               className="h-20 twr-heatmap-cell"
+  //               key={team._id}
+  //               style={{
+  //                 animationDelay: teamIndex * 0.05 + 's',
+  //               }}
+  //             >
+  //               <div
+  //                 style={{
+  //                   background: `${team.color}80`,
+  //                 }}
+  //               >
+  //                 <img
+  //                   src={team.squareLogoImage + '?w=128&h=128'}
+  //                   alt={team.name!}
+  //                   className="h-24 w-24 my-2 inline-block"
+  //                 />
+  //               </div>
+  //               <p
+  //                 className="py-2"
+  //                 style={{
+  //                   background:
+  //                     statistics!.point > 0
+  //                       ? `rgba(23, 235, 0, ${
+  //                           statistics!.point / slide.highestTeamPoint
+  //                         })`
+  //                       : `rgba(235, 0, 0, ${
+  //                           statistics!.point / slide.lowestTeamPoint
+  //                         })`,
+  //                 }}
+  //               >
+  //                 {renderPoint(statistics!.point)}
+  //               </p>
+  //             </div>
+  //           ))}
+  //           {([0, 1, 2, 3] as const).map((index) =>
+  //             slide.teams.map(({ team }, teamIndex) => (
+  //               <div
+  //                 className="flex items-center justify-center twr-heatmap-cell"
+  //                 key={team._id}
+  //                 style={{
+  //                   background:
+  //                     typeof slide.teamPlayersGroupedByTeamIds[team._id][index]
+  //                       .player.statisticss?.point !== 'undefined'
+  //                       ? slide.teamPlayersGroupedByTeamIds[team._id][index]
+  //                           .player.statisticss!.point > 0
+  //                         ? `rgba(23, 235, 0, ${
+  //                             slide.teamPlayersGroupedByTeamIds[team._id][index]
+  //                               .player.statisticss!.point /
+  //                             slide.highestPlayerPoint
+  //                           })`
+  //                         : `rgba(235, 0, 0, ${
+  //                             slide.teamPlayersGroupedByTeamIds[team._id][index]
+  //                               .player.statisticss!.point /
+  //                             slide.lowestPlayerPoint
+  //                           })`
+  //                       : 'tranparent',
+  //                   animationDelay: (teamIndex + index + 1) * 0.05 + 's',
+  //                 }}
+  //               >
+  //                 {renderPoint(
+  //                   slide.teamPlayersGroupedByTeamIds[team._id][index].player
+  //                     .statistics?.point
+  //                 )}
+  //               </div>
+  //             ))
+  //           )}
+  //         </div>
+  //       </div>
+  //     </div>
+  //   )
+  // }
 
   return <></>
 }
@@ -507,7 +507,6 @@ const RealtimeSummaryPage = ({
   disableClick,
   auto,
   minute,
-  params,
 }: Props) => {
   const mInSearch = useSearchParam('m') || minute?.toString()
   const autoInSearch = useSearchParam('auto') || auto
@@ -517,32 +516,13 @@ const RealtimeSummaryPage = ({
     queryFn: () =>
       apiGetTournament(TOURNAMENT_ID as string).then((tournament) => ({
         ...tournament,
-        teams: tournament.teams.sort((a, b) => b.point - a.point),
+        teams: tournament.teams.sort(
+          (a, b) => b.statistics.point - a.statistics.point
+        ),
       })),
     enabled: !!TOURNAMENT_ID,
     staleTime: 5 * 60 * 1000,
   })
-
-  const { data: teamPlayers } = useQuery({
-    queryKey: ['tournament', TOURNAMENT_ID, 'players'],
-    queryFn: () => apiGetTeamPlayersOfTournament(TOURNAMENT_ID as string),
-    enabled: !!TOURNAMENT_ID,
-    staleTime: 5 * 60 * 1000,
-  })
-
-  const teamsMap = useMemo(() => {
-    if (!tournament) {
-      return {}
-    }
-
-    return tournament.teams.reduce(
-      (prev, { team }) => {
-        prev[team._id] = team
-        return prev
-      },
-      {} as Record<string, DB_Team>
-    )
-  }, [tournament])
 
   const [slideIndex, setSlideIndex] = useState<number>(0)
   const [subSlideIndex, setSubSlideIndex] = useState<number>(0)
@@ -557,15 +537,21 @@ const RealtimeSummaryPage = ({
   const [prevResetFlag, setPrevResetFlag] = useState<number>(resetFlag ?? 0)
 
   const slides = useMemo<Slide[]>(() => {
-    if (!tournament || !teamPlayers) {
+    if (!tournament) {
       return [{ type: 'empty', _id: 'empty', subslide: 0 }]
     }
 
-    const filteredTeamPlayers = teamPlayers.filter(
-      (teamPlayer) => teamPlayer.player.statistics!.matchCount > 0
+    const teamAndPlayers: { team: Team; player: Player }[] = tournament.teams
+      .map((team) =>
+        team.players.map((player) => ({ team: team.team, player })).flat()
+      )
+      .flat()
+
+    const filteredTeamAndPlayers = teamAndPlayers.filter(
+      ({ player }) => player.statistics!.matchCount > 0
     )
 
-    const teamPlayersSortedByPoint = teamPlayers.sort(
+    const playersSortedByPoint = filteredTeamAndPlayers.sort(
       (a, b) =>
         (b.player.statistics?.point ?? 0) - (a.player.statistics?.point ?? 0)
     )
@@ -587,40 +573,35 @@ const RealtimeSummaryPage = ({
         type: 'players',
         _id: 'players',
         highestPointPlayers: sortPlayersAndConvertToTeamPlayerDTOByKey(
-          filteredTeamPlayers,
-          teamsMap,
+          filteredTeamAndPlayers,
           (stat) => stat.point,
           (stat) => stat.matchCount,
           'desc',
           'asc'
         ),
         highestRonPPlayers: sortPlayersAndConvertToTeamPlayerDTOByKey(
-          filteredTeamPlayers,
-          teamsMap,
+          filteredTeamAndPlayers,
           (stat) => stat.ronCount / stat.roundCount,
           (stat) => stat.roundCount,
           'desc',
           'desc'
         ),
         highestRonPurePointPlayers: sortPlayersAndConvertToTeamPlayerDTOByKey(
-          filteredTeamPlayers,
-          teamsMap,
+          filteredTeamAndPlayers,
           (stat) => stat.ronPureScoreAvg,
           (stat) => stat.roundCount,
           'desc',
           'desc'
         ),
         lowestChuckPPlayers: sortPlayersAndConvertToTeamPlayerDTOByKey(
-          filteredTeamPlayers,
-          teamsMap,
+          filteredTeamAndPlayers,
           (stat) => stat.chuckCount / stat.roundCount,
           (stat) => stat.roundCount,
           'asc',
           'desc'
         ),
         highestScoreMax: sortPlayersAndConvertToTeamPlayerDTOByKey(
-          filteredTeamPlayers,
-          teamsMap,
+          filteredTeamAndPlayers,
           (stat) => stat.scoreMax,
           (stat) => stat.roundCount,
           'desc',
@@ -628,22 +609,18 @@ const RealtimeSummaryPage = ({
         ),
         subslide: 1,
       },
-      {
-        type: 'heatmap',
-        _id: 'heatmap',
-        teams: tournament.teams,
-        teamPlayersGroupedByTeamIds: arrGroupBy(
-          teamPlayersSortedByPoint,
-          (item: { teamId: string }) => item.teamId
-        ),
-        highestTeamPoint: tournament.teams[0].point,
-        lowestTeamPoint: tournament.teams.at(-1)!.point,
-        highestPlayerPoint:
-          teamPlayersSortedByPoint[0].player.statistics?.point ?? 0,
-        lowestPlayerPoint:
-          teamPlayersSortedByPoint.at(-1)!.player.statistics?.point ?? 0,
-        subslide: 1,
-      },
+      // {
+      //   type: 'heatmap',
+      //   _id: 'heatmap',
+      //   teams: tournament.teams,
+      //   highestTeamPoint: tournament.teams[0].statistics.point,
+      //   lowestTeamPoint: tournament.teams.at(-1)!.statistics.point,
+      //   highestPlayerPoint:
+      //     playersSortedByPoint[0].player.statistics?.point ?? 0,
+      //   lowestPlayerPoint:
+      //     playersSortedByPoint.at(-1)!.player.statistics?.point ?? 0,
+      //   subslide: 1,
+      // },
     ]
 
     if (!autoInSearch) {
@@ -651,7 +628,7 @@ const RealtimeSummaryPage = ({
     }
 
     return result
-  }, [autoInSearch, teamPlayers, teamsMap, tournament])
+  }, [autoInSearch, tournament])
 
   const handleSlideForward = useCallback(() => {
     if (isSlideChanging) {
@@ -743,7 +720,7 @@ const RealtimeSummaryPage = ({
       }}
       onClick={handleClickScreen}
     >
-      <div className="absolute inset-0 tournament-weekly-report text-white text-[36px] flex py-[1em] px-[1em] gap-x-[1em]">
+      <div className="absolute inset-0 tournament-realtime-report text-white text-[36px] flex py-[1em] px-[1em] gap-x-[1em]">
         <div className="twr-title flex flex-col justify-start gap-[1em] items-center relative">
           <div>
             <img
