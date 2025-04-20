@@ -197,7 +197,7 @@ const TournamentDetailSlide = ({
           opacity: status >= 0 && status < 1 ? 1 : 0,
         }}
       >
-        <div className="flex-[3] twr-chart-chart">
+        <div className="flex-3 twr-chart-chart">
           <MJTeamHistoryChart teamAndStatistics={slide.teams} />
         </div>
         <div

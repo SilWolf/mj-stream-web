@@ -80,7 +80,7 @@ export default function MJPlayerCardDiv({
 
   return (
     <div
-      className="relative min-w-[5.35em] mx-auto [&_.hide-if-changing]:transition-opacity [&_.hide-if-changing]:data-[score-changing='1']:opacity-0 overflow-visible"
+      className="relative min-w-[5.35em] mx-auto [&_.hide-if-changing]:transition-opacity data-[score-changing='1']:[&_.hide-if-changing]:opacity-0 overflow-visible"
       data-score-changing={isScoreChanging ? '1' : '0'}
     >
       <div className="absolute top-[0.05em] bottom-[0.15em] -left-[0.1em] -right-[0.1em] rounded-[0.1em] overflow-hidden -z-50">
@@ -106,7 +106,7 @@ export default function MJPlayerCardDiv({
             <div className="origin-bottom w-[200%] h-[100%] bg-[#d1291d] animate-[riichi_8s_ease-in-out_infinite]" />
           </div>
 
-          <div className="relative z-10 w-full aspect-[90/125] p-[0.085em]">
+          <div className="relative z-10 w-full aspect-90/125 p-[0.085em]">
             <div
               className="w-full h-full bg-white rounded-[0.08em] overflow-hidden"
               style={{
@@ -152,7 +152,7 @@ export default function MJPlayerCardDiv({
               </div>
             </div>
             <div
-              className="bg-black bg-opacity-60 rounded text-[0.5em] flex gap-x-[0.2em] p-[0.1em] pl-[0.2em] pr-[0.2em] opacity-0 transition-opacity data-[has-waiting-tiles='1']:opacity-100 hide-if-changing cursor-pointer"
+              className="bg-black bg-opacity-60 rounded-sm text-[0.5em] flex gap-x-[0.2em] p-[0.1em] pl-[0.2em] pr-[0.2em] opacity-0 transition-opacity data-[has-waiting-tiles='1']:opacity-100 hide-if-changing cursor-pointer"
               data-has-waiting-tiles={
                 (waitingTiles && waitingTiles.length > 0) ||
                 !!onClickWaitingTiles

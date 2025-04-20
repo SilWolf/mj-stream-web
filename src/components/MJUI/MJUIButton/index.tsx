@@ -4,7 +4,7 @@ import { cva, VariantProps } from 'cva'
 const button = cva(['font-semibold'], {
   variants: {
     variant: {
-      contained: ['border', 'rounded'],
+      contained: ['border', 'rounded-sm'],
       text: [],
       icon: ['hover:enabled:bg-opacity-50 leading-4'],
     },

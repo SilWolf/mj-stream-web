@@ -34,7 +34,7 @@ const PlayersListView = ({
         <div className="flex gap-2">
           <div className="shrink-0 flex flex-col gap-1">
             <button
-              className="text-gray-900 text-xs px-1 rounded"
+              className="text-gray-900 text-xs px-1 rounded-sm"
               style={{
                 backgroundColor: '#ffe100',
                 width: '2rem',
@@ -52,7 +52,7 @@ const PlayersListView = ({
               黃牌
             </button>
             <button
-              className="text-gray-900 text-xs px-1 rounded"
+              className="text-gray-900 text-xs px-1 rounded-sm"
               style={{
                 backgroundColor: '#ff1900',
                 width: '2rem',
@@ -70,7 +70,7 @@ const PlayersListView = ({
               紅牌
             </button>
             <button
-              className="text-gray-900 text-xs px-1 rounded"
+              className="text-gray-900 text-xs px-1 rounded-sm"
               style={{
                 border: '1px solid #333',
                 borderColor: currentRound.playerResults[index].isRonDisallowed
@@ -125,10 +125,10 @@ const PlayersListView = ({
                         alt={players[index].primaryName}
                       />
                       <div className="flex-1 align-middle overflow-hidden">
-                        <p className="whitespace-nowrap overflow-ellipsis">
+                        <p className="whitespace-nowrap text-ellipsis">
                           {players[index].secondaryName}
                         </p>
-                        <p className="whitespace-nowrap overflow-ellipsis">
+                        <p className="whitespace-nowrap text-ellipsis">
                           {players[index].nickname ||
                             players[index].primaryName}
                         </p>
@@ -181,7 +181,7 @@ const PlayersListView = ({
                         </button>
 
                         <button
-                          className="flex-1 px-1 bg-neutral-200 border rounded border-neutral-700 text-xl disabled:opacity-20 disabled:cursor-not-allowed data-[active='1']:bg-teal-800 data-[active='1']:text-yellow-300"
+                          className="flex-1 px-1 bg-neutral-200 border rounded-sm border-neutral-700 text-xl disabled:opacity-20 disabled:cursor-not-allowed data-[active='1']:bg-teal-800 data-[active='1']:text-yellow-300"
                           data-player-index={index}
                           data-action="reveal"
                           onClick={handleAction}
@@ -199,7 +199,7 @@ const PlayersListView = ({
                       <div className="flex items-center gap-x-1 relative">
                         <div className="flex flex-col gap-1">
                           <button
-                            className="px-1 ml-3 h-12 w-16 bg-neutral-200 border rounded border-neutral-700 text-xl"
+                            className="px-1 ml-3 h-12 w-16 bg-neutral-200 border rounded-sm border-neutral-700 text-xl"
                             data-player-index={index}
                             data-action="ron-self"
                             onClick={handleAction}
@@ -209,7 +209,7 @@ const PlayersListView = ({
                         </div>
                         <div className="flex flex-col gap-1">
                           <button
-                            className="px-1 mr-4 h-10 bg-neutral-200 border rounded border-neutral-700 text-xl"
+                            className="px-1 mr-4 h-10 bg-neutral-200 border rounded-sm border-neutral-700 text-xl"
                             data-player-index={index}
                             data-action="ron-before"
                             onClick={handleAction}
@@ -219,7 +219,7 @@ const PlayersListView = ({
                               '上家'}
                           </button>
                           <button
-                            className="px-1 ml-4 h-10 bg-neutral-200 border rounded border-neutral-700 text-xl"
+                            className="px-1 ml-4 h-10 bg-neutral-200 border rounded-sm border-neutral-700 text-xl"
                             data-player-index={index}
                             data-action="ron-opposite"
                             onClick={handleAction}
@@ -230,7 +230,7 @@ const PlayersListView = ({
                           </button>
 
                           <button
-                            className="px-1 mr-4 h-10 bg-neutral-200 border rounded border-neutral-700 text-xl"
+                            className="px-1 mr-4 h-10 bg-neutral-200 border rounded-sm border-neutral-700 text-xl"
                             data-player-index={index}
                             data-action="ron-after"
                             onClick={handleAction}

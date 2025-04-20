@@ -55,7 +55,7 @@ const MatchTeamPlayerDiv = ({
   return (
     <div
       key={player.name}
-      className={cns('relative aspect-[18/25] rounded-[1em] overflow-hidden', {
+      className={cns('relative aspect-18/25 rounded-[1em] overflow-hidden', {
         'mi-team-player-in': fadeIn,
         'mi-team-player-out': fadeOut,
       })}
@@ -117,7 +117,7 @@ const MatchIntroductionSlide = ({
         }}
       >
         <div className="flex-1"></div>
-        <div className="flex-[2] grid grid-cols-4 items-center">
+        <div className="flex-2 grid grid-cols-4 items-center">
           {slide.teamAndPlayers.map(({ team, player }, index) => (
             <div
               key={team._id}
@@ -176,7 +176,7 @@ const MatchIntroductionSlide = ({
               >
                 <img
                   src={player.portraitImage + '?w=360&h=500&auto=format'}
-                  className="aspect-[18/25] w-full"
+                  className="aspect-18/25 w-full"
                   alt=""
                 />
                 <div className="font-semibold text-center">
@@ -262,7 +262,7 @@ const MatchIntroductionSlide = ({
             {slide.team.name} {slide.team.secondaryName}
           </h3>
         </div>
-        <div className="flex-[2] relative">
+        <div className="flex-2 relative">
           <div
             className="absolute inset-0 grid grid-cols-4 items-center gap-16"
             style={{

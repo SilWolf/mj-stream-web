@@ -114,12 +114,12 @@ const MJPlayersForm = ({ defaultPlayers, onSubmit }: Props) => {
         <div className="flex-1">
           <div className="flex font-semibold gap-2 text-center">
             <div className="flex-1"></div>
-            <div className="flex-[2]">圖片</div>
-            <div className="flex-[2]">隊伍</div>
-            <div className="flex-[5]">隊伍名稱／稱號</div>
-            <div className="flex-[5]">名稱</div>
-            <div className="flex-[3]">暱稱</div>
-            <div className="flex-[3]">顏色</div>
+            <div className="flex-2">圖片</div>
+            <div className="flex-2">隊伍</div>
+            <div className="flex-5">隊伍名稱／稱號</div>
+            <div className="flex-5">名稱</div>
+            <div className="flex-3">暱稱</div>
+            <div className="flex-3">顏色</div>
           </div>
         </div>
       </div>
@@ -156,9 +156,9 @@ const MJPlayersForm = ({ defaultPlayers, onSubmit }: Props) => {
                                 <i className="bi bi-grip-vertical"></i>
                               </div>
                             </div>
-                            <div className="flex-[2] border border-neutral-400">
+                            <div className="flex-2 border border-neutral-400">
                               <img
-                                className="aspect-[18/25] w-full cursor-pointer"
+                                className="aspect-18/25 w-full cursor-pointer"
                                 src={imageUrls[2 * index] as string}
                                 onClick={handleClickImage}
                                 data-type="propicUrl"
@@ -166,7 +166,7 @@ const MJPlayersForm = ({ defaultPlayers, onSubmit }: Props) => {
                                 alt=""
                               />
                             </div>
-                            <div className="flex-[2] border border-neutral-400">
+                            <div className="flex-2 border border-neutral-400">
                               <img
                                 className="aspect-square w-full cursor-pointer"
                                 src={imageUrls[2 * index + 1] as string}
@@ -176,25 +176,25 @@ const MJPlayersForm = ({ defaultPlayers, onSubmit }: Props) => {
                                 alt=""
                               />
                             </div>
-                            <div className="flex-[5]">
+                            <div className="flex-5">
                               <input
                                 className="w-full"
                                 {...register(`${playerIndex}.secondaryName`)}
                               />
                             </div>
-                            <div className="flex-[5]">
+                            <div className="flex-5">
                               <input
                                 className="w-full"
                                 {...register(`${playerIndex}.primaryName`)}
                               />
                             </div>
-                            <div className="flex-[3]">
+                            <div className="flex-3">
                               <input
                                 className="w-full"
                                 {...register(`${playerIndex}.nickname`)}
                               />
                             </div>
-                            <div className="flex-[3]">
+                            <div className="flex-3">
                               <input
                                 className="w-full text-white"
                                 {...register(`${playerIndex}.color`)}

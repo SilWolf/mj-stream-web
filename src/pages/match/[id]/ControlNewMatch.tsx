@@ -192,7 +192,7 @@ const ControlNewMatch = ({ match }: Props) => {
   ])
 
   return (
-    <div className="container mx-auto max-w-screen-md py-16">
+    <div className="container mx-auto max-w-(--breakpoint-md) py-16">
       <div className="space-y-6">
         <div className="bg-red-500 p-4 text-white space-y-2">
           <div className="text-center text-6xl">

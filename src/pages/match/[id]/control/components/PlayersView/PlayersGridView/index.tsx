@@ -163,7 +163,7 @@ const PlayersGridView = ({
               <td className="whitespace-nowrap" colSpan={2}>
                 <div className=" grid grid-cols-3 gap-2 justify-center">
                   <button
-                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl mr-4 disabled:opacity-20 disabled:cursor-not-allowed data-[active='1']:bg-teal-800 data-[active='1']:text-yellow-300"
+                    className="px-1 py-1 bg-neutral-200 border rounded-sm border-neutral-700 text-xl mr-4 disabled:opacity-20 disabled:cursor-not-allowed data-[active='1']:bg-teal-800 data-[active='1']:text-yellow-300"
                     data-player-index={order[0]}
                     data-action="reveal"
                     onClick={handleAction}
@@ -177,7 +177,7 @@ const PlayersGridView = ({
                     副露
                   </button>
                   <button
-                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl"
+                    className="px-1 py-1 bg-neutral-200 border rounded-sm border-neutral-700 text-xl"
                     data-player-index={order[0]}
                     data-action="ron-self"
                     onClick={handleAction}
@@ -185,7 +185,7 @@ const PlayersGridView = ({
                     自摸
                   </button>
                   <button
-                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl"
+                    className="px-1 py-1 bg-neutral-200 border rounded-sm border-neutral-700 text-xl"
                     data-player-index={order[0]}
                     data-action="ron-before"
                     onClick={handleAction}
@@ -193,7 +193,7 @@ const PlayersGridView = ({
                     和上家←
                   </button>
                   <button
-                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl mr-4 disabled:opacity-20 disabled:cursor-not-allowed data-[active='1']:bg-red-800 data-[active='1']:text-yellow-300"
+                    className="px-1 py-1 bg-neutral-200 border rounded-sm border-neutral-700 text-xl mr-4 disabled:opacity-20 disabled:cursor-not-allowed data-[active='1']:bg-red-800 data-[active='1']:text-yellow-300"
                     data-player-index={order[0]}
                     data-action="riichi"
                     onClick={handleAction}
@@ -205,7 +205,7 @@ const PlayersGridView = ({
                     立直
                   </button>
                   <button
-                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl"
+                    className="px-1 py-1 bg-neutral-200 border rounded-sm border-neutral-700 text-xl"
                     data-player-index={order[0]}
                     data-action="ron-after"
                     onClick={handleAction}
@@ -213,7 +213,7 @@ const PlayersGridView = ({
                     和下家↑
                   </button>
                   <button
-                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl"
+                    className="px-1 py-1 bg-neutral-200 border rounded-sm border-neutral-700 text-xl"
                     data-player-index={order[0]}
                     data-action="ron-opposite"
                     onClick={handleAction}
@@ -344,7 +344,7 @@ const PlayersGridView = ({
               <td className="whitespace-nowrap" colSpan={2}>
                 <div className=" grid grid-cols-3 gap-2 justify-center">
                   <button
-                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl"
+                    className="px-1 py-1 bg-neutral-200 border rounded-sm border-neutral-700 text-xl"
                     data-player-index={order[1]}
                     data-action="ron-after"
                     onClick={handleAction}
@@ -352,7 +352,7 @@ const PlayersGridView = ({
                     →和下家
                   </button>
                   <button
-                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl"
+                    className="px-1 py-1 bg-neutral-200 border rounded-sm border-neutral-700 text-xl"
                     data-player-index={order[1]}
                     data-action="ron-self"
                     onClick={handleAction}
@@ -360,7 +360,7 @@ const PlayersGridView = ({
                     自摸
                   </button>
                   <button
-                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl ml-4 disabled:opacity-20 disabled:cursor-not-allowed data-[active='1']:bg-teal-800 data-[active='1']:text-yellow-300"
+                    className="px-1 py-1 bg-neutral-200 border rounded-sm border-neutral-700 text-xl ml-4 disabled:opacity-20 disabled:cursor-not-allowed data-[active='1']:bg-teal-800 data-[active='1']:text-yellow-300"
                     data-player-index={order[1]}
                     data-action="reveal"
                     onClick={handleAction}
@@ -374,7 +374,7 @@ const PlayersGridView = ({
                     副露
                   </button>
                   <button
-                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl"
+                    className="px-1 py-1 bg-neutral-200 border rounded-sm border-neutral-700 text-xl"
                     data-player-index={order[1]}
                     data-action="ron-opposite"
                     onClick={handleAction}
@@ -382,7 +382,7 @@ const PlayersGridView = ({
                     ↗和對家
                   </button>
                   <button
-                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl"
+                    className="px-1 py-1 bg-neutral-200 border rounded-sm border-neutral-700 text-xl"
                     data-player-index={order[1]}
                     data-action="ron-before"
                     onClick={handleAction}
@@ -390,7 +390,7 @@ const PlayersGridView = ({
                     ↑和上家
                   </button>
                   <button
-                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl ml-4 disabled:opacity-20 disabled:cursor-not-allowed data-[active='1']:bg-red-800 data-[active='1']:text-yellow-300"
+                    className="px-1 py-1 bg-neutral-200 border rounded-sm border-neutral-700 text-xl ml-4 disabled:opacity-20 disabled:cursor-not-allowed data-[active='1']:bg-red-800 data-[active='1']:text-yellow-300"
                     data-player-index={order[1]}
                     data-action="riichi"
                     onClick={handleAction}
@@ -413,7 +413,7 @@ const PlayersGridView = ({
               <td className="whitespace-nowrap" colSpan={2}>
                 <div className=" grid grid-cols-3 gap-2 justify-center">
                   <button
-                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl mr-4 disabled:opacity-20 disabled:cursor-not-allowed data-[active='1']:bg-red-800 data-[active='1']:text-yellow-300"
+                    className="px-1 py-1 bg-neutral-200 border rounded-sm border-neutral-700 text-xl mr-4 disabled:opacity-20 disabled:cursor-not-allowed data-[active='1']:bg-red-800 data-[active='1']:text-yellow-300"
                     data-player-index={order[2]}
                     data-action="riichi"
                     onClick={handleAction}
@@ -425,7 +425,7 @@ const PlayersGridView = ({
                     立直
                   </button>
                   <button
-                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl"
+                    className="px-1 py-1 bg-neutral-200 border rounded-sm border-neutral-700 text-xl"
                     data-player-index={order[2]}
                     data-action="ron-before"
                     onClick={handleAction}
@@ -433,7 +433,7 @@ const PlayersGridView = ({
                     和上家↓
                   </button>
                   <button
-                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl"
+                    className="px-1 py-1 bg-neutral-200 border rounded-sm border-neutral-700 text-xl"
                     data-player-index={order[2]}
                     data-action="ron-opposite"
                     onClick={handleAction}
@@ -441,7 +441,7 @@ const PlayersGridView = ({
                     和對家↙
                   </button>
                   <button
-                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl mr-4 disabled:opacity-20 disabled:cursor-not-allowed data-[active='1']:bg-teal-800 data-[active='1']:text-yellow-300"
+                    className="px-1 py-1 bg-neutral-200 border rounded-sm border-neutral-700 text-xl mr-4 disabled:opacity-20 disabled:cursor-not-allowed data-[active='1']:bg-teal-800 data-[active='1']:text-yellow-300"
                     data-player-index={order[2]}
                     data-action="reveal"
                     onClick={handleAction}
@@ -455,7 +455,7 @@ const PlayersGridView = ({
                     副露
                   </button>
                   <button
-                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl"
+                    className="px-1 py-1 bg-neutral-200 border rounded-sm border-neutral-700 text-xl"
                     data-player-index={order[2]}
                     data-action="ron-self"
                     onClick={handleAction}
@@ -463,7 +463,7 @@ const PlayersGridView = ({
                     自摸
                   </button>
                   <button
-                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl"
+                    className="px-1 py-1 bg-neutral-200 border rounded-sm border-neutral-700 text-xl"
                     data-player-index={order[2]}
                     data-action="ron-after"
                     onClick={handleAction}
@@ -594,7 +594,7 @@ const PlayersGridView = ({
               <td className="whitespace-nowrap" colSpan={2}>
                 <div className=" grid grid-cols-3 gap-2 justify-center">
                   <button
-                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl"
+                    className="px-1 py-1 bg-neutral-200 border rounded-sm border-neutral-700 text-xl"
                     data-player-index={order[3]}
                     data-action="ron-opposite"
                     onClick={handleAction}
@@ -602,7 +602,7 @@ const PlayersGridView = ({
                     ↘和對家
                   </button>
                   <button
-                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl"
+                    className="px-1 py-1 bg-neutral-200 border rounded-sm border-neutral-700 text-xl"
                     data-player-index={order[3]}
                     data-action="ron-after"
                     onClick={handleAction}
@@ -610,7 +610,7 @@ const PlayersGridView = ({
                     ↓和下家
                   </button>
                   <button
-                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl ml-4 disabled:opacity-20 disabled:cursor-not-allowed data-[active='1']:bg-red-800 data-[active='1']:text-yellow-300"
+                    className="px-1 py-1 bg-neutral-200 border rounded-sm border-neutral-700 text-xl ml-4 disabled:opacity-20 disabled:cursor-not-allowed data-[active='1']:bg-red-800 data-[active='1']:text-yellow-300"
                     data-player-index={order[3]}
                     data-action="riichi"
                     onClick={handleAction}
@@ -622,7 +622,7 @@ const PlayersGridView = ({
                     立直
                   </button>
                   <button
-                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl"
+                    className="px-1 py-1 bg-neutral-200 border rounded-sm border-neutral-700 text-xl"
                     data-player-index={order[3]}
                     data-action="ron-before"
                     onClick={handleAction}
@@ -630,7 +630,7 @@ const PlayersGridView = ({
                     →和上家
                   </button>
                   <button
-                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl"
+                    className="px-1 py-1 bg-neutral-200 border rounded-sm border-neutral-700 text-xl"
                     data-player-index={order[3]}
                     data-action="ron-self"
                     onClick={handleAction}
@@ -638,7 +638,7 @@ const PlayersGridView = ({
                     自摸
                   </button>
                   <button
-                    className="px-1 py-1 bg-neutral-200 border rounded border-neutral-700 text-xl ml-4 disabled:opacity-20 disabled:cursor-not-allowed data-[active='1']:bg-teal-800 data-[active='1']:text-yellow-300"
+                    className="px-1 py-1 bg-neutral-200 border rounded-sm border-neutral-700 text-xl ml-4 disabled:opacity-20 disabled:cursor-not-allowed data-[active='1']:bg-teal-800 data-[active='1']:text-yellow-300"
                     data-player-index={order[3]}
                     data-action="reveal"
                     onClick={handleAction}

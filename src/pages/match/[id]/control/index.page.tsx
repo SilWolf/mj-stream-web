@@ -125,7 +125,7 @@ const PlayerResultMetadata = ({
         rtMatchRound.resultType === RoundResultTypeEnum.SelfDrawn) &&
         rtMatchRound.playerResults[playerIndex].type ===
           PlayerResultWinnerOrLoserEnum.Win && (
-          <div className="bg-black bg-opacity-10 rounded py-1 px-2 mx-auto inline-block">
+          <div className="bg-black bg-opacity-10 rounded-sm py-1 px-2 mx-auto inline-block">
             <p className="font-bold">
               <MJHanFuTextSpan
                 className="text-xs text-neutral-600"
@@ -2013,7 +2013,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         </div>
       )} */}
 
-      <div className="fixed bottom-0 left-0 right-0 pl-6 pr-6 pb-6 z-50 flex justify-between items-end bg-gradient-to-b from-transparent to-[#00000080]">
+      <div className="fixed bottom-0 left-0 right-0 pl-6 pr-6 pb-6 z-50 flex justify-between items-end bg-linear-to-b from-transparent to-[#00000080]">
         <div className="text-left"></div>
 
         <div>
@@ -2060,7 +2060,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
             {!rtMatch.hideHeader && (
               <button
                 onClick={handleClickHideHeader}
-                className="relative rounded-full py-2 px-4 shadow shadow-neutral-700 text-center bg-neutral-200 border border-neutral-300 leading-6 text-neutral-600"
+                className="relative rounded-full py-2 px-4 shadow-sm shadow-neutral-700 text-center bg-neutral-200 border border-neutral-300 leading-6 text-neutral-600"
               >
                 <i className="bi bi-eye"></i> 標題：顯示中
               </button>
@@ -2068,7 +2068,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
             {rtMatch.hideHeader && (
               <button
                 onClick={handleClickShowHeader}
-                className="relative rounded-full py-2 px-4 shadow shadow-neutral-700 text-center bg-red-600 border border-red-500 leading-6 text-white"
+                className="relative rounded-full py-2 px-4 shadow-sm shadow-neutral-700 text-center bg-red-600 border border-red-500 leading-6 text-white"
               >
                 <i className="bi bi-eye-slash"></i> 標題：隱藏中
               </button>
@@ -2076,7 +2076,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
             {!rtMatch.hidePlayers && (
               <button
                 onClick={handleClickHidePlayers}
-                className="relative rounded-full py-2 px-4 shadow shadow-neutral-700 text-center bg-neutral-200 border border-neutral-300 leading-6 text-neutral-600"
+                className="relative rounded-full py-2 px-4 shadow-sm shadow-neutral-700 text-center bg-neutral-200 border border-neutral-300 leading-6 text-neutral-600"
               >
                 <i className="bi bi-people-fill"></i> 玩家：顯示中
               </button>
@@ -2084,7 +2084,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
             {rtMatch.hidePlayers && (
               <button
                 onClick={handleClickShowPlayers}
-                className="relative rounded-full py-2 px-4 shadow shadow-neutral-700 text-center bg-red-600 border border-red-500 leading-6 text-white"
+                className="relative rounded-full py-2 px-4 shadow-sm shadow-neutral-700 text-center bg-red-600 border border-red-500 leading-6 text-white"
               >
                 <i className="bi bi-people"></i> 玩家：隱藏中
               </button>
@@ -2092,7 +2092,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
             {!rtMatch.showPoints && (
               <button
                 onClick={handleClickDisplayPoint}
-                className="relative rounded-full py-2 px-4 shadow shadow-neutral-700 text-center bg-neutral-200 border border-neutral-300 leading-6 text-neutral-600"
+                className="relative rounded-full py-2 px-4 shadow-sm shadow-neutral-700 text-center bg-neutral-200 border border-neutral-300 leading-6 text-neutral-600"
               >
                 <i className="bi bi-list-ol"></i> 切換播放馬點＆名次
               </button>
@@ -2100,7 +2100,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
             {rtMatch.showPoints && (
               <button
                 onClick={handleClickDisplayScore}
-                className="relative rounded-full py-2 px-4 shadow shadow-neutral-700 text-center bg-green-300 border border-green-300 leading-6 text-green-800"
+                className="relative rounded-full py-2 px-4 shadow-sm shadow-neutral-700 text-center bg-green-300 border border-green-300 leading-6 text-green-800"
               >
                 <i className="bi bi-list-ol"></i> 切換播放馬點＆名次
               </button>
@@ -2110,7 +2110,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
               <button
                 onClick={handleClickBroadcastRonDetail}
                 data-rtMatch-round-id={rtMatchRound.id}
-                className="relative rounded-full py-2 px-4 shadow shadow-neutral-700 text-center bg-red-200 border border-red-300 leading-6 text-red-800 animate-bounce"
+                className="relative rounded-full py-2 px-4 shadow-sm shadow-neutral-700 text-center bg-red-200 border border-red-300 leading-6 text-red-800 animate-bounce"
               >
                 <p>
                   <i className="bi bi-trophy"></i> {rtMatchRound.roundCount}.
@@ -2119,7 +2119,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
               </button>
             ))}
 
-            {/* <button className="relative rounded-full p-5 shadow shadow-neutral-700 text-center bg-neutral-200 border border-neutral-300 text-4xl leading-6 text-neutral-600">
+            {/* <button className="relative rounded-full p-5 shadow-sm shadow-neutral-700 text-center bg-neutral-200 border border-neutral-300 text-4xl leading-6 text-neutral-600">
             {activeAnimationMessage ? (
               <span>
                 <i className="bi bi-hourglass-split"></i>{' '}
@@ -2130,7 +2130,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
             )}
 
             {unboardcastedMatchRounds.length > 0 && (
-              <div className="absolute h-6 w-6 -top-1 -left-1 shadow shadow-neutral-700 bg-red-600 text-white text-sm rounded-full font-semibold">
+              <div className="absolute h-6 w-6 -top-1 -left-1 shadow-sm shadow-neutral-700 bg-red-600 text-white text-sm rounded-full font-semibold">
                 {unboardcastedMatchRounds.length}
               </div>
             )}

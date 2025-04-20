@@ -62,7 +62,7 @@ const MatchNameplateNarrow = ({
         </tbody>
       </table>
       <div
-        className="absolute left-[0] top-[2.5mm] w-[55mm] h-[55mm] bg-contain opacity-50"
+        className="absolute left-0 top-[2.5mm] w-[55mm] h-[55mm] bg-contain opacity-50"
         style={{
           backgroundImage: `url(${team.squareLogoImage + '?w=500&h=500'})`,
         }}
@@ -147,7 +147,7 @@ const MatchNameplate = ({
         </tbody>
       </table>
       <div
-        className="absolute left-[0] top-[2.5mm] w-[55mm] h-[55mm] bg-contain opacity-50"
+        className="absolute left-0 top-[2.5mm] w-[55mm] h-[55mm] bg-contain opacity-50"
         style={{
           backgroundImage: `url(${team.squareLogoImage + '?w=500&h=500'})`,
         }}

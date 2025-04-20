@@ -1,23 +1,171 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
-@layer base {
-  a {
-    @apply text-teal-600 hover:text-teal-500 underline underline-offset-2;
+@theme {
+  --font-sans:
+    Noto Sans TC, AdobeZh, lansui, ui-sans-serif, system-ui, sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  --font-numeric:
+    KdamThmorPro, YuPearl, lansui, ui-sans-serif, system-ui, sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  --font-kurewa: KurewaGothicCjkTc;
+  --font-ud: UDDigiKyokashoN;
+
+  @keyframes drop {
+    0% {
+      transform: translateY(-1em);
+      opacity: 0;
+    }
+    15% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    85% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(1.75em);
+      opacity: 0;
+    }
   }
-
-  dialog {
-    @apply w-full max-w-3xl;
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+      top: -15px;
+      position: relative;
+    }
+    100% {
+      opacity: 1;
+      top: 0px;
+      position: relative;
+    }
   }
-
-  input:not([type='checkbox']) {
-    @apply border border-neutral-400 focus:border-neutral-600 py-1 px-2 rounded bg-white text-black;
+  @keyframes fadeInFromBottom {
+    0% {
+      opacity: 0;
+      bottom: -32px;
+    }
+    100% {
+      opacity: 1;
+      bottom: 0px;
+    }
+  }
+  @keyframes fadeInFromLeft {
+    0% {
+      opacity: 0;
+      left: -15px;
+      position: relative;
+    }
+    100% {
+      opacity: 1;
+      left: 0px;
+      position: relative;
+    }
+  }
+  @keyframes scrollFromRightToLeft {
+    0% {
+      transform: translateX(150%);
+    }
+    100% {
+      transform: translateX(-150%);
+    }
+  }
+  @keyframes yellowPenaltyAni {
+    0% {
+      background-color: #ffe100;
+      transform: rotate(45deg) translateX(-130%);
+    }
+    20% {
+      background-color: #ffe100;
+      transform: rotate(45deg) translateX(-50%);
+    }
+    80% {
+      background-color: #ffe100;
+      transform: rotate(45deg) translateX(-50%);
+    }
+    100% {
+      background-color: #ffe100;
+      transform: rotate(45deg) translateX(50%);
+    }
+  }
+  @keyframes redPenaltyAni {
+    0% {
+      background-color: #ff1900;
+      transform: rotate(45deg) translateX(-130%);
+    }
+    20% {
+      background-color: #ff1900;
+      transform: rotate(45deg) translateX(-50%);
+    }
+    80% {
+      background-color: #ff1900;
+      transform: rotate(45deg) translateX(-50%);
+    }
+    100% {
+      background-color: #ff1900;
+      transform: rotate(45deg) translateX(50%);
+    }
+  }
+  @keyframes riichi {
+    0% {
+      transform: translateX(-25%) translateY(-50%) rotate(-25deg);
+    }
+    37% {
+      transform: translateX(-25%) translateY(-50%) rotate(-25deg);
+    }
+    50% {
+      transform: translateX(-25%) translateY(-50%) rotate(-280deg);
+    }
+    58% {
+      transform: translateX(-25%) translateY(-50%) rotate(-385deg);
+    }
+    61% {
+      transform: translateX(-25%) translateY(-50%) rotate(-385deg);
+    }
+    65% {
+      transform: translateX(-25%) translateY(-120%) rotate(-385deg);
+    }
+    73% {
+      transform: translateX(200%) translateY(-120%);
+    }
+    74% {
+      transform: translateX(200%) translateY(200%);
+    }
+    75% {
+      transform: translateX(-25%) translateY(100%);
+    }
+    80% {
+      transform: translateX(-25%) translateY(0%);
+    }
+    85% {
+      transform: translateX(-25%) translateY(0%);
+    }
+    100% {
+      transform: translateX(-25%) translateY(-50%) rotate(-25deg);
+    }
   }
 }
 
-@layer components {
-  table.data-table {
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+@utility data-table {
+  &table {
     & thead th,
     & thead td {
       @apply px-2 py-1 whitespace-nowrap bg-neutral-300;
@@ -35,6 +183,857 @@
       @apply px-6 py-4 whitespace-nowrap;
     }
   }
+}
+
+@utility reach-animation {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+
+  & > .reach-background {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    transform: scaleY(0);
+    transform-origin: center;
+
+    animation-name: reach-animation-background-kf;
+    animation-duration: 1.7s;
+    animation-delay: 0.5s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: 1;
+  }
+
+  & > .reach-animation-logo {
+    position: absolute;
+    width: 38%;
+    aspect-ratio: 1 / 1;
+    left: 50%;
+    top: 38%;
+    transform: translate(-50%, -50%);
+    transform-origin: center;
+
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    animation-name: reach-animation-logo-kf;
+    animation-duration: 1.7s;
+    animation-delay: 0.5s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: 1;
+
+    opacity: 0;
+  }
+
+  @keyframes reach-animation-bar-kf {
+    0% {
+      transform: translate(-50%, 50%) scale(0.1);
+      opacity: 1;
+    }
+    1.75% {
+      transform: translate(-50%, 50%) scale(1.2);
+      opacity: 1;
+    }
+    3.5% {
+      transform: translate(-50%, 50%) scale(1);
+      opacity: 1;
+    }
+    5.25% {
+      transform: translate(-50%, 50%) scale(1.05);
+      opacity: 1;
+    }
+    7% {
+      transform: translate(-50%, 50%) scale(0.98);
+      opacity: 1;
+    }
+    8.75% {
+      transform: translate(-50%, 50%) scale(1);
+      opacity: 1;
+    }
+    24% {
+      transform: translate(-50%, 50%) scale(1);
+      opacity: 1;
+    }
+    25.75% {
+      transform: translate(-50%, 50%) scale(0.98);
+      opacity: 1;
+    }
+    27.5% {
+      transform: translate(-50%, 50%) scale(1.05);
+      opacity: 1;
+    }
+    32% {
+      transform: translate(-50%, 50%) scale(0.1);
+      opacity: 0;
+    }
+    100% {
+      transform: translate(-50%, 50%) scale(0.1);
+      opacity: 0;
+    }
+  }
+
+  & > .reach-animation-bar {
+    position: absolute;
+    width: 55%;
+    aspect-ratio: 10 / 1;
+    left: 50%;
+    bottom: 20%;
+    transform: translate(-50%, 50%) scale(0.1);
+    transform-origin: center;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    animation-name: reach-animation-bar-kf;
+    animation-duration: 1.7s;
+    animation-delay: 0.5s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: 1;
+
+    opacity: 0;
+  }
+
+  & > .reach-animation-text {
+    position: absolute;
+    width: 48%;
+    aspect-ratio: 3.5 / 1;
+    left: 50%;
+    bottom: 20%;
+    transform: translate(-50%, 50%);
+    transform-origin: center;
+
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    overflow: visible;
+  }
+
+  @keyframes reach-animation-text-c1-kf {
+    0% {
+      transform: translate(0, -25%);
+      opacity: 0;
+    }
+    32% {
+      transform: translate(0, -25%);
+      opacity: 0;
+    }
+    32% {
+      transform: translate(0, -25%);
+      opacity: 0;
+    }
+    36% {
+      transform: translate(0, 12%);
+      opacity: 1;
+    }
+    38% {
+      transform: translate(0, 0%);
+      opacity: 1;
+    }
+    92% {
+      transform: translate(0, 0%);
+      opacity: 1;
+    }
+    98% {
+      transform: translate(0, 0%);
+      opacity: 0;
+    }
+    100% {
+      transform: translate(0, 0%);
+      opacity: 0;
+    }
+  }
+
+  @keyframes reach-animation-text-c2-kf {
+    0% {
+      transform: translate(0, -25%);
+      opacity: 0;
+    }
+    36% {
+      transform: translate(0, -25%);
+      opacity: 0;
+    }
+    37% {
+      transform: translate(0, -25%);
+      opacity: 0.8;
+    }
+    40% {
+      transform: translate(0, 12%);
+      opacity: 1;
+    }
+    42% {
+      transform: translate(0, 0%);
+      opacity: 1;
+    }
+    88% {
+      transform: translate(0, 0%);
+      opacity: 1;
+    }
+    94% {
+      transform: translate(0, 0%);
+      opacity: 0;
+    }
+    100% {
+      transform: translate(0, 0%);
+      opacity: 0;
+    }
+  }
+
+  @keyframes reach-animation-text-c3-kf {
+    0% {
+      transform: translate(0, -25%);
+      opacity: 0;
+    }
+    40% {
+      transform: translate(0, -25%);
+      opacity: 0;
+    }
+    41% {
+      transform: translate(0, -25%);
+      opacity: 0.8;
+    }
+    44% {
+      transform: translate(0, 12%);
+      opacity: 1;
+    }
+    46% {
+      transform: translate(0, 0%);
+      opacity: 1;
+    }
+    84% {
+      transform: translate(0, 0%);
+      opacity: 1;
+    }
+    90% {
+      transform: translate(0, 0%);
+      opacity: 0;
+    }
+    100% {
+      transform: translate(0, 0%);
+      opacity: 0;
+    }
+  }
+
+  @keyframes reach-animation-text-c4-kf {
+    0% {
+      transform: translate(0, -25%);
+      opacity: 0;
+    }
+    44% {
+      transform: translate(0, -25%);
+      opacity: 0;
+    }
+    45% {
+      transform: translate(0, -25%);
+      opacity: 0.8;
+    }
+    48% {
+      transform: translate(0, 12%);
+      opacity: 1;
+    }
+    50% {
+      transform: translate(0, 0%);
+      opacity: 1;
+    }
+    80% {
+      transform: translate(0, 0%);
+      opacity: 1;
+    }
+    86% {
+      transform: translate(0, 0%);
+      opacity: 0;
+    }
+    100% {
+      transform: translate(0, 0%);
+      opacity: 0;
+    }
+  }
+
+  @keyframes reach-animation-text-c5-kf {
+    0% {
+      transform: translate(0, -25%);
+      opacity: 0;
+    }
+    48% {
+      transform: translate(0, -25%);
+      opacity: 0;
+    }
+    49% {
+      transform: translate(0, -25%);
+      opacity: 0.8;
+    }
+    52% {
+      transform: translate(0, 12%);
+      opacity: 1;
+    }
+    54% {
+      transform: translate(0, 0%);
+      opacity: 1;
+    }
+    76% {
+      transform: translate(0, 0%);
+      opacity: 1;
+    }
+    82% {
+      transform: translate(0, 0%);
+      opacity: 0;
+    }
+    100% {
+      transform: translate(0, 0%);
+      opacity: 0;
+    }
+  }
+
+  & > .reach-animation-text > .reach-animation-text-character {
+    animation-duration: 1.7s;
+    animation-delay: 0.5s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: 1;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    opacity: 0;
+
+    /* height: 100%; */
+    &.c1 {
+      animation-name: reach-animation-text-c1-kf;
+    }
+    &.c2 {
+      animation-name: reach-animation-text-c2-kf;
+    }
+    &.c3 {
+      animation-name: reach-animation-text-c3-kf;
+    }
+    &.c4 {
+      animation-name: reach-animation-text-c4-kf;
+    }
+    &.c5 {
+      animation-name: reach-animation-text-c5-kf;
+    }
+  }
+}
+
+@utility match-introduction {
+  @keyframes mi-title-in {
+    0% {
+      transform: translateX(-25%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  .mi-title-in {
+    animation: mi-title-in 1s ease-in-out 0s 1 normal both;
+  }
+
+  .mi-subbtitle-in {
+    animation: mi-title-in 1s ease-in-out 0.5s 1 normal both;
+  }
+
+  @keyframes mi-teams-in {
+    0% {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes mi-teams-out {
+    0% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+  }
+
+  .mi-teams-in {
+    animation: mi-teams-in 0.8s ease-in-out 0s 1 normal both;
+  }
+
+  .mi-teams-out {
+    animation: mi-teams-out 0.8s ease-in-out 0s 1 normal both;
+  }
+
+  @keyframes mi-teams-team-out {
+    0% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+  }
+
+  .mi-teams-team-out {
+    animation: mi-teams-team-out 0.5s ease-out 0s 1 normal both;
+  }
+
+  @keyframes mi-teams-player-in {
+    0% {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .mi-teams-player-in {
+    opacity: 0;
+    animation: mi-teams-player-in 0.8s ease-in-out 0s 1 normal both;
+  }
+
+  @keyframes mi-team-colorBackground-in {
+    0% {
+      transform: translateY(100%);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes mi-team-colorBackground-out {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(100%);
+    }
+  }
+
+  .mi-team-colorBackground-in {
+    animation: mi-team-colorBackground-in 0.8s ease-in-out 0s 1 normal both;
+  }
+
+  .mi-team-colorBackground-out {
+    animation: mi-team-colorBackground-out 0.5s ease-in-out 0s 1 normal both;
+  }
+
+  @keyframes mi-team-logoBackground-in {
+    0% {
+      transform: translateY(100%);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes mi-team-logoBackground-out {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(100%);
+    }
+  }
+
+  .mi-team-logoBackground-in {
+    animation: mi-team-logoBackground-in 0.8s ease-in-out 0.25s 1 normal both;
+  }
+
+  .mi-team-logoBackground-out {
+    animation: mi-team-logoBackground-out 0.5s ease-in-out 0s 1 normal both;
+  }
+
+  @keyframes mi-team-team-in {
+    0% {
+      transform: translateY(-120%);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes mi-team-team-out {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(-120%);
+    }
+  }
+
+  .mi-team-team-in {
+    animation: mi-team-team-in 0.8s ease-in-out 0s 1 normal both;
+  }
+
+  .mi-team-team-out {
+    animation: mi-team-team-out 0.5s ease-in-out 0s 1 normal both;
+  }
+
+  @keyframes mi-team-player-in {
+    0% {
+      transform: translateX(-25%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes mi-team-player-out {
+    0% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(25%);
+      opacity: 0;
+    }
+  }
+
+  .mi-team-player-in {
+    animation: mi-team-player-in 0.8s ease-in-out 0.8s 1 normal both;
+  }
+
+  .mi-team-player-out {
+    animation: mi-team-player-out 0.5s ease-in-out 0s 1 normal both;
+  }
+
+  @keyframes mi-team-activePlayer-in {
+    0% {
+      transform: translateX(-25%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes mi-team-activePlayer-out {
+    0% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(25%);
+      opacity: 0;
+    }
+  }
+
+  .mi-team-activePlayer-in {
+    animation: mi-team-activePlayer-in 0.8s ease-in-out 2s 1 normal both;
+  }
+
+  .mi-team-activePlayer-out {
+    animation: mi-team-activePlayer-out 0.5s ease-in-out 0s 1 normal both;
+  }
+
+  @keyframes mi-team-activePlayerStat-in {
+    0% {
+      transform: translateX(-12%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes mi-team-activePlayerStat-out {
+    0% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(12%);
+      opacity: 0;
+    }
+  }
+
+  .mi-team-activePlayerStat-in {
+    animation: mi-team-activePlayerStat-in 0.8s ease-in-out 0.25s 1 normal both;
+  }
+
+  .mi-team-activePlayerStat-out {
+    animation: mi-team-activePlayerStat-out 0.5s ease-in-out 0.25s 1 normal both;
+  }
+
+  @keyframes mi-chart-chart-in {
+    0% {
+      transform: translateX(-12%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes mi-chart-chart-out {
+    0% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(-12%);
+      opacity: 0;
+    }
+  }
+
+  .mi-chart-chart-in {
+    animation: mi-chart-chart-in 0.8s ease-in-out 0s 1 normal both;
+  }
+
+  .mi-chart-chart-out {
+    animation: mi-chart-chart-out 0.5s ease-in-out 0s 1 normal both;
+  }
+
+  @keyframes mi-chart-player-in {
+    0% {
+      transform: translateX(20%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes mi-chart-player-out {
+    0% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(12%);
+      opacity: 0;
+    }
+  }
+
+  .mi-chart-player-in {
+    animation: mi-chart-player-in 0.8s ease-in-out 0s 1 normal both;
+  }
+
+  .mi-chart-player-out {
+    animation: mi-chart-player-out 0.5s ease-in-out 0s 1 normal both;
+  }
+
+  @keyframes mi-ranking-ranking-in {
+    0% {
+      transform: translateY(1080px);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes mi-ranking-ranking-out {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(200px);
+      opacity: 0;
+    }
+  }
+
+  .mi-ranking-ranking-in {
+    animation: mi-ranking-ranking-in 0.8s ease-in-out 0s 1 normal both;
+  }
+
+  .mi-ranking-ranking-out {
+    animation: mi-ranking-ranking-out 0.5s ease-in-out 0s 1 normal both;
+  }
+}
+
+@utility tournament-realtime-report {
+  @keyframes twr-title-in {
+    0% {
+      transform: translateX(-150%);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+  @keyframes twr-title-out {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-150%);
+    }
+  }
+
+  .twr-title {
+    animation: twr-title-in 0.8s ease-in-out 0s 1 normal both;
+  }
+
+  @keyframes twr-team-ranking-row-in {
+    0% {
+      transform: translateY(1080px);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+  @keyframes twr-team-ranking-row-out {
+    0% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(200px);
+      opacity: 0;
+    }
+  }
+
+  .twr-team-ranking {
+    & .twr-team-ranking-row {
+      animation: twr-team-ranking-row-out 0.6s ease-in-out 0s 1 normal both;
+    }
+
+    &[data-active='true'] .twr-team-ranking-row {
+      animation: twr-team-ranking-row-in 0.6s ease-in-out 0s 1 normal both;
+    }
+  }
+
+  @keyframes twr-chart-chart-in {
+    0% {
+      transform: translateY(1080px);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+  @keyframes twr-chart-chart-out {
+    0% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(200px);
+      opacity: 0;
+    }
+  }
+
+  .twr-chart {
+    & .twr-chart-chart {
+      animation: twr-chart-chart-out 0.6s ease-in-out 0s 1 normal both;
+    }
+
+    &[data-active='true'] .twr-chart-chart {
+      animation: twr-chart-chart-in 0.6s ease-in-out 0s 1 normal both;
+    }
+  }
+
+  @keyframes twr-player-ranking-row-in {
+    0% {
+      transform: translateY(1080px);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+  @keyframes twr-player-ranking-row-out {
+    0% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(200px);
+      opacity: 0;
+    }
+  }
+
+  .twr-player-ranking {
+    & .twr-player-ranking-row {
+      animation: twr-player-ranking-row-out 0.6s ease-in-out 0s 1 normal both;
+    }
+
+    &[data-active='true'] .twr-player-ranking-row {
+      animation: twr-player-ranking-row-in 0.6s ease-in-out 0s 1 normal both;
+    }
+  }
+
+  @keyframes twr-heatmap-title-in {
+    0% {
+      transform: translateY(-200px);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+  @keyframes twr-heatmap-title-out {
+    0% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(-200px);
+      opacity: 0;
+    }
+  }
+
+  @keyframes twr-heatmap-cell-in {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  @keyframes twr-heatmap-cell-out {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+
+  .twr-heatmap {
+    & .twr-heatmap-title {
+      animation: twr-heatmap-title-out 0.4s ease-in-out 0s 1 normal both;
+    }
+
+    &[data-active='true'] .twr-heatmap-title {
+      animation: twr-heatmap-title-in 0.4s ease-in-out 0s 1 normal both;
+    }
+
+    & .twr-heatmap-cell {
+      animation: twr-heatmap-cell-out 0.4s ease-in-out 0s 1 normal both;
+    }
+
+    &[data-active='true'] .twr-heatmap-cell {
+      animation: twr-heatmap-cell-in 0.4s ease-in-out 0s 1 normal both;
+    }
+  }
+}
+
+@layer base {
+  a {
+    @apply text-teal-600 hover:text-teal-500 underline underline-offset-2;
+  }
+
+  dialog {
+    @apply w-full max-w-3xl;
+  }
+
+  input:not([type='checkbox']) {
+    @apply border border-neutral-400 focus:border-neutral-600 py-1 px-2 rounded-sm bg-white text-black;
+  }
+}
+
+@layer components {
 
   @keyframes reach-animation-logo-kf {
     0% {
@@ -71,842 +1070,6 @@
     }
     100% {
       transform: scaleY(0);
-    }
-  }
-
-  .reach-animation {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    text-align: center;
-
-    & > .reach-background {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      transform: scaleY(0);
-      transform-origin: center;
-
-      animation-name: reach-animation-background-kf;
-      animation-duration: 1.7s;
-      animation-delay: 0.5s;
-      animation-timing-function: ease-in-out;
-      animation-iteration-count: 1;
-    }
-
-    & > .reach-animation-logo {
-      position: absolute;
-      width: 38%;
-      aspect-ratio: 1 / 1;
-      left: 50%;
-      top: 38%;
-      transform: translate(-50%, -50%);
-      transform-origin: center;
-
-      background-size: contain;
-      background-position: center;
-      background-repeat: no-repeat;
-
-      animation-name: reach-animation-logo-kf;
-      animation-duration: 1.7s;
-      animation-delay: 0.5s;
-      animation-timing-function: ease-in-out;
-      animation-iteration-count: 1;
-
-      opacity: 0;
-    }
-
-    @keyframes reach-animation-bar-kf {
-      0% {
-        transform: translate(-50%, 50%) scale(0.1);
-        opacity: 1;
-      }
-      1.75% {
-        transform: translate(-50%, 50%) scale(1.2);
-        opacity: 1;
-      }
-      3.5% {
-        transform: translate(-50%, 50%) scale(1);
-        opacity: 1;
-      }
-      5.25% {
-        transform: translate(-50%, 50%) scale(1.05);
-        opacity: 1;
-      }
-      7% {
-        transform: translate(-50%, 50%) scale(0.98);
-        opacity: 1;
-      }
-      8.75% {
-        transform: translate(-50%, 50%) scale(1);
-        opacity: 1;
-      }
-      24% {
-        transform: translate(-50%, 50%) scale(1);
-        opacity: 1;
-      }
-      25.75% {
-        transform: translate(-50%, 50%) scale(0.98);
-        opacity: 1;
-      }
-      27.5% {
-        transform: translate(-50%, 50%) scale(1.05);
-        opacity: 1;
-      }
-      32% {
-        transform: translate(-50%, 50%) scale(0.1);
-        opacity: 0;
-      }
-      100% {
-        transform: translate(-50%, 50%) scale(0.1);
-        opacity: 0;
-      }
-    }
-
-    & > .reach-animation-bar {
-      position: absolute;
-      width: 55%;
-      aspect-ratio: 10 / 1;
-      left: 50%;
-      bottom: 20%;
-      transform: translate(-50%, 50%) scale(0.1);
-      transform-origin: center;
-      background-size: contain;
-      background-position: center;
-      background-repeat: no-repeat;
-
-      animation-name: reach-animation-bar-kf;
-      animation-duration: 1.7s;
-      animation-delay: 0.5s;
-      animation-timing-function: ease-in-out;
-      animation-iteration-count: 1;
-
-      opacity: 0;
-    }
-
-    & > .reach-animation-text {
-      position: absolute;
-      width: 48%;
-      aspect-ratio: 3.5 / 1;
-      left: 50%;
-      bottom: 20%;
-      transform: translate(-50%, 50%);
-      transform-origin: center;
-
-      display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      overflow: visible;
-    }
-
-    @keyframes reach-animation-text-c1-kf {
-      0% {
-        transform: translate(0, -25%);
-        opacity: 0;
-      }
-      32% {
-        transform: translate(0, -25%);
-        opacity: 0;
-      }
-      32% {
-        transform: translate(0, -25%);
-        opacity: 0;
-      }
-      36% {
-        transform: translate(0, 12%);
-        opacity: 1;
-      }
-      38% {
-        transform: translate(0, 0%);
-        opacity: 1;
-      }
-      92% {
-        transform: translate(0, 0%);
-        opacity: 1;
-      }
-      98% {
-        transform: translate(0, 0%);
-        opacity: 0;
-      }
-      100% {
-        transform: translate(0, 0%);
-        opacity: 0;
-      }
-    }
-
-    @keyframes reach-animation-text-c2-kf {
-      0% {
-        transform: translate(0, -25%);
-        opacity: 0;
-      }
-      36% {
-        transform: translate(0, -25%);
-        opacity: 0;
-      }
-      37% {
-        transform: translate(0, -25%);
-        opacity: 0.8;
-      }
-      40% {
-        transform: translate(0, 12%);
-        opacity: 1;
-      }
-      42% {
-        transform: translate(0, 0%);
-        opacity: 1;
-      }
-      88% {
-        transform: translate(0, 0%);
-        opacity: 1;
-      }
-      94% {
-        transform: translate(0, 0%);
-        opacity: 0;
-      }
-      100% {
-        transform: translate(0, 0%);
-        opacity: 0;
-      }
-    }
-
-    @keyframes reach-animation-text-c3-kf {
-      0% {
-        transform: translate(0, -25%);
-        opacity: 0;
-      }
-      40% {
-        transform: translate(0, -25%);
-        opacity: 0;
-      }
-      41% {
-        transform: translate(0, -25%);
-        opacity: 0.8;
-      }
-      44% {
-        transform: translate(0, 12%);
-        opacity: 1;
-      }
-      46% {
-        transform: translate(0, 0%);
-        opacity: 1;
-      }
-      84% {
-        transform: translate(0, 0%);
-        opacity: 1;
-      }
-      90% {
-        transform: translate(0, 0%);
-        opacity: 0;
-      }
-      100% {
-        transform: translate(0, 0%);
-        opacity: 0;
-      }
-    }
-
-    @keyframes reach-animation-text-c4-kf {
-      0% {
-        transform: translate(0, -25%);
-        opacity: 0;
-      }
-      44% {
-        transform: translate(0, -25%);
-        opacity: 0;
-      }
-      45% {
-        transform: translate(0, -25%);
-        opacity: 0.8;
-      }
-      48% {
-        transform: translate(0, 12%);
-        opacity: 1;
-      }
-      50% {
-        transform: translate(0, 0%);
-        opacity: 1;
-      }
-      80% {
-        transform: translate(0, 0%);
-        opacity: 1;
-      }
-      86% {
-        transform: translate(0, 0%);
-        opacity: 0;
-      }
-      100% {
-        transform: translate(0, 0%);
-        opacity: 0;
-      }
-    }
-
-    @keyframes reach-animation-text-c5-kf {
-      0% {
-        transform: translate(0, -25%);
-        opacity: 0;
-      }
-      48% {
-        transform: translate(0, -25%);
-        opacity: 0;
-      }
-      49% {
-        transform: translate(0, -25%);
-        opacity: 0.8;
-      }
-      52% {
-        transform: translate(0, 12%);
-        opacity: 1;
-      }
-      54% {
-        transform: translate(0, 0%);
-        opacity: 1;
-      }
-      76% {
-        transform: translate(0, 0%);
-        opacity: 1;
-      }
-      82% {
-        transform: translate(0, 0%);
-        opacity: 0;
-      }
-      100% {
-        transform: translate(0, 0%);
-        opacity: 0;
-      }
-    }
-
-    & > .reach-animation-text > .reach-animation-text-character {
-      animation-duration: 1.7s;
-      animation-delay: 0.5s;
-      animation-timing-function: ease-in-out;
-      animation-iteration-count: 1;
-      background-size: contain;
-      background-position: center;
-      background-repeat: no-repeat;
-
-      opacity: 0;
-
-      /* height: 100%; */
-      &.c1 {
-        animation-name: reach-animation-text-c1-kf;
-      }
-      &.c2 {
-        animation-name: reach-animation-text-c2-kf;
-      }
-      &.c3 {
-        animation-name: reach-animation-text-c3-kf;
-      }
-      &.c4 {
-        animation-name: reach-animation-text-c4-kf;
-      }
-      &.c5 {
-        animation-name: reach-animation-text-c5-kf;
-      }
-    }
-  }
-
-  .match-introduction {
-    @keyframes mi-title-in {
-      0% {
-        transform: translateX(-25%);
-        opacity: 0;
-      }
-      100% {
-        transform: translateX(0);
-        opacity: 1;
-      }
-    }
-
-    .mi-title-in {
-      animation: mi-title-in 1s ease-in-out 0s 1 normal both;
-    }
-
-    .mi-subbtitle-in {
-      animation: mi-title-in 1s ease-in-out 0.5s 1 normal both;
-    }
-
-    @keyframes mi-teams-in {
-      0% {
-        transform: translateY(100%);
-        opacity: 0;
-      }
-      100% {
-        transform: translateY(0);
-        opacity: 1;
-      }
-    }
-
-    @keyframes mi-teams-out {
-      0% {
-        transform: translateY(0);
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(100%);
-        opacity: 0;
-      }
-    }
-
-    .mi-teams-in {
-      animation: mi-teams-in 0.8s ease-in-out 0s 1 normal both;
-    }
-
-    .mi-teams-out {
-      animation: mi-teams-out 0.8s ease-in-out 0s 1 normal both;
-    }
-
-    @keyframes mi-teams-team-out {
-      0% {
-        transform: translateX(0);
-        opacity: 1;
-      }
-      100% {
-        transform: translateX(100%);
-        opacity: 0;
-      }
-    }
-
-    .mi-teams-team-out {
-      animation: mi-teams-team-out 0.5s ease-out 0s 1 normal both;
-    }
-
-    @keyframes mi-teams-player-in {
-      0% {
-        transform: translateY(100%);
-        opacity: 0;
-      }
-      100% {
-        transform: translateY(0);
-        opacity: 1;
-      }
-    }
-
-    .mi-teams-player-in {
-      opacity: 0;
-      animation: mi-teams-player-in 0.8s ease-in-out 0s 1 normal both;
-    }
-
-    @keyframes mi-team-colorBackground-in {
-      0% {
-        transform: translateY(100%);
-      }
-      100% {
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes mi-team-colorBackground-out {
-      0% {
-        transform: translateY(0);
-      }
-      100% {
-        transform: translateY(100%);
-      }
-    }
-
-    .mi-team-colorBackground-in {
-      animation: mi-team-colorBackground-in 0.8s ease-in-out 0s 1 normal both;
-    }
-
-    .mi-team-colorBackground-out {
-      animation: mi-team-colorBackground-out 0.5s ease-in-out 0s 1 normal both;
-    }
-
-    @keyframes mi-team-logoBackground-in {
-      0% {
-        transform: translateY(100%);
-      }
-      100% {
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes mi-team-logoBackground-out {
-      0% {
-        transform: translateY(0);
-      }
-      100% {
-        transform: translateY(100%);
-      }
-    }
-
-    .mi-team-logoBackground-in {
-      animation: mi-team-logoBackground-in 0.8s ease-in-out 0.25s 1 normal both;
-    }
-
-    .mi-team-logoBackground-out {
-      animation: mi-team-logoBackground-out 0.5s ease-in-out 0s 1 normal both;
-    }
-
-    @keyframes mi-team-team-in {
-      0% {
-        transform: translateY(-120%);
-      }
-      100% {
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes mi-team-team-out {
-      0% {
-        transform: translateY(0);
-      }
-      100% {
-        transform: translateY(-120%);
-      }
-    }
-
-    .mi-team-team-in {
-      animation: mi-team-team-in 0.8s ease-in-out 0s 1 normal both;
-    }
-
-    .mi-team-team-out {
-      animation: mi-team-team-out 0.5s ease-in-out 0s 1 normal both;
-    }
-
-    @keyframes mi-team-player-in {
-      0% {
-        transform: translateX(-25%);
-        opacity: 0;
-      }
-      100% {
-        transform: translateX(0);
-        opacity: 1;
-      }
-    }
-
-    @keyframes mi-team-player-out {
-      0% {
-        transform: translateX(0);
-        opacity: 1;
-      }
-      100% {
-        transform: translateX(25%);
-        opacity: 0;
-      }
-    }
-
-    .mi-team-player-in {
-      animation: mi-team-player-in 0.8s ease-in-out 0.8s 1 normal both;
-    }
-
-    .mi-team-player-out {
-      animation: mi-team-player-out 0.5s ease-in-out 0s 1 normal both;
-    }
-
-    @keyframes mi-team-activePlayer-in {
-      0% {
-        transform: translateX(-25%);
-        opacity: 0;
-      }
-      100% {
-        transform: translateX(0);
-        opacity: 1;
-      }
-    }
-
-    @keyframes mi-team-activePlayer-out {
-      0% {
-        transform: translateX(0);
-        opacity: 1;
-      }
-      100% {
-        transform: translateX(25%);
-        opacity: 0;
-      }
-    }
-
-    .mi-team-activePlayer-in {
-      animation: mi-team-activePlayer-in 0.8s ease-in-out 2s 1 normal both;
-    }
-
-    .mi-team-activePlayer-out {
-      animation: mi-team-activePlayer-out 0.5s ease-in-out 0s 1 normal both;
-    }
-
-    @keyframes mi-team-activePlayerStat-in {
-      0% {
-        transform: translateX(-12%);
-        opacity: 0;
-      }
-      100% {
-        transform: translateX(0);
-        opacity: 1;
-      }
-    }
-
-    @keyframes mi-team-activePlayerStat-out {
-      0% {
-        transform: translateX(0);
-        opacity: 1;
-      }
-      100% {
-        transform: translateX(12%);
-        opacity: 0;
-      }
-    }
-
-    .mi-team-activePlayerStat-in {
-      animation: mi-team-activePlayerStat-in 0.8s ease-in-out 0.25s 1 normal
-        both;
-    }
-
-    .mi-team-activePlayerStat-out {
-      animation: mi-team-activePlayerStat-out 0.5s ease-in-out 0.25s 1 normal
-        both;
-    }
-
-    @keyframes mi-chart-chart-in {
-      0% {
-        transform: translateX(-12%);
-        opacity: 0;
-      }
-      100% {
-        transform: translateX(0);
-        opacity: 1;
-      }
-    }
-
-    @keyframes mi-chart-chart-out {
-      0% {
-        transform: translateX(0);
-        opacity: 1;
-      }
-      100% {
-        transform: translateX(-12%);
-        opacity: 0;
-      }
-    }
-
-    .mi-chart-chart-in {
-      animation: mi-chart-chart-in 0.8s ease-in-out 0s 1 normal both;
-    }
-
-    .mi-chart-chart-out {
-      animation: mi-chart-chart-out 0.5s ease-in-out 0s 1 normal both;
-    }
-
-    @keyframes mi-chart-player-in {
-      0% {
-        transform: translateX(20%);
-        opacity: 0;
-      }
-      100% {
-        transform: translateX(0);
-        opacity: 1;
-      }
-    }
-
-    @keyframes mi-chart-player-out {
-      0% {
-        transform: translateX(0);
-        opacity: 1;
-      }
-      100% {
-        transform: translateX(12%);
-        opacity: 0;
-      }
-    }
-
-    .mi-chart-player-in {
-      animation: mi-chart-player-in 0.8s ease-in-out 0s 1 normal both;
-    }
-
-    .mi-chart-player-out {
-      animation: mi-chart-player-out 0.5s ease-in-out 0s 1 normal both;
-    }
-
-    @keyframes mi-ranking-ranking-in {
-      0% {
-        transform: translateY(1080px);
-      }
-      100% {
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes mi-ranking-ranking-out {
-      0% {
-        transform: translateX(0);
-      }
-      100% {
-        transform: translateX(200px);
-        opacity: 0;
-      }
-    }
-
-    .mi-ranking-ranking-in {
-      animation: mi-ranking-ranking-in 0.8s ease-in-out 0s 1 normal both;
-    }
-
-    .mi-ranking-ranking-out {
-      animation: mi-ranking-ranking-out 0.5s ease-in-out 0s 1 normal both;
-    }
-  }
-
-  .tournament-realtime-report {
-    @keyframes twr-title-in {
-      0% {
-        transform: translateX(-150%);
-      }
-      100% {
-        transform: translateX(0);
-      }
-    }
-    @keyframes twr-title-out {
-      0% {
-        transform: translateX(0);
-      }
-      100% {
-        transform: translateX(-150%);
-      }
-    }
-
-    .twr-title {
-      animation: twr-title-in 0.8s ease-in-out 0s 1 normal both;
-    }
-
-    @keyframes twr-team-ranking-row-in {
-      0% {
-        transform: translateY(1080px);
-      }
-      100% {
-        transform: translateY(0);
-      }
-    }
-    @keyframes twr-team-ranking-row-out {
-      0% {
-        transform: translateX(0);
-        opacity: 1;
-      }
-      100% {
-        transform: translateX(200px);
-        opacity: 0;
-      }
-    }
-
-    .twr-team-ranking {
-      & .twr-team-ranking-row {
-        animation: twr-team-ranking-row-out 0.6s ease-in-out 0s 1 normal both;
-      }
-
-      &[data-active='true'] .twr-team-ranking-row {
-        animation: twr-team-ranking-row-in 0.6s ease-in-out 0s 1 normal both;
-      }
-    }
-
-    @keyframes twr-chart-chart-in {
-      0% {
-        transform: translateY(1080px);
-      }
-      100% {
-        transform: translateY(0);
-      }
-    }
-    @keyframes twr-chart-chart-out {
-      0% {
-        transform: translateX(0);
-        opacity: 1;
-      }
-      100% {
-        transform: translateX(200px);
-        opacity: 0;
-      }
-    }
-
-    .twr-chart {
-      & .twr-chart-chart {
-        animation: twr-chart-chart-out 0.6s ease-in-out 0s 1 normal both;
-      }
-
-      &[data-active='true'] .twr-chart-chart {
-        animation: twr-chart-chart-in 0.6s ease-in-out 0s 1 normal both;
-      }
-    }
-
-    @keyframes twr-player-ranking-row-in {
-      0% {
-        transform: translateY(1080px);
-      }
-      100% {
-        transform: translateY(0);
-      }
-    }
-    @keyframes twr-player-ranking-row-out {
-      0% {
-        transform: translateX(0);
-        opacity: 1;
-      }
-      100% {
-        transform: translateX(200px);
-        opacity: 0;
-      }
-    }
-
-    .twr-player-ranking {
-      & .twr-player-ranking-row {
-        animation: twr-player-ranking-row-out 0.6s ease-in-out 0s 1 normal both;
-      }
-
-      &[data-active='true'] .twr-player-ranking-row {
-        animation: twr-player-ranking-row-in 0.6s ease-in-out 0s 1 normal both;
-      }
-    }
-
-    @keyframes twr-heatmap-title-in {
-      0% {
-        transform: translateY(-200px);
-      }
-      100% {
-        transform: translateY(0);
-      }
-    }
-    @keyframes twr-heatmap-title-out {
-      0% {
-        transform: translateY(0);
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(-200px);
-        opacity: 0;
-      }
-    }
-
-    @keyframes twr-heatmap-cell-in {
-      0% {
-        opacity: 0;
-      }
-      100% {
-        opacity: 1;
-      }
-    }
-    @keyframes twr-heatmap-cell-out {
-      0% {
-        opacity: 1;
-      }
-      100% {
-        opacity: 0;
-      }
-    }
-
-    .twr-heatmap {
-      & .twr-heatmap-title {
-        animation: twr-heatmap-title-out 0.4s ease-in-out 0s 1 normal both;
-      }
-
-      &[data-active='true'] .twr-heatmap-title {
-        animation: twr-heatmap-title-in 0.4s ease-in-out 0s 1 normal both;
-      }
-
-      & .twr-heatmap-cell {
-        animation: twr-heatmap-cell-out 0.4s ease-in-out 0s 1 normal both;
-      }
-
-      &[data-active='true'] .twr-heatmap-cell {
-        animation: twr-heatmap-cell-in 0.4s ease-in-out 0s 1 normal both;
-      }
     }
   }
 }

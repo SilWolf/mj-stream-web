@@ -348,13 +348,13 @@ const ObsRoomSceneControlPage = ({ params: { obsRoomId } }: Props) => {
       >
         切換到入分控制台 <i className="bi bi-arrow-right-circle-fill"></i>
       </a>
-      <div className="py-8 container px-6 max-w-screen-md mx-auto space-y-6">
+      <div className="py-8 container px-6 max-w-(--breakpoint-md) mx-auto space-y-6">
         <div>
           <p className="font-bold text-red-600">
             <i className="bi bi-record-circle"></i> 目前場景：
             {activeScene?.name ?? '(沒有)'}
           </p>
-          <div className="relative aspect-video ring ring-red-500 mt-2">
+          <div className="relative aspect-video ring-3 ring-red-500 mt-2">
             <div
               className="absolute overflow-hidden w-[1920px] h-[1080px] origin-top-left scale-[.375]"
               ref={previewWrapperRef}
@@ -395,7 +395,7 @@ const ObsRoomSceneControlPage = ({ params: { obsRoomId } }: Props) => {
                 key={scene.id}
                 data-id={scene.id}
                 data-active={scene.id === activeScene.id}
-                className="bg-green-300 border-green-400 rounded-lg text-green-800 text-lg py-4 px-6 data-[active=true]:ring data-[active=true]:ring-red-500"
+                className="bg-green-300 border-green-400 rounded-lg text-green-800 text-lg py-4 px-6 data-[active=true]:ring-3 data-[active=true]:ring-red-500"
                 onDoubleClick={handleClickChangeScene}
               >
                 {scene.name}

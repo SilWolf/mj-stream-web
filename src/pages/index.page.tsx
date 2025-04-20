@@ -91,7 +91,7 @@ function IndexPage() {
             <span>日麻比賽直播系統 (牌藝攻防)</span>
           </h1>
         </div>
-        {/* <div className="flex-1 bg-gray-100 bg-opacity-50 rounded p-8 min-h-0 overflow-scroll">
+        {/* <div className="flex-1 bg-gray-100 bg-opacity-50 rounded-sm p-8 min-h-0 overflow-scroll">
           <ul>
             <li className="font-bold">2022-07-08</li>
             <ul className="list-disc pl-4 mb-4">
@@ -136,7 +136,7 @@ function IndexPage() {
                         <a
                           href={`${location.origin}/v1/obs/1/scene`}
                           target="_blank"
-                          className="block text-black bg-white bg-opacity-40 p-2 rounded hover:text-black"
+                          className="block text-black bg-white bg-opacity-40 p-2 rounded-sm hover:text-black"
                         >
                           <span className="text-red-600 font-bold">
                             *01/30新增*
@@ -147,20 +147,20 @@ function IndexPage() {
                         <a
                           href={`${location.origin}/v1/obs/1/realtime-summary`}
                           target="_blank"
-                          className="block text-black bg-white bg-opacity-40 p-2 rounded hover:text-black"
+                          className="block text-black bg-white bg-opacity-40 p-2 rounded-sm hover:text-black"
                         >
                           現時數據
                         </a>
                         <a
                           href={`${location.origin}/v1/obs/1/end`}
                           target="_blank"
-                          className="text-black bg-white bg-opacity-40 p-2 rounded hover:text-black"
+                          className="text-black bg-white bg-opacity-40 p-2 rounded-sm hover:text-black"
                         >
                           今日賽事已完結
                         </a>
                       </div>
 
-                      <div className="bg-white rounded p-4 space-y-4">
+                      <div className="bg-white rounded-sm p-4 space-y-4">
                         <p className="text-center">
                           請在下方表格點擊“直播“來切換賽事
                         </p>
@@ -194,35 +194,35 @@ function IndexPage() {
                             <a
                               href={`${location.origin}/v1/obs/1/forecast?m=0`}
                               target="_blank"
-                              className="text-black bg-red-800 bg-opacity-50 p-2 rounded hover:text-black"
+                              className="text-black bg-red-800 bg-opacity-50 p-2 rounded-sm hover:text-black"
                             >
                               即將開始
                             </a>
                             <a
                               href={`${location.origin}/v1/obs/1/forecast?m=5`}
                               target="_blank"
-                              className="text-black bg-red-800 bg-opacity-50 p-2 rounded hover:text-black"
+                              className="text-black bg-red-800 bg-opacity-50 p-2 rounded-sm hover:text-black"
                             >
                               5分鐘
                             </a>
                             <a
                               href={`${location.origin}/v1/obs/1/forecast?m=10`}
                               target="_blank"
-                              className="text-black bg-red-800 bg-opacity-50 p-2 rounded hover:text-black"
+                              className="text-black bg-red-800 bg-opacity-50 p-2 rounded-sm hover:text-black"
                             >
                               10分鐘
                             </a>
                             <a
                               href={`${location.origin}/v1/obs/1/forecast?m=15`}
                               target="_blank"
-                              className="text-black bg-red-800 bg-opacity-50 p-2 rounded hover:text-black"
+                              className="text-black bg-red-800 bg-opacity-50 p-2 rounded-sm hover:text-black"
                             >
                               15分鐘
                             </a>
                             <a
                               href={`${location.origin}/v1/obs/1/forecast?m=20`}
                               target="_blank"
-                              className="text-black bg-red-800 bg-opacity-50 p-2 rounded hover:text-black"
+                              className="text-black bg-red-800 bg-opacity-50 p-2 rounded-sm hover:text-black"
                             >
                               20分鐘
                             </a>
@@ -233,21 +233,21 @@ function IndexPage() {
                           <a
                             href={`${location.origin}/v1/obs/1/introduction`}
                             target="_blank"
-                            className="text-black bg-white bg-opacity-40 p-2 rounded hover:text-black"
+                            className="text-black bg-white bg-opacity-40 p-2 rounded-sm hover:text-black"
                           >
                             賽前介紹
                           </a>
                           <a
                             href={`${location.origin}/v1/obs/1`}
                             target="_blank"
-                            className="text-black bg-white bg-opacity-40 p-2 rounded hover:text-black"
+                            className="text-black bg-white bg-opacity-40 p-2 rounded-sm hover:text-black"
                           >
                             直播頁面
                           </a>
                           <a
                             href={`${location.origin}/v1/obs/1/summary`}
                             target="_blank"
-                            className="text-black bg-white bg-opacity-40 p-2 rounded hover:text-black"
+                            className="text-black bg-white bg-opacity-40 p-2 rounded-sm hover:text-black"
                           >
                             賽後結果
                           </a>
@@ -446,7 +446,7 @@ function IndexPage() {
                             href={`/v1/match/${match._id}/control`}
                             target="_blank"
                           >
-                            <span className="bg-red-600 px-2 py-1 rounded text-white">
+                            <span className="bg-red-600 px-2 py-1 rounded-sm text-white">
                               <i className="bi bi-record-circle"></i> LIVE
                               直播中
                             </span>

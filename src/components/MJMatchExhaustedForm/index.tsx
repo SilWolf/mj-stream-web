@@ -198,7 +198,7 @@ export default function MJMatchExhaustedForm({
           <thead>
             <tr>
               <th>玩家</th>
-              <th className="!bg-yellow-200">聽牌？</th>
+              <th className="bg-yellow-200!">聽牌？</th>
               <th className="w-32">目前分數</th>
               <th className="w-32">變動</th>
               <th className="w-32">最新分數</th>

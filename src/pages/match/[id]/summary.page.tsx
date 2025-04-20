@@ -120,7 +120,7 @@ const MatchSummarySlide = ({
         }}
       >
         <div className="flex-1"></div>
-        <div className="flex-[2] grid grid-cols-4 items-center">
+        <div className="flex-2 grid grid-cols-4 items-center">
           {(
             ['playerEast', 'playerSouth', 'playerWest', 'playerNorth'] as const
           ).map((playerKey, index) => (
@@ -201,14 +201,14 @@ const MatchSummarySlide = ({
         }}
       >
         <div className="flex-1"></div>
-        <div className="flex-[3] flex flex-col items-stretch">
+        <div className="flex-3 flex flex-col items-stretch">
           <div
             className={cns('flex gap-x-[1em] pl-[1em] mb-[.5em] items-end', {
               'mi-teams-in': status === 0,
               'mi-teams-out': status > 0,
             })}
           >
-            <div className="flex-[5] space-x-[1.5em] text-[1.1em]">
+            <div className="flex-5 space-x-[1.5em] text-[1.1em]">
               <span>
                 <span className="text-[1.5em]">{slide.roundCount}</span> 總局數
               </span>
@@ -270,7 +270,7 @@ const MatchSummarySlide = ({
                   }
                 )}
               >
-                <div className="text-left flex-[5]">
+                <div className="text-left flex-5">
                   <h3 className="text-[1.5em] font-semibold">
                     {player.name} ({player.nickname})
                   </h3>
@@ -317,7 +317,7 @@ const MatchSummarySlide = ({
                     teamPlayer.playerPortraitImageUrl +
                     '?w=360&h=500&auto=format'
                   }
-                  className="aspect-[18/25] w-full"
+                  className="aspect-18/25 w-full"
                   alt=""
                 />
                 <div className="font-semibold text-center">
@@ -339,9 +339,9 @@ const MatchSummarySlide = ({
         }}
       >
         <div className="flex-1"></div>
-        <div className="flex-[3] flex items-stretch gap-x-[1em]">
+        <div className="flex-3 flex items-stretch gap-x-[1em]">
           <div
-            className={cns('flex-[3]', {
+            className={cns('flex-3', {
               'mi-chart-chart-in': status === 0,
               'mi-chart-chart-out': status > 0,
             })}
@@ -409,7 +409,7 @@ const MatchSummarySlide = ({
       >
         <div className="flex-1"></div>
         <div
-          className={cns('flex-[5] flex flex-col', {
+          className={cns('flex-5 flex flex-col', {
             'mi-ranking-ranking-in': status === 0,
             'mi-ranking-ranking-out': status > 0,
           })}

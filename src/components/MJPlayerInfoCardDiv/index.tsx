@@ -14,7 +14,7 @@ function MJPlayerInfoCardDiv({ player, onClickEdit, ...divProps }: Props) {
 
   return (
     <div
-      className="relative flex-1 flex items-center gap-x-2 rounded p-2 text-white"
+      className="relative flex-1 flex items-center gap-x-2 rounded-sm p-2 text-white"
       style={{
         backgroundColor: player.color ?? '#115e59',
       }}
@@ -30,7 +30,7 @@ function MJPlayerInfoCardDiv({ player, onClickEdit, ...divProps }: Props) {
       )}
       <div className="relative z-10 shrink-0">
         <div
-          className="w-14 h-14 bg-center bg-contain bg-no-repeat rounded"
+          className="w-14 h-14 bg-center bg-contain bg-no-repeat rounded-sm"
           style={{
             backgroundImage: `url(${
               player.logoUrl || '/images/portrait-placeholder.jpeg'

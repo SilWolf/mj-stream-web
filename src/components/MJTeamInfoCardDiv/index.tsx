@@ -19,7 +19,7 @@ function MJTeamInfoCardDiv({
 
   return (
     <div
-      className="flex-1 flex items-center gap-x-2 rounded p-2 text-white"
+      className="flex-1 flex items-center gap-x-2 rounded-sm p-2 text-white"
       style={{
         background: team.color ?? '#115e59',
       }}

@@ -28,7 +28,7 @@ export default function OBSInstructionDiv() {
           - 網址 = 此頁的網址 <strong>{window.location.href}</strong>
           <br />- 寬度 = 1920, 高度 = 1080
           <br /> - 自訂CSS ={' '}
-          <div className="relative bg-gray-700 text-white p-4 rounded">
+          <div className="relative bg-gray-700 text-white p-4 rounded-sm">
             <pre>{cssText}</pre>
             <div className="absolute top-2 right-2">
               <button type="button" onClick={handleClickCopy}>
