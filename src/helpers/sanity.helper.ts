@@ -23,6 +23,7 @@ const TEAM_META_FIELDS = [
   'name',
   'secondaryName',
   'thirdName',
+  'preferredName',
   '"squareLogoImage": squareLogoImage.asset->url',
   '"color": color.hex',
   'introduction',
@@ -74,6 +75,7 @@ export type DB_Team = {
   name: string
   secondaryName: string
   thirdName: string
+  preferredName: string
   color: string
   squareLogoImage: string | null
 }
@@ -444,7 +446,7 @@ export const convertDbTeamPlayerToRealtimePlayer = (
 ): RealtimePlayer => {
   return {
     primaryName: player.name!,
-    secondaryName: team.name!,
+    secondaryName: team.preferredName ?? team.name!,
     nickname: player.nickname!,
     color: team.color,
     logoUrl: `${team.squareLogoImage}?w=500&h=500`,

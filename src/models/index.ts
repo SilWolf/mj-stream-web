@@ -204,6 +204,7 @@ export type Team = {
   name: string | null
   secondaryName: string | null
   thirdName: string | null
+  preferredName: string | null
   squareLogoImage: string | null
   color: string
   introduction: string

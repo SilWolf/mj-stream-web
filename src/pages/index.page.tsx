@@ -264,40 +264,6 @@ function IndexPage() {
               </div>
             </div>
 
-            {/* <div>
-              <div className="px-8 py-4 bg-blue-300 border-2 border-blue-600 text-center space-y-4">
-                <p className="text-3xl font-bold text-blue-900">
-                  主播 + 控制台
-                </p>
-                <p className="text-2xl">
-                  固定的紀錄頁面：
-                  <a
-                    href={`${location.origin}/v1/obs/1/stat`}
-                    target="_blank"
-                    className="text-black"
-                  >
-                    {location.origin}/obs/1/stat
-                  </a>
-                </p>
-                <p className="text-2xl">
-                  固定的Overlay頁面：
-                  <a
-                    href={`${location.origin}/v1/obs/1/stat`}
-                    target="_blank"
-                    className="text-black"
-                  >
-                    {location.origin}/obs/1/overlay
-                  </a>
-                </p>
-                <div className="pt-16">
-                  <img
-                    className="mx-auto block w-64 h-64"
-                    src={getQrCodeImgSrc(`${location.origin}/v1/obs/1/stat`)}
-                    alt=""
-                  />
-                </div>
-              </div>
-            </div> */}
             <div>
               <div className="px-8 py-4 bg-yellow-300 border-2 border-yellow-600 text-center space-y-4">
                 <p className="text-3xl font-bold text-yellow-900">
