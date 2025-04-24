@@ -7,7 +7,7 @@ import { generateMatchRoundCode } from '@/helpers/mahjong.helper'
 import V2MatchForm from '../../widgets/V2MatchForm'
 import { useToggle } from 'react-use'
 import { useLocation } from 'wouter'
-import { getRulesetById } from '../../services/api.service'
+import { apiGetRulesetById } from '../../services/ruleset.service'
 import { V2Match } from '../../models/V2Match.model'
 import { V2MatchRound } from '../../models/V2MatchRound.model'
 import { V2ObsRoom } from '../../models/V2ObsRoom.model'
@@ -25,7 +25,7 @@ export default function V2CreateMatchPage() {
 
   const handleSubmitMatchForm = useCallback(
     async (newMatch: V2Match) => {
-      const ruleset = await getRulesetById(newMatch.data.rulesetRef)
+      const ruleset = await apiGetRulesetById(newMatch.data.rulesetRef)
       if (!ruleset) {
         return
       }

@@ -1,106 +1,90 @@
-import * as yup from 'yup'
+import * as zod from 'zod'
 
-export const v2RulesetSchema = yup.object({
-  id: yup.string().required(),
-  name: yup.string().required(),
-  metadata: yup.object({
-    name: yup
-      .object({
-        display: yup.string().required(),
-      })
-      .required(),
-    description: yup.string().required(),
+export const v2RulesetSchema = zod.object({
+  id: zod.string(),
+  name: zod.string(),
+  metadata: zod.object({
+    name: zod.object({
+      display: zod.string(),
+    }),
+    description: zod.string(),
   }),
-  data: yup.object({
-    playerCount: yup.number().required(),
-    roundCount: yup.number().required(),
-    startingPoint: yup.number().required(),
+  data: zod.object({
+    playerCount: zod.number(),
+    roundCount: zod.number(),
+    startingPoint: zod.number(),
   }),
-  winScoring: yup
-    .array(
-      yup.object({
-        condition: yup.string().required(),
-        name: yup
-          .object({
-            display: yup.string().required(),
-          })
-          .required(),
-        value: yup.object({
-          dealerWin: yup.object({
-            ron: yup.object({
-              perWinner: yup.number().required(),
-              perLoserAsDealer: yup.number().required(),
-              perLoser: yup.number().required(),
-            }),
-            tsumo: yup.object({
-              perWinner: yup.number().required(),
-              perLoserAsDealer: yup.number().required(),
-              perLoser: yup.number().required(),
-            }),
+  winScoring: zod.array(
+    zod.object({
+      condition: zod.string(),
+      name: zod.object({
+        display: zod.string(),
+      }),
+      value: zod.object({
+        dealerWin: zod.object({
+          ron: zod.object({
+            perWinner: zod.number(),
+            perLoserAsDealer: zod.number(),
+            perLoser: zod.number(),
           }),
-          playerWin: yup.object({
-            ron: yup.object({
-              perWinner: yup.number().required(),
-              perLoserAsDealer: yup.number().required(),
-              perLoser: yup.number().required(),
-            }),
-            tsumo: yup.object({
-              perWinner: yup.number().required(),
-              perLoserAsDealer: yup.number().required(),
-              perLoser: yup.number().required(),
-            }),
+          tsumo: zod.object({
+            perWinner: zod.number(),
+            perLoserAsDealer: zod.number(),
+            perLoser: zod.number(),
           }),
         }),
-      })
-    )
-    .required(),
-  exhaustScoring: yup
-    .array(
-      yup.object({
-        winnerCount: yup.number().required(),
-        value: yup
-          .object({ perWinner: yup.number(), perLoser: yup.number() })
-          .required(),
-      })
-    )
-    .required(),
-  extendRoundScoring: yup
-    .object({
-      ron: yup.object({
-        perWinner: yup.number().required(),
-        perLoserAsDealer: yup.number().required(),
-        perLoser: yup.number().required(),
-      }),
-      tsumo: yup.object({
-        perWinner: yup.number().required(),
-        perLoserAsDealer: yup.number().required(),
-        perLoser: yup.number().required(),
+        playerWin: zod.object({
+          ron: zod.object({
+            perWinner: zod.number(),
+            perLoserAsDealer: zod.number(),
+            perLoser: zod.number(),
+          }),
+          tsumo: zod.object({
+            perWinner: zod.number(),
+            perLoserAsDealer: zod.number(),
+            perLoser: zod.number(),
+          }),
+        }),
       }),
     })
-    .required(),
-  yakus: yup
-    .array(
-      yup.object({
-        systemName: yup.string().required(),
-        displayName: yup.string().required(),
-        data: yup.object({
-          han: yup.number(),
-          hanWhenRevealed: yup.number(),
-          yakuman: yup.number(),
-          yakumanWhenRevealed: yup.number(),
-          fixedFu: yup.number(),
-        }),
-      })
-    )
-    .required(),
-  doras: yup
-    .array(
-      yup.object({
-        systemName: yup.string().required(),
-        displayName: yup.string().required(),
-      })
-    )
-    .required(),
+  ),
+  exhaustScoring: zod.array(
+    zod.object({
+      winnerCount: zod.number(),
+      value: zod.object({ perWinner: zod.number(), perLoser: zod.number() }),
+    })
+  ),
+  extendRoundScoring: zod.object({
+    ron: zod.object({
+      perWinner: zod.number(),
+      perLoserAsDealer: zod.number(),
+      perLoser: zod.number(),
+    }),
+    tsumo: zod.object({
+      perWinner: zod.number(),
+      perLoserAsDealer: zod.number(),
+      perLoser: zod.number(),
+    }),
+  }),
+  yakus: zod.array(
+    zod.object({
+      systemName: zod.string(),
+      displayName: zod.string(),
+      data: zod.object({
+        han: zod.number().optional(),
+        hanWhenRevealed: zod.number().optional(),
+        yakuman: zod.number().optional(),
+        yakumanWhenRevealed: zod.number().optional(),
+        fixedFu: zod.number().optional(),
+      }),
+    })
+  ),
+  doras: zod.array(
+    zod.object({
+      systemName: zod.string(),
+      displayName: zod.string(),
+    })
+  ),
 })
 
-export type V2Ruleset = yup.InferType<typeof v2RulesetSchema>
+export type V2Ruleset = zod.infer<typeof v2RulesetSchema>

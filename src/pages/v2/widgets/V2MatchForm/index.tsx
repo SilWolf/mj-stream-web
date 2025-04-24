@@ -1,8 +1,8 @@
 import InputColor from '@/components/v2/inputs/InputColor'
 import { useCallback, useEffect, useMemo } from 'react'
 import { Controller, useForm, useWatch } from 'react-hook-form'
-import * as yup from 'yup'
-import { yupResolver } from '@hookform/resolvers/yup'
+import * as zod from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { getRandomId } from '@/utils/string.util'
 import useAllRulesets from '../../hooks/useAllRulesets'
 import useRuleset from '../../hooks/useRuleset'
@@ -11,28 +11,23 @@ import { V2Match } from '../../models/V2Match.model'
 
 const positionNames = ['東家', '南家', '西家', '北家']
 
-const formSchema = yup
-  .object({
-    name: yup.string().required('必須填寫對局名稱。'),
-    rulesetId: yup.string().required('必須選擇其中一套規則。'),
-    players: yup
-      .array(
-        yup.object({
-          namePrimary: yup.string().required('玩家必須有名稱'),
-          nameSecondary: yup.string(),
-          nameThird: yup.string(),
-          colorPrimary: yup
-            .string()
-            .matches(/^#[0-9A-F]{6}$/i, '顏色必須是 #ABCDEF 格式。')
-            .required('玩家必須有主要顏色'),
-          imagePortraitUrl: yup.string().url('玩家圖片必須是URL。'),
-        })
-      )
-      .required(),
-  })
-  .required()
+const formSchema = zod.object({
+  name: zod.string({ required_error: '必須填寫對局名稱。' }),
+  rulesetId: zod.string({ required_error: '必須選擇其中一套規則。' }),
+  players: zod.array(
+    zod.object({
+      namePrimary: zod.string({ required_error: '玩家必須有名稱' }),
+      nameSecondary: zod.string(),
+      nameThird: zod.string(),
+      colorPrimary: zod
+        .string({ required_error: '玩家必須有主要顏色' })
+        .regex(/^#[0-9A-F]{6}$/i, '顏色必須是 #ABCDEF 格式。'),
+      imagePortraitUrl: zod.string().url('玩家圖片必須是URL。').optional(),
+    })
+  ),
+})
 
-type FormProps = yup.InferType<typeof formSchema>
+type FormProps = zod.infer<typeof formSchema>
 
 export default function V2MatchForm({
   onSubmit,
@@ -50,7 +45,7 @@ export default function V2MatchForm({
     reset,
     formState,
   } = useForm<FormProps>({
-    resolver: yupResolver(formSchema),
+    resolver: zodResolver(formSchema),
     defaultValues,
   })
 
@@ -111,11 +106,13 @@ export default function V2MatchForm({
                 primary: player.colorPrimary,
               },
               image: {
-                portrait: {
-                  default: {
-                    url: player.imagePortraitUrl,
-                  },
-                },
+                portrait: player.imagePortraitUrl
+                  ? {
+                      default: {
+                        url: player.imagePortraitUrl,
+                      },
+                    }
+                  : undefined,
               },
             })),
             rulesetRef: values.rulesetId,

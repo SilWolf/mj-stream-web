@@ -1,63 +1,50 @@
-import * as yup from 'yup'
+import * as zod from 'zod'
 
-export const v2MatchPlayerSchema = yup.object({
-  name: yup
-    .object({
-      primary: yup.string().required(),
-      secondary: yup.string(),
-      third: yup.string(),
-    })
-    .required(),
-  color: yup
-    .object({
-      primary: yup
-        .string()
-        .matches(/^#[0-9A-F]{6}$/i, '顏色必須是 #ABCDEF 格式。')
-        .required(),
-      secondary: yup
-        .string()
-        .matches(/^#[0-9A-F]{6}$/i, '顏色必須是 #ABCDEF 格式。'),
-    })
-    .required(),
-  image: yup
-    .object({
-      portrait: yup
-        .object({
-          default: yup.object({ url: yup.string().url('玩家圖片必須是URL。') }),
-        })
-        .notRequired(),
-      logo: yup
-        .object({
-          default: yup.object({ url: yup.string().url('Logo圖片必須是URL。') }),
-          large: yup.object({ url: yup.string().url('Logo圖片必須是URL。') }),
-        })
-        .notRequired(),
-    })
-    .required(),
+export const v2MatchPlayerSchema = zod.object({
+  name: zod.object({
+    primary: zod.string(),
+    secondary: zod.string().optional(),
+    third: zod.string().optional(),
+  }),
+  color: zod.object({
+    primary: zod.string().regex(/^#[0-9A-F]{6}$/i, '顏色必須是 #ABCDEF 格式。'),
+    secondary: zod
+      .string()
+      .regex(/^#[0-9A-F]{6}$/i, '顏色必須是 #ABCDEF 格式。')
+      .optional(),
+  }),
+  image: zod.object({
+    portrait: zod
+      .object({
+        default: zod.object({ url: zod.string().url('玩家圖片必須是URL。') }),
+      })
+      .optional(),
+    logo: zod
+      .object({
+        default: zod.object({ url: zod.string().url('玩家圖片必須是URL。') }),
+      })
+      .optional(),
+  }),
 })
 
-export const v2MatchSchema = yup
+export const v2MatchSchema = zod
   .object({
-    schemaVersion: yup.string().required(),
-    code: yup.string().required(),
-    data: yup
-      .object({
-        name: yup.string().required('對局必須有名稱'),
-        remark: yup.string(),
-        players: yup.array(v2MatchPlayerSchema).required(),
-        rulesetRef: yup.string().required(),
-      })
-      .required(),
-    metadata: yup
-      .object({
-        createdAt: yup.string().datetime().required(),
-        createdBy: yup.string().datetime().required(),
-        updatedAt: yup.string().datetime().required(),
-        updatedBy: yup.string().datetime().required(),
-      })
-      .required(),
+    schemaVersion: zod.string(),
+    code: zod.string(),
+    data: zod.object({
+      name: zod.string({ required_error: '對局必須有名稱' }),
+      remark: zod.string().optional(),
+      players: zod.array(v2MatchPlayerSchema),
+      rulesetRef: zod.string(),
+    }),
+    metadata: zod.object({
+      createdAt: zod.string().datetime(),
+      createdBy: zod.string().datetime(),
+      updatedAt: zod.string().datetime(),
+      updatedBy: zod.string().datetime(),
+    }),
   })
   .required()
 
-export type V2MatchPlayer = yup.InferType<typeof v2MatchPlayerSchema>
-export type V2Match = yup.InferType<typeof v2MatchSchema>
+export type V2MatchPlayer = zod.infer<typeof v2MatchPlayerSchema>
+export type V2Match = zod.infer<typeof v2MatchSchema>

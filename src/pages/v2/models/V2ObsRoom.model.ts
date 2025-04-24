@@ -1,22 +1,23 @@
-import * as yup from 'yup'
+import * as zod from 'zod'
 
-export const V2ObsRoomSchema = yup.object({
-  schemaVersion: yup.string().required(),
-  orgId: yup.string().required(),
-  name: yup
-    .object({
-      display: yup.string().required(),
-    })
-    .required(),
-  activeMatchId: yup.string(),
-  activeDetailMatchRoundId: yup.string(),
-  props: yup.object({
-    isHidingHeader: yup.boolean(),
-    isHidingPlayers: yup.boolean(),
-    scoreDisplayMode: yup.string().matches(/^(score)|(point)$/),
-    activeReviewMatchRoundId: yup.string(),
-    __placeholder: yup.boolean().required(),
+export const V2ObsRoomSchema = zod.object({
+  schemaVersion: zod.string(),
+  orgId: zod.string(),
+  name: zod.object({
+    display: zod.string(),
+  }),
+  activeMatchId: zod.string().optional(),
+  activeDetailMatchRoundId: zod.string().optional(),
+  props: zod.object({
+    isHidingHeader: zod.boolean().optional(),
+    isHidingPlayers: zod.boolean().optional(),
+    scoreDisplayMode: zod
+      .string()
+      .regex(/^(score)|(point)$/)
+      .optional(),
+    activeReviewMatchRoundId: zod.string().optional(),
+    __placeholder: zod.boolean(),
   }),
 })
 
-export type V2ObsRoom = yup.InferType<typeof V2ObsRoomSchema>
+export type V2ObsRoom = zod.infer<typeof V2ObsRoomSchema>

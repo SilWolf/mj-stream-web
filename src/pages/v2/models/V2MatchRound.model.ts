@@ -1,77 +1,64 @@
-import * as yup from 'yup'
+import * as zod from 'zod'
 
-export const v2MatchRoundSchema = yup
-  .object({
-    schemaVersion: yup.string().required(),
-    matchId: yup.string().required(),
-    code: yup.string().required(),
-    initial: yup
-      .object({
-        roundCount: yup.number().required(),
-        extendedRoundCount: yup.number().required(),
-        jackpot: yup.number().required(),
-        players: yup
-          .array(
-            yup.object({
-              score: yup.number().required(),
-            })
-          )
-          .required(),
+export const v2MatchRoundSchema = zod.object({
+  schemaVersion: zod.string(),
+  matchId: zod.string(),
+  code: zod.string(),
+  initial: zod.object({
+    roundCount: zod.number(),
+    extendedRoundCount: zod.number(),
+    jackpot: zod.number(),
+    players: zod.array(
+      zod.object({
+        score: zod.number(),
       })
-      .required(),
-    progress: yup
-      .object({
-        doras: yup.array(yup.string().required()).notRequired(),
-        players: yup
-          .array(
-            yup.object({
-              waitingTiles: yup.array(yup.string().required()).notRequired(),
-              predictedYakus: yup.string(),
-              flag: yup.object({
-                isRiichied: yup.boolean(),
-                isRevealed: yup.boolean(),
-                isYellowCarded: yup.boolean(),
-                isRedCarded: yup.boolean(),
-                isRonDisallowed: yup.boolean(),
-                __placeholder: yup.boolean().required(),
-              }),
-            })
-          )
-          .required(),
+    ),
+  }),
+  progress: zod.object({
+    doras: zod.array(zod.string()).optional(),
+    players: zod.array(
+      zod.object({
+        waitingTiles: zod.array(zod.string()).optional(),
+        predictedYakus: zod.string(),
+        flag: zod.object({
+          isRiichied: zod.boolean().optional(),
+          isRevealed: zod.boolean().optional(),
+          isYellowCarded: zod.boolean().optional(),
+          isRedCarded: zod.boolean().optional(),
+          isRonDisallowed: zod.boolean().optional(),
+          __placeholder: zod.boolean(),
+        }),
       })
-      .required(),
-    result: yup
-      .object({
-        endingType: yup
-          .string()
-          .matches(/^(ron)|(tsumo)|(exhausted)|(hotfix)$/),
-        winDetail: yup
-          .object({
-            yakus: yup.string().required(),
-            condition: yup.string().required(),
-          })
-          .notRequired(),
-        players: yup
-          .array(
-            yup.object({
-              isWinner: yup.boolean(),
-              isLoser: yup.boolean(),
-              score: yup.number().required(),
-              scoreChanges: yup.array(yup.number().required()).required(),
-            })
-          )
-          .required(),
-      })
-      .notRequired(),
-    metadata: yup
-      .object({
-        createdAt: yup.string().datetime().required(),
-        createdBy: yup.string().datetime().required(),
-        updatedAt: yup.string().datetime().required(),
-        updatedBy: yup.string().datetime().required(),
-      })
-      .required(),
-  })
-  .required()
+    ),
+  }),
+  result: zod
+    .object({
+      endingType: zod
+        .string()
+        .regex(/^(ron)|(tsumo)|(exhausted)|(hotfix)$/)
+        .optional(),
+      winDetail: zod
+        .object({
+          yakus: zod.string(),
+          condition: zod.string(),
+        })
+        .partial(),
+      players: zod.array(
+        zod.object({
+          isWinner: zod.boolean().optional(),
+          isLoser: zod.boolean().optional(),
+          score: zod.number(),
+          scoreChanges: zod.array(zod.number()),
+        })
+      ),
+    })
+    .optional(),
+  metadata: zod.object({
+    createdAt: zod.string().datetime(),
+    createdBy: zod.string().datetime(),
+    updatedAt: zod.string().datetime(),
+    updatedBy: zod.string().datetime(),
+  }),
+})
 
-export type V2MatchRound = yup.InferType<typeof v2MatchRoundSchema>
+export type V2MatchRound = zod.infer<typeof v2MatchRoundSchema>

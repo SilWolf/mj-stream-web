@@ -6,6 +6,7 @@ import reportWebVitals from './reportWebVitals'
 import FirebaseDatabaseProvider from './providers/firebaseDatabase.provider'
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { toast, ToastContainer } from 'react-toastify'
 
 import IndexPage from './pages/index.page'
 import MatchDetailPage from './pages/match/[id]/index.page'
@@ -35,7 +36,6 @@ import AllNameplatesPage from './pages/nameplaces/index.page'
 import ObsRoomSceneControlPage, {
   ObsRoomScenePage,
 } from './pages/obs/[obsRoomId]/scene/index.page'
-import { toast, ToastContainer } from 'react-toastify'
 
 const V2PanelLayout = lazy(
   () => import('./pages/v2/layouts/V2PanelLayout.layout')
