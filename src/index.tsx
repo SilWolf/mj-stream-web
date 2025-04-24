@@ -35,6 +35,7 @@ import AllNameplatesPage from './pages/nameplaces/index.page'
 import ObsRoomSceneControlPage, {
   ObsRoomScenePage,
 } from './pages/obs/[obsRoomId]/scene/index.page'
+import { toast, ToastContainer } from 'react-toastify'
 
 const V2PanelLayout = lazy(
   () => import('./pages/v2/layouts/V2PanelLayout.layout')
@@ -55,6 +56,10 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
       refetchIntervalInBackground: false,
       staleTime: Infinity,
+      throwOnError(error, query) {
+        toast.error((error as Error)?.message ?? '未知錯誤')
+        return false
+      },
     },
   },
 })
@@ -162,6 +167,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         </ConfirmDialogProvider>
       </FirebaseDatabaseProvider>
     </QueryClientProvider>
+    <ToastContainer />
   </React.StrictMode>
 )
 

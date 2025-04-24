@@ -1,0 +1,1668 @@
+{
+  "id": "hkleague-4p",
+  "name": "HK-League 四麻規則",
+  "metadata": {
+    "name": {
+      "display": "HK-League 四麻規則"
+    },
+    "description": "切上滿貫、雙役滿役種視作單役滿、累計最高三倍滿、本場300點、負點續行。"
+  },
+  "data": { "playerCount": 4, "roundCount": 8, "startingPoint": 25000 },
+  "winScoring": [
+    {
+      "condition": "1h20f",
+      "name": {
+        "display": "1番20符"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 1500,
+            "perLoser": 1500,
+            "perLoserAsDealer": 1500
+          },
+          "tsumo": {
+            "perLoser": 400,
+            "perWinner": 1200,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 1000,
+            "perLoser": 1000,
+            "perLoserAsDealer": 1000
+          },
+          "tsumo": {
+            "perLoser": 200,
+            "perWinner": 800,
+            "perLoserAsDealer": 400
+          }
+        }
+      }
+    },
+    {
+      "condition": "1h25f",
+      "name": {
+        "display": "1番25符"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 1500,
+            "perLoser": 1500,
+            "perLoserAsDealer": 1500
+          },
+          "tsumo": {
+            "perLoser": 400,
+            "perWinner": 1200,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 1000,
+            "perLoser": 1000,
+            "perLoserAsDealer": 1000
+          },
+          "tsumo": {
+            "perLoser": 200,
+            "perWinner": 800,
+            "perLoserAsDealer": 400
+          }
+        }
+      }
+    },
+    {
+      "condition": "1h30f",
+      "name": {
+        "display": "1番30符"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 1500,
+            "perLoser": 1500,
+            "perLoserAsDealer": 1500
+          },
+          "tsumo": {
+            "perLoser": 500,
+            "perWinner": 1500,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 1000,
+            "perLoser": 1000,
+            "perLoserAsDealer": 1000
+          },
+          "tsumo": {
+            "perLoser": 300,
+            "perWinner": 1100,
+            "perLoserAsDealer": 500
+          }
+        }
+      }
+    },
+    {
+      "condition": "1h40f",
+      "name": {
+        "display": "1番40符"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 2000,
+            "perLoser": 2000,
+            "perLoserAsDealer": 2000
+          },
+          "tsumo": {
+            "perLoser": 700,
+            "perWinner": 2100,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 1300,
+            "perLoser": 1300,
+            "perLoserAsDealer": 1300
+          },
+          "tsumo": {
+            "perLoser": 400,
+            "perWinner": 1500,
+            "perLoserAsDealer": 700
+          }
+        }
+      }
+    },
+    {
+      "condition": "1h50f",
+      "name": {
+        "display": "1番50符"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 2400,
+            "perLoser": 2400,
+            "perLoserAsDealer": 2400
+          },
+          "tsumo": {
+            "perLoser": 800,
+            "perWinner": 2400,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 1600,
+            "perLoser": 1600,
+            "perLoserAsDealer": 1600
+          },
+          "tsumo": {
+            "perLoser": 400,
+            "perWinner": 1600,
+            "perLoserAsDealer": 800
+          }
+        }
+      }
+    },
+    {
+      "condition": "1h60f",
+      "name": {
+        "display": "1番60符"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 2900,
+            "perLoser": 2900,
+            "perLoserAsDealer": 2900
+          },
+          "tsumo": {
+            "perLoser": 1000,
+            "perWinner": 3000,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 2000,
+            "perLoser": 2000,
+            "perLoserAsDealer": 2000
+          },
+          "tsumo": {
+            "perLoser": 500,
+            "perWinner": 2000,
+            "perLoserAsDealer": 1000
+          }
+        }
+      }
+    },
+    {
+      "condition": "1h70f",
+      "name": {
+        "display": "1番70符"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 3400,
+            "perLoser": 3400,
+            "perLoserAsDealer": 3400
+          },
+          "tsumo": {
+            "perLoser": 1200,
+            "perWinner": 3600,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 2300,
+            "perLoser": 2300,
+            "perLoserAsDealer": 2300
+          },
+          "tsumo": {
+            "perLoser": 600,
+            "perWinner": 2400,
+            "perLoserAsDealer": 1200
+          }
+        }
+      }
+    },
+    {
+      "condition": "1h80f",
+      "name": {
+        "display": "1番80符"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 3900,
+            "perLoser": 3900,
+            "perLoserAsDealer": 3900
+          },
+          "tsumo": {
+            "perLoser": 1300,
+            "perWinner": 3900,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 2600,
+            "perLoser": 2600,
+            "perLoserAsDealer": 2600
+          },
+          "tsumo": {
+            "perLoser": 700,
+            "perWinner": 2700,
+            "perLoserAsDealer": 1300
+          }
+        }
+      }
+    },
+    {
+      "condition": "1h90f",
+      "name": {
+        "display": "1番90符"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 4400,
+            "perLoser": 4400,
+            "perLoserAsDealer": 4400
+          },
+          "tsumo": {
+            "perLoser": 1500,
+            "perWinner": 4500,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 2900,
+            "perLoser": 2900,
+            "perLoserAsDealer": 2900
+          },
+          "tsumo": {
+            "perLoser": 800,
+            "perWinner": 3100,
+            "perLoserAsDealer": 1500
+          }
+        }
+      }
+    },
+    {
+      "condition": "1h100f",
+      "name": {
+        "display": "1番100符"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 4800,
+            "perLoser": 4800,
+            "perLoserAsDealer": 4800
+          },
+          "tsumo": {
+            "perLoser": 1600,
+            "perWinner": 4800,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 3200,
+            "perLoser": 3200,
+            "perLoserAsDealer": 3200
+          },
+          "tsumo": {
+            "perLoser": 800,
+            "perWinner": 3200,
+            "perLoserAsDealer": 1600
+          }
+        }
+      }
+    },
+    {
+      "condition": "1h110f",
+      "name": {
+        "display": "1番110符"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 5300,
+            "perLoser": 5300,
+            "perLoserAsDealer": 5300
+          },
+          "tsumo": {
+            "perLoser": 1800,
+            "perWinner": 5400,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 3600,
+            "perLoser": 3600,
+            "perLoserAsDealer": 3600
+          },
+          "tsumo": {
+            "perLoser": 900,
+            "perWinner": 3600,
+            "perLoserAsDealer": 1800
+          }
+        }
+      }
+    },
+    {
+      "condition": "2h20f",
+      "name": {
+        "display": "2番20符"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 2100,
+            "perLoser": 2100,
+            "perLoserAsDealer": 2100
+          },
+          "tsumo": {
+            "perLoser": 700,
+            "perWinner": 2100,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 1500,
+            "perLoser": 1500,
+            "perLoserAsDealer": 1500
+          },
+          "tsumo": {
+            "perLoser": 400,
+            "perWinner": 1500,
+            "perLoserAsDealer": 700
+          }
+        }
+      }
+    },
+    {
+      "condition": "2h25f",
+      "name": {
+        "display": "2番25符"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 2400,
+            "perLoser": 2400,
+            "perLoserAsDealer": 2400
+          },
+          "tsumo": {
+            "perLoser": 800,
+            "perWinner": 2400,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 1600,
+            "perLoser": 1600,
+            "perLoserAsDealer": 1600
+          },
+          "tsumo": {
+            "perLoser": 400,
+            "perWinner": 1600,
+            "perLoserAsDealer": 800
+          }
+        }
+      }
+    },
+    {
+      "condition": "2h30f",
+      "name": {
+        "display": "2番30符"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 2900,
+            "perLoser": 2900,
+            "perLoserAsDealer": 2900
+          },
+          "tsumo": {
+            "perLoser": 1000,
+            "perWinner": 3000,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 2000,
+            "perLoser": 2000,
+            "perLoserAsDealer": 2000
+          },
+          "tsumo": {
+            "perLoser": 500,
+            "perWinner": 2000,
+            "perLoserAsDealer": 1000
+          }
+        }
+      }
+    },
+    {
+      "condition": "2h40f",
+      "name": {
+        "display": "2番40符"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 3900,
+            "perLoser": 3900,
+            "perLoserAsDealer": 3900
+          },
+          "tsumo": {
+            "perLoser": 1300,
+            "perWinner": 3900,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 2600,
+            "perLoser": 2600,
+            "perLoserAsDealer": 2600
+          },
+          "tsumo": {
+            "perLoser": 700,
+            "perWinner": 2700,
+            "perLoserAsDealer": 1300
+          }
+        }
+      }
+    },
+    {
+      "condition": "2h50f",
+      "name": {
+        "display": "2番50符"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 4800,
+            "perLoser": 4800,
+            "perLoserAsDealer": 4800
+          },
+          "tsumo": {
+            "perLoser": 1600,
+            "perWinner": 4800,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 3200,
+            "perLoser": 3200,
+            "perLoserAsDealer": 3200
+          },
+          "tsumo": {
+            "perLoser": 800,
+            "perWinner": 3200,
+            "perLoserAsDealer": 1600
+          }
+        }
+      }
+    },
+    {
+      "condition": "2h60f",
+      "name": {
+        "display": "2番60符"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 5800,
+            "perLoser": 5800,
+            "perLoserAsDealer": 5800
+          },
+          "tsumo": {
+            "perLoser": 2000,
+            "perWinner": 6000,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 3900,
+            "perLoser": 3900,
+            "perLoserAsDealer": 3900
+          },
+          "tsumo": {
+            "perLoser": 1000,
+            "perWinner": 4000,
+            "perLoserAsDealer": 2000
+          }
+        }
+      }
+    },
+    {
+      "condition": "2h70f",
+      "name": {
+        "display": "2番70符"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 6800,
+            "perLoser": 6800,
+            "perLoserAsDealer": 6800
+          },
+          "tsumo": {
+            "perLoser": 2300,
+            "perWinner": 6900,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 4500,
+            "perLoser": 4500,
+            "perLoserAsDealer": 4500
+          },
+          "tsumo": {
+            "perLoser": 1200,
+            "perWinner": 4700,
+            "perLoserAsDealer": 2300
+          }
+        }
+      }
+    },
+    {
+      "condition": "2h80f",
+      "name": {
+        "display": "2番80符"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 7700,
+            "perLoser": 7700,
+            "perLoserAsDealer": 7700
+          },
+          "tsumo": {
+            "perLoser": 2600,
+            "perWinner": 7800,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 5200,
+            "perLoser": 5200,
+            "perLoserAsDealer": 5200
+          },
+          "tsumo": {
+            "perLoser": 1300,
+            "perWinner": 5200,
+            "perLoserAsDealer": 2600
+          }
+        }
+      }
+    },
+    {
+      "condition": "2h90f",
+      "name": {
+        "display": "2番90符"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 8700,
+            "perLoser": 8700,
+            "perLoserAsDealer": 8700
+          },
+          "tsumo": {
+            "perLoser": 2900,
+            "perWinner": 8700,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 5800,
+            "perLoser": 5800,
+            "perLoserAsDealer": 5800
+          },
+          "tsumo": {
+            "perLoser": 1500,
+            "perWinner": 5900,
+            "perLoserAsDealer": 2900
+          }
+        }
+      }
+    },
+    {
+      "condition": "2h100f",
+      "name": {
+        "display": "2番100符"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 9600,
+            "perLoser": 9600,
+            "perLoserAsDealer": 9600
+          },
+          "tsumo": {
+            "perLoser": 3200,
+            "perWinner": 9600,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 6400,
+            "perLoser": 6400,
+            "perLoserAsDealer": 6400
+          },
+          "tsumo": {
+            "perLoser": 1600,
+            "perWinner": 6400,
+            "perLoserAsDealer": 3200
+          }
+        }
+      }
+    },
+    {
+      "condition": "2h110f",
+      "name": {
+        "display": "2番110符"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 10600,
+            "perLoser": 10600,
+            "perLoserAsDealer": 10600
+          },
+          "tsumo": {
+            "perLoser": 3600,
+            "perWinner": 10800,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 7100,
+            "perLoser": 7100,
+            "perLoserAsDealer": 7100
+          },
+          "tsumo": {
+            "perLoser": 1800,
+            "perWinner": 7200,
+            "perLoserAsDealer": 3600
+          }
+        }
+      }
+    },
+    {
+      "condition": "3h20f",
+      "name": {
+        "display": "3番20符"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 3900,
+            "perLoser": 3900,
+            "perLoserAsDealer": 3900
+          },
+          "tsumo": {
+            "perLoser": 1300,
+            "perWinner": 3900,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 2600,
+            "perLoser": 2600,
+            "perLoserAsDealer": 2600
+          },
+          "tsumo": {
+            "perLoser": 700,
+            "perWinner": 2700,
+            "perLoserAsDealer": 1300
+          }
+        }
+      }
+    },
+    {
+      "condition": "3h25f",
+      "name": {
+        "display": "3番25符"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 4800,
+            "perLoser": 4800,
+            "perLoserAsDealer": 4800
+          },
+          "tsumo": {
+            "perLoser": 1600,
+            "perWinner": 4800,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 3200,
+            "perLoser": 3200,
+            "perLoserAsDealer": 3200
+          },
+          "tsumo": {
+            "perLoser": 800,
+            "perWinner": 3200,
+            "perLoserAsDealer": 1600
+          }
+        }
+      }
+    },
+    {
+      "condition": "3h30f",
+      "name": {
+        "display": "3番30符"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 5800,
+            "perLoser": 5800,
+            "perLoserAsDealer": 5800
+          },
+          "tsumo": {
+            "perLoser": 2000,
+            "perWinner": 6000,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 3900,
+            "perLoser": 3900,
+            "perLoserAsDealer": 3900
+          },
+          "tsumo": {
+            "perLoser": 1000,
+            "perWinner": 4000,
+            "perLoserAsDealer": 2000
+          }
+        }
+      }
+    },
+    {
+      "condition": "3h40f",
+      "name": {
+        "display": "3番40符"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 7700,
+            "perLoser": 7700,
+            "perLoserAsDealer": 7700
+          },
+          "tsumo": {
+            "perLoser": 2600,
+            "perWinner": 7800,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 5200,
+            "perLoser": 5200,
+            "perLoserAsDealer": 5200
+          },
+          "tsumo": {
+            "perLoser": 1300,
+            "perWinner": 5200,
+            "perLoserAsDealer": 2600
+          }
+        }
+      }
+    },
+    {
+      "condition": "3h50f",
+      "name": {
+        "display": "3番50符"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 9600,
+            "perLoser": 9600,
+            "perLoserAsDealer": 9600
+          },
+          "tsumo": {
+            "perLoser": 3200,
+            "perWinner": 9600,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 6400,
+            "perLoser": 6400,
+            "perLoserAsDealer": 6400
+          },
+          "tsumo": {
+            "perLoser": 1600,
+            "perWinner": 6400,
+            "perLoserAsDealer": 3200
+          }
+        }
+      }
+    },
+    {
+      "condition": "3h60f",
+      "name": {
+        "display": "滿貫(3番60符以上)"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 12000,
+            "perLoser": 12000,
+            "perLoserAsDealer": 12000
+          },
+          "tsumo": {
+            "perLoser": 4000,
+            "perWinner": 12000,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 8000,
+            "perLoser": 8000,
+            "perLoserAsDealer": 8000
+          },
+          "tsumo": {
+            "perLoser": 2000,
+            "perWinner": 8000,
+            "perLoserAsDealer": 4000
+          }
+        }
+      }
+    },
+    {
+      "condition": "4h20f",
+      "name": {
+        "display": "4番20符"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 7700,
+            "perLoser": 7700,
+            "perLoserAsDealer": 7700
+          },
+          "tsumo": {
+            "perLoser": 2600,
+            "perWinner": 7800,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 5200,
+            "perLoser": 5200,
+            "perLoserAsDealer": 5200
+          },
+          "tsumo": {
+            "perLoser": 1300,
+            "perWinner": 5200,
+            "perLoserAsDealer": 2600
+          }
+        }
+      }
+    },
+    {
+      "condition": "4h25f",
+      "name": {
+        "display": "4番25符"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 9600,
+            "perLoser": 9600,
+            "perLoserAsDealer": 9600
+          },
+          "tsumo": {
+            "perLoser": 3200,
+            "perWinner": 9600,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 6400,
+            "perLoser": 6400,
+            "perLoserAsDealer": 6400
+          },
+          "tsumo": {
+            "perLoser": 1600,
+            "perWinner": 6400,
+            "perLoserAsDealer": 3200
+          }
+        }
+      }
+    },
+    {
+      "condition": "4h30f",
+      "name": {
+        "display": "滿貫(4番30符以上)"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 12000,
+            "perLoser": 12000,
+            "perLoserAsDealer": 12000
+          },
+          "tsumo": {
+            "perLoser": 4000,
+            "perWinner": 12000,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 8000,
+            "perLoser": 8000,
+            "perLoserAsDealer": 8000
+          },
+          "tsumo": {
+            "perLoser": 2000,
+            "perWinner": 8000,
+            "perLoserAsDealer": 4000
+          }
+        }
+      }
+    },
+    {
+      "condition": "5h",
+      "name": {
+        "display": "滿貫(5番)"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 12000,
+            "perLoser": 12000,
+            "perLoserAsDealer": 12000
+          },
+          "tsumo": {
+            "perLoser": 4000,
+            "perWinner": 12000,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 8000,
+            "perLoser": 8000,
+            "perLoserAsDealer": 8000
+          },
+          "tsumo": {
+            "perLoser": 2000,
+            "perWinner": 8000,
+            "perLoserAsDealer": 4000
+          }
+        }
+      }
+    },
+    {
+      "condition": "6h",
+      "name": {
+        "display": "跳滿(6番)"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 18000,
+            "perLoser": 18000,
+            "perLoserAsDealer": 18000
+          },
+          "tsumo": {
+            "perLoser": 6000,
+            "perWinner": 18000,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 12000,
+            "perLoser": 12000,
+            "perLoserAsDealer": 12000
+          },
+          "tsumo": {
+            "perLoser": 3000,
+            "perWinner": 12000,
+            "perLoserAsDealer": 6000
+          }
+        }
+      }
+    },
+    {
+      "condition": "7h",
+      "name": {
+        "display": "跳滿(7番)"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 18000,
+            "perLoser": 18000,
+            "perLoserAsDealer": 18000
+          },
+          "tsumo": {
+            "perLoser": 6000,
+            "perWinner": 18000,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 12000,
+            "perLoser": 12000,
+            "perLoserAsDealer": 12000
+          },
+          "tsumo": {
+            "perLoser": 3000,
+            "perWinner": 12000,
+            "perLoserAsDealer": 6000
+          }
+        }
+      }
+    },
+    {
+      "condition": "8h",
+      "name": {
+        "display": "跳滿(8番)"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 24000,
+            "perLoser": 24000,
+            "perLoserAsDealer": 24000
+          },
+          "tsumo": {
+            "perLoser": 8000,
+            "perWinner": 24000,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 16000,
+            "perLoser": 16000,
+            "perLoserAsDealer": 16000
+          },
+          "tsumo": {
+            "perLoser": 4000,
+            "perWinner": 16000,
+            "perLoserAsDealer": 8000
+          }
+        }
+      }
+    },
+    {
+      "condition": "9h",
+      "name": {
+        "display": "倍滿(9番)"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 24000,
+            "perLoser": 24000,
+            "perLoserAsDealer": 24000
+          },
+          "tsumo": {
+            "perLoser": 8000,
+            "perWinner": 24000,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 16000,
+            "perLoser": 16000,
+            "perLoserAsDealer": 16000
+          },
+          "tsumo": {
+            "perLoser": 4000,
+            "perWinner": 16000,
+            "perLoserAsDealer": 8000
+          }
+        }
+      }
+    },
+    {
+      "condition": "10h",
+      "name": {
+        "display": "倍滿(10番)"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 24000,
+            "perLoser": 24000,
+            "perLoserAsDealer": 24000
+          },
+          "tsumo": {
+            "perLoser": 8000,
+            "perWinner": 24000,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 16000,
+            "perLoser": 16000,
+            "perLoserAsDealer": 16000
+          },
+          "tsumo": {
+            "perLoser": 4000,
+            "perWinner": 16000,
+            "perLoserAsDealer": 8000
+          }
+        }
+      }
+    },
+    {
+      "condition": "11h",
+      "name": {
+        "display": "三倍滿(11番)"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 36000,
+            "perLoser": 36000,
+            "perLoserAsDealer": 36000
+          },
+          "tsumo": {
+            "perLoser": 12000,
+            "perWinner": 36000,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 24000,
+            "perLoser": 24000,
+            "perLoserAsDealer": 24000
+          },
+          "tsumo": {
+            "perLoser": 6000,
+            "perWinner": 24000,
+            "perLoserAsDealer": 12000
+          }
+        }
+      }
+    },
+    {
+      "condition": "12h",
+      "name": {
+        "display": "三倍滿(12番以上)"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 36000,
+            "perLoser": 36000,
+            "perLoserAsDealer": 36000
+          },
+          "tsumo": {
+            "perLoser": 12000,
+            "perWinner": 36000,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 24000,
+            "perLoser": 24000,
+            "perLoserAsDealer": 24000
+          },
+          "tsumo": {
+            "perLoser": 6000,
+            "perWinner": 24000,
+            "perLoserAsDealer": 12000
+          }
+        }
+      }
+    },
+    {
+      "condition": "1y",
+      "name": {
+        "display": "役滿"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 48000,
+            "perLoser": 48000,
+            "perLoserAsDealer": 48000
+          },
+          "tsumo": {
+            "perLoser": 16000,
+            "perWinner": 48000,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 32000,
+            "perLoser": 32000,
+            "perLoserAsDealer": 32000
+          },
+          "tsumo": {
+            "perLoser": 8000,
+            "perWinner": 32000,
+            "perLoserAsDealer": 16000
+          }
+        }
+      }
+    },
+    {
+      "condition": "2y",
+      "name": {
+        "display": "雙倍役滿"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 96000,
+            "perLoser": 96000,
+            "perLoserAsDealer": 96000
+          },
+          "tsumo": {
+            "perLoser": 32000,
+            "perWinner": 96000,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 64000,
+            "perLoser": 64000,
+            "perLoserAsDealer": 64000
+          },
+          "tsumo": {
+            "perLoser": 16000,
+            "perWinner": 64000,
+            "perLoserAsDealer": 32000
+          }
+        }
+      }
+    },
+    {
+      "condition": "3y",
+      "name": {
+        "display": "三倍役滿"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 144000,
+            "perLoser": 144000,
+            "perLoserAsDealer": 144000
+          },
+          "tsumo": {
+            "perLoser": 48000,
+            "perWinner": 144000,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 96000,
+            "perLoser": 96000,
+            "perLoserAsDealer": 96000
+          },
+          "tsumo": {
+            "perLoser": 24000,
+            "perWinner": 96000,
+            "perLoserAsDealer": 48000
+          }
+        }
+      }
+    },
+    {
+      "condition": "4y",
+      "name": {
+        "display": "四倍役滿"
+      },
+      "value": {
+        "dealerWin": {
+          "ron": {
+            "perWinner": 192000,
+            "perLoser": 192000,
+            "perLoserAsDealer": 192000
+          },
+          "tsumo": {
+            "perLoser": 64000,
+            "perWinner": 192000,
+            "perLoserAsDealer": 0
+          }
+        },
+        "playerWin": {
+          "ron": {
+            "perWinner": 128000,
+            "perLoser": 128000,
+            "perLoserAsDealer": 128000
+          },
+          "tsumo": {
+            "perLoser": 32000,
+            "perWinner": 128000,
+            "perLoserAsDealer": 64000
+          }
+        }
+      }
+    }
+  ],
+  "exhaustScoring": [
+    { "winnerCount": 0, "value": { "perWinner": 0, "perLoser": 0 } },
+    { "winnerCount": 1, "value": { "perWinner": 3000, "perLoser": 1000 } },
+    { "winnerCount": 2, "value": { "perWinner": 1500, "perLoser": 1500 } },
+    { "winnerCount": 3, "value": { "perWinner": 1000, "perLoser": 3000 } },
+    { "winnerCount": 4, "value": { "perWinner": 0, "perLoser": 0 } }
+  ],
+  "extendRoundScoring": {
+    "ron": { "perWinner": 300, "perLoser": 300, "perLoserAsDealer": 300 },
+    "tsumo": { "perWinner": 300, "perLoser": 100, "perLoserAsDealer": 100 }
+  },
+  "yakus": [
+    {
+      "systemName": "立直",
+      "displayName": "立直",
+      "data": { "han": 1, "hanWhenRevealed": 0 }
+    },
+    {
+      "systemName": "雙立直",
+      "displayName": "雙立直",
+      "data": { "han": 2, "hanWhenRevealed": 0 }
+    },
+    {
+      "systemName": "一發",
+      "displayName": "一發",
+      "data": { "han": 1, "hanWhenRevealed": 0 }
+    },
+    {
+      "systemName": "門前清自摸和",
+      "displayName": "門前清自摸和",
+      "data": { "han": 1, "hanWhenRevealed": 0 }
+    },
+    {
+      "systemName": "斷么九",
+      "displayName": "斷么九",
+      "data": { "han": 1, "hanWhenRevealed": 1 }
+    },
+    {
+      "systemName": "平和",
+      "displayName": "平和",
+      "data": { "han": 1, "hanWhenRevealed": 0 }
+    },
+    {
+      "systemName": "東",
+      "displayName": "東",
+      "data": { "han": 1, "hanWhenRevealed": 1 }
+    },
+
+    {
+      "systemName": "雙東",
+      "displayName": "雙東",
+      "data": { "han": 2, "hanWhenRevealed": 2 }
+    },
+
+    {
+      "systemName": "南",
+      "displayName": "南",
+      "data": { "han": 1, "hanWhenRevealed": 1 }
+    },
+    {
+      "systemName": "雙南",
+      "displayName": "雙南",
+      "data": { "han": 2, "hanWhenRevealed": 2 }
+    },
+    {
+      "systemName": "西",
+      "displayName": "西",
+      "data": { "han": 1, "hanWhenRevealed": 1 }
+    },
+    {
+      "systemName": "北",
+      "displayName": "北",
+      "data": { "han": 1, "hanWhenRevealed": 1 }
+    },
+    {
+      "systemName": "白",
+      "displayName": "白",
+      "data": { "han": 1, "hanWhenRevealed": 1 }
+    },
+    {
+      "systemName": "發",
+      "displayName": "發",
+      "data": { "han": 1, "hanWhenRevealed": 1 }
+    },
+    {
+      "systemName": "中",
+      "displayName": "中",
+      "data": { "han": 1, "hanWhenRevealed": 1 }
+    },
+    {
+      "systemName": "小三元",
+      "displayName": "小三元",
+      "data": { "han": 2, "hanWhenRevealed": 2 }
+    },
+    {
+      "systemName": "海底撈月",
+      "displayName": "海底撈月",
+      "data": { "han": 1, "hanWhenRevealed": 1 }
+    },
+    {
+      "systemName": "河底撈魚",
+      "displayName": "河底撈魚",
+      "data": { "han": 1, "hanWhenRevealed": 1 }
+    },
+    {
+      "systemName": "嶺上開花",
+      "displayName": "嶺上開花",
+      "data": { "han": 1, "hanWhenRevealed": 1 }
+    },
+    {
+      "systemName": "搶槓",
+      "displayName": "搶槓",
+      "data": { "han": 1, "hanWhenRevealed": 1 }
+    },
+    {
+      "systemName": "七對子",
+      "displayName": "七對子",
+      "data": { "han": 2, "hanWhenRevealed": 0, "fixedFu": 25 }
+    },
+    {
+      "systemName": "一盃口",
+      "displayName": "一盃口",
+      "data": { "han": 1, "hanWhenRevealed": 0 }
+    },
+    {
+      "systemName": "二盃口",
+      "displayName": "二盃口",
+      "data": { "han": 3, "hanWhenRevealed": 0 }
+    },
+    {
+      "systemName": "三色同順",
+      "displayName": "三色同順",
+      "data": { "han": 2, "hanWhenRevealed": 1 }
+    },
+    {
+      "systemName": "一氣通貫",
+      "displayName": "一氣通貫",
+      "data": { "han": 2, "hanWhenRevealed": 1 }
+    },
+    {
+      "systemName": "混一色",
+      "displayName": "混一色",
+      "data": { "han": 3, "hanWhenRevealed": 2 }
+    },
+    {
+      "systemName": "清一色",
+      "displayName": "清一色",
+      "data": { "han": 6, "hanWhenRevealed": 5 }
+    },
+    {
+      "systemName": "混全帶么九",
+      "displayName": "混全帶么九",
+      "data": { "han": 2, "hanWhenRevealed": 1 }
+    },
+    {
+      "systemName": "純全帶么九",
+      "displayName": "純全帶么九",
+      "data": { "han": 3, "hanWhenRevealed": 2 }
+    },
+    {
+      "systemName": "混老頭",
+      "displayName": "混老頭",
+      "data": { "han": 2, "hanWhenRevealed": 2 }
+    },
+    {
+      "systemName": "對對和",
+      "displayName": "對對和",
+      "data": { "han": 2, "hanWhenRevealed": 2 }
+    },
+    {
+      "systemName": "三色同刻",
+      "displayName": "三色同刻",
+      "data": { "han": 2, "hanWhenRevealed": 2 }
+    },
+    {
+      "systemName": "三暗刻",
+      "displayName": "三暗刻",
+      "data": { "han": 2, "hanWhenRevealed": 2 }
+    },
+    {
+      "systemName": "三槓子",
+      "displayName": "三槓子",
+      "data": { "han": 2, "hanWhenRevealed": 2 }
+    },
+    {
+      "systemName": "國士無雙",
+      "displayName": "國士無雙",
+      "data": { "yakuman": 1, "yakumanWhenRevealed": 0 }
+    },
+    {
+      "systemName": "國士無雙十三面(單役滿)",
+      "displayName": "國士無雙十三面",
+      "data": { "yakuman": 1, "yakumanWhenRevealed": 0 }
+    },
+    {
+      "systemName": "大三元",
+      "displayName": "大三元",
+      "data": { "yakuman": 1, "yakumanWhenRevealed": 1 }
+    },
+    {
+      "systemName": "小四喜",
+      "displayName": "小四喜",
+      "data": { "yakuman": 1, "yakumanWhenRevealed": 1 }
+    },
+    {
+      "systemName": "大四喜(單役滿)",
+      "displayName": "大四喜",
+      "data": { "yakuman": 1, "yakumanWhenRevealed": 1 }
+    },
+    {
+      "systemName": "清老頭",
+      "displayName": "清老頭",
+      "data": { "yakuman": 1, "yakumanWhenRevealed": 1 }
+    },
+    {
+      "systemName": "綠一色",
+      "displayName": "綠一色",
+      "data": { "yakuman": 1, "yakumanWhenRevealed": 1 }
+    },
+    {
+      "systemName": "字一色",
+      "displayName": "字一色",
+      "data": { "yakuman": 1, "yakumanWhenRevealed": 1 }
+    },
+    {
+      "systemName": "四暗刻",
+      "displayName": "四暗刻",
+      "data": { "yakuman": 1, "yakumanWhenRevealed": 0 }
+    },
+    {
+      "systemName": "四暗刻單騎(單役滿)",
+      "displayName": "四暗刻單騎",
+      "data": { "yakuman": 1, "yakumanWhenRevealed": 0 }
+    },
+    {
+      "systemName": "四槓子",
+      "displayName": "四槓子",
+      "data": { "yakuman": 1, "yakumanWhenRevealed": 1 }
+    },
+    {
+      "systemName": "九連寶燈",
+      "displayName": "九連寶燈",
+      "data": { "yakuman": 1, "yakumanWhenRevealed": 0 }
+    },
+    {
+      "systemName": "純正九連寶燈(單役滿)",
+      "displayName": "純正九連寶燈",
+      "data": { "yakuman": 1, "yakumanWhenRevealed": 0 }
+    },
+    {
+      "systemName": "天和",
+      "displayName": "天和",
+      "data": { "yakuman": 1, "yakumanWhenRevealed": 0 }
+    },
+    {
+      "systemName": "地和",
+      "displayName": "地和",
+      "data": { "yakuman": 1, "yakumanWhenRevealed": 0 }
+    },
+    {
+      "systemName": "人和",
+      "displayName": "人和",
+      "data": { "yakuman": 1, "yakumanWhenRevealed": 0 }
+    }
+  ],
+  "doras": [
+    {
+      "systemName": "寶牌",
+      "displayName": "寶牌"
+    },
+    {
+      "systemName": "赤寶牌",
+      "displayName": "赤寶牌"
+    },
+    {
+      "systemName": "裡寶牌",
+      "displayName": "裡寶牌"
+    }
+  ]
+}
