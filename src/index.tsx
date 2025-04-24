@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { lazy } from 'react'
 import ReactDOM from 'react-dom/client'
 import { Route, Switch } from 'wouter'
 import './index.css'
@@ -36,6 +36,12 @@ import ObsRoomSceneControlPage, {
   ObsRoomScenePage,
 } from './pages/obs/[obsRoomId]/scene/index.page'
 
+const V2PanelLayout = lazy(
+  () => import('./pages/v2/layouts/V2PanelLayout.layout')
+)
+const V2IndexPage = lazy(() => import('./pages/v2/page'))
+const V2PanelPage = lazy(() => import('./pages/v2/panel/page'))
+
 // Import the functions you need from the SDKs you need
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -59,6 +65,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <FirebaseDatabaseProvider>
         <ConfirmDialogProvider>
           <Switch>
+            {/* Pages for v1 site */}
             <Route path="/v1" component={IndexPage} />
             <Route path="/v1/match/:matchId" component={MatchDetailPage} />
             <Route path="/v1/match/:matchId/obs" component={MatchOBSPage} />
@@ -142,6 +149,15 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               path="/v1/tournament/nameplates"
               component={AllNameplatesPage}
             />
+
+            {/* Pages for v2 site */}
+            <Route path="/v2" nest>
+              <Route path="/panel" nest>
+                <V2PanelLayout>
+                  <Route path="/" component={V2PanelPage}></Route>
+                </V2PanelLayout>
+              </Route>
+            </Route>
           </Switch>
         </ConfirmDialogProvider>
       </FirebaseDatabaseProvider>

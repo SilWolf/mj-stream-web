@@ -1,4 +1,10 @@
 @import 'tailwindcss';
+@plugin "@tailwindcss/typography";
+@plugin "daisyui" {
+  themes:
+    corporate --default,
+    corporate --prefersdark;
+}
 
 @theme {
   --font-sans:
@@ -1034,7 +1040,6 @@
 }
 
 @layer components {
-
   @keyframes reach-animation-logo-kf {
     0% {
       transform: translate(-100%, -50%);

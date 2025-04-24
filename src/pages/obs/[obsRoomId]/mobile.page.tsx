@@ -205,50 +205,6 @@ const ObsControlSceneForCountdown = ({
       <p className="text-[4em] leading-[1em]">
         <ObsCountdownTimer startAt={obsInfo?.startAt} />
       </p>
-      <div className="grid grid-cols-2 gap-2 px-4">
-        <button
-          className="bg-green-400 aspect-video py-1 px-4"
-          onClick={handleClick}
-          data-value="0"
-        >
-          即將開始
-        </button>
-        <button
-          className="bg-green-400 aspect-video py-1 px-4"
-          onClick={handleClick}
-          data-value="5"
-        >
-          5分鐘
-        </button>
-        <button
-          className="bg-green-400 aspect-video py-1 px-4"
-          onClick={handleClick}
-          data-value="10"
-        >
-          10分鐘
-        </button>
-        <button
-          className="bg-green-400 aspect-video py-1 px-4"
-          onClick={handleClick}
-          data-value="15"
-        >
-          15分鐘
-        </button>
-        <button
-          className="bg-green-400 aspect-video py-1 px-4"
-          onClick={handleClick}
-          data-value="20"
-        >
-          20分鐘
-        </button>
-        <button
-          className="bg-green-400 aspect-video py-1 px-4"
-          onClick={handleClick}
-          data-value="30"
-        >
-          30分鐘
-        </button>
-      </div>
     </div>
   )
 }

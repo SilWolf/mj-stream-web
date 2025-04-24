@@ -339,7 +339,7 @@ function IndexPage() {
                 <i className="bi bi-arrow-repeat"></i> 刷新
               </MJUIButton>
             </div>
-            <table className="data-table w-full text-left">
+            <table className="table w-full">
               <thead>
                 <tr>
                   <th>對局</th>
