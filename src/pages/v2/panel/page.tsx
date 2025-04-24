@@ -1,4 +1,17 @@
+import { useEffect } from 'react'
+import {
+  apiGetTournamentById,
+  apiGetTournaments,
+} from '../services/tournament.service'
+
 export default function V2PanelPage() {
+  useEffect(() => {
+    apiGetTournaments().then((result) => console.log(result))
+    apiGetTournamentById('62e7d07d-f59f-421d-a000-2e4d28ab89db').then(
+      (result) => console.log(result)
+    )
+  }, [])
+
   return (
     <>
       <section className="container mx-6 my-4">

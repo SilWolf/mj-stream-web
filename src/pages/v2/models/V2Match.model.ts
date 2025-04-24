@@ -2,10 +2,18 @@ import * as zod from 'zod'
 
 export const v2MatchPlayerSchema = zod.object({
   name: zod.object({
-    primary: zod.string(),
-    secondary: zod.string().optional(),
-    third: zod.string().optional(),
+    official: zod.object({
+      primary: zod.string(),
+      secondary: zod.string().optional(),
+      third: zod.string().optional(),
+    }),
+    display: zod.object({
+      primary: zod.string(),
+      secondary: zod.string().optional(),
+      third: zod.string().optional(),
+    }),
   }),
+
   color: zod.object({
     primary: zod.string().regex(/^#[0-9A-F]{6}$/i, '顏色必須是 #ABCDEF 格式。'),
     secondary: zod
