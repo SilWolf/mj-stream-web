@@ -161,6 +161,7 @@ export const apiGetTournamentById = (
         ) as NonNullable<(typeof team)['ref']>
 
         return {
+          id: team.ref?._id ?? '',
           name: {
             official: {
               primary: teamFinal.name ?? '',
@@ -195,6 +196,7 @@ export const apiGetTournamentById = (
             ) as NonNullable<(typeof player)['ref']>
 
             return {
+              id: player.ref?._id ?? '',
               name: {
                 official: {
                   primary: playerFinal.name ?? '',
@@ -214,6 +216,13 @@ export const apiGetTournamentById = (
                   ? {
                       default: {
                         url: playerFinal.portraitImage,
+                      },
+                    }
+                  : undefined,
+                logo: teamFinal.squareLogoImage
+                  ? {
+                      default: {
+                        url: teamFinal.squareLogoImage,
                       },
                     }
                   : undefined,

@@ -1,6 +1,8 @@
 import * as zod from 'zod'
 
 export const v2MatchPlayerSchema = zod.object({
+  id: zod.string(),
+  teamId: zod.string().optional(),
   name: zod.object({
     official: zod.object({
       primary: zod.string(),
@@ -13,7 +15,6 @@ export const v2MatchPlayerSchema = zod.object({
       third: zod.string().optional(),
     }),
   }),
-
   color: zod.object({
     primary: zod.string().regex(/^#[0-9A-F]{6}$/i, '顏色必須是 #ABCDEF 格式。'),
     secondary: zod
@@ -47,9 +48,7 @@ export const v2MatchSchema = zod
     }),
     metadata: zod.object({
       createdAt: zod.string().datetime(),
-      createdBy: zod.string().datetime(),
       updatedAt: zod.string().datetime(),
-      updatedBy: zod.string().datetime(),
     }),
   })
   .required()

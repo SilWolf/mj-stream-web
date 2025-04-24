@@ -1,65 +1,123 @@
-import { V2Ruleset } from '../models/V2Ruleset.model'
-import { q, runQuery } from '../adapters/sanity'
+import { q, runQuery, urlFor } from '../adapters/sanity'
 import * as z from 'zod'
+import { V2Match } from '../models/V2Match.model'
+import { getLightColorOfColor } from '@/utils/string.util'
 
-// const teamInMatchFragment = q.fragmentForType<'player'>().project(sub => ({
+const playerProject = q.fragmentForType<'player'>().project((playerRef) => ({
+  _id: z.string(),
+  name: z.string().nullable(),
+  nickname: z.string().nullable(),
+  designation: z.string().nullable(),
+  introduction: z.string().nullable(),
+  portraitImage: playerRef.field('portraitImage.asset').field(
+    '_ref',
+    z
+      .string()
+      .nullable()
+      .transform((assetId) => urlFor(assetId, { width: 360, height: 500 }))
+  ),
+}))
 
-// }))
-// const playerInMatchFragment = q.fragmentForType<'player'>().project(sub)
+const teamProject = q.fragmentForType<'team'>().project((teamRef) => ({
+  _id: z.string(),
+  name: z.string().nullable(),
+  secondaryName: z.string().nullable(),
+  thirdName: z.string().nullable(),
+  preferredName: z.string().nullable(),
+  squareLogoImage: teamRef.field('squareLogoImage.asset').field(
+    '_ref',
+    z
+      .string()
+      .nullable()
+      .transform((assetId) => urlFor(assetId, { width: 500, height: 500 }))
+  ),
+  color: teamRef.field('color.hex', z.string().nullable()),
+  introduction: z.string().nullable(),
+}))
 
-// export const apiGetMatchesByTournamentId = async (tournamentId: string) => {
-//   const query = q.star.filterByType('match').order('startAt asc').slice(0, 10).project(sub => ({
-//     _id: z.string(),
-//     name: z.string().nullable(),
-//     playerEast: sub.field('playerEast').deref().project()
-//   }))
-//   return runQuery()
+export const apiQueryMatchesByTournamentId = async (tournamentId: string) => {
+  const query = q.star
+    .filterByType('match')
+    .filterRaw(`tournament._ref == "${tournamentId}"`)
+    .order('startAt asc')
+    .slice(0, 10)
+    .project((sub) => ({
+      _id: z.string(),
+      name: z.string().nullable(),
+      playerEast: sub.field('playerEast').deref().project(playerProject),
+      playerSouth: sub.field('playerSouth').deref().project(playerProject),
+      playerWest: sub.field('playerWest').deref().project(playerProject),
+      playerNorth: sub.field('playerNorth').deref().project(playerProject),
+      playerEastTeam: sub.field('playerEastTeam').deref().project(teamProject),
+      playerSouthTeam: sub
+        .field('playerSouthTeam')
+        .deref()
+        .project(teamProject),
+      playerWestTeam: sub.field('playerWestTeam').deref().project(teamProject),
+      playerNorthTeam: sub
+        .field('playerNorthTeam')
+        .deref()
+        .project(teamProject),
+      _createdAt: true,
+      _updatedAt: true,
+    }))
 
-//   const regularTeams = await getRegularTeamsWithPlayers()
-//   return client
-//     .fetch<
-//       MatchFromSanity[]
-//     >(`*[_type == "match" && !(_id in path("drafts.**")) && (status == "initialized" || status == "streaming")] | order(startAt asc)[0...10]{ _id, name, playerEast, playerSouth, playerWest, playerNorth, playerEastTeam, playerSouthTeam, playerWestTeam, playerNorthTeam, startAt, tournament->{_id, name, "logoUrl": logo.asset->url} }`)
-//     .then((matches) =>
-//       matches.map((rawMatch) => {
-//         const teamEast = regularTeams.find(
-//           ({ team }) => rawMatch.playerEastTeam?._ref === team._id
-//         )
-//         const playerEast = teamEast?.players.find(
-//           ({ _id }) => _id === rawMatch.playerEast?._ref
-//         )
-//         const teamSouth = regularTeams.find(
-//           ({ team }) => rawMatch.playerSouthTeam?._ref === team._id
-//         )
-//         const playerSouth = teamSouth?.players.find(
-//           ({ _id }) => _id === rawMatch.playerSouth?._ref
-//         )
-//         const teamWest = regularTeams.find(
-//           ({ team }) => rawMatch.playerWestTeam?._ref === team._id
-//         )
-//         const playerWest = teamWest?.players.find(
-//           ({ _id }) => _id === rawMatch.playerWest?._ref
-//         )
-//         const teamNorth = regularTeams.find(
-//           ({ team }) => rawMatch.playerNorthTeam?._ref === team._id
-//         )
-//         const playerNorth = teamNorth?.players.find(
-//           ({ _id }) => _id === rawMatch.playerNorth?._ref
-//         )
+  return runQuery(query).then((matches) => {
+    const formatPlayer = (
+      player: (typeof matches)[number]['playerEast'],
+      team: (typeof matches)[number]['playerEastTeam']
+    ) => ({
+      id: player?._id ?? '',
+      teamId: team?._id ?? '',
+      color: {
+        primary: team?.color ?? '#FFFF00',
+        secondary: getLightColorOfColor(team?.color ?? '#FFFF00'),
+      },
+      name: {
+        official: {
+          primary: player?.name ?? '',
+          secondary: player?.designation ?? '',
+          third: player?.nickname ?? '',
+        },
+        display: {
+          primary: player?.name ?? '',
+          secondary: team?.preferredName ?? '',
+          third: player?.nickname ?? '',
+        },
+      },
+      image: {
+        portrait: {
+          default: {
+            url: player?.portraitImage ?? '',
+          },
+        },
+        logo: {
+          default: {
+            url: team?.squareLogoImage ?? '',
+          },
+        },
+      },
+    })
 
-//         const match: Match = {
-//           ...rawMatch,
-//           playerEast,
-//           playerSouth,
-//           playerWest,
-//           playerNorth,
-//           playerEastTeam: teamEast?.team,
-//           playerSouthTeam: teamSouth?.team,
-//           playerWestTeam: teamWest?.team,
-//           playerNorthTeam: teamNorth?.team,
-//         }
-
-//         return match
-//       })
-//     )
-// }
+    return matches.map((match) => {
+      return {
+        schemaVersion: '2',
+        code: match._id,
+        data: {
+          name: match.name ?? '',
+          players: [
+            formatPlayer(match.playerEast, match.playerEastTeam),
+            formatPlayer(match.playerSouth, match.playerSouthTeam),
+            formatPlayer(match.playerWest, match.playerWestTeam),
+            formatPlayer(match.playerNorth, match.playerNorthTeam),
+          ],
+          rulesetRef: 'hkleague-4p',
+        },
+        metadata: {
+          createdAt: match._createdAt,
+          updatedAt: match._updatedAt,
+        },
+      } satisfies V2Match
+    })
+  })
+}

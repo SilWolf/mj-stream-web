@@ -17,3 +17,7 @@ export const mergeObject = <T extends Record<string, unknown>>(
 
   return res
 }
+
+export function theFirstNonNull(...args: unknown[]) {
+  return args.find((item) => !!item)
+}

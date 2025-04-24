@@ -1026,10 +1026,6 @@
 }
 
 @layer base {
-  a {
-    @apply text-teal-600 hover:text-teal-500 underline underline-offset-2;
-  }
-
   dialog {
     @apply w-full max-w-3xl;
   }
