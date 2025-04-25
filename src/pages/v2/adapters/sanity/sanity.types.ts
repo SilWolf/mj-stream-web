@@ -372,6 +372,8 @@ export type MatchTournament = {
     crop?: SanityImageCrop
     _type: 'image'
   }
+  rulesetId?: string
+  themeId?: string
   startingScore?: '25000' | '30000' | '35000' | '50000' | '100000'
   isManganRoundUp?: boolean
   yakuMax?: '12' | '13'

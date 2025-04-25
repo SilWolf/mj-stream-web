@@ -19,6 +19,8 @@ export const apiGetTournaments = (): Promise<V2Tournament[]> => {
           .nullable()
           .transform((assetId) => urlFor(assetId, { width: 500, height: 500 }))
       ),
+      rulesetId: z.string().nullable(),
+      themeId: z.string().nullable(),
     }))
 
   return runQuery(query).then((tournaments) =>
@@ -30,6 +32,8 @@ export const apiGetTournaments = (): Promise<V2Tournament[]> => {
           image: {
             logo: item.logoUrl ? { default: { url: item.logoUrl } } : undefined,
           },
+          rulesetId: item.rulesetId ?? 'hkleague-4p',
+          themeId: item.themeId ?? 'default',
         }) satisfies V2Tournament
     )
   )
@@ -52,6 +56,8 @@ export const apiGetTournamentById = (
           .nullable()
           .transform((assetId) => urlFor(assetId, { width: 500, height: 500 }))
       ),
+      rulesetId: z.string().nullable(),
+      themeId: z.string().nullable(),
       teams: sub.field('teams[]').project((team) => ({
         _key: z.string(),
         ref: team
@@ -75,38 +81,61 @@ export const apiGetTournamentById = (
             color: teamRef.field('color.hex', z.string().nullable()),
             introduction: z.string().nullable(),
           })),
-        overrided: team.field('overrided').project((teamOverrided) => ({
-          name: z.string().nullable(),
-          secondaryName: z.string().nullable(),
-          thirdName: z.string().nullable(),
-          preferredName: z.string().nullable(),
-          squareLogoImageUrl: teamOverrided
-            .field('squareLogoImage.asset')
-            .field(
-              '_ref',
-              z
-                .string()
-                .nullable()
-                .transform((assetId) =>
-                  urlFor(assetId, { width: 500, height: 500 })
-                )
-            ),
-          color: teamOverrided.field('color.hex', z.string().nullable()),
-          introduction: z.string().nullable(),
-        })),
+        overrided: team
+          .field('overrided')
+          .project((teamOverrided) => ({
+            name: z.string().nullable(),
+            secondaryName: z.string().nullable(),
+            thirdName: z.string().nullable(),
+            preferredName: z.string().nullable(),
+            squareLogoImageUrl: teamOverrided
+              .field('squareLogoImage.asset')
+              .field(
+                '_ref',
+                z
+                  .string()
+                  .nullable()
+                  .transform((assetId) =>
+                    urlFor(assetId, { width: 500, height: 500 })
+                  )
+              ),
+            color: teamOverrided.field('color.hex', z.string().nullable()),
+            introduction: z.string().nullable(),
+          }))
+          .nullable(true),
 
-        players: team.field('players[]').project((player) => ({
-          _key: z.string(),
-          ref: player
-            .field('ref')
-            .deref()
-            .project((playerRef) => ({
-              _id: z.string(),
+        players: team
+          .field('players[]')
+          .project((player) => ({
+            _key: z.string(),
+            ref: player
+              .field('ref')
+              .deref()
+              .project((playerRef) => ({
+                _id: z.string(),
+                name: z.string().nullable(),
+                nickname: z.string().nullable(),
+                designation: z.string().nullable(),
+                introduction: z.string().nullable(),
+                portraitImage: playerRef.field('portraitImage.asset').field(
+                  '_ref',
+                  z
+                    .string()
+                    .nullable()
+                    .transform((assetId) =>
+                      urlFor(assetId, { width: 360, height: 500 })
+                    )
+                ),
+                statistics: playerRef.raw<unknown>(
+                  `statistics[_key=="${tournamentId}"][0]`
+                ),
+              })),
+            overrided: player.field('overrided').project((playerOverrided) => ({
               name: z.string().nullable(),
               nickname: z.string().nullable(),
               designation: z.string().nullable(),
               introduction: z.string().nullable(),
-              portraitImage: playerRef.field('portraitImage.asset').field(
+              portraitImage: playerOverrided.field('portraitImage.asset').field(
                 '_ref',
                 z
                   .string()
@@ -115,26 +144,9 @@ export const apiGetTournamentById = (
                     urlFor(assetId, { width: 360, height: 500 })
                   )
               ),
-              statistics: playerRef.raw<unknown>(
-                `statistics[_key=="${tournamentId}"][0]`
-              ),
             })),
-          overrided: player.field('overrided').project((playerOverrided) => ({
-            name: z.string().nullable(),
-            nickname: z.string().nullable(),
-            designation: z.string().nullable(),
-            introduction: z.string().nullable(),
-            portraitImage: playerOverrided.field('portraitImage.asset').field(
-              '_ref',
-              z
-                .string()
-                .nullable()
-                .transform((assetId) =>
-                  urlFor(assetId, { width: 360, height: 500 })
-                )
-            ),
-          })),
-        })),
+          }))
+          .nullable(true),
 
         statistics: true,
       })),
@@ -154,6 +166,8 @@ export const apiGetTournamentById = (
           ? { default: { url: tournaments[0].logoUrl } }
           : undefined,
       },
+      rulesetId: tournaments[0].rulesetId ?? 'hkleague-4p',
+      themeId: tournaments[0].themeId ?? 'default',
       teams: (tournaments[0].teams ?? []).map((team) => {
         const teamFinal = mergeObject(
           mergeObject({}, team.ref ?? {}),

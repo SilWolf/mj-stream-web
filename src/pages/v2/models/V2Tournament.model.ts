@@ -21,6 +21,8 @@ export const v2TournamentSchema = zod.object({
       .optional(),
   }),
   teams: zod.array(v2TournamentTeamSchema).optional(),
+  rulesetId: zod.string(),
+  themeId: zod.string(),
 })
 
 export type V2TournamentTeam = zod.infer<typeof v2TournamentTeamSchema>
