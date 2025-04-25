@@ -16,7 +16,7 @@ export default function V2PanelMatchesByIdEditPage() {
   const [, navigate] = useLocation()
 
   const {
-    data: { playersMap },
+    data: { tournament, playersMap },
   } = useCurrentTournament()
 
   const { data: match } = useQuery({
@@ -195,10 +195,13 @@ export default function V2PanelMatchesByIdEditPage() {
       }
 
       await fb.push(`matchRounds`, matchRound)
-      await fb.update(`obs/1`, { matchId: match.code })
+      await fb.update(`obs/1`, {
+        matchId: match.code,
+        themeId: tournament?.themeId ?? 'default',
+      })
       navigate('/obs/match-control')
     },
-    [fb, match, navigate]
+    [fb, match, navigate, tournament?.themeId]
   )
 
   const defaultValues = useMemo(() => {

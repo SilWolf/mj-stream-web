@@ -15,7 +15,7 @@ const playerProject = q.fragmentForType<'player'>().project((playerRef) => ({
       .string()
       .nullable()
       .transform((assetId) =>
-        urlFor(assetId, { mode: 'cover', width: 360, height: 500 })
+        urlFor(assetId, { mode: 'cover', width: 720, height: 1000 })
       )
   ),
 }))

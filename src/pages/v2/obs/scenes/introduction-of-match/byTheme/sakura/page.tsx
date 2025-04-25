@@ -2,12 +2,13 @@ import {
   getLightColorOfColor,
   renderPercentage,
   renderPoint,
-  renderRanking,
 } from '@/utils/string.util'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import cns from 'classnames'
 import useDbMatchWithStatistics from '@/hooks/useDbMatchWithStatistics'
 import { Player, Team } from '@/models'
+
+import styles from './index.module.css'
 
 type Props = {
   params: { matchId: string }
@@ -24,17 +25,16 @@ type Slide =
     }
   | {
       _id: string
-      type: 'teams'
+      type: 'players'
       teamAndPlayers: { team: Team; player: Player }[]
-      subslide: 1 | 2
+      subslide: 1
     }
   | {
       _id: string
-      type: 'team'
+      type: 'player'
       team: Team
-      players: Player[]
       focusPlayer: Player
-      subslide: 1 | 2
+      subslide: 1
     }
 
 const MatchTeamPlayerDiv = ({
@@ -78,7 +78,7 @@ const MatchTeamPlayerDiv = ({
       <img
         className="relative z-10 block mx-auto w-full"
         src={
-          player.portraitImage + '?h=500&w=360&auto=format&fit=crop&crop=top'
+          player.portraitImage + '?h=1000&w=720&auto=format&fit=crop&crop=top'
         }
         alt={player.name!}
       />
@@ -89,10 +89,7 @@ const MatchTeamPlayerDiv = ({
         }}
       >
         <div>
-          <p className="text-[1.5em] leading-[1em] font-semibold">
-            {player.nickname}
-          </p>
-          <p className="text-[0.8em]">{player.name}</p>
+          <p className="text-[1.5em]">{player.name}</p>
         </div>
       </div>
     </div>
@@ -108,7 +105,7 @@ const MatchIntroductionSlide = ({
   status: number
   subslide: number
 }) => {
-  if (slide.type === 'teams') {
+  if (slide.type === 'players') {
     return (
       <div
         className="absolute px-24 inset-0 flex flex-col justify-center items-stretch"
@@ -120,7 +117,7 @@ const MatchIntroductionSlide = ({
         <div className="flex-2 grid grid-cols-4 items-center">
           {slide.teamAndPlayers.map(({ team, player }, index) => (
             <div
-              key={team._id}
+              key={player._id}
               className={cns('relative h-full overflow-hidden', {
                 'mi-teams-in': status === 0,
                 'mi-teams-out': status > 0,
@@ -141,7 +138,7 @@ const MatchIntroductionSlide = ({
                 className="absolute inset-0 -z-10"
                 style={{
                   background: `url(${
-                    team.squareLogoImage + '?w=800&h=800&auto=format'
+                    team.squareLogoImage + '?w=720&h=1000&auto=format'
                   })`,
                   backgroundRepeat: 'no-repeat',
                   backgroundPosition: 'center center',
@@ -154,15 +151,15 @@ const MatchIntroductionSlide = ({
                 })}
               >
                 <img
-                  src={team.squareLogoImage + '?w=800&h=800&auto=format'}
-                  className="aspect-square w-full"
+                  src={
+                    player.portraitImage +
+                    '?w=720&h=1000&auto=format&fit=crop&crop=top'
+                  }
+                  className="aspect-[18/25] w-full"
                   alt=""
                 />
-                <h3 className="text-[1.5em] font-semibold text-center">
-                  {team.name}
-                </h3>
-                <h3 className="text-[1em] font-semibold text-center">
-                  {team.secondaryName}
+                <h3 className="text-[1.5em] font-semibold text-center text-[#78012c]">
+                  {player.name}
                 </h3>
               </div>
               <div
@@ -175,7 +172,7 @@ const MatchIntroductionSlide = ({
                 }}
               >
                 <img
-                  src={player.portraitImage + '?w=360&h=500&auto=format'}
+                  src={player.portraitImage + '?w=720&h=1000&auto=format'}
                   className="aspect-18/25 w-full"
                   alt=""
                 />
@@ -189,7 +186,7 @@ const MatchIntroductionSlide = ({
         </div>
       </div>
     )
-  } else if (slide.type === 'team') {
+  } else if (slide.type === 'player') {
     return (
       <div
         className="absolute py-16 px-24 inset-0 flex flex-col justify-center items-stretch"
@@ -198,119 +195,46 @@ const MatchIntroductionSlide = ({
         }}
       >
         <div
-          className={cns('absolute inset-0 -z-10', {
-            'mi-team-colorBackground-in': status === 0,
-            'mi-team-colorBackground-out': status > 0,
-          })}
-          style={{
-            background: `linear-gradient(to bottom, transparent 60%, ${slide.team.color})`,
-            opacity: 0.5,
-          }}
-        ></div>
-        <div
-          className={cns('absolute inset-0 -z-10', {
-            'mi-team-logoBackground-in': status === 0,
-            'mi-team-logoBackground-out': status > 0,
-          })}
-          style={{
-            background: `url(${
-              slide.team.squareLogoImage + '?w=800&h=800&auto=format'
-            })`,
-            backgroundRepeat: 'no-repeat',
-            backgroundPosition: 'center center',
-            opacity: 0.125,
-          }}
-        ></div>
-
-        <div
-          className={cns('text-right mb-[.5em]', {
+          className={cns('flex-1 text-right mb-[.5em]', {
             'mi-team-team-in': status === 0,
             'mi-team-team-out': status > 0,
           })}
         >
           <div className="flex-1 flex gap-x-[1.5em] items-center justify-end">
             <div className="text-left space-y-[.5em]">
-              <div className="flex justify-start gap-x-[1em]">
-                <p>隊伍積分</p>
-                <p>
-                  <span className="font-numeric">
-                    {renderPoint(slide.team.statistics?.point)}
-                  </span>
-                </p>
-              </div>
-              <div className="flex justify-start gap-x-[1em]">
-                <p>隊伍排名</p>
-                <p>
-                  <span className="font-numeric">
-                    {renderRanking(slide.team.statistics?.ranking)}
-                  </span>
-                </p>
-              </div>
+              <div className="flex justify-start gap-x-[1em]"></div>
+              <div className="flex justify-start gap-x-[1em]"></div>
             </div>
-            <img
-              src={slide.team.squareLogoImage + '?w=512&h=512&auto=format'}
-              alt={slide.team.name!}
-              className="aspect-square"
-              style={{
-                width: 256,
-                height: 256,
-              }}
-            />
           </div>
 
-          <h3 className="inline-block font-semibold text-right text-[1.5em]">
-            {slide.team.name} {slide.team.secondaryName}
-          </h3>
+          <h3 className="inline-block font-semibold text-right text-[1.5em]"></h3>
         </div>
-        <div className="flex-2 relative">
+        <div className="flex-5 relative">
           <div
             className="absolute inset-0 grid grid-cols-4 items-center gap-16"
             style={{
-              opacity: status === 0 && subslide >= 0 && subslide < 1 ? 1 : 0,
-            }}
-          >
-            {slide.players.map((player, index) => (
-              <MatchTeamPlayerDiv
-                key={player._id}
-                team={slide.team}
-                player={player}
-                fadeIn={status === 0 && subslide <= 0}
-                fadeOut={status === 0 && subslide > 0}
-                delay={(subslide <= 0 ? 0 : 0) + index * 0.25}
-              />
-            ))}
-          </div>
-          <div
-            className="absolute inset-0 grid grid-cols-4 items-center gap-16"
-            style={{
-              opacity:
-                status >= 0 && status < 1 && subslide >= 1 && subslide < 2
-                  ? 1
-                  : 0,
+              opacity: status >= 0 && status < 1 ? 1 : 0,
             }}
           >
             <MatchTeamPlayerDiv
               team={slide.team}
               player={slide.focusPlayer}
-              fadeIn={status === 0 && subslide === 1}
+              fadeIn={status === 0}
               fadeOut={status > 0}
               delay={0}
             />
-            <div className="col-span-3">
+            <div className="col-span-3 text-[#78012c]">
               <div
                 className={cns({
-                  'mi-team-activePlayerStat-in': status === 0 && subslide === 1,
+                  'mi-team-activePlayerStat-in': status === 0,
                   'mi-team-activePlayerStat-out': status > 0,
                 })}
               >
-                <div className="flex justify-between mb-[1em]">
+                <div className="flex justify-between mb-[1em] text-[#78012c]">
                   <p className="text-[2em] flex items-center">
                     <span>個人總分</span>
                     <span className="font-numeric">
                       {renderPoint(slide.focusPlayer.statistics?.point)}
-                    </span>
-                    <span className="ml-4 font-numeric text-[.75em] min-w-[2.5em] text-right text-cyan-400">
-                      {slide.focusPlayer.statistics?.pointRanking ?? '-'}名
                     </span>
                   </p>
                   <p className="text-[2em]">
@@ -330,11 +254,6 @@ const MatchIntroductionSlide = ({
                           slide.focusPlayer.statistics?.nonFourthP
                         )}
                       </span>
-                      <span className="font-numeric ml-2 text-[.75em] min-w-[2.5em] text-right text-cyan-400">
-                        {' '}
-                        {slide.focusPlayer.statistics?.nonFourthPRanking ?? '-'}
-                        名
-                      </span>
                     </p>
                   </div>
                   <div className="flex justify-between">
@@ -344,12 +263,6 @@ const MatchIntroductionSlide = ({
                         {renderPercentage(
                           slide.focusPlayer.statistics?.firstAndSecondP
                         )}
-                      </span>
-                      <span className="font-numeric ml-2 text-[.75em] min-w-[2.5em] text-right text-cyan-400">
-                        {' '}
-                        {slide.focusPlayer.statistics?.firstAndSecondPRanking ??
-                          '-'}
-                        名
                       </span>
                     </p>
                   </div>
@@ -361,10 +274,6 @@ const MatchIntroductionSlide = ({
                           slide.focusPlayer.statistics?.riichiP
                         )}
                       </span>
-                      <span className="font-numeric ml-2 text-[.75em] min-w-[2.5em] text-right text-cyan-400">
-                        {' '}
-                        {slide.focusPlayer.statistics?.riichiPRanking ?? '-'}名
-                      </span>
                     </p>
                   </div>
                   <div className="flex justify-between">
@@ -373,10 +282,6 @@ const MatchIntroductionSlide = ({
                       <span className="font-numeric">
                         {renderPercentage(slide.focusPlayer.statistics?.ronP)}
                       </span>
-                      <span className="font-numeric ml-2 text-[.75em] min-w-[2.5em] text-right text-cyan-400">
-                        {' '}
-                        {slide.focusPlayer.statistics?.ronPRanking ?? '-'}名
-                      </span>
                     </p>
                   </div>
                   <div className="flex justify-between">
@@ -384,10 +289,6 @@ const MatchIntroductionSlide = ({
                     <p className="flex items-center">
                       <span className="font-numeric">
                         {renderPercentage(slide.focusPlayer.statistics?.chuckP)}
-                      </span>
-                      <span className="font-numeric ml-2 text-[.75em] min-w-[2.5em] text-right text-cyan-400">
-                        {' '}
-                        {slide.focusPlayer.statistics?.chuckPRanking ?? '-'}名
                       </span>
                     </p>
                   </div>
@@ -398,10 +299,6 @@ const MatchIntroductionSlide = ({
                         {renderPercentage(
                           slide.focusPlayer.statistics?.revealP
                         )}
-                      </span>
-                      <span className="font-numeric ml-2 text-[.75em] min-w-[2.5em] text-right text-cyan-400">
-                        {' '}
-                        {slide.focusPlayer.statistics?.revealPRanking ?? '-'}名
                       </span>
                     </p>
                   </div>
@@ -416,11 +313,6 @@ const MatchIntroductionSlide = ({
                           slide.focusPlayer.statistics?.ronPureScoreAvg
                         )}
                       </p>
-                      <p className="font-numeric text-[.75em] min-w-[2.5em] text-cyan-400 -mt-4">
-                        {slide.focusPlayer.statistics?.ronPureScoreAvgRanking ??
-                          '-'}
-                        名
-                      </p>
                     </div>
                   </div>
 
@@ -431,11 +323,6 @@ const MatchIntroductionSlide = ({
                         {renderPercentage(
                           slide.focusPlayer.statistics?.chuckPureScoreAvg
                         )}
-                      </p>
-                      <p className="font-numeric text-[.75em] min-w-[2.5em] text-cyan-400 -mt-4">
-                        {slide.focusPlayer.statistics
-                          ?.chuckPureScoreAvgRanking ?? '-'}
-                        名
                       </p>
                     </div>
                   </div>
@@ -465,10 +352,9 @@ const MatchIntroductionPage = ({
     }
 
     return [
-      { type: 'empty', _id: 'empty', subslide: 0 },
       {
-        type: 'teams',
-        _id: 'teams',
+        type: 'players',
+        _id: 'players',
         teamAndPlayers: [
           {
             team: match.playerEastTeam,
@@ -490,36 +376,32 @@ const MatchIntroductionPage = ({
         subslide: 1,
       },
       {
-        _id: 'team_playerEast',
-        type: 'team',
+        _id: 'player_playerEast',
+        type: 'player',
         team: match.playerEastTeam,
-        players: match.playerEastTeam.players,
         focusPlayer: match.playerEast,
-        subslide: 2,
+        subslide: 1,
       },
       {
-        _id: 'team_playerSouth',
-        type: 'team',
+        _id: 'player_playerSouth',
+        type: 'player',
         team: match.playerSouthTeam,
-        players: match.playerSouthTeam.players,
         focusPlayer: match.playerSouth,
-        subslide: 2,
+        subslide: 1,
       },
       {
-        _id: 'team_playerWest',
-        type: 'team',
+        _id: 'player_playerWest',
+        type: 'player',
         team: match.playerWestTeam,
-        players: match.playerWestTeam.players,
         focusPlayer: match.playerWest,
-        subslide: 2,
+        subslide: 1,
       },
       {
-        _id: 'team_playerNorth',
-        type: 'team',
+        _id: 'player_playerNorth',
+        type: 'player',
         team: match.playerNorthTeam,
-        players: match.playerNorthTeam.players,
         focusPlayer: match.playerNorth,
-        subslide: 2,
+        subslide: 1,
       },
     ]
   }, [match])
@@ -540,7 +422,7 @@ const MatchIntroductionPage = ({
 
     const activeSlide = slides[slideIndex]
     if (!activeSlide) {
-      setSlideIndex(1)
+      setSlideIndex(0)
       return
     }
 
@@ -599,10 +481,10 @@ const MatchIntroductionPage = ({
 
   return (
     <div
-      className="match-introduction absolute inset-0 text-white text-[36px] -z-50 overflow-hidden"
+      className={`absolute inset-0 text-[#ec276e] text-[36px] -z-50 overflow-hidden ${styles['match-introduction']}`}
       style={{
         background:
-          'linear-gradient(to bottom, rgb(30, 34, 59), rgb(16, 18, 33))',
+          'linear-gradient(to bottom, rgb(255, 217, 227), rgb(255, 192, 203))',
       }}
       onClick={handleClickScreen}
     >

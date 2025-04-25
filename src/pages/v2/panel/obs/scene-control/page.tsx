@@ -78,13 +78,13 @@ export default function V2PanelObsSceneControlPage() {
           <div className="overflow-hidden w-full aspect-video ring-3 ring-error mt-2">
             <iframe
               className=" w-[1920px] h-[1080px] origin-top-left scale-[.375]"
-              src="/v1/obs/1/scene"
+              src="/v2/obs/scene/view"
               frameBorder={0}
             />
           </div>
 
           <div className="text-center">
-            <a href="/v1/obs/1/scene" target="_blank">
+            <a href="/v2/obs/scene/view" target="_blank">
               打開連結 <i className="bi bi-box-arrow-up-right"></i>
             </a>
           </div>

@@ -129,8 +129,8 @@ export const apiGetTournamentById = (
                     .transform((assetId) =>
                       urlFor(assetId, {
                         mode: 'cover',
-                        width: 360,
-                        height: 500,
+                        width: 720,
+                        height: 1000,
                       })
                     )
                 ),
@@ -149,7 +149,7 @@ export const apiGetTournamentById = (
                   .string()
                   .nullable()
                   .transform((assetId) =>
-                    urlFor(assetId, { mode: 'cover', width: 360, height: 500 })
+                    urlFor(assetId, { mode: 'cover', width: 720, height: 1000 })
                   )
               ),
             })),
