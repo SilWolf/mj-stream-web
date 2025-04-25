@@ -27,9 +27,6 @@ import MJTileKeyboardDiv from '@/components/MJTileKeyboardDiv'
 import MJUIDialogV2 from '@/components/MJUI/MJUIDialogV2'
 import MJUIButton from '@/components/MJUI/MJUIButton'
 import { useFirebaseDatabaseByKey } from '@/providers/firebaseDatabase.provider'
-import { useQuery } from '@tanstack/react-query'
-import { apiGetMatchById } from '@/helpers/sanity.helper'
-import ControlNewMatch from '../ControlNewMatch'
 import PlayersListView from './components/PlayersView/PlayersListView'
 import { PlayersViewAction } from './components/PlayersView'
 import {
@@ -123,11 +120,6 @@ type Props = {
 export default function MatchControlPage({ params: { matchId } }: Props) {
   const { data: obsInfo, set: setObsInfo } =
     useFirebaseDatabaseByKey<string>('obs/1')
-
-  const { data: match } = useQuery({
-    queryKey: ['matches', matchId],
-    queryFn: ({ queryKey }) => apiGetMatchById(queryKey[1]),
-  })
 
   const {
     rtMatch,
@@ -1089,10 +1081,6 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
   const handleClickShowPlayers = useCallback(() => {
     setMatchHidePlayersDisplay(false)
   }, [setMatchHidePlayersDisplay])
-
-  if ((!rtMatch || !rtMatchCurrentRound) && match) {
-    return <ControlNewMatch match={match} />
-  }
 
   if (!rtMatch || !rtMatchCurrentRound) {
     return <div>對局讀取失敗。</div>

@@ -9,8 +9,8 @@ import {
   getIsPlayerEast,
 } from '@/helpers/mahjong.helper'
 import MJHanFuTextSpecialSpan from '@/components/MJHanFuTextSpecialSpan'
-import MJReachAnimationDiv from '@/components/MJReachAnimationDiv'
 import PlayerCard from './components/PlayerCard'
+import ReachAnimation from './components/ReachAnimation'
 
 type Props = {
   params: { matchId: string }
@@ -209,7 +209,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
         </div>
 
         {rtMatch.activeResultDetail && (
-          <div className="absolute bottom-0 left-0 right-0 px-10 pb-6 grid grid-cols-4 gap-x-8 text-white transition-opacity animate-[fadeInFromBottom_1s_ease-in-out]">
+          <div className="absolute bottom-0 left-0 right-0 px-10 pb-6 grid grid-cols-4 items-end gap-x-8 text-white transition-opacity animate-[fadeInFromBottom_1s_ease-in-out]">
             <div className="w-full">
               <PlayerCard
                 player={
@@ -222,7 +222,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
                 }
               />
             </div>
-            <div className="col-span-3 bg-black bg-opacity-50 py-6 px-8 text-[0.5em] flex items-stretch gap-x-4">
+            <div className="col-span-3 mb-5 bg-black/50 py-6 px-8 text-[0.5em] flex items-stretch gap-x-4">
               <div
                 className={`flex-1 flex flex-wrap gap-x-[0.75em] ${
                   rtMatch.activeResultDetail.yakumanCount > 0
@@ -248,7 +248,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
       </div>
 
       <div className="absolute top-0 bottom-0 left-0 right-0 pointer-events-none">
-        <MJReachAnimationDiv
+        <ReachAnimation
           active={currentRiichiPlayerIndex !== null}
           color={
             currentRiichiPlayerIndex && players[currentRiichiPlayerIndex].color

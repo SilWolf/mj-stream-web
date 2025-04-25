@@ -5,6 +5,7 @@ import { V2Match } from '@/pages/v2/models/V2Match.model'
 import { apiGetMatchById } from '@/pages/v2/services/match.service'
 import V2MatchForm from '@/pages/v2/widgets/V2MatchForm'
 import { useFirebaseDatabase } from '@/providers/firebaseDatabase.provider'
+import { getRandomId } from '@/utils/string.util'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
 import { useLocation, useParams, useSearchParams } from 'wouter'
@@ -33,8 +34,10 @@ export default function V2PanelMatchesByIdEditPage() {
         return
       }
 
+      const newMatchId = getRandomId()
+
       const newRTMatch: RealtimeMatch = {
-        code: match.code,
+        code: newMatchId,
         name: newMatch.data.name,
         remark: '',
         createdAt: new Date().toISOString(),
@@ -58,7 +61,9 @@ export default function V2PanelMatchesByIdEditPage() {
             propicUrl:
               newMatch.data.players[0].image.portrait?.default.url ?? '',
             largeLogoUrl:
-              newMatch.data.players[0].image.logo?.default.url ?? '',
+              newMatch.data.players[0].image.riichi?.default.url ??
+              newMatch.data.players[0].image.logo?.default.url ??
+              '',
           },
           '1': {
             primaryName: newMatch.data.players[1].name.display.primary,
@@ -70,7 +75,9 @@ export default function V2PanelMatchesByIdEditPage() {
             propicUrl:
               newMatch.data.players[1].image.portrait?.default.url ?? '',
             largeLogoUrl:
-              newMatch.data.players[1].image.logo?.default.url ?? '',
+              newMatch.data.players[1].image.riichi?.default.url ??
+              newMatch.data.players[1].image.logo?.default.url ??
+              '',
           },
           '2': {
             primaryName: newMatch.data.players[2].name.display.primary,
@@ -82,7 +89,9 @@ export default function V2PanelMatchesByIdEditPage() {
             propicUrl:
               newMatch.data.players[2].image.portrait?.default.url ?? '',
             largeLogoUrl:
-              newMatch.data.players[2].image.logo?.default.url ?? '',
+              newMatch.data.players[2].image.riichi?.default.url ??
+              newMatch.data.players[2].image.logo?.default.url ??
+              '',
           },
           '3': {
             primaryName: newMatch.data.players[3].name.display.primary,
@@ -94,19 +103,21 @@ export default function V2PanelMatchesByIdEditPage() {
             propicUrl:
               newMatch.data.players[3].image.portrait?.default.url ?? '',
             largeLogoUrl:
-              newMatch.data.players[3].image.logo?.default.url ?? '',
+              newMatch.data.players[3].image.riichi?.default.url ??
+              newMatch.data.players[3].image.logo?.default.url ??
+              '',
           },
         },
         activeResultDetail: null,
       }
 
-      await fb.set(`matches/${match.code}`, newRTMatch)
+      await fb.set(`matches/${newRTMatch.code}`, newRTMatch)
 
       const startingScore = 25000
 
       const matchRound: RealtimeMatchRound = {
-        matchId: match.code,
-        code: generateMatchRoundCode(match.code, 1, 0),
+        matchId: newRTMatch.code,
+        code: generateMatchRoundCode(newRTMatch.code, 1, 0),
         roundCount: 1,
         extendedRoundCount: 0,
         cumulatedThousands: 0,
@@ -196,7 +207,7 @@ export default function V2PanelMatchesByIdEditPage() {
 
       await fb.push(`matchRounds`, matchRound)
       await fb.update(`obs/1`, {
-        matchId: match.code,
+        matchId: newRTMatch.code,
         themeId: tournament?.themeId ?? 'default',
       })
       navigate('/obs/match-control')

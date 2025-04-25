@@ -139,7 +139,7 @@ export default function V2PlayerCard({
               </div>
             </div>
             <div
-              className="bg-black bg-opacity-60 rounded-sm text-[0.5em] flex gap-x-[0.2em] p-[0.1em] pl-[0.2em] pr-[0.2em] opacity-0 transition-opacity data-[has-waiting-tiles='1']:opacity-100 hide-if-changing cursor-pointer"
+              className="bg-black/50 rounded-sm text-[0.5em] flex gap-x-[0.2em] p-[0.1em] pl-[0.2em] pr-[0.2em] opacity-0 transition-opacity data-[has-waiting-tiles='1']:opacity-100 hide-if-changing cursor-pointer"
               data-has-waiting-tiles={
                 waitingTiles && waitingTiles.length > 0 ? '1' : '0'
               }

@@ -223,7 +223,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
                 }
               />
             </div>
-            <div className="col-span-3 bg-black bg-opacity-50 py-6 px-8 text-[0.5em] flex items-stretch gap-x-4">
+            <div className="col-span-3 bg-black/50 py-6 px-8 text-[0.5em] flex items-stretch gap-x-4">
               <div
                 className={`flex-1 flex flex-wrap gap-x-[0.75em] ${
                   rtMatch.activeResultDetail.yakumanCount > 0

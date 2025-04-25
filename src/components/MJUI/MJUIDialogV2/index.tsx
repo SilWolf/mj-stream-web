@@ -37,7 +37,11 @@ function MJUIDialogV2({
   }, [onClose])
 
   return (
-    <dialog ref={dialogRef} onClose={handleDialogClose}>
+    <dialog
+      className="mx-auto my-8"
+      ref={dialogRef}
+      onClose={handleDialogClose}
+    >
       <div className="p-6">
         <div className="flex mb-4">
           <div className="flex-1 items-center font-bold text-lg">{title}</div>

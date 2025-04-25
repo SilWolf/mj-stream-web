@@ -106,7 +106,7 @@ function MJTileKeyboardDiv({
                   className={`${
                     selectedTileKeys.indexOf(tileKey) !== -1
                       ? 'bg-blue-400'
-                      : 'bg-black bg-opacity-20'
+                      : 'bg-black/20'
                   } rounded p-1 lg:p-2`}
                 >
                   <MJTileDiv>{tileKey}</MJTileDiv>
