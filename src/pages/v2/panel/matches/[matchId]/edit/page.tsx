@@ -34,11 +34,12 @@ export default function V2PanelMatchesByIdEditPage() {
         return
       }
 
-      const newMatchId = getRandomId()
+      const newMatchCode = getRandomId()
 
       const newRTMatch: RealtimeMatch = {
-        code: newMatchId,
+        code: newMatchCode,
         name: newMatch.data.name,
+        databaseId: matchId,
         remark: '',
         createdAt: new Date().toISOString(),
         createdBy: 'Dicky',
@@ -212,7 +213,7 @@ export default function V2PanelMatchesByIdEditPage() {
       })
       navigate('/obs/match-control')
     },
-    [fb, match, navigate, tournament?.themeId]
+    [fb, match, matchId, navigate, tournament?.themeId]
   )
 
   const defaultValues = useMemo(() => {

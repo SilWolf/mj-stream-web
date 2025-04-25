@@ -1,14 +1,11 @@
-import {
-  getLightColorOfColor,
-  renderPercentage,
-  renderPoint,
-} from '@/utils/string.util'
+import { renderPercentage, renderPoint } from '@/utils/string.util'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import cns from 'classnames'
 import useDbMatchWithStatistics from '@/hooks/useDbMatchWithStatistics'
 import { Match, Player, Team } from '@/models'
 
 import styles from './index.module.css'
+import useRealtimeMatch from '@/hooks/useRealtimeMatch'
 
 type Props = {
   params: { matchId: string }
@@ -339,7 +336,8 @@ const MatchIntroductionPage = ({
   resetFlag,
   disableClick,
 }: Props) => {
-  const { data: match } = useDbMatchWithStatistics(matchId)
+  const { rtMatch } = useRealtimeMatch(matchId)
+  const { data: match } = useDbMatchWithStatistics(rtMatch?.databaseId)
 
   const slides = useMemo<Slide[]>(() => {
     if (!match) {

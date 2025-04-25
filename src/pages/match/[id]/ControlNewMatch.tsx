@@ -49,6 +49,7 @@ const ControlNewMatch = ({ match }: Props) => {
     const newMatch: RealtimeMatch = {
       code: match._id,
       name: match.name,
+      databaseId: match._id,
       remark: '',
       createdAt: new Date().toISOString(),
       createdBy: 'Dicky',

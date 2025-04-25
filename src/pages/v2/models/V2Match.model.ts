@@ -68,6 +68,7 @@ export const v2MatchSchema = zod
     metadata: zod.object({
       createdAt: zod.string().datetime(),
       updatedAt: zod.string().datetime(),
+      databaseId: zod.string().optional(),
     }),
   })
   .required()

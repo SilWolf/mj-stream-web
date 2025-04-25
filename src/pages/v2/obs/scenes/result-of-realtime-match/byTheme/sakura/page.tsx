@@ -410,8 +410,8 @@ const MatchSummaryPage = ({
   resetFlag,
   disableClick,
 }: Props) => {
-  const { data: match } = useDbMatch(matchId)
   const { rtMatch, rtMatchRounds } = useRealtimeMatch(matchId)
+  const { data: match } = useDbMatch(rtMatch?.databaseId)
 
   const slides = useMemo<Slide[]>(() => {
     if (!rtMatch || !rtMatchRounds) {
