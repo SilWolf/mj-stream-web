@@ -27,6 +27,26 @@ export const v2MatchPlayerSchema = zod.object({
         default: zod.object({ url: zod.string().url('玩家圖片必須是URL。') }),
       })
       .optional(),
+    portraitAlt: zod
+      .object({
+        default: zod.object({ url: zod.string().url('玩家圖片必須是URL。') }),
+      })
+      .optional(),
+    fullBody: zod
+      .object({
+        default: zod.object({ url: zod.string().url('玩家圖片必須是URL。') }),
+      })
+      .optional(),
+    fullBodyAlt: zod
+      .object({
+        default: zod.object({ url: zod.string().url('玩家圖片必須是URL。') }),
+      })
+      .optional(),
+    riichi: zod
+      .object({
+        default: zod.object({ url: zod.string().url('玩家圖片必須是URL。') }),
+      })
+      .optional(),
     logo: zod
       .object({
         default: zod.object({ url: zod.string().url('玩家圖片必須是URL。') }),

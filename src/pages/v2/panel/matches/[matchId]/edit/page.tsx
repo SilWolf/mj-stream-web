@@ -225,6 +225,8 @@ export default function V2PanelMatchesByIdEditPage() {
         colorSecondary: player.color.secondary ?? player.color.primary,
         imagePortraitUrl: player.image.portrait?.default.url,
         imageLogoUrl: player.image.logo?.default.url,
+        imageRiichiUrl:
+          player.image.riichi?.default.url ?? player.image.logo?.default.url,
       })),
     }
   }, [match, playersMap])

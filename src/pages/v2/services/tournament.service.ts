@@ -134,6 +134,54 @@ export const apiGetTournamentById = (
                       })
                     )
                 ),
+                portraitAltImage: playerRef
+                  .field('portraitAltImage.asset')
+                  .field(
+                    '_ref',
+                    z
+                      .string()
+                      .nullable()
+                      .transform((assetId) =>
+                        urlFor(assetId, {
+                          mode: 'cover',
+                          width: 720,
+                          height: 1000,
+                        })
+                      )
+                  ),
+                fullBodyImage: playerRef.field('fullBodyImage.asset').field(
+                  '_ref',
+                  z
+                    .string()
+                    .nullable()
+                    .transform((assetId) =>
+                      urlFor(assetId, { mode: 'contain', height: 1200 })
+                    )
+                ),
+                fullBodyAltImage: playerRef
+                  .field('fullBodyAltImage.asset')
+                  .field(
+                    '_ref',
+                    z
+                      .string()
+                      .nullable()
+                      .transform((assetId) =>
+                        urlFor(assetId, { mode: 'contain', height: 1200 })
+                      )
+                  ),
+                riichiImage: playerRef.field('riichiImage.asset').field(
+                  '_ref',
+                  z
+                    .string()
+                    .nullable()
+                    .transform((assetId) =>
+                      urlFor(assetId, {
+                        mode: 'cover',
+                        width: 800,
+                        height: 800,
+                      })
+                    )
+                ),
                 statistics: playerRef.raw<unknown>(
                   `statistics[_key=="${tournamentId}"][0]`
                 ),
@@ -150,6 +198,50 @@ export const apiGetTournamentById = (
                   .nullable()
                   .transform((assetId) =>
                     urlFor(assetId, { mode: 'cover', width: 720, height: 1000 })
+                  )
+              ),
+              portraitAltImage: playerOverrided
+                .field('portraitAltImage.asset')
+                .field(
+                  '_ref',
+                  z
+                    .string()
+                    .nullable()
+                    .transform((assetId) =>
+                      urlFor(assetId, {
+                        mode: 'cover',
+                        width: 720,
+                        height: 1000,
+                      })
+                    )
+                ),
+              fullBodyImage: playerOverrided.field('fullBodyImage.asset').field(
+                '_ref',
+                z
+                  .string()
+                  .nullable()
+                  .transform((assetId) =>
+                    urlFor(assetId, { mode: 'contain', height: 1200 })
+                  )
+              ),
+              fullBodyAltImage: playerOverrided
+                .field('fullBodyAltImage.asset')
+                .field(
+                  '_ref',
+                  z
+                    .string()
+                    .nullable()
+                    .transform((assetId) =>
+                      urlFor(assetId, { mode: 'contain', height: 1200 })
+                    )
+                ),
+              riichiImage: playerOverrided.field('riichiImage.asset').field(
+                '_ref',
+                z
+                  .string()
+                  .nullable()
+                  .transform((assetId) =>
+                    urlFor(assetId, { mode: 'cover', width: 800, height: 800 })
                   )
               ),
             })),
@@ -238,6 +330,34 @@ export const apiGetTournamentById = (
                   ? {
                       default: {
                         url: playerFinal.portraitImage,
+                      },
+                    }
+                  : undefined,
+                portraitAlt: playerFinal.portraitAltImage
+                  ? {
+                      default: {
+                        url: playerFinal.portraitAltImage,
+                      },
+                    }
+                  : undefined,
+                fullBody: playerFinal.fullBodyImage
+                  ? {
+                      default: {
+                        url: playerFinal.fullBodyImage,
+                      },
+                    }
+                  : undefined,
+                fullBodyAlt: playerFinal.fullBodyAltImage
+                  ? {
+                      default: {
+                        url: playerFinal.fullBodyAltImage,
+                      },
+                    }
+                  : undefined,
+                riichi: playerFinal.riichiImage
+                  ? {
+                      default: {
+                        url: playerFinal.riichiImage,
                       },
                     }
                   : undefined,

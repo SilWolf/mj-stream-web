@@ -18,6 +18,42 @@ const playerProject = q.fragmentForType<'player'>().project((playerRef) => ({
         urlFor(assetId, { mode: 'cover', width: 720, height: 1000 })
       )
   ),
+  portraitAltImage: playerRef.field('portraitAltImage.asset').field(
+    '_ref',
+    z
+      .string()
+      .nullable()
+      .transform((assetId) =>
+        urlFor(assetId, { mode: 'cover', width: 720, height: 1000 })
+      )
+  ),
+  fullBodyImage: playerRef.field('fullBodyImage.asset').field(
+    '_ref',
+    z
+      .string()
+      .nullable()
+      .transform((assetId) =>
+        urlFor(assetId, { mode: 'contain', height: 1200 })
+      )
+  ),
+  fullBodyAltImage: playerRef.field('fullBodyAltImage.asset').field(
+    '_ref',
+    z
+      .string()
+      .nullable()
+      .transform((assetId) =>
+        urlFor(assetId, { mode: 'contain', height: 1200 })
+      )
+  ),
+  riichiImage: playerRef.field('riichiImage.asset').field(
+    '_ref',
+    z
+      .string()
+      .nullable()
+      .transform((assetId) =>
+        urlFor(assetId, { mode: 'cover', width: 800, height: 800 })
+      )
+  ),
 }))
 
 const teamProject = q.fragmentForType<'team'>().project((teamRef) => ({
@@ -88,11 +124,41 @@ export const apiQueryMatchesByTournamentId = async (tournamentId: string) => {
         },
       },
       image: {
-        portrait: {
-          default: {
-            url: player?.portraitImage ?? '',
-          },
-        },
+        portrait: player?.portraitImage
+          ? {
+              default: {
+                url: player?.portraitImage,
+              },
+            }
+          : undefined,
+        portraitAlt: player?.portraitAltImage
+          ? {
+              default: {
+                url: player?.portraitAltImage,
+              },
+            }
+          : undefined,
+        fullBody: player?.fullBodyImage
+          ? {
+              default: {
+                url: player?.fullBodyImage,
+              },
+            }
+          : undefined,
+        fullBodyAlt: player?.fullBodyAltImage
+          ? {
+              default: {
+                url: player?.fullBodyAltImage,
+              },
+            }
+          : undefined,
+        riichi: player?.riichiImage
+          ? {
+              default: {
+                url: player?.riichiImage,
+              },
+            }
+          : undefined,
         logo: {
           default: {
             url: team?.squareLogoImage ?? '',

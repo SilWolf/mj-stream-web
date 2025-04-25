@@ -30,6 +30,8 @@ const formSchema = zod.object({
         .string()
         .url('隊伍圖片／立直圖片必須是URL。')
         .optional(),
+      imagePortraitAltUrl: zod.string().url('玩家圖片必須是URL。').optional(),
+      imageRiichiUrl: zod.string().url('玩家圖片必須是URL。').optional(),
     })
   ),
 })
@@ -128,6 +130,20 @@ export default function V2MatchForm({
                   ? {
                       default: {
                         url: player.imagePortraitUrl,
+                      },
+                    }
+                  : undefined,
+                portraitAlt: player.imagePortraitAltUrl
+                  ? {
+                      default: {
+                        url: player.imagePortraitAltUrl,
+                      },
+                    }
+                  : undefined,
+                riichi: player.imageRiichiUrl
+                  ? {
+                      default: {
+                        url: player.imageRiichiUrl,
                       },
                     }
                   : undefined,
@@ -296,7 +312,7 @@ export default function V2MatchForm({
                   }
                 </p>
 
-                <label className="fieldset-label">隊伍圖片／立直圖片</label>
+                <label className="fieldset-label">隊伍圖片</label>
                 <input
                   type="text"
                   className="input w-full"
@@ -306,6 +322,20 @@ export default function V2MatchForm({
                 <p className="fieldset-label text-error">
                   {
                     formState.errors['players']?.[index]?.['imageLogoUrl']
+                      ?.message
+                  }
+                </p>
+
+                <label className="fieldset-label">立直圖片</label>
+                <input
+                  type="text"
+                  className="input w-full"
+                  placeholder="https://....png"
+                  {...register(`players.${index}.imageRiichiUrl`)}
+                />
+                <p className="fieldset-label text-error">
+                  {
+                    formState.errors['players']?.[index]?.['imageRiichiUrl']
                       ?.message
                   }
                 </p>
@@ -349,7 +379,7 @@ export default function V2MatchForm({
                     <div>
                       <img
                         className="w-full aspect-square"
-                        src={watchedPlayers[index].imageLogoUrl}
+                        src={watchedPlayers[index].imageRiichiUrl}
                         alt=""
                       />
                     </div>
