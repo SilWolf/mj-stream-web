@@ -8,9 +8,9 @@ import {
   convertScoresToPointsAndRankings,
   getIsPlayerEast,
 } from '@/helpers/mahjong.helper'
-import MJPlayerCardDiv from '@/components/MJPlayerCardDiv'
 import MJHanFuTextSpecialSpan from '@/components/MJHanFuTextSpecialSpan'
 import MJReachAnimationDiv from '@/components/MJReachAnimationDiv'
+import PlayerCard from './components/PlayerCard'
 
 type Props = {
   params: { matchId: string }
@@ -94,7 +94,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
     <>
       <div
         className={
-          'absolute inset-0 mx-auto py-8 overflow-hidden text-[4.8rem] transition-opacity'
+          'absolute -z-10 inset-0 mx-auto py-8 overflow-hidden text-[4.8rem] transition-opacity'
         }
         style={{
           background:
@@ -113,8 +113,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
             }}
           >
             <div className="">
-              <div className="text-[0.5em]">{rtMatch.name}</div>
-              <div className="flex gap-x-8 items-center">
+              <div className="flex gap-x-2 items-center h-[2em]">
                 <div className="min-w-[3.5em]">
                   <MJMatchCounterSpan
                     roundCount={rtMatchCurrentRound.roundCount}
@@ -161,7 +160,9 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
               ))}
             </div>
           </div>
-          <div className="flex-1" />
+          <div className="flex-1 flex items-start justify-end text-black pr-10 self-start">
+            <span className="text-[.35em]">{rtMatch.name}</span>
+          </div>
         </div>
 
         <div className="flex items-center justify-center mt-20">
@@ -180,10 +181,9 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
           }}
         >
           {players.map((player) => (
-            <div className="w-[5.35em]" key={player.primaryName}>
-              <MJPlayerCardDiv
+            <div className="w-full" key={player.primaryName}>
+              <PlayerCard
                 player={player}
-                playerIndex={'0'}
                 score={player.currentStatus.afterScore}
                 scoreChanges={player.currentStatus.scoreChanges}
                 isEast={player.currentStatus.isEast}
@@ -210,12 +210,11 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
 
         {rtMatch.activeResultDetail && (
           <div className="absolute bottom-0 left-0 right-0 px-10 pb-6 grid grid-cols-4 gap-x-8 text-white transition-opacity animate-[fadeInFromBottom_1s_ease-in-out]">
-            <div className="w-[5.35em]">
-              <MJPlayerCardDiv
+            <div className="w-full">
+              <PlayerCard
                 player={
                   rtMatch.players[rtMatch.activeResultDetail.winnerPlayerIndex]
                 }
-                playerIndex="0"
                 score={
                   rtMatchCurrentRound.playerResults[
                     rtMatch.activeResultDetail.winnerPlayerIndex

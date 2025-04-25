@@ -1,0 +1,64 @@
+@keyframes riichi-sakura {
+  0% {
+    transform: translateX(1em);
+    opacity: 0;
+  }
+  15% {
+    transform: translateX(0.7em);
+    opacity: 1;
+  }
+  85% {
+    transform: translateX(-0.7em);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-1em);
+    opacity: 0;
+  }
+}
+
+@keyframes riichi-sakura-single {
+  0% {
+    transform: translateX(1em) rotate(0);
+    opacity: 0;
+  }
+  15% {
+    transform: translateX(0.7em) rotate(0.06turn);
+    opacity: 0.5;
+  }
+  85% {
+    transform: translateX(-0.7em) rotate(0.34turn);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateX(-1em) rotate(0.4turn);
+    opacity: 0;
+  }
+}
+
+.riichi-sakura {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+}
+
+.riichi-sakura > :global(img.riichi-sakura-large) {
+  position: absolute;
+  top: 0;
+  right: 0;
+  animation-name: riichi-sakura;
+  animation-duration: 10s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+.riichi-sakura > :global(img.riichi-sakura-single) {
+  position: absolute;
+  animation-name: riichi-sakura-single;
+  animation-duration: 10s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}

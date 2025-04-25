@@ -376,7 +376,12 @@ export default function V2MatchForm({
                         }}
                       />
                     </div>
-                    <div>
+                    <div className="grid grid-cols-2">
+                      <img
+                        className="w-full aspect-square"
+                        src={watchedPlayers[index].imageLogoUrl}
+                        alt=""
+                      />
                       <img
                         className="w-full aspect-square"
                         src={watchedPlayers[index].imageRiichiUrl}
