@@ -42,6 +42,10 @@ const V2PanelLayout = lazy(
 )
 const V2IndexPage = lazy(() => import('./pages/v2/page'))
 const V2PanelPage = lazy(() => import('./pages/v2/panel/page'))
+const V2PanelMatchesByIdEditPage = lazy(
+  () => import('./pages/v2/panel/matches/[matchId]/edit/page')
+)
+
 const V2PanelObsMatchControlPage = lazy(
   () => import('./pages/v2/panel/obs/match-control/page')
 )
@@ -169,6 +173,10 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               <Route path="/panel" nest>
                 <V2PanelLayout>
                   <Route path="/" component={V2PanelPage} />
+                  <Route
+                    path="/matches/:matchId/edit"
+                    component={V2PanelMatchesByIdEditPage}
+                  />
                   <Route
                     path="/obs/match-control"
                     component={V2PanelObsMatchControlPage}

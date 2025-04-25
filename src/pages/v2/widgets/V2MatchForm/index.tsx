@@ -22,7 +22,14 @@ const formSchema = zod.object({
       colorPrimary: zod
         .string({ required_error: '玩家必須有主要顏色' })
         .regex(/^#[0-9A-F]{6}$/i, '顏色必須是 #ABCDEF 格式。'),
+      colorSecondary: zod
+        .string({ required_error: '玩家必須有次要顏色' })
+        .regex(/^#[0-9A-F]{6}$/i, '顏色必須是 #ABCDEF 格式。'),
       imagePortraitUrl: zod.string().url('玩家圖片必須是URL。').optional(),
+      imageLogoUrl: zod
+        .string()
+        .url('隊伍圖片／立直圖片必須是URL。')
+        .optional(),
     })
   ),
 })
@@ -32,11 +39,13 @@ type FormProps = zod.infer<typeof formSchema>
 export default function V2MatchForm({
   onSubmit,
   defaultValues,
+  autoSubmit,
 }: {
   onSubmit: (newMatch: V2Match) => void
   defaultValues?: FormProps | undefined
+  autoSubmit?: boolean
 }) {
-  const { data: rulesets } = useAllRulesets()
+  const { data: rulesets = [] } = useAllRulesets()
 
   const {
     control,
@@ -97,13 +106,22 @@ export default function V2MatchForm({
             name: values.name,
             remark: '',
             players: values.players.map((player) => ({
+              id: '',
               name: {
-                primary: player.namePrimary,
-                secondary: player.nameSecondary,
-                third: player.nameThird,
+                display: {
+                  primary: player.namePrimary,
+                  secondary: player.nameSecondary,
+                  third: player.nameThird,
+                },
+                official: {
+                  primary: player.namePrimary,
+                  secondary: player.nameSecondary,
+                  third: player.nameThird,
+                },
               },
               color: {
                 primary: player.colorPrimary,
+                secondary: player.colorSecondary,
               },
               image: {
                 portrait: player.imagePortraitUrl
@@ -119,9 +137,7 @@ export default function V2MatchForm({
           },
           metadata: {
             createdAt: new Date().toISOString(),
-            createdBy: 'System',
             updatedAt: new Date().toISOString(),
-            updatedBy: 'System',
           },
         } satisfies V2Match)
       }),
@@ -137,6 +153,17 @@ export default function V2MatchForm({
       reset(defaultValues)
     }
   }, [defaultValues, reset])
+
+  useEffect(() => {
+    if (autoSubmit && handleSubmit) {
+      handleSubmit()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [handleSubmit])
+
+  if (rulesets.length === 0) {
+    return <div>讀取中…</div>
+  }
 
   return (
     <form onSubmit={handleSubmit}>
@@ -236,6 +263,25 @@ export default function V2MatchForm({
                   }
                 </p>
 
+                <label className="fieldset-label">次顏色</label>
+                <Controller
+                  control={control}
+                  name={`players.${index}.colorSecondary`}
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <InputColor
+                      onChange={onChange} // send value to hook form
+                      onBlur={onBlur} // notify when input is touched/blur
+                      value={value}
+                    />
+                  )}
+                />
+                <p className="fieldset-label text-error">
+                  {
+                    formState.errors['players']?.[index]?.['colorSecondary']
+                      ?.message
+                  }
+                </p>
+
                 <label className="fieldset-label">圖片</label>
                 <input
                   type="text"
@@ -250,31 +296,63 @@ export default function V2MatchForm({
                   }
                 </p>
 
+                <label className="fieldset-label">隊伍圖片／立直圖片</label>
+                <input
+                  type="text"
+                  className="input w-full"
+                  placeholder="https://....png"
+                  {...register(`players.${index}.imageLogoUrl`)}
+                />
+                <p className="fieldset-label text-error">
+                  {
+                    formState.errors['players']?.[index]?.['imageLogoUrl']
+                      ?.message
+                  }
+                </p>
+
                 <div className="divider"></div>
 
                 <label className="fieldset-label">預覽</label>
                 {watchedPlayers?.[index] && (
-                  <div key={index} className="w-full text-[48px]">
-                    <V2PlayerCard
-                      score={watchedRuleset?.data.startingPoint ?? 0}
-                      player={{
-                        name: {
-                          primary: watchedPlayers[index].namePrimary!,
-                          secondary: watchedPlayers[index].nameSecondary!,
-                          third: watchedPlayers[index].nameThird!,
-                        },
-                        color: {
-                          primary: watchedPlayers[index].colorPrimary!,
-                        },
-                        image: {
-                          portrait: {
-                            default: {
-                              url: watchedPlayers[index].imagePortraitUrl!,
+                  <div>
+                    <div key={index} className="w-full text-[48px]">
+                      <V2PlayerCard
+                        score={watchedRuleset?.data.startingPoint ?? 0}
+                        player={{
+                          id: '',
+                          name: {
+                            official: {
+                              primary: watchedPlayers[index].namePrimary!,
+                              secondary: watchedPlayers[index].nameSecondary!,
+                              third: watchedPlayers[index].nameThird!,
+                            },
+                            display: {
+                              primary: watchedPlayers[index].namePrimary!,
+                              secondary: watchedPlayers[index].nameSecondary!,
+                              third: watchedPlayers[index].nameThird!,
                             },
                           },
-                        },
-                      }}
-                    />
+                          color: {
+                            primary: watchedPlayers[index].colorPrimary!,
+                            secondary: watchedPlayers[index].colorSecondary!,
+                          },
+                          image: {
+                            portrait: {
+                              default: {
+                                url: watchedPlayers[index].imagePortraitUrl!,
+                              },
+                            },
+                          },
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <img
+                        className="w-full aspect-square"
+                        src={watchedPlayers[index].imageLogoUrl}
+                        alt=""
+                      />
+                    </div>
                   </div>
                 )}
 

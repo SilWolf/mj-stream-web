@@ -71,7 +71,7 @@ export default function V2PanelLayout({ children }: PropsWithChildren) {
             <ul className="menu bg-base-100 text-base-content min-h-full p-4 w-full">
               {/* Sidebar content here */}
               <li>
-                <a>賽事</a>
+                <Link href="/">賽事</Link>
               </li>
               <li>
                 <a>隊伍／選手</a>

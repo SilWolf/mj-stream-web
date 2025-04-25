@@ -67,13 +67,7 @@ export default function V2PanelObsSceneControlPage() {
   }
 
   return (
-    <main>
-      <a
-        href="/obs/1/control"
-        className="block text-center py-4 bg-neutral-300"
-      >
-        切換到入分控制台 <i className="bi bi-arrow-right-circle-fill"></i>
-      </a>
+    <>
       <div className="py-8 container px-6 max-w-(--breakpoint-md) mx-auto space-y-6">
         <div>
           <p className="font-bold text-red-600">
@@ -131,6 +125,6 @@ export default function V2PanelObsSceneControlPage() {
           </div>
         </div>
       </div>
-    </main>
+    </>
   )
 }

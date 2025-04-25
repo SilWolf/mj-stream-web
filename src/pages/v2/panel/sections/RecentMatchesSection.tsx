@@ -3,6 +3,7 @@ import useCurrentTournament from '../../hooks/useCurrentTournament'
 import { useState } from 'react'
 import { apiQueryMatchesByTournamentId } from '../../services/match.service'
 import { V2MatchPlayer } from '../../models/V2Match.model'
+import { Link } from 'wouter'
 
 function PlayerMiniCard({ player }: { player: V2MatchPlayer }) {
   return (
@@ -97,7 +98,14 @@ export default function RecentMatchesSection() {
                   }
                 />
               </td>
-              <td></td>
+              <td>
+                <Link
+                  href={`/matches/${match.code}/edit?autoSubmit`}
+                  className="text-success"
+                >
+                  導入至直播系統
+                </Link>
+              </td>
             </tr>
           ))}
         </tbody>

@@ -17,7 +17,9 @@ export const apiGetTournaments = (): Promise<V2Tournament[]> => {
         z
           .string()
           .nullable()
-          .transform((assetId) => urlFor(assetId, { width: 500, height: 500 }))
+          .transform((assetId) =>
+            urlFor(assetId, { width: 1000, height: 1000 })
+          )
       ),
       rulesetId: z.string().nullable(),
       themeId: z.string().nullable(),
@@ -54,7 +56,9 @@ export const apiGetTournamentById = (
         z
           .string()
           .nullable()
-          .transform((assetId) => urlFor(assetId, { width: 500, height: 500 }))
+          .transform((assetId) =>
+            urlFor(assetId, { width: 1000, height: 1000 })
+          )
       ),
       rulesetId: z.string().nullable(),
       themeId: z.string().nullable(),
@@ -75,7 +79,7 @@ export const apiGetTournamentById = (
                 .string()
                 .nullable()
                 .transform((assetId) =>
-                  urlFor(assetId, { width: 500, height: 500 })
+                  urlFor(assetId, { width: 1000, height: 1000 })
                 )
             ),
             color: teamRef.field('color.hex', z.string().nullable()),
@@ -96,7 +100,7 @@ export const apiGetTournamentById = (
                   .string()
                   .nullable()
                   .transform((assetId) =>
-                    urlFor(assetId, { width: 500, height: 500 })
+                    urlFor(assetId, { width: 1000, height: 1000 })
                   )
               ),
             color: teamOverrided.field('color.hex', z.string().nullable()),
@@ -123,7 +127,11 @@ export const apiGetTournamentById = (
                     .string()
                     .nullable()
                     .transform((assetId) =>
-                      urlFor(assetId, { width: 360, height: 500 })
+                      urlFor(assetId, {
+                        mode: 'cover',
+                        width: 360,
+                        height: 500,
+                      })
                     )
                 ),
                 statistics: playerRef.raw<unknown>(
@@ -141,7 +149,7 @@ export const apiGetTournamentById = (
                   .string()
                   .nullable()
                   .transform((assetId) =>
-                    urlFor(assetId, { width: 360, height: 500 })
+                    urlFor(assetId, { mode: 'cover', width: 360, height: 500 })
                   )
               ),
             })),

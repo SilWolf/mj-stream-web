@@ -5,7 +5,7 @@ export default function useAllRulesets() {
   return useQuery({
     queryKey: ['v2-rulesets'],
     queryFn: apiGetRulesets,
-    initialData: [],
+    // initialData: [],
     placeholderData: keepPreviousData,
   })
 }

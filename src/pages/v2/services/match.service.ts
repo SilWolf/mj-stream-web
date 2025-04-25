@@ -14,7 +14,9 @@ const playerProject = q.fragmentForType<'player'>().project((playerRef) => ({
     z
       .string()
       .nullable()
-      .transform((assetId) => urlFor(assetId, { width: 360, height: 500 }))
+      .transform((assetId) =>
+        urlFor(assetId, { mode: 'cover', width: 360, height: 500 })
+      )
   ),
 }))
 
@@ -29,7 +31,7 @@ const teamProject = q.fragmentForType<'team'>().project((teamRef) => ({
     z
       .string()
       .nullable()
-      .transform((assetId) => urlFor(assetId, { width: 500, height: 500 }))
+      .transform((assetId) => urlFor(assetId, { width: 1000, height: 1000 }))
   ),
   color: teamRef.field('color.hex', z.string().nullable()),
   introduction: z.string().nullable(),
@@ -119,5 +121,94 @@ export const apiQueryMatchesByTournamentId = async (tournamentId: string) => {
         },
       } satisfies V2Match
     })
+  })
+}
+
+export const apiGetMatchById = async (matchId: string) => {
+  const query = q.star
+    .filterByType('match')
+    .filterRaw(`_id == "${matchId}"`)
+    .order('startAt asc')
+    .slice(0, 1)
+    .project((sub) => ({
+      _id: z.string(),
+      name: z.string().nullable(),
+      playerEast: sub.field('playerEast').deref().project(playerProject),
+      playerSouth: sub.field('playerSouth').deref().project(playerProject),
+      playerWest: sub.field('playerWest').deref().project(playerProject),
+      playerNorth: sub.field('playerNorth').deref().project(playerProject),
+      playerEastTeam: sub.field('playerEastTeam').deref().project(teamProject),
+      playerSouthTeam: sub
+        .field('playerSouthTeam')
+        .deref()
+        .project(teamProject),
+      playerWestTeam: sub.field('playerWestTeam').deref().project(teamProject),
+      playerNorthTeam: sub
+        .field('playerNorthTeam')
+        .deref()
+        .project(teamProject),
+      _createdAt: true,
+      _updatedAt: true,
+    }))
+
+  return runQuery(query).then((matches) => {
+    if (matches.length === 0) {
+      throw new Error('找不到賽事')
+    }
+
+    const formatPlayer = (
+      player: (typeof matches)[number]['playerEast'],
+      team: (typeof matches)[number]['playerEastTeam']
+    ) => ({
+      id: player?._id ?? '',
+      teamId: team?._id ?? '',
+      color: {
+        primary: team?.color ?? '#FFFF00',
+        secondary: getLightColorOfColor(team?.color ?? '#FFFF00'),
+      },
+      name: {
+        official: {
+          primary: player?.name ?? '',
+          secondary: player?.designation ?? '',
+          third: player?.nickname ?? '',
+        },
+        display: {
+          primary: player?.name ?? '',
+          secondary: team?.preferredName ?? '',
+          third: player?.nickname ?? '',
+        },
+      },
+      image: {
+        portrait: {
+          default: {
+            url: player?.portraitImage ?? '',
+          },
+        },
+        logo: {
+          default: {
+            url: team?.squareLogoImage ?? '',
+          },
+        },
+      },
+    })
+
+    return {
+      schemaVersion: '2',
+      code: matches[0]._id,
+      data: {
+        name: matches[0].name ?? '',
+        players: [
+          formatPlayer(matches[0].playerEast, matches[0].playerEastTeam),
+          formatPlayer(matches[0].playerSouth, matches[0].playerSouthTeam),
+          formatPlayer(matches[0].playerWest, matches[0].playerWestTeam),
+          formatPlayer(matches[0].playerNorth, matches[0].playerNorthTeam),
+        ],
+        rulesetRef: 'hkleague-4p',
+      },
+      metadata: {
+        createdAt: matches[0]._createdAt,
+        updatedAt: matches[0]._updatedAt,
+      },
+    } satisfies V2Match
   })
 }

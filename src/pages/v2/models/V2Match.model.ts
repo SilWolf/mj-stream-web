@@ -19,8 +19,7 @@ export const v2MatchPlayerSchema = zod.object({
     primary: zod.string().regex(/^#[0-9A-F]{6}$/i, '顏色必須是 #ABCDEF 格式。'),
     secondary: zod
       .string()
-      .regex(/^#[0-9A-F]{6}$/i, '顏色必須是 #ABCDEF 格式。')
-      .optional(),
+      .regex(/^#[0-9A-F]{6}$/i, '顏色必須是 #ABCDEF 格式。'),
   }),
   image: zod.object({
     portrait: zod

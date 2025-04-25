@@ -1,10 +1,6 @@
 import MJAmountSpan from '@/components/MJAmountSpan'
 import React, { HTMLAttributes, useEffect, useMemo, useState } from 'react'
-import {
-  getLightColorOfColor,
-  renderPoint,
-  renderRanking,
-} from '@/utils/string.util'
+import { renderPoint, renderRanking } from '@/utils/string.util'
 import MJTileDiv from '@/components/MJTileDiv'
 import { V2MatchPlayer } from '../../models/V2Match.model'
 
@@ -48,11 +44,6 @@ export default function V2PlayerCard({
   const [storedScore, setStoredScore] = useState<number>(score)
   const [storedScoreChanges, setStoredScoreChanges] = useState<number[] | null>(
     null
-  )
-
-  const lightenedColor = useMemo(
-    () => getLightColorOfColor(player.color.primary ?? '#000000'),
-    [player.color]
   )
 
   const isScoreChanging = useMemo(
@@ -106,7 +97,7 @@ export default function V2PlayerCard({
             <div
               className="w-full h-full bg-white rounded-[0.08em] overflow-hidden"
               style={{
-                background: `linear-gradient(180deg, ${player.color}, ${lightenedColor})`,
+                background: `linear-gradient(180deg, ${player.color.primary}, ${player.color.secondary})`,
               }}
             >
               {player.image.logo?.default.url && (
@@ -114,7 +105,7 @@ export default function V2PlayerCard({
                   <img
                     className="absolute max-w-[none] h-[2.2em] w-[2.2em] opacity-30 animate-[scrollFromRightToLeft_12s_linear_infinite]"
                     src={player.image.logo.default.url}
-                    alt={player.name.primary}
+                    alt={player.name.display.primary}
                   />
                 </div>
               )}
@@ -122,13 +113,13 @@ export default function V2PlayerCard({
                 <img
                   className="relative z-10 w-full h-full rounded-[0.08em]"
                   src={player.image.portrait.default.url}
-                  alt={player.name.primary}
+                  alt={player.name.display.primary}
                 />
               )}
-              {player.name.third && (
+              {player.name.display.third && (
                 <div className="absolute bottom-[0.085em] left-[0.085em] right-[0.085em] rounded-b-[0.08em] bg-[linear-gradient(to_top,#00000060,#00000050_70%,transparent)] text-white z-20">
                   <p className="text-center text-[0.25em] font-semibold pb-[0.25em] pt-[0.5em]">
-                    {player.name.third}
+                    {player.name.display.third}
                   </p>
                 </div>
               )}
@@ -173,26 +164,26 @@ export default function V2PlayerCard({
             className={`relative w-full text-left bg-white px-[0.1em] pb-[0.05em] pt-[0.08em] ${className}`}
             {...props}
             style={{
-              background: `linear-gradient(260deg, transparent, transparent 22px, ${lightenedColor} 23px, ${player.color} 100%`,
+              background: `linear-gradient(260deg, transparent, transparent 22px, ${player.color.secondary} 23px, ${player.color.primary} 100%`,
               textShadow:
                 '#00000048 2px 2px 3px, #00000048 -2px -2px 3px, #00000048 -2px 2px 3px, #00000048 2px -2px 3px, #00000048 0 0 6px',
             }}
           >
             <div className="flex flex-col justify-center gap-y-[0.075em] mt-[0.04em]">
               <div className="text-[0.1875em] ml-[0.1em] leading-none text-white hide-if-changing font-semibold whitespace-nowrap">
-                {player.name.secondary || '　'}
+                {player.name.display.secondary || '　'}
               </div>
               <div
                 className="text-[0.3125em] ml-[0.1em] leading-none text-white hide-if-changing font-semibold whitespace-nowrap"
                 style={{
                   transformOrigin: 'left',
                   transform:
-                    (player.name.primary || '').length >= 17
+                    (player.name.display.primary || '').length >= 17
                       ? 'scaleX(0.9)'
                       : 'scaleX(1)',
                 }}
               >
-                {player.name.primary}
+                {player.name.display.primary}
               </div>
             </div>
 
