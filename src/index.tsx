@@ -45,6 +45,12 @@ const V2PanelPage = lazy(() => import('./pages/v2/panel/page'))
 const V2PanelObsMatchControlPage = lazy(
   () => import('./pages/v2/panel/obs/match-control/page')
 )
+const V2PanelObsSceneControlPage = lazy(
+  () => import('./pages/v2/panel/obs/scene-control/page')
+)
+const V2ObsSceneViewPage = lazy(
+  () => import('./pages/v2/obs/scenes/master/page')
+)
 
 // Import the functions you need from the SDKs you need
 // TODO: Add SDKs for Firebase products that you want to use
@@ -59,7 +65,7 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
       refetchIntervalInBackground: false,
       staleTime: Infinity,
-      throwOnError(error, query) {
+      throwOnError(error) {
         toast.error((error as Error)?.message ?? '未知錯誤')
         return false
       },
@@ -162,13 +168,18 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <Route path="/v2" nest>
               <Route path="/panel" nest>
                 <V2PanelLayout>
-                  <Route path="/" component={V2PanelPage}></Route>
+                  <Route path="/" component={V2PanelPage} />
                   <Route
                     path="/obs/match-control"
                     component={V2PanelObsMatchControlPage}
-                  ></Route>
+                  />
+                  <Route
+                    path="/obs/scene-control"
+                    component={V2PanelObsSceneControlPage}
+                  />
                 </V2PanelLayout>
               </Route>
+              <Route path="/obs/scene/view" component={V2ObsSceneViewPage} />
             </Route>
           </Switch>
         </ConfirmDialogProvider>

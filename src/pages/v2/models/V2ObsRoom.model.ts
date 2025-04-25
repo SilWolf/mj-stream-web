@@ -4,7 +4,8 @@ export const V2ObsRoomSchema = zod.object({
   /** Legace fields. Need to keep until fully upgrade to v2 **/
   matchId: zod.string(),
   activeSceneId: zod.string(),
-  activeSceneProps: zod.record(zod.string(), zod.unknown()),
+  activeSceneProps: zod.record(zod.string(), zod.string().or(zod.number())),
+  themeId: zod.string().nullable(),
 
   schemaVersion: zod.string(),
   displayProps: zod.object({

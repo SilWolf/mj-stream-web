@@ -98,7 +98,7 @@ export default function V2PanelLayout({ children }: PropsWithChildren) {
                 <Link href="/obs/match-control">分數控制台</Link>
               </li>
               <li>
-                <a>多合一畫面控制台</a>
+                <Link href="/obs/scene-control">多合一場景控制台</Link>
               </li>
             </ul>
           </div>

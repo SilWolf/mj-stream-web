@@ -34,6 +34,8 @@ export type RawMatch = {
     _id: string
     name: string
     logoUrl: string
+    rulesetId?: string
+    themeId?: string
   }
 }
 
