@@ -137,19 +137,16 @@ const PlayersListView = ({
                   </td>
                   <td className="px-2 border-b border-black" colSpan={2}>
                     <button
-                      className="py-2 text-left block"
+                      className="py-2 w-full flex gap-x-1 items-stretch"
                       data-player-index={index}
                       data-action="waitingTile"
                       onClick={handleAction}
                     >
                       <span className="mr-2 text-xl">待牌</span>
-                      <div className="inline-block space-x-1">
+                      <div className="flex-1 gap-x-[2px] flex justify-start">
                         {currentRound.playerResults[index].waitingTiles?.map(
                           (tile) => (
-                            <MJTileDiv
-                              key={tile}
-                              className="inline-block align-middle w-8 animate-[fadeInFromLeft_1s_ease-in-out]"
-                            >
+                            <MJTileDiv key={tile} className="w-10!">
                               {tile}
                             </MJTileDiv>
                           )

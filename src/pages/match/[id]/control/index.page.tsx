@@ -1,4 +1,3 @@
-/* eslint-disable no-nested-ternary */
 import React, { MouseEvent, useCallback, useMemo, useState } from 'react'
 import useRealtimeMatch from '@/hooks/useRealtimeMatch'
 import {
@@ -18,12 +17,10 @@ import {
   generateMatchRoundCode,
   getAfterOfPlayerIndex,
   getBeforeOfPlayerIndex,
-  getIsPlayerEast,
   getOppositeOfPlayerIndex,
   getPlayerIndexOfEastByRound,
 } from '@/helpers/mahjong.helper'
 import { useBoolean } from 'react-use'
-import MJPlayerCardDiv from '@/components/MJPlayerCardDiv'
 import MJTileDiv, { MJTileKey } from '@/components/MJTileDiv'
 import MJMatchCounterSpan from '@/components/MJMatchCounterSpan'
 import MJTileKeyboardDiv from '@/components/MJTileKeyboardDiv'
@@ -34,8 +31,6 @@ import { useQuery } from '@tanstack/react-query'
 import { apiGetMatchById } from '@/helpers/sanity.helper'
 import ControlNewMatch from '../ControlNewMatch'
 import PlayersListView from './components/PlayersView/PlayersListView'
-import PlayersGridView from './components/PlayersView/PlayersGridView'
-import MJUITabs from '@/components/MJUI/MJUITabs'
 import { PlayersViewAction } from './components/PlayersView'
 import {
   MJYakuKeyboardDialog,
@@ -52,33 +47,6 @@ import MJMatchRoundEditForm, {
   MJMatchRoundEditFormProps,
 } from '@/components/MJMatchRoundEditForm'
 import MJPlayersForm from '@/components/MJPlayersForm'
-
-const VIEW_TABS = [
-  {
-    label: (
-      <span>
-        <i className="bi bi-hdd-stack-fill"></i> 列表(舊版)
-      </span>
-    ),
-    value: 'listView-old',
-  },
-  {
-    label: (
-      <span>
-        <i className="bi bi-hdd-stack-fill"></i> 列表(新版)
-      </span>
-    ),
-    value: 'listView-new',
-  },
-  {
-    label: (
-      <span>
-        <i className="bi-grid-fill"></i> 2x2
-      </span>
-    ),
-    value: 'gridView',
-  },
-]
 
 function MJMatchHistoryAmountSpan({ value }: { value: number }) {
   return (
@@ -125,10 +93,10 @@ const PlayerResultMetadata = ({
         rtMatchRound.resultType === RoundResultTypeEnum.SelfDrawn) &&
         rtMatchRound.playerResults[playerIndex].type ===
           PlayerResultWinnerOrLoserEnum.Win && (
-          <div className="bg-black bg-opacity-10 rounded-sm py-1 px-2 mx-auto inline-block">
+          <div className="bg-base-200 rounded-sm py-1 px-2 mx-auto inline-block">
             <p className="font-bold">
               <MJHanFuTextSpan
-                className="text-xs text-neutral-600"
+                className="text-xs text-base-content"
                 han={rtMatchRound.playerResults[playerIndex].detail.han}
                 fu={rtMatchRound.playerResults[playerIndex].detail.fu}
                 yakumanCount={
@@ -202,8 +170,6 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
     undefined
   )
 
-  const [viewTabValue, setViewTabValue] = useState<string>(VIEW_TABS[0].value)
-
   const [isShowingRonDialog, toggleRonDialog] = useBoolean(false)
   const [ronDialogProps, setRonDialogProps] = useState<
     Pick<
@@ -270,7 +236,6 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
       let prevRound = newMatchRound
 
       for (let i = foundIndex + 1; i < matchRoundsWithDetail.length; i++) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { id: oldNextMatchId, ...oldNextMatchRound } =
           matchRoundsWithDetail[i]
         const newNextMatchRound: RealtimeMatchRound = {
@@ -330,53 +295,6 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
 
   const [, setActiveAnimationMessage] = useState<string | null>(null)
 
-  const handleClickRiichi = useCallback(
-    (e: React.MouseEvent<HTMLButtonElement>) => {
-      const playerIndex = e.currentTarget.getAttribute(
-        'data-player-index'
-      ) as unknown as PlayerIndex
-      if (!playerIndex) {
-        return
-      }
-
-      const player = rtMatch?.players[playerIndex]
-      if (!player) {
-        return
-      }
-
-      const isDoingRiichi =
-        !rtMatchCurrentRound?.playerResults[playerIndex].isRiichi
-
-      confirmDialog.showConfirmDialog({
-        title: isDoingRiichi ? '確定要立直嗎？' : '取消立直？',
-        content: isDoingRiichi
-          ? `一旦點擊確定，就會播出立直動畫，請確定立直的是 ${player.primaryName}！`
-          : `你是否想取消 ${player.primaryName} 的立直？`,
-        onClickOk: async () => {
-          updateCurrentMatchRound({
-            playerResults: {
-              ...(rtMatchCurrentRound?.playerResults as Record<
-                PlayerIndex,
-                PlayerResult
-              >),
-              [playerIndex]: {
-                ...rtMatchCurrentRound?.playerResults[playerIndex],
-                isRiichi:
-                  !rtMatchCurrentRound?.playerResults[playerIndex].isRiichi,
-              },
-            },
-          })
-        },
-      })
-    },
-    [
-      confirmDialog,
-      rtMatch?.players,
-      rtMatchCurrentRound?.playerResults,
-      updateCurrentMatchRound,
-    ]
-  )
-
   const handleClickDora = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
       const doraIndex = parseInt(
@@ -429,24 +347,6 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
   const handleCloseDoraKeyboard = useCallback(() => {
     setClickedDoraIndex(undefined)
   }, [])
-
-  const handleClickRon = useCallback(
-    (e: React.MouseEvent<HTMLButtonElement>) => {
-      const playerIndex = e?.currentTarget.getAttribute(
-        'data-player-index'
-      ) as PlayerIndex
-
-      if (!playerIndex) {
-        return
-      }
-
-      setRonDialogProps({
-        initialActivePlayerIndex: playerIndex,
-      })
-      toggleRonDialog()
-    },
-    [toggleRonDialog]
-  )
 
   const handleClickExhausted = useCallback(() => {
     toggleExhaustedDialog(true)
@@ -1025,26 +925,6 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
     index: PlayerIndex
     tiles: string[]
   } | null>(null)
-  const handleClickWaitingTiles = useCallback(
-    (e: React.MouseEvent) => {
-      const playerIndex = e.currentTarget.getAttribute(
-        'data-player-index'
-      ) as PlayerIndex
-      if (
-        typeof playerIndex === 'undefined' ||
-        !rtMatchCurrentRound?.playerResults[playerIndex]
-      ) {
-        return
-      }
-
-      setActiveWaitingTilesData({
-        index: playerIndex,
-        tiles:
-          rtMatchCurrentRound?.playerResults[playerIndex].waitingTiles ?? [],
-      })
-    },
-    [rtMatchCurrentRound?.playerResults]
-  )
 
   const handleCloseWaitingTileDoraKeyboard = useCallback(() => {
     setActiveWaitingTilesData(null)
@@ -1286,7 +1166,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                   >
                     <MJTileDiv
                       key={dora}
-                      className="w-12 animate-[fadeInFromLeft_0.5s_ease-in-out]"
+                      className="w-12! animate-[fadeInFromLeft_0.5s_ease-in-out]"
                     >
                       {dora}
                     </MJTileDiv>
@@ -1327,15 +1207,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
             </div>
           </div>
 
-          <div className="flex justify-between gap-x-8 ">
-            <div className="flex-1">
-              <MJUITabs
-                tabs={VIEW_TABS}
-                defaultValue={VIEW_TABS[0].value}
-                onChangeValue={setViewTabValue}
-              />
-            </div>
-
+          <div className="flex justify-end gap-x-8 ">
             <div className="text-right space-x-4">
               {rtMatch.activeResultDetail && (
                 <MJUIButton
@@ -1389,102 +1261,11 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
             </div>
           </div>
 
-          {viewTabValue === 'listView-old' && (
-            <div className="space-y-4">
-              {(['0', '1', '2', '3'] as PlayerIndex[]).map((index) => (
-                <div className="flex gap-x-2 items-center">
-                  <div className="flex-1 text-[2.5rem]">
-                    <MJPlayerCardDiv
-                      player={rtMatch.players[index]}
-                      playerIndex={index}
-                      score={
-                        rtMatchCurrentRound.playerResults[index].afterScore
-                      }
-                      scoreChanges={
-                        rtMatchCurrentRound.playerResults[index].scoreChanges
-                      }
-                      isEast={getIsPlayerEast(
-                        index,
-                        rtMatchCurrentRound.roundCount
-                      )}
-                      isRiichi={
-                        rtMatchCurrentRound.playerResults[index].isRiichi
-                      }
-                      waitingTiles={
-                        rtMatchCurrentRound.playerResults[index].waitingTiles
-                      }
-                      onClickWaitingTiles={handleClickWaitingTiles}
-                      isYellowCarded={
-                        rtMatchCurrentRound.playerResults[index].isYellowCarded
-                      }
-                      isRedCarded={
-                        rtMatchCurrentRound.playerResults[index].isRedCarded
-                      }
-                      showPointAndRanking={rtMatch.showPoints}
-                    />
-                  </div>
-                  {/* <div>
-            <button
-              type="button"
-              className={`${
-                rtMatchCurrentRound.playerResults[index].isRevealed
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white text-blue-600 opacity-30'
-              } h-16 w-16 border-2 border-blue-600  rounded-full text-lg`}
-              onClick={handleClickReveal}
-              data-player-index={index}
-            >
-              {rtMatchCurrentRound.playerResults[index].isRevealed
-                ? '已副露'
-                : '副露?'}
-            </button>
-          </div> */}
-                  <div>
-                    <button
-                      type="button"
-                      className={`${
-                        rtMatchCurrentRound.playerResults[index].isRiichi
-                          ? 'bg-orange-600 text-white'
-                          : 'bg-white text-orange-600 opacity-30'
-                      } h-16 w-16 border-2 border-orange-600  rounded-full text-lg`}
-                      onClick={handleClickRiichi}
-                      data-player-index={index}
-                    >
-                      {rtMatchCurrentRound.playerResults[index].isRiichi
-                        ? '已立直'
-                        : '立直?'}
-                    </button>
-                  </div>
-                  <div className="pl-6">
-                    <MJUIButton
-                      color="danger"
-                      type="button"
-                      onClick={handleClickRon}
-                      data-player-index={index}
-                    >
-                      和了
-                    </MJUIButton>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {viewTabValue === 'listView-new' && (
-            <PlayersListView
-              players={rtMatch.players}
-              currentRound={rtMatchCurrentRound}
-              onAction={handlePlayerListViewAction}
-            />
-          )}
-
-          {viewTabValue === 'gridView' && (
-            <PlayersGridView
-              players={rtMatch.players}
-              currentRound={rtMatchCurrentRound}
-              onAction={handlePlayerListViewAction}
-            />
-          )}
+          <PlayersListView
+            players={rtMatch.players}
+            currentRound={rtMatchCurrentRound}
+            onAction={handlePlayerListViewAction}
+          />
 
           <div>
             <MJUIButton

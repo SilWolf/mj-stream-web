@@ -1,14 +1,13 @@
 import * as zod from 'zod'
 
 export const V2ObsRoomSchema = zod.object({
+  /** Legace fields. Need to keep until fully upgrade to v2 **/
+  matchId: zod.string(),
+  activeSceneId: zod.string(),
+  activeSceneProps: zod.record(zod.string(), zod.unknown()),
+
   schemaVersion: zod.string(),
-  orgId: zod.string(),
-  name: zod.object({
-    display: zod.string(),
-  }),
-  activeMatchId: zod.string().optional(),
-  activeDetailMatchRoundId: zod.string().optional(),
-  props: zod.object({
+  displayProps: zod.object({
     isHidingHeader: zod.boolean().optional(),
     isHidingPlayers: zod.boolean().optional(),
     scoreDisplayMode: zod
@@ -18,6 +17,18 @@ export const V2ObsRoomSchema = zod.object({
     activeReviewMatchRoundId: zod.string().optional(),
     __placeholder: zod.boolean(),
   }),
+  activeMatch: zod
+    .object({
+      id: zod.string(),
+      props: zod.record(zod.string(), zod.unknown()),
+    })
+    .optional(),
+  activeScene: zod
+    .object({
+      id: zod.string(),
+      props: zod.record(zod.string(), zod.unknown()),
+    })
+    .optional(),
 })
 
 export type V2ObsRoom = zod.infer<typeof V2ObsRoomSchema>

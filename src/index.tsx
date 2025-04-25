@@ -42,6 +42,9 @@ const V2PanelLayout = lazy(
 )
 const V2IndexPage = lazy(() => import('./pages/v2/page'))
 const V2PanelPage = lazy(() => import('./pages/v2/panel/page'))
+const V2PanelObsMatchControlPage = lazy(
+  () => import('./pages/v2/panel/obs/match-control/page')
+)
 
 // Import the functions you need from the SDKs you need
 // TODO: Add SDKs for Firebase products that you want to use
@@ -160,6 +163,10 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               <Route path="/panel" nest>
                 <V2PanelLayout>
                   <Route path="/" component={V2PanelPage}></Route>
+                  <Route
+                    path="/obs/match-control"
+                    component={V2PanelObsMatchControlPage}
+                  ></Route>
                 </V2PanelLayout>
               </Route>
             </Route>

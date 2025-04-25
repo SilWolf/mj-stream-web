@@ -5,6 +5,8 @@ import { CurrentTournamentIdContext } from '../hooks/useCurrentTournament'
 import useAllTournaments from '../hooks/useAllTournaments'
 import { useLocalStorage } from 'react-use'
 import { closeDialog, openDialog } from '@/components/Dialog'
+import CurrentLiveMatchWidget from '../widgets/CurrentLiveMatchWidget'
+import { Link } from 'wouter'
 
 export default function V2PanelLayout({ children }: PropsWithChildren) {
   const { data: allTournaments = [] } = useAllTournaments()
@@ -62,19 +64,44 @@ export default function V2PanelLayout({ children }: PropsWithChildren) {
           <main>{children}</main>
         </div>
         <div className="drawer-side border-r-1 border-base-300">
-          <div className="p-4 w-full text-lg text-center">日麻直播系統</div>
-          <ul className="menu bg-base-100 text-base-content min-h-full w-80 p-4">
-            {/* Sidebar content here */}
-            <li>
-              <a>賽事</a>
-            </li>
-            <li>
-              <a>隊伍／選手</a>
-            </li>
-            <li>
-              <a>風格</a>
-            </li>
-          </ul>
+          <div className="w-60">
+            <div className="p-4 w-full text-lg text-center">日麻直播系統</div>
+
+            <h5 className="text-sm font-bold px-4">聯賽控制</h5>
+            <ul className="menu bg-base-100 text-base-content min-h-full p-4 w-full">
+              {/* Sidebar content here */}
+              <li>
+                <a>賽事</a>
+              </li>
+              <li>
+                <a>隊伍／選手</a>
+              </li>
+              <li>
+                <a>風格</a>
+              </li>
+            </ul>
+
+            <div className="divider"></div>
+
+            <h5 className="text-sm font-bold px-4">OBS 控制</h5>
+
+            <div className="px-4 py-2">
+              <CurrentLiveMatchWidget />
+            </div>
+
+            <ul className="menu bg-base-100 text-base-content min-h-full p-4 w-full">
+              {/* Sidebar content here */}
+              <li>
+                <a>如何設置 OBS</a>
+              </li>
+              <li>
+                <Link href="/obs/match-control">分數控制台</Link>
+              </li>
+              <li>
+                <a>多合一畫面控制台</a>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
 
