@@ -1,6 +1,6 @@
 import React, { lazy } from 'react'
 import ReactDOM from 'react-dom/client'
-import { Route, Switch } from 'wouter'
+import { Redirect, Route, Switch } from 'wouter'
 import './index.css'
 import FirebaseDatabaseProvider from './providers/firebaseDatabase.provider'
 
@@ -82,114 +82,31 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <FirebaseDatabaseProvider>
         <ConfirmDialogProvider>
           <Switch>
-            {/* Pages for v1 site */}
-            <Route path="/v1" component={IndexPage} />
-            <Route path="/v1/match/:matchId" component={MatchDetailPage} />
-            <Route path="/v1/match/:matchId/obs" component={MatchOBSPage} />
-            <Route
-              path="/v1/match/:matchId/overlay"
-              component={MatchOverviewOverlayPage}
-            />
-            <Route
-              path="/v1/match/:matchId/control"
-              component={MatchControlPage}
-            />
-            <Route
-              path="/v1/match/:matchId/export"
-              component={MatchExportPage}
-            />
-            <Route
-              path="/v1/match/:matchId/forecast"
-              component={MatchForecastPage}
-            />
-            <Route
-              path="/v1/match/:matchId/introduction"
-              component={MatchIntroductionPage}
-            />
-            <Route
-              path="/v1/match/:matchId/summary"
-              component={MatchSummaryPage}
-            />
-            <Route path="/v1/match/:matchId/stat" component={MatchStatPage} />
-
-            <Route path="/v1/obs/:obsRoomId" component={ObsRoomPage} />
-            <Route
-              path="/v1/obs/:obsRoomId/scene"
-              component={ObsRoomScenePage}
-            />
-            <Route
-              path="/v1/obs/:obsRoomId/scene-control"
-              component={ObsRoomSceneControlPage}
-            />
-            <Route
-              path="/v1/obs/:obsRoomId/overlay"
-              component={ObsOverviewOverlayPage}
-            />
-            <Route
-              path="/v1/obs/:obsRoomId/control"
-              component={ObsRoomControlPage}
-            />
-            <Route
-              path="/v1/obs/:obsRoomId/export"
-              component={ObsRoomExportPage}
-            />
-            <Route
-              path="/v1/obs/:obsRoomId/forecast"
-              component={ObsRoomForecastPage}
-            />
-            <Route
-              path="/v1/obs/:obsRoomId/introduction"
-              component={ObsRoomIntroductionPage}
-            />
-            <Route
-              path="/v1/obs/:obsRoomId/summary"
-              component={ObsRoomSummaryPage}
-            />
-            <Route
-              path="/v1/obs/:obsRoomId/realtime-summary"
-              component={RealtimeSummaryPage}
-            />
-            <Route path="/v1/obs/:obsRoomId/end" component={ObsRoomEndPage} />
-            <Route path="/v1/obs/:obsRoomId/score" component={ObsScorePage} />
-            <Route path="/v1/obs/:obsRoomId/chart" component={ObsChartPage} />
-            <Route
-              path="/v1/obs/:obsRoomId/carousel"
-              component={ObsCarouselPage}
-            />
-            <Route path="/v1/obs/:obsRoomId/stat" component={ObsStatPage} />
-
-            <Route
-              path="/v1/realtime-summary/"
-              component={RealtimeSummaryPage}
-            />
-            <Route
-              path="/v1/tournament/nameplates"
-              component={AllNameplatesPage}
-            />
-
             {/* Pages for v2 site */}
-            <Route path="/v2" nest>
-              <Route path="/panel" nest>
-                <V2PanelLayout>
-                  <Route path="/" component={V2PanelPage} />
-                  <Route
-                    path="/matches/:matchId/edit"
-                    component={V2PanelMatchesByIdEditPage}
-                  />
-                  <Route
-                    path="/obs/match-control"
-                    component={V2PanelObsMatchControlPage}
-                  />
-                  <Route
-                    path="/obs/scene-control"
-                    component={V2PanelObsSceneControlPage}
-                  />
-                </V2PanelLayout>
-              </Route>
+            <Route path="/panel" nest>
+              <V2PanelLayout>
+                <Route path="/" component={V2PanelPage} />
+                <Route
+                  path="/matches/:matchId/edit"
+                  component={V2PanelMatchesByIdEditPage}
+                />
+                <Route
+                  path="/obs/match-control"
+                  component={V2PanelObsMatchControlPage}
+                />
+                <Route
+                  path="/obs/scene-control"
+                  component={V2PanelObsSceneControlPage}
+                />
+              </V2PanelLayout>
+            </Route>
 
-              <Route path="/obs/scene" nest>
-                <Route path="/master" component={V2ObsSceneMasterPage} />
-              </Route>
+            <Route path="/obs/scene" nest>
+              <Route path="/master" component={V2ObsSceneMasterPage} />
+            </Route>
+
+            <Route>
+              <Redirect to="/panel" />
             </Route>
           </Switch>
         </ConfirmDialogProvider>
