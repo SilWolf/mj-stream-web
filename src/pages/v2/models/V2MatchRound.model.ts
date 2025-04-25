@@ -55,9 +55,7 @@ export const v2MatchRoundSchema = zod.object({
     .optional(),
   metadata: zod.object({
     createdAt: zod.string().datetime(),
-    createdBy: zod.string().datetime(),
     updatedAt: zod.string().datetime(),
-    updatedBy: zod.string().datetime(),
   }),
 })
 
