@@ -26,9 +26,9 @@ function MJMatchHistoryChart({ players, rounds }: Props) {
     <ResponsiveContainer width="100%" height="100%">
       <LineChart data={rounds}>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis tick={{ fill: 'white' }} dataKey="name" />
+        <XAxis tick={{ fill: '#78012c' }} dataKey="name" />
         <YAxis
-          tick={{ fill: 'white' }}
+          tick={{ fill: '#78012c' }}
           width={120}
           allowDecimals={false}
           tickCount={5}

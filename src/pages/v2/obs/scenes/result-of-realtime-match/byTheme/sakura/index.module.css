@@ -1,0 +1,336 @@
+@keyframes :global(mi-title-in) {
+  0% {
+    transform: translateX(-25%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes :global(mi-teams-in) {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes :global(mi-teams-out) {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes :global(mi-teams-team-out) {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes :global(mi-teams-player-in) {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes :global(mi-team-colorBackground-in) {
+  0% {
+    transform: translateY(100%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes :global(mi-team-colorBackground-out) {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes :global(mi-team-logoBackground-in) {
+  0% {
+    transform: translateY(100%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes :global(mi-team-logoBackground-out) {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes :global(mi-team-team-in) {
+  0% {
+    transform: translateY(-120%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes :global(mi-team-team-out) {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-120%);
+  }
+}
+
+@keyframes :global(mi-team-player-in) {
+  0% {
+    transform: translateX(-25%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes :global(mi-team-player-out) {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-25%);
+    opacity: 0;
+  }
+}
+
+@keyframes :global(mi-team-activePlayer-in) {
+  0% {
+    transform: translateX(-25%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes :global(mi-team-activePlayer-out) {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-25%);
+    opacity: 0;
+  }
+}
+
+@keyframes :global(mi-team-activePlayerStat-in) {
+  0% {
+    transform: translateX(12%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes :global(mi-team-activePlayerStat-out) {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(12%);
+    opacity: 0;
+  }
+}
+
+@keyframes :global(mi-chart-chart-in) {
+  0% {
+    transform: translateX(-12%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes :global(mi-chart-chart-out) {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-12%);
+    opacity: 0;
+  }
+}
+
+@keyframes :global(mi-chart-player-in) {
+  0% {
+    transform: translateX(20%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes :global(mi-chart-player-out) {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(12%);
+    opacity: 0;
+  }
+}
+
+@keyframes :global(mi-ranking-ranking-in) {
+  0% {
+    transform: translateY(1080px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes :global(mi-ranking-ranking-out) {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(200px);
+    opacity: 0;
+  }
+}
+
+.match-introduction {
+  :global .mi-title-in {
+    animation: mi-title-in 1s ease-in-out 0s 1 normal both;
+  }
+
+  :global .mi-subbtitle-in {
+    animation: mi-title-in 1s ease-in-out 0.5s 1 normal both;
+  }
+
+  :global .mi-teams-in {
+    animation: mi-teams-in 0.8s ease-in-out 0s 1 normal both;
+  }
+
+  :global .mi-teams-out {
+    animation: mi-teams-out 0.8s ease-in-out 0s 1 normal both;
+  }
+
+  :global .mi-teams-team-out {
+    animation: mi-teams-team-out 0.5s ease-out 0s 1 normal both;
+  }
+
+  :global .mi-teams-player-in {
+    opacity: 0;
+    animation: mi-teams-player-in 0.8s ease-in-out 0s 1 normal both;
+  }
+
+  :global .mi-team-colorBackground-in {
+    animation: mi-team-colorBackground-in 0.8s ease-in-out 0s 1 normal both;
+  }
+
+  :global .mi-team-colorBackground-out {
+    animation: mi-team-colorBackground-out 0.5s ease-in-out 0s 1 normal both;
+  }
+
+  :global .mi-team-logoBackground-in {
+    animation: mi-team-logoBackground-in 0.8s ease-in-out 0.25s 1 normal both;
+  }
+
+  :global .mi-team-logoBackground-out {
+    animation: mi-team-logoBackground-out 0.5s ease-in-out 0s 1 normal both;
+  }
+
+  :global .mi-team-team-in {
+    animation: mi-team-team-in 0.8s ease-in-out 0s 1 normal both;
+  }
+
+  :global .mi-team-team-out {
+    animation: mi-team-team-out 0.5s ease-in-out 0s 1 normal both;
+  }
+
+  :global .mi-team-player-in {
+    animation: mi-team-player-in 0.8s ease-in-out 0.8s 1 normal both;
+  }
+
+  :global .mi-team-player-out {
+    animation: mi-team-player-out 0.5s ease-in-out 0s 1 normal both;
+  }
+
+  :global .mi-team-activePlayer-in {
+    animation: mi-team-activePlayer-in 0.8s ease-in-out 2s 1 normal both;
+  }
+
+  :global .mi-team-activePlayer-out {
+    animation: mi-team-activePlayer-out 0.5s ease-in-out 0s 1 normal both;
+  }
+
+  :global .mi-team-activePlayerStat-in {
+    animation: mi-team-activePlayerStat-in 0.8s ease-in-out 0s 1 normal both;
+  }
+
+  :global .mi-team-activePlayerStat-out {
+    animation: mi-team-activePlayerStat-out 0.5s ease-in-out 0s 1 normal both;
+  }
+
+  :global .mi-chart-chart-in {
+    animation: mi-chart-chart-in 0.8s ease-in-out 0s 1 normal both;
+  }
+
+  :global .mi-chart-chart-out {
+    animation: mi-chart-chart-out 0.5s ease-in-out 0s 1 normal both;
+  }
+
+  :global .mi-chart-player-in {
+    animation: mi-chart-player-in 0.8s ease-in-out 0s 1 normal both;
+  }
+
+  :global .mi-chart-player-out {
+    animation: mi-chart-player-out 0.5s ease-in-out 0s 1 normal both;
+  }
+
+  :global .mi-ranking-ranking-in {
+    animation: mi-ranking-ranking-in 0.8s ease-in-out 0s 1 normal both;
+  }
+
+  :global .mi-ranking-ranking-out {
+    animation: mi-ranking-ranking-out 0.5s ease-in-out 0s 1 normal both;
+  }
+}

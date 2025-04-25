@@ -1,12 +1,14 @@
-import ObsPage from '@/pages/match/[id]/obs.page'
-import MatchSummaryPage from '@/pages/match/[id]/summary.page'
 import RealtimeSummaryPage from '@/pages/realtime-summary/index.page'
 
 import { V2ObsRoom } from '@/pages/v2/models/V2ObsRoom.model'
 import { lazy } from 'react'
 
+const V2ObsSceneOfRealtime = lazy(() => import('./realtime/page'))
 const V2ObsSceneOfIntroductionForMatch = lazy(
   () => import('./introduction-of-match/page')
+)
+const V2ObsSceneOfResultForRealtimeMatch = lazy(
+  () => import('./result-of-realtime-match/page')
 )
 
 const V2ObsSceneOfEndOfDay = lazy(() => import('./end-of-day/page'))
@@ -30,7 +32,12 @@ export const SCENES: Scene[] = [
   {
     id: 'scoring',
     name: '直播分數',
-    render: (obsInfo) => <ObsPage params={{ matchId: obsInfo.matchId }} />,
+    render: (obsInfo) => (
+      <V2ObsSceneOfRealtime
+        themeId={obsInfo.themeId}
+        params={{ matchId: obsInfo.matchId }}
+      />
+    ),
   },
   {
     id: 'introduction',
@@ -79,7 +86,8 @@ export const SCENES: Scene[] = [
     id: 'result',
     name: '對局結果',
     render: (obsInfo) => (
-      <MatchSummaryPage
+      <V2ObsSceneOfResultForRealtimeMatch
+        themeId={obsInfo.themeId}
         params={{ matchId: obsInfo.matchId }}
         disableClick
         forwardFlag={obsInfo.activeSceneProps?.forwardFlag as number}
