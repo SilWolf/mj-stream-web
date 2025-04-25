@@ -52,7 +52,7 @@ const V2PanelObsMatchControlPage = lazy(
 const V2PanelObsSceneControlPage = lazy(
   () => import('./pages/v2/panel/obs/scene-control/page')
 )
-const V2ObsSceneViewPage = lazy(
+const V2ObsSceneMasterPage = lazy(
   () => import('./pages/v2/obs/scenes/master/page')
 )
 
@@ -187,7 +187,10 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                   />
                 </V2PanelLayout>
               </Route>
-              <Route path="/obs/scene/view" component={V2ObsSceneViewPage} />
+
+              <Route path="/obs/scene" nest>
+                <Route path="/master" component={V2ObsSceneMasterPage} />
+              </Route>
             </Route>
           </Switch>
         </ConfirmDialogProvider>
