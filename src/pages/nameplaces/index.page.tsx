@@ -3,6 +3,9 @@ import { Player, Team } from '@/models'
 import { getLightColorOfColor } from '@/utils/string.util'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
+import { apiGetTournamentById } from '../v2/services/tournament.service'
+import { V2TournamentTeam } from '../v2/models/V2Tournament.model'
+import { V2MatchPlayer } from '../v2/models/V2Match.model'
 
 const MatchNameplateNarrow = ({
   team,
@@ -89,30 +92,24 @@ const MatchNameplateNarrow = ({
   )
 }
 
-const MatchNameplate = ({
-  team,
-  player,
-}: {
-  team: Omit<Team, 'players'>
-  player: Player
-}) => {
+const MatchNameplate = ({ player }: { player: V2MatchPlayer }) => {
   const lightenedColor = useMemo(
-    () => getLightColorOfColor(team.color),
-    [team.color]
+    () => getLightColorOfColor(player.color.primary),
+    [player.color]
   )
 
   return (
     <div className="relative overflow-hidden">
       <table className="w-full">
         <tbody>
-          <tr style={{ background: team.color }}>
+          <tr style={{ background: player.color.primary }}>
             <td className="w-[8mm] h-[8mm]"></td>
             <td className="w-[2mm] border-r border-white"></td>
             <td></td>
             <td className="w-[2mm] border-l border-white"></td>
             <td className="w-[8mm] h-[8mm]"></td>
           </tr>
-          <tr style={{ background: team.color }}>
+          <tr style={{ background: player.color.primary }}>
             <td className="h-[2mm] border-b border-white"></td>
             <td></td>
             <td></td>
@@ -121,7 +118,7 @@ const MatchNameplate = ({
           </tr>
           <tr
             style={{
-              background: `linear-gradient(180deg, ${team.color}, ${lightenedColor})`,
+              background: `linear-gradient(180deg, ${player.color.primary}, ${lightenedColor})`,
             }}
           >
             <td></td>
@@ -149,17 +146,17 @@ const MatchNameplate = ({
       <div
         className="absolute left-0 top-[2.5mm] w-[55mm] h-[55mm] bg-contain opacity-50"
         style={{
-          backgroundImage: `url(${team.squareLogoImage + '?w=500&h=500'})`,
+          backgroundImage: `url(${player.image.logo?.default.url})`,
         }}
       ></div>
       <div className="absolute top-[10mm] bottom-[10mm] left-[25mm] right-[12mm] flex flex-col items-center justify-center">
         <p
-          className="text-[13mm] text-white leading-none font-semibold mb-[3mm] whitespace-nowrap"
+          className="text-[18mm] text-white leading-none font-semibold mb-[3mm] whitespace-nowrap"
           style={{
             textShadow: '0px 0px 3px #333333B0, 0px 0px 6px #333333B0',
           }}
         >
-          {player.name}
+          {player.name.display.primary}
         </p>
         <p
           className="text-[13mm] text-white leading-none font-semibold"
@@ -167,7 +164,7 @@ const MatchNameplate = ({
             textShadow: '0px 0px 3px #333333B0, 0px 0px 6px #333333B0',
           }}
         >
-          {player.nickname}
+          {/* {player.nickname} */}
         </p>
       </div>
     </div>
@@ -175,21 +172,28 @@ const MatchNameplate = ({
 }
 
 const MatchNameplatesPage = () => {
-  const { data: tournamentTeams } = useQuery({
+  const { data } = useQuery({
     queryKey: ['tournament-teams-and-player'],
-    queryFn: () => getRegularTeamsWithPlayers(),
+    queryFn: () => apiGetTournamentById('15e152e2-33bb-495f-ac73-efeba15965f2'),
   })
 
-  if (!tournamentTeams) {
+  if (!data?.teams) {
     return <></>
   }
 
+  const playersPerFour = Object.values(
+    Object.groupBy(
+      data.teams.map(({ players }) => players).flat(),
+      (_, index) => Math.floor(index / 4)
+    )
+  )
+
   return (
     <>
-      {tournamentTeams.map(({ team, players }) => (
+      {playersPerFour.map((players, index) => (
         <div
-          key={team._id}
-          className="print:w-[210mm] print:h-[297mm] overflow-hidden content-center"
+          key={index}
+          className="print:w-[210mm] print:h-[297mm] overflow-hidden flex flex-col items-center justify-center"
         >
           <div className="w-[170mm] mx-auto mb-8 print:hidden">
             <p>右鍵「列印」，設定如下：</p>
@@ -206,8 +210,8 @@ const MatchNameplatesPage = () => {
             </ul>
           </div>
           {players.map((player) => (
-            <div key={player._id} className="w-[170mm] h-[60mm] mx-auto">
-              <MatchNameplate team={team} player={player} />
+            <div key={player.id} className="w-[170mm] h-[60mm] mx-auto">
+              <MatchNameplate player={player} />
             </div>
           ))}
         </div>

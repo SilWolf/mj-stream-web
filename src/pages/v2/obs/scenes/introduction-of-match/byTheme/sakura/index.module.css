@@ -9,6 +9,17 @@
   }
 }
 
+@keyframes :global(mi-title-out) {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-25%);
+    opacity: 0;
+  }
+}
+
 @keyframes :global(mi-teams-in) {
   0% {
     transform: translateY(100%);
@@ -239,6 +250,10 @@
 .match-introduction {
   :global .mi-title-in {
     animation: mi-title-in 1s ease-in-out 0s 1 normal both;
+  }
+
+  :global .mi-title-out {
+    animation: mi-title-out 1s ease-in-out 0s 1 normal both;
   }
 
   :global .mi-subbtitle-in {

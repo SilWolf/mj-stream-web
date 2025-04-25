@@ -128,14 +128,14 @@ const MatchSummarySlide = ({
               })}
               style={{
                 animationDelay: status === 0 ? index * 0.25 + 's' : '0s',
-                filter:
+                opacity:
                   slide.teamAndPlayers[playerKey].result.ranking !== '1'
-                    ? 'grayscale(1)'
-                    : 'grayscale(0)',
+                    ? 1
+                    : 0.5,
               }}
             >
               <div
-                className="absolute inset-0 -z-10"
+                className="absolute inset-0 -z-10 border-l-1 border-r-1 border-[#d41737]"
                 style={{
                   background: `linear-gradient(to bottom, transparent, ${slide.teamAndPlayers[playerKey].player.color})`,
                   opacity: 0.5,
@@ -154,28 +154,42 @@ const MatchSummarySlide = ({
                 }}
               ></div>
               <div
-                className={cns('absolute inset-0', {
+                className={cns('absolute bottom-0 left-0 right-0', {
                   'mi-teams-team-out': status >= 0 && subslide > 0,
                 })}
               >
-                <img
-                  src={slide.teamAndPlayers[playerKey].player.propicUrl!}
-                  className="aspect-[18/25] w-full"
-                  alt=""
-                />
-                <h3 className="text-[1.5em] font-semibold text-center">
+                <h3 className="text-[2em] font-semibold text-center text-[#e81763]">
                   {slide.teamAndPlayers[playerKey].player.primaryName}
                 </h3>
-                <h3 className="text-[1.5em] font-semibold text-center flex justify-between px-[.5em]">
-                  <span>
+                <h3 className="text-[1.5em] font-semibold text-center flex justify-between px-[1em] mb-6">
+                  <div
+                    className="px-4"
+                    style={{
+                      background:
+                        slide.teamAndPlayers[playerKey].result.ranking === '1'
+                          ? '#FFF000'
+                          : slide.teamAndPlayers[playerKey].result.ranking ===
+                              '2'
+                            ? '#ededed'
+                            : slide.teamAndPlayers[playerKey].result.ranking ===
+                                '3'
+                              ? '#f29674'
+                              : '#d9d9d9',
+                    }}
+                  >
                     {renderRanking(
                       slide.teamAndPlayers[playerKey].result.ranking
                     )}
-                  </span>
+                  </div>
                   <span>
                     {renderPoint(slide.teamAndPlayers[playerKey].result.point)}
                   </span>
                 </h3>
+                <img
+                  src={slide.teamAndPlayers[playerKey].player.propicUrl!}
+                  className="w-full"
+                  alt=""
+                />
               </div>
             </div>
           ))}
@@ -226,10 +240,13 @@ const MatchSummarySlide = ({
           {slide.teamAndPlayers.map(({ player, result }, index) => (
             <div
               key={index}
-              className={cns('text-[#78012c] relative overflow-hidden flex-1', {
-                'mi-teams-in': status === 0,
-                'mi-teams-out': status > 0,
-              })}
+              className={cns(
+                'text-[#78012c] relative overflow-hidden flex-1 border-b-1 border-t-1 border-[#78012c]',
+                {
+                  'mi-teams-in': status === 0,
+                  'mi-teams-out': status > 0,
+                }
+              )}
               style={{
                 animationDelay: status === 0 ? index * 0.25 + 's' : '0s',
               }}
@@ -343,7 +360,7 @@ const MatchSummarySlide = ({
               <div
                 key={index}
                 className={cns(
-                  'relative overflow-hidden flex-1 pl-[.5em] flex flex-col justify-center',
+                  'relative overflow-hidden flex-1 pl-[.5em] flex flex-col justify-centerborder-t-1 border-b-1 border-[#78012c]',
                   {
                     'mi-chart-player-in': status === 0,
                     'mi-chart-player-out': status > 0,
@@ -695,27 +712,30 @@ const MatchSummaryPage = ({
       }}
       onClick={handleClickScreen}
     >
+      <div className="absolute inset-0">
+        <video
+          src="/videos/ptt-bg3.mp4"
+          className="absolute inset-0"
+          autoPlay
+          loop
+          muted
+        ></video>
+      </div>
       <div className="absolute py-16 px-24 inset-0">
-        <div className="flex items-end gap-x-[0.25em] mi-title-in">
-          <div>
-            <img
-              src={match.tournament.logoUrl + '?w=280&h=280&auto=format'}
-              alt={match.tournament.name}
-              style={{ width: '3.5em', height: '3.5em', marginTop: '0.15em' }}
-            />
-          </div>
+        <div className="flex items-start gap-x-[0.25em] mi-title-in">
           <div className="flex-1">
-            <h3 className="text-[1.25em] leading-[1em]">
-              {match.tournament.name}
-            </h3>
-            <h1 className="text-[2em] leading-[1.2em] font-semibold">
-              {match.name}
-            </h1>
+            <div className="flex justify-start">
+              <div className="font-bold text-[1.5em] leading-[100%]">
+                {match.startAt.substring(0, 10)}
+              </div>
+            </div>
+            <div className="flex gap-x-10">
+              <div className="font-bold text-[2.5em]">對局結果</div>
+              <div className="font-bold text-[2.5em]">Result</div>
+            </div>
           </div>
           <div>
-            <h1 className="text-[2em] leading-[1.2em] font-semibold">
-              對局結果
-            </h1>
+            <h1 className="text-[1.25em] font-semibold">{match.name}</h1>
           </div>
         </div>
         {/* <h1 className="text-[2.2em] leading-[1.2em] font-semibold mi-subbtitle-in">

@@ -73,6 +73,7 @@ export type Player = {
   nickname: string | null
   designation: string | null
   portraitImage: string | null
+  fullBodyImage: string | null
   introduction: string
   statistics?: PlayerStatistic
 }

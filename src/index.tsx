@@ -82,6 +82,8 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <FirebaseDatabaseProvider>
         <ConfirmDialogProvider>
           <Switch>
+            <Route path="/nameplates" component={AllNameplatesPage} />
+
             {/* Pages for v2 site */}
             <Route path="/panel" nest>
               <V2PanelLayout>

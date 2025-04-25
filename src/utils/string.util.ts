@@ -115,7 +115,7 @@ export const renderPoint = (value: number | undefined | null) => {
   }
 
   if (value >= 0) {
-    return `+${value.toFixed(1)}`
+    return `+ ${value.toFixed(1)}`
   }
 
   return `▲${Math.abs(value).toFixed(1)}`

@@ -6,7 +6,7 @@ import {
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import cns from 'classnames'
 import useDbMatchWithStatistics from '@/hooks/useDbMatchWithStatistics'
-import { Player, Team } from '@/models'
+import { Match, Player, Team } from '@/models'
 
 import styles from './index.module.css'
 
@@ -26,6 +26,7 @@ type Slide =
   | {
       _id: string
       type: 'players'
+      match: Match
       teamAndPlayers: { team: Team; player: Player }[]
       subslide: 1
     }
@@ -37,52 +38,37 @@ type Slide =
       subslide: 1
     }
 
-const MatchTeamPlayerDiv = ({
-  team,
+const MatchTeamPlayerFullBodyDiv = ({
   player,
   fadeIn,
   fadeOut,
   delay,
 }: {
-  team: Team
   player: Player
   fadeIn: boolean
   fadeOut: boolean
   delay: number
 }) => {
-  const lightenedColor = getLightColorOfColor(team.color)
-
   return (
     <div
       key={player.name}
-      className={cns('relative aspect-18/25 rounded-[1em] overflow-hidden', {
-        'mi-team-player-in': fadeIn,
-        'mi-team-player-out': fadeOut,
-      })}
+      className={cns(
+        'absolute -inset-[1em] h-full rounded-[1em] overflow-visible',
+        {
+          'mi-team-player-in': fadeIn,
+          'mi-team-player-out': fadeOut,
+        }
+      )}
       style={{
-        background: `linear-gradient(180deg, ${team.color}, ${lightenedColor})`,
         animationDelay: delay + 's',
       }}
     >
-      <div
-        className="absolute inset-0"
-        style={{
-          background: `url(${
-            team.squareLogoImage + '?w=500&h=500&auto=format'
-          })`,
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'center',
-          opacity: 0.2,
-        }}
-      ></div>
       <img
-        className="relative z-10 block mx-auto w-full"
-        src={
-          player.portraitImage + '?h=1000&w=720&auto=format&fit=crop&crop=top'
-        }
+        className="absolute inset-0 z-10 block mx-auto w-full"
+        src={player.fullBodyImage + '?h=1200&auto=format&fit=clip'}
         alt={player.name!}
       />
-      <div
+      {/* <div
         className="absolute z-20 bottom-0 left-0 right-0 text-center py-[0.25em]"
         style={{
           background: 'linear-gradient(to top, #00000090 80%, transparent',
@@ -91,7 +77,7 @@ const MatchTeamPlayerDiv = ({
         <div>
           <p className="text-[1.5em]">{player.name}</p>
         </div>
-      </div>
+      </div> */}
     </div>
   )
 }
@@ -113,7 +99,23 @@ const MatchIntroductionSlide = ({
           opacity: status >= 0 && status < 1 ? 1 : 0,
         }}
       >
-        <div className="flex-1"></div>
+        <div
+          className={cns('flex-1 flex flex-col justify-center pl-16', {
+            'mi-title-in': status === 0,
+            'mi-title-out': status > 0,
+          })}
+        >
+          <div className="flex justify-start">
+            <div className="font-bold text-[1.5em] leading-[100%]">
+              {slide.match.startAt.substring(0, 10)}
+            </div>
+          </div>
+          <div className="flex gap-x-10">
+            <div className="font-bold text-[2.5em]">今日出戰選手</div>
+            <div className="font-bold text-[2.5em]">Today's Players</div>
+          </div>
+        </div>
+
         <div className="flex-2 grid grid-cols-4 items-center">
           {slide.teamAndPlayers.map(({ team, player }, index) => (
             <div
@@ -135,21 +137,13 @@ const MatchIntroductionSlide = ({
                 }}
               ></div>
               <div
-                className="absolute inset-0 -z-10"
-                style={{
-                  background: `url(${
-                    team.squareLogoImage + '?w=720&h=1000&auto=format'
-                  })`,
-                  backgroundRepeat: 'no-repeat',
-                  backgroundPosition: 'center center',
-                  opacity: 0.05,
-                }}
-              ></div>
-              <div
-                className={cns('absolute inset-0', {
+                className={cns('absolute bottom-0 left-0 right-0', {
                   'mi-teams-team-out': status >= 0 && subslide > 0,
                 })}
               >
+                <h3 className="text-[2em] font-semibold text-center text-[#e81763] mb-8">
+                  {player.name}
+                </h3>
                 <img
                   src={
                     player.portraitImage +
@@ -158,9 +152,6 @@ const MatchIntroductionSlide = ({
                   className="aspect-[18/25] w-full"
                   alt=""
                 />
-                <h3 className="text-[1.5em] font-semibold text-center text-[#78012c]">
-                  {player.name}
-                </h3>
               </div>
               <div
                 className={cns('absolute inset-0 opacity-0', {
@@ -209,27 +200,31 @@ const MatchIntroductionSlide = ({
 
           <h3 className="inline-block font-semibold text-right text-[1.5em]"></h3>
         </div>
-        <div className="flex-5 relative">
+        <div className="flex-8 relative">
           <div
-            className="absolute inset-0 grid grid-cols-4 items-center gap-16"
+            className="absolute inset-0 grid grid-cols-4 items-stretch gap-16"
             style={{
               opacity: status >= 0 && status < 1 ? 1 : 0,
             }}
           >
-            <MatchTeamPlayerDiv
-              team={slide.team}
-              player={slide.focusPlayer}
-              fadeIn={status === 0}
-              fadeOut={status > 0}
-              delay={0}
-            />
-            <div className="col-span-3 text-[#78012c]">
+            <div className="relative col-span-1">
+              <MatchTeamPlayerFullBodyDiv
+                player={slide.focusPlayer}
+                fadeIn={status === 0}
+                fadeOut={status > 0}
+                delay={0}
+              />
+            </div>
+            <div className="col-span-3 text-[#78012c] -mt-12">
               <div
                 className={cns({
                   'mi-team-activePlayerStat-in': status === 0,
                   'mi-team-activePlayerStat-out': status > 0,
                 })}
               >
+                <div className="text-[5em] font-bold mb-2 text-[#e81763]">
+                  {slide.focusPlayer.name}
+                </div>
                 <div className="flex justify-between mb-[1em] text-[#78012c]">
                   <p className="text-[2em] flex items-center">
                     <span>個人總分</span>
@@ -355,6 +350,7 @@ const MatchIntroductionPage = ({
       {
         type: 'players',
         _id: 'players',
+        match,
         teamAndPlayers: [
           {
             team: match.playerEastTeam,
@@ -488,24 +484,32 @@ const MatchIntroductionPage = ({
       }}
       onClick={handleClickScreen}
     >
-      <div className="absolute py-16 px-24 inset-0">
-        <div className="flex gap-x-[0.25em] mi-title-in">
+      <div className="absolute inset-0">
+        <video
+          src="/videos/ptt-bg3.mp4"
+          className="absolute inset-0"
+          autoPlay
+          loop
+          muted
+        ></video>
+      </div>
+      <div className="absolute pt-6 pb-16 pl-16 pr-24 inset-0 flex items-start justify-end">
+        {/* <div className="flex gap-x-[1.25em] mi-title-in items-center">
           <div>
             <img
               src={match.tournament.logoUrl + '?w=280&h=280&auto=format'}
               alt={match.tournament.name}
-              style={{ width: '3.5em', height: '3.5em', marginTop: '0.15em' }}
+              style={{ width: '5em', height: '5em', marginTop: '0.15em' }}
             />
           </div>
           <div>
-            <h3 className="text-[1.25em] leading-[1em]">
-              {match.tournament.name}
-            </h3>
-            <h1 className="text-[2em] leading-[1.2em] font-semibold">
-              {match.name}
-            </h1>
+            <h3 className="text-[2.5em]">{match.tournament.name}</h3>
           </div>
-        </div>
+        </div> */}
+        {/* <img src="/images/logo-sakura-long.png" className="h-[4em]" alt="" /> */}
+        {/* <h1 className="mt-[0.8em] text-[1em] leading-[1.2em] font-semibold">
+          {match.name}
+        </h1> */}
         {/* <h1 className="text-[2.2em] leading-[1.2em] font-semibold mi-subbtitle-in">
           {match.name}
         </h1> */}

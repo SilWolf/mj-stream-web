@@ -14,6 +14,7 @@ const PLAYER_META_FIELDS = [
   'name',
   'nickname',
   '"portraitImage": portraitImage.asset->url',
+  '"fullBodyImage": fullBodyImage.asset->url',
   'designation',
   'introduction',
 ]
