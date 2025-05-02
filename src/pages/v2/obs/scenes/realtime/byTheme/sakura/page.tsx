@@ -161,7 +161,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
             </div>
           </div>
           <div className="flex-1 flex items-start justify-end text-black pr-10 self-start">
-            <span className="text-[.35em]">{rtMatch.name}</span>
+            {/* <span className="text-[.35em]">{rtMatch.name}</span> */}
           </div>
         </div>
 

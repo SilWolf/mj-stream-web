@@ -138,7 +138,12 @@ const MatchIntroductionSlide = ({
                   'mi-teams-team-out': status >= 0 && subslide > 0,
                 })}
               >
-                <h3 className="text-[2em] font-semibold text-center text-[#e81763] mb-8">
+                <h3
+                  className="text-[2em] font-semibold text-center mb-8"
+                  style={{
+                    color: team.color,
+                  }}
+                >
                   {player.name}
                 </h3>
                 <img
@@ -219,7 +224,12 @@ const MatchIntroductionSlide = ({
                   'mi-team-activePlayerStat-out': status > 0,
                 })}
               >
-                <div className="text-[5em] font-bold mb-2 text-[#e81763]">
+                <div
+                  className="text-[5em] font-bold mb-2"
+                  style={{
+                    color: slide.team.color,
+                  }}
+                >
                   {slide.focusPlayer.name}
                 </div>
                 <div className="flex justify-between mb-[1em] text-[#78012c]">
@@ -334,7 +344,6 @@ const MatchIntroductionPage = ({
   params: { matchId },
   forwardFlag,
   resetFlag,
-  disableClick,
 }: Props) => {
   const { rtMatch } = useRealtimeMatch(matchId)
   const { data: match } = useDbMatchWithStatistics(rtMatch?.databaseId)
@@ -443,10 +452,8 @@ const MatchIntroductionPage = ({
   }, [isSlideChanging, slideIndex, slides, subSlideIndex])
 
   const handleClickScreen = useCallback(() => {
-    if (!disableClick) {
-      handleSlideForward()
-    }
-  }, [disableClick, handleSlideForward])
+    handleSlideForward()
+  }, [handleSlideForward])
 
   useEffect(() => {
     if (typeof forwardFlag !== 'undefined' && forwardFlag !== prevForwardFlag) {

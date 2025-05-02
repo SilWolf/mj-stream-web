@@ -51,6 +51,11 @@ const V2PanelObsMatchControlPage = lazy(
 const V2PanelObsSceneControlPage = lazy(
   () => import('./pages/v2/panel/obs/scene-control/page')
 )
+
+const V2PanelRealtimeMatchesPage = lazy(
+  () => import('./pages/v2/panel/realtime/matches/page')
+)
+
 const V2ObsSceneMasterPage = lazy(
   () => import('./pages/v2/obs/scenes/master/page')
 )
@@ -88,10 +93,12 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <Route path="/panel" nest>
               <V2PanelLayout>
                 <Route path="/" component={V2PanelPage} />
+
                 <Route
                   path="/matches/:matchId/edit"
                   component={V2PanelMatchesByIdEditPage}
                 />
+
                 <Route
                   path="/obs/match-control"
                   component={V2PanelObsMatchControlPage}
@@ -99,6 +106,11 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                 <Route
                   path="/obs/scene-control"
                   component={V2PanelObsSceneControlPage}
+                />
+
+                <Route
+                  path="/realtime/matches"
+                  component={V2PanelRealtimeMatchesPage}
                 />
               </V2PanelLayout>
             </Route>

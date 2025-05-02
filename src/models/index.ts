@@ -241,6 +241,9 @@ export type RealtimeMatch = {
   showPoints?: boolean | null
   hideHeader?: boolean | null
   hidePlayers?: boolean | null
+  flag?: {
+    isUploaded?: boolean | null
+  }
 }
 
 export type RealtimePlayer = {

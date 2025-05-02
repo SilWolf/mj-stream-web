@@ -24,8 +24,8 @@ import {
   Query,
   QueryConstraint,
   orderByChild,
-  connectDatabaseEmulator,
   equalTo,
+  orderByKey,
 } from 'firebase/database'
 import { isObjectEqual } from '@/utils/object.util'
 import firebaseApp from '@/firebaseApp'
@@ -106,12 +106,14 @@ export const useFirebaseDatabase = () => {
 
 export type UseFirebaseDatabaseByKeyOptions = fbListenOptions & {
   order?: {
+    byKey?: boolean
     byChild?: string
   }
   filter?: {
     limitToLast?: number
     equalTo?: string | number | boolean | null
   }
+  limit?: number
 }
 
 export const useFirebaseDatabaseByKey = <
@@ -163,6 +165,9 @@ export const useFirebaseDatabaseByKey = <
     const queryConstraint: QueryConstraint[] = []
 
     if (lastOptions?.order) {
+      if (lastOptions.order.byKey) {
+        queryConstraint.push(orderByKey())
+      }
       if (lastOptions.order.byChild) {
         queryConstraint.push(orderByChild(lastOptions.order.byChild))
       }

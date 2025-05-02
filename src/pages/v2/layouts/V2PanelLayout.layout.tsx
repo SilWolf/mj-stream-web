@@ -101,6 +101,16 @@ export default function V2PanelLayout({ children }: PropsWithChildren) {
                 <Link href="/obs/scene-control">多合一場景控制台</Link>
               </li>
             </ul>
+
+            <div className="divider"></div>
+
+            <h5 className="text-sm font-bold px-4">暫存資料庫</h5>
+
+            <ul className="menu bg-base-100 text-base-content min-h-full p-4 w-full">
+              <li>
+                <Link href="/realtime/matches">已結束賽事</Link>
+              </li>
+            </ul>
           </div>
         </div>
       </div>

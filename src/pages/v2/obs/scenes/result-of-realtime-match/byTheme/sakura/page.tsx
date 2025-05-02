@@ -9,6 +9,13 @@ import { RealtimePlayer } from '@/models'
 import styles from './index.module.css'
 import useDbMatch from '@/hooks/useDbMatch'
 
+const rankingColors = [
+  { strokeColor: '#77475b', bgColor: '#562135C0', color: '#f9dddc' },
+  { strokeColor: '#c68fa7', bgColor: '#c3829eC0', color: '#77475b' },
+  { strokeColor: '#e4b2ca', bgColor: '#e9b1cdC0', color: '#77475b' },
+  { strokeColor: '#f9dddc', bgColor: '#ffe7deC0', color: '#77475b' },
+]
+
 type Props = {
   params: { matchId: string }
   forwardFlag?: number
@@ -67,7 +74,7 @@ type Slide =
       }[]
       players: Record<
         'playerEast' | 'playerSouth' | 'playerWest' | 'playerNorth',
-        { name: string; color: string }
+        { name: string; strokeColor: string; color: string }
       >
       teamAndPlayers: {
         player: RealtimePlayer
@@ -135,7 +142,7 @@ const MatchSummarySlide = ({
               }}
             >
               <div
-                className="absolute inset-0 -z-10 border-l-1 border-r-1 border-[#d41737]"
+                className="absolute inset-0 -z-10 border-l-1 border-r-1 border-[#d41737C0]"
                 style={{
                   background: `linear-gradient(to bottom, transparent, ${slide.teamAndPlayers[playerKey].player.color})`,
                   opacity: 0.5,
@@ -158,23 +165,30 @@ const MatchSummarySlide = ({
                   'mi-teams-team-out': status >= 0 && subslide > 0,
                 })}
               >
-                <h3 className="text-[2em] font-semibold text-center text-[#e81763]">
+                <h3
+                  className="text-[2em] font-semibold text-center"
+                  style={{
+                    color: slide.teamAndPlayers[playerKey].player.color,
+                  }}
+                >
                   {slide.teamAndPlayers[playerKey].player.primaryName}
                 </h3>
-                <h3 className="text-[1.5em] font-semibold text-center flex justify-between px-[1em] mb-6">
+                <h3 className="text-[1.5em] leading-[1em] font-semibold text-center flex justify-between px-[1em] mb-6">
                   <div
-                    className="px-4"
+                    className="px-4 py-1"
                     style={{
                       background:
-                        slide.teamAndPlayers[playerKey].result.ranking === '1'
-                          ? '#FFF000'
-                          : slide.teamAndPlayers[playerKey].result.ranking ===
-                              '2'
-                            ? '#ededed'
-                            : slide.teamAndPlayers[playerKey].result.ranking ===
-                                '3'
-                              ? '#f29674'
-                              : '#d9d9d9',
+                        rankingColors[
+                          (parseInt(
+                            slide.teamAndPlayers[playerKey].result.ranking
+                          ) ?? 1) - 1
+                        ].bgColor,
+                      color:
+                        rankingColors[
+                          (parseInt(
+                            slide.teamAndPlayers[playerKey].result.ranking
+                          ) ?? 1) - 1
+                        ].color,
                     }}
                   >
                     {renderRanking(
@@ -233,7 +247,7 @@ const MatchSummarySlide = ({
             <div className="flex-1 text-right text-[.9em] font-semibold">
               和了次數
             </div>
-            <div className="flex-1 text-right text-[.9em] font-semibold">
+            <div className="flex-1 text-right text-[.9em] font-semibold pr-8">
               放銃次數
             </div>
           </div>
@@ -249,15 +263,11 @@ const MatchSummarySlide = ({
               )}
               style={{
                 animationDelay: status === 0 ? index * 0.25 + 's' : '0s',
+                background: rankingColors[index].bgColor,
+                color: rankingColors[index].color,
               }}
             >
-              <div
-                className="absolute inset-0 -z-10"
-                style={{
-                  background: `linear-gradient(to left, transparent, ${player.color})`,
-                  opacity: 0.5,
-                }}
-              ></div>
+              <div className="absolute inset-0 -z-10"></div>
               <div
                 className="absolute inset-0 -z-10"
                 style={{
@@ -300,7 +310,7 @@ const MatchSummarySlide = ({
                   </span>
                   回
                 </div>
-                <div className="flex-1 text-right">
+                <div className="flex-1 text-right pr-8">
                   <span className="text-[1.5em]">
                     {renderScore(result.chuckCount)}
                   </span>
@@ -345,7 +355,7 @@ const MatchSummarySlide = ({
         <div className="flex-1"></div>
         <div className="flex-3 flex items-stretch gap-x-[1em]">
           <div
-            className={cns('flex-3', {
+            className={cns('flex-3 bg-white/25 p-4', {
               'mi-chart-chart-in': status === 0,
               'mi-chart-chart-out': status > 0,
             })}
@@ -360,32 +370,26 @@ const MatchSummarySlide = ({
               <div
                 key={index}
                 className={cns(
-                  'relative overflow-hidden flex-1 pl-[.5em] flex flex-col justify-centerborder-t-1 border-b-1 border-[#78012c]',
+                  'relative overflow-hidden flex-1 px-[.5em] flex flex-col justify-center border-t-1 border-b-1 border-[#78012c]',
                   {
                     'mi-chart-player-in': status === 0,
                     'mi-chart-player-out': status > 0,
                   }
                 )}
                 style={{
-                  background: `linear-gradient(to left, transparent, ${slide.teamAndPlayers[index].player.color}C0)`,
+                  color: rankingColors[index].color,
+                  background: rankingColors[index].bgColor,
                   animationDelay: status === 0 ? index * 0.25 + 's' : '0s',
                 }}
               >
-                <img
-                  src={
-                    slide.teamAndPlayers[index].player.logoUrl + '?w=320&h=320'
-                  }
-                  alt={slide.teamAndPlayers[index].player.primaryName}
-                  className="absolute left-0 opacity-10 -z-10"
-                />
                 <div className="flex justify-between">
                   <div>
-                    <p className="text-[1.5em] leading-[1em]">
+                    <p className="text-[1.25em] leading-[1em]">
                       {slide.teamAndPlayers[index].player.primaryName}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-[1.5em] leading-[1em]">
+                    <p className="text-[1.25em] leading-[1em]">
                       {slide.teamAndPlayers[index].result.score}
                     </p>
                     <p className="text-[.75em]">
@@ -408,7 +412,6 @@ const MatchSummaryPage = ({
   params: { matchId },
   forwardFlag,
   resetFlag,
-  disableClick,
 }: Props) => {
   const { rtMatch, rtMatchRounds } = useRealtimeMatch(matchId)
   const { data: match } = useDbMatch(rtMatch?.databaseId)
@@ -608,19 +611,39 @@ const MatchSummaryPage = ({
       players: {
         playerEast: {
           name: rtMatch.players[0].primaryName!,
-          color: rtMatch.players[0].color,
+          color:
+            rankingColors[(parseInt(playersStat.playerEast.ranking) ?? 1) - 1]
+              .strokeColor,
+          strokeColor:
+            rankingColors[(parseInt(playersStat.playerEast.ranking) ?? 1) - 1]
+              .color,
         },
         playerSouth: {
           name: rtMatch.players[1].primaryName!,
-          color: rtMatch.players[1].color,
+          color:
+            rankingColors[(parseInt(playersStat.playerSouth.ranking) ?? 1) - 1]
+              .strokeColor,
+          strokeColor:
+            rankingColors[(parseInt(playersStat.playerSouth.ranking) ?? 1) - 1]
+              .color,
         },
         playerWest: {
           name: rtMatch.players[2].primaryName!,
-          color: rtMatch.players[2].color,
+          color:
+            rankingColors[(parseInt(playersStat.playerWest.ranking) ?? 1) - 1]
+              .strokeColor,
+          strokeColor:
+            rankingColors[(parseInt(playersStat.playerWest.ranking) ?? 1) - 1]
+              .color,
         },
         playerNorth: {
           name: rtMatch.players[3].primaryName!,
-          color: rtMatch.players[3].color,
+          color:
+            rankingColors[(parseInt(playersStat.playerNorth.ranking) ?? 1) - 1]
+              .strokeColor,
+          strokeColor:
+            rankingColors[(parseInt(playersStat.playerNorth.ranking) ?? 1) - 1]
+              .color,
         },
       },
       teamAndPlayers: sortedTeamPlayers,
@@ -673,10 +696,8 @@ const MatchSummaryPage = ({
   }, [isSlideChanging, slideIndex, slides, subSlideIndex])
 
   const handleClickScreen = useCallback(() => {
-    if (!disableClick) {
-      handleSlideForward()
-    }
-  }, [disableClick, handleSlideForward])
+    handleSlideForward()
+  }, [handleSlideForward])
 
   useEffect(() => {
     if (typeof forwardFlag !== 'undefined' && forwardFlag !== prevForwardFlag) {
