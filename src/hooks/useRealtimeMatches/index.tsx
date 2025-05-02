@@ -12,12 +12,19 @@ export default function useRealtimeMatches() {
       byChild: 'createdAt',
     },
     filter: {
-      limitToLast: 20,
+      limitToLast: 10,
     },
   })
 
   const rtMatches = useMemo(
-    () => Object.values(rtMatchesMap ?? {}).reverse(),
+    () =>
+      Object.entries(rtMatchesMap ?? {})
+        .map(([key, value]) => ({
+          ...value,
+          databaseId: value.databaseId || key,
+          _id: key,
+        }))
+        .reverse(),
     [rtMatchesMap]
   )
 

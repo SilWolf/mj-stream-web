@@ -1,5 +1,6 @@
 import useRealtimeMatches from '@/hooks/useRealtimeMatches'
 import { RealtimePlayer } from '@/models'
+import { Link } from 'wouter'
 
 function RealtimePlayerMiniCard({ player }: { player: RealtimePlayer }) {
   return (
@@ -45,6 +46,7 @@ export default function RecentRealtimeMatchesSection() {
             <tr key={rtMatch.code}>
               <th>
                 <div>{rtMatch.name}</div>
+                <div>{rtMatch.createdAt}</div>
                 <div className="flex flex-wrap gap-1">
                   {!rtMatch.flag?.isUploaded && (
                     <div className="badge badge-outline badge-error">
@@ -65,7 +67,14 @@ export default function RecentRealtimeMatchesSection() {
               <td>
                 <RealtimePlayerMiniCard player={rtMatch.players[3]} />
               </td>
-              <td>上傳成績</td>
+              <td>
+                <Link
+                  href={`/matches/${rtMatch._id}/detail`}
+                  className="text-success"
+                >
+                  詳細
+                </Link>
+              </td>
             </tr>
           ))}
         </tbody>
