@@ -100,20 +100,50 @@ const PlayersListView = ({
             </button>
           </div>
           <div className="flex-1">
-            <div className="flex flex-wrap gap-x-4 items-center">
-              <span>{players[index].primaryName}</span>
-              <button className="btn btn-base">立直</button>
-              <div className="space-x-1">
-                <button className="btn btn-base">碰</button>
-                <button className="btn btn-base">吃</button>
-                <button className="btn btn-base">槓</button>
-                <button className="btn btn-base">暗槓</button>
+            <div className="flex flex-wrap gap-x-2 items-center">
+              <span className="w-32 overflow-hidden">
+                {players[index].primaryName}
+              </span>
+              <button
+                className="cursor-pointer px-4 h-10 bg-neutral-200 border border-neutral-700 text-xl disabled:opacity-20 disabled:cursor-not-allowed data-[active=true]:bg-red-800 data-[active=true]:text-yellow-300"
+                data-player-index={index}
+                data-action="riichi"
+                onClick={handleAction}
+                data-active={
+                  currentRound.playerResults[index].isRiichi ? true : false
+                }
+                disabled={currentRound.playerResults[index].isRevealed}
+              >
+                立直
+              </button>
+              <div className="space-x-1 ml-2">
+                <button
+                  className="cursor-pointer px-2 h-10 bg-neutral-200 border rounded-sm border-neutral-700 text-xl"
+                  disabled={currentRound.playerResults[index].isRiichi}
+                >
+                  碰
+                </button>
+                <button
+                  className="cursor-pointer px-2 h-10 bg-neutral-200 border rounded-sm border-neutral-700 text-xl"
+                  disabled={currentRound.playerResults[index].isRiichi}
+                >
+                  吃
+                </button>
+                <button
+                  className="cursor-pointer px-2 h-10 bg-neutral-200 border rounded-sm border-neutral-700 text-xl"
+                  disabled={currentRound.playerResults[index].isRiichi}
+                >
+                  槓
+                </button>
+                <button className="cursor-pointer px-2 h-10 bg-neutral-200 border rounded-sm border-neutral-700 text-xl">
+                  暗槓
+                </button>
               </div>
             </div>
 
             <div className="flex items-stretch mt-1">
               <div
-                className="flex items-center justify-center px-2 text-white text-4xl w-[3.5em]"
+                className="flex items-center justify-center px-2 text-white text-4xl w-32"
                 style={{ background: players[index].color }}
               >
                 {currentRound.playerResults[index].afterScore}
