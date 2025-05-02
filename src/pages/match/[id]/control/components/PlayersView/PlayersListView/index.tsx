@@ -8,6 +8,7 @@ import {
   getIsPlayerEast,
   getOppositeOfPlayerIndex,
 } from '@/helpers/mahjong.helper'
+import MJTileKeyboardMiniDiv from '@/components/MJTileKeyboardMiniDiv'
 
 const PlayersListView = ({
   players,
@@ -117,12 +118,18 @@ const PlayersListView = ({
                 立直
               </button>
               <div className="space-x-1 ml-2">
-                <button
-                  className="cursor-pointer px-2 h-10 bg-neutral-200 border rounded-sm border-neutral-700 text-xl"
-                  disabled={currentRound.playerResults[index].isRiichi}
-                >
-                  碰
-                </button>
+                <details className="dropdown dropdown-center dropdown-top mb-1">
+                  <summary className="btn font-normal cursor-pointer px-2 h-10 bg-neutral-200 border rounded-sm border-neutral-700 text-xl">
+                    碰
+                  </summary>
+                  <div className="dropdown-content z-1">
+                    <div className="card border border-base-300 shadow mb-1">
+                      <div className="card-content bg-base-100 p-2">
+                        <MJTileKeyboardMiniDiv />
+                      </div>
+                    </div>
+                  </div>
+                </details>
                 <button
                   className="cursor-pointer px-2 h-10 bg-neutral-200 border rounded-sm border-neutral-700 text-xl"
                   disabled={currentRound.playerResults[index].isRiichi}

@@ -233,99 +233,146 @@ const MatchIntroductionSlide = ({
                   {slide.focusPlayer.name}
                 </div>
                 <div className="flex justify-between mb-[1em] text-[#78012c]">
-                  <p className="text-[2em] flex items-center">
-                    <span>個人總分</span>
+                  <p className="text-[2em] gap-x-8 flex items-center">
+                    <span>總分</span>
                     <span className="font-numeric">
                       {renderPoint(slide.focusPlayer.statistics?.point)}
+                    </span>
+                    <span className="ml-4 font-numeric text-[.75em] min-w-[2.5em] text-right text-[#ec276e]">
+                      ( 第 {slide.focusPlayer.statistics?.pointRanking ?? '10'}{' '}
+                      名 )
                     </span>
                   </p>
                   <p className="text-[2em]">
                     半莊數{' '}
                     <span className="font-numeric">
-                      {slide.focusPlayer.statistics?.matchCount ?? '-'}
+                      {slide.focusPlayer.statistics?.matchCount ?? '0'} / 16
                     </span>
                   </p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-x-[2em] text-[1.5em]">
-                  <div className="flex justify-between">
+                <div className="grid grid-cols-2 gap-x-[2em] gap-y-[.35em] text-[1.5em]">
+                  <div className="flex justify-between items-center">
                     <p className="text-[.9em]">四位迴避率</p>
-                    <p className="flex items-center">
+                    <p className="flex items-center text-[.8em]">
                       <span className="font-numeric">
                         {renderPercentage(
                           slide.focusPlayer.statistics?.nonFourthP
                         )}
                       </span>
+                      <span className="font-numeric ml-6 text-[.75em] min-w-[2.5em] text-right text-[#ec276e]">
+                        ({' '}
+                        {slide.focusPlayer.statistics?.nonFourthPRanking ?? '-'}{' '}
+                        位 )
+                      </span>
                     </p>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between items-center">
                     <p className="text-[.9em]">連對率</p>
-                    <p className="flex items-center">
+                    <p className="flex items-center text-[.8em]">
                       <span className="font-numeric">
+                        {' '}
                         {renderPercentage(
                           slide.focusPlayer.statistics?.firstAndSecondP
                         )}
                       </span>
+                      <span className="font-numeric ml-6 text-[.75em] min-w-[2.5em] text-right text-[#ec276e]">
+                        ({' '}
+                        {slide.focusPlayer.statistics?.firstAndSecondPRanking ??
+                          '-'}{' '}
+                        位 )
+                      </span>
                     </p>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between items-center">
                     <p className="text-[.9em]">立直率</p>
-                    <p className="flex items-center">
+                    <p className="flex items-center text-[.8em]">
                       <span className="font-numeric">
+                        {' '}
                         {renderPercentage(
                           slide.focusPlayer.statistics?.riichiP
                         )}
                       </span>
+                      <span className="font-numeric ml-6 text-[.75em] min-w-[2.5em] text-right text-[#ec276e]">
+                        ( {slide.focusPlayer.statistics?.riichiPRanking ?? '-'}{' '}
+                        位 )
+                      </span>
                     </p>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between items-center">
                     <p className="text-[.9em]">和了率</p>
-                    <p className="flex items-center">
+                    <p className="flex items-center text-[.8em]">
                       <span className="font-numeric">
                         {renderPercentage(slide.focusPlayer.statistics?.ronP)}
                       </span>
-                    </p>
-                  </div>
-                  <div className="flex justify-between">
-                    <p className="text-[.9em]">銃和率</p>
-                    <p className="flex items-center">
-                      <span className="font-numeric">
-                        {renderPercentage(slide.focusPlayer.statistics?.chuckP)}
+                      <span className="font-numeric ml-6 text-[.75em] min-w-[2.5em] text-right text-[#ec276e]">
+                        ( {slide.focusPlayer.statistics?.ronPRanking ?? '-'} 位
+                        )
                       </span>
                     </p>
                   </div>
-                  <div className="flex justify-between">
-                    <p className="text-[.9em]">副露率</p>
-                    <p className="flex items-center">
+                  <div className="flex justify-between items-center">
+                    <p className="text-[.9em]">銃和率</p>
+                    <p className="flex items-center text-[.8em]">
                       <span className="font-numeric">
+                        {' '}
+                        {renderPercentage(slide.focusPlayer.statistics?.chuckP)}
+                      </span>
+                      <span className="font-numeric ml-6 text-[.75em] min-w-[2.5em] text-right text-[#ec276e]">
+                        ( {slide.focusPlayer.statistics?.chuckPRanking ?? '-'}{' '}
+                        位 )
+                      </span>
+                    </p>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <p className="text-[.9em]">副露率</p>
+                    <p className="flex items-center text-[.8em]">
+                      <span className="font-numeric">
+                        {' '}
                         {renderPercentage(
                           slide.focusPlayer.statistics?.revealP
                         )}
+                      </span>
+                      <span className="font-numeric ml-6 text-[.75em] min-w-[2.5em] text-right text-[#ec276e]">
+                        ( {slide.focusPlayer.statistics?.revealPRanking ?? '-'}
+                        {''} 位 )
                       </span>
                     </p>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-x-[2em] text-[1.5em] mt-[.8em]">
+                <div className="grid grid-cols-2 gap-x-[2em] text-[1.5em] mt-[.4em]">
                   <div className="flex justify-between items-start">
-                    <p className="text-[.9em]">和了平均打點</p>
-                    <div className="text-right">
-                      <p className="font-numeric">
+                    <p className="text-[.75em]">和了平均打點</p>
+                    <div className="text-right text-[.8em]">
+                      <span className="font-numeric">
                         {renderPercentage(
                           slide.focusPlayer.statistics?.ronPureScoreAvg
                         )}
-                      </p>
+                      </span>
+                      <span className="font-numeric ml-6 text-[.75em] min-w-[2.5em] text-[#ec276e] -mt-4">
+                        ({' '}
+                        {slide.focusPlayer.statistics?.ronPureScoreAvgRanking ??
+                          '-'}{' '}
+                        位 )
+                      </span>
                     </div>
                   </div>
 
                   <div className="flex justify-between items-start">
-                    <p className="text-[.9em]">銃和平均打點</p>
-                    <div className="text-right">
-                      <p className="font-numeric">
+                    <p className="text-[.75em]">銃和平均打點</p>
+                    <div className="text-right text-[.8em]">
+                      <span className="font-numeric">
                         {renderPercentage(
                           slide.focusPlayer.statistics?.chuckPureScoreAvg
                         )}
-                      </p>
+                      </span>
+                      <span className="font-numeric ml-6 text-[.75em] min-w-[2.5em] text-[#ec276e] -mt-4">
+                        ({' '}
+                        {slide.focusPlayer.statistics
+                          ?.chuckPureScoreAvgRanking ?? '-'}{' '}
+                        位 )
+                      </span>
                     </div>
                   </div>
                 </div>

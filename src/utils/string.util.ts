@@ -109,7 +109,7 @@ export const getYakumanMaxLabel = (value: '13' | '26' | '39' | '130') => {
   return '(未知)'
 }
 
-export const renderPoint = (value: number | undefined | null) => {
+export const renderPoint = (value = 0) => {
   if (typeof value === 'undefined' || value === null) {
     return '-'
   }
@@ -139,7 +139,7 @@ export const renderRanking = (
   return `${i}th`
 }
 
-export const renderPercentage = (value: number | undefined | null) => {
+export const renderPercentage = (value = 0) => {
   if (typeof value === 'undefined' || value === null) {
     return '-'
   }

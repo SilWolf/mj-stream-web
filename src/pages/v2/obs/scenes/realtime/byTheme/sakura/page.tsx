@@ -98,10 +98,18 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
         }
         style={{
           background:
-            'linear-gradient(transparent, transparent 73%, rgba(0, 0, 0, 0.4))',
+            'linear-gradient(transparent, transparent 73%, rgba(0, 0, 0, 0.8))',
           opacity: currentRiichiPlayerIndex !== null ? 0 : 1,
         }}
       >
+        <div className="absolute top-[1vh] right-[1vw] w-[20vw]">
+          <img src="/images/logo-sakura-long.png" className="" alt="" />
+          <div className="text-left text-[0.5em] pl-[0.5em] relative bottom-[0.5em] text-[#ec276e] font-numeric">
+            {new Date().toISOString().substring(8, 10)} /{' '}
+            {new Date().toISOString().substring(5, 7)} /{' '}
+            {new Date().toISOString().substring(0, 4)}
+          </div>
+        </div>
         <div className="flex flex-row items-stretch gap-x-4 text-white">
           <div
             className="relative text-[0.6em] p-2 pl-10 pr-[1em] flex items-center gap-x-8"
@@ -222,7 +230,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
                 }
               />
             </div>
-            <div className="col-span-3 mb-5 bg-black/50 py-6 px-8 text-[0.5em] flex items-stretch gap-x-4">
+            <div className="col-span-3 mb-5 bg-black/50 py-6 px-8 text-[0.5em] min-h-[5.5em] flex items-stretch gap-x-4">
               <div
                 className={`flex-1 flex flex-wrap gap-x-[0.75em] ${
                   rtMatch.activeResultDetail.yakumanCount > 0

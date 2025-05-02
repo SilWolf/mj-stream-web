@@ -21,7 +21,7 @@ export default function MatchExportPage({ params: { matchId } }: Props) {
     }
 
     const exportedMatch = {
-      _id: matchId,
+      _id: rtMatch.databaseId || matchId,
       ...convertMatchToExportedMatch(Object.values(rtMatchRounds)),
     }
 
@@ -52,8 +52,16 @@ export default function MatchExportPage({ params: { matchId } }: Props) {
     <div>
       <div className="container mx-auto my-8 px-8 space-y-6">
         <div>
-          <h6 className="text-center text-sm">{matchId}</h6>
           <h3 className="text-2xl text-center">{rtMatch.name}</h3>
+        </div>
+
+        <div>
+          <p className="text-sm">
+            暫存資料庫ID: <strong>{matchId}</strong>
+          </p>
+          <p className="text-sm">
+            長久資料庫ID: <strong>{rtMatch.databaseId}</strong>
+          </p>
         </div>
 
         <MJMatchHistoryTable
