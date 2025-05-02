@@ -2,13 +2,10 @@ import { PlayerIndex } from '@/models'
 import { PlayersViewAction, PlayersViewProps } from '..'
 import React, { useCallback } from 'react'
 import MJTileDiv from '@/components/MJTileDiv'
-import {
-  getAfterOfPlayerIndex,
-  getBeforeOfPlayerIndex,
-  getIsPlayerEast,
-  getOppositeOfPlayerIndex,
-} from '@/helpers/mahjong.helper'
-import MJTileKeyboardMiniDiv from '@/components/MJTileKeyboardMiniDiv'
+import MJTileCombinationDiv from '@/components/MJTileCombinationDiv'
+import RevealPonKeyboard from './widgets/RevealPonKeyboard'
+import RevealKanngKeyboard from './widgets/RevealKanngKeyboard'
+import RevealChiKeyboard from './widgets/RevealChiKeyboard'
 
 const PlayersListView = ({
   players,
@@ -118,33 +115,99 @@ const PlayersListView = ({
                 立直
               </button>
               <div className="space-x-1 ml-2">
-                <details className="dropdown dropdown-center dropdown-top mb-1">
-                  <summary className="btn font-normal cursor-pointer px-2 h-10 bg-neutral-200 border rounded-sm border-neutral-700 text-xl">
-                    碰
-                  </summary>
-                  <div className="dropdown-content z-1">
-                    <div className="card border border-base-300 shadow mb-1">
-                      <div className="card-content bg-base-100 p-2">
-                        <MJTileKeyboardMiniDiv />
+                {!currentRound.playerResults[index].isRiichi && (
+                  <>
+                    <button
+                      className="cursor-pointer px-2 h-10 bg-neutral-200 border rounded-sm border-neutral-700 text-xl"
+                      popoverTarget={`player${index}-popover-pon-keyboard`}
+                      style={
+                        {
+                          anchorName: `--player${index}-anchor-pon-keyboard`,
+                        } as React.CSSProperties
+                      }
+                    >
+                      碰
+                    </button>
+                    <div
+                      className="dropdown dropdown-center dropdown-top rounded-box bg-base-100 shadow-sm"
+                      popover="auto"
+                      id={`player${index}-popover-pon-keyboard`}
+                      style={
+                        {
+                          positionAnchor: `--player${index}-anchor-pon-keyboard`,
+                        } as React.CSSProperties
+                      }
+                    >
+                      <div className="card border border-base-300 shadow mb-1">
+                        <div className="card-content p-2 text-[32px]">
+                          <RevealPonKeyboard />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </details>
-                <button
-                  className="cursor-pointer px-2 h-10 bg-neutral-200 border rounded-sm border-neutral-700 text-xl"
-                  disabled={currentRound.playerResults[index].isRiichi}
-                >
-                  吃
-                </button>
-                <button
-                  className="cursor-pointer px-2 h-10 bg-neutral-200 border rounded-sm border-neutral-700 text-xl"
-                  disabled={currentRound.playerResults[index].isRiichi}
-                >
-                  槓
-                </button>
+
+                    <button
+                      className="cursor-pointer px-2 h-10 bg-neutral-200 border rounded-sm border-neutral-700 text-xl"
+                      popoverTarget={`player${index}-popover-chi-keyboard`}
+                      style={
+                        {
+                          anchorName: `--player${index}-anchor-chi-keyboard`,
+                        } as React.CSSProperties
+                      }
+                    >
+                      吃
+                    </button>
+                    <div
+                      className="dropdown dropdown-center dropdown-top rounded-box bg-base-100 shadow-sm"
+                      popover="auto"
+                      id={`player${index}-popover-chi-keyboard`}
+                      style={
+                        {
+                          positionAnchor: `--player${index}-anchor-chi-keyboard`,
+                        } as React.CSSProperties
+                      }
+                    >
+                      <div className="card border border-base-300 shadow mb-1">
+                        <div className="card-content p-2 text-[32px]">
+                          <RevealChiKeyboard />
+                        </div>
+                      </div>
+                    </div>
+
+                    <button
+                      className="cursor-pointer px-2 h-10 bg-neutral-200 border rounded-sm border-neutral-700 text-xl"
+                      popoverTarget={`player${index}-popover-kanng-keyboard`}
+                      style={
+                        {
+                          anchorName: `--player${index}-anchor-kanng-keyboard`,
+                        } as React.CSSProperties
+                      }
+                    >
+                      槓
+                    </button>
+                    <div
+                      className="dropdown dropdown-center dropdown-top rounded-box bg-base-100 shadow-sm"
+                      popover="auto"
+                      id={`player${index}-popover-kanng-keyboard`}
+                      style={
+                        {
+                          positionAnchor: `--player${index}-anchor-kanng-keyboard`,
+                        } as React.CSSProperties
+                      }
+                    >
+                      <div className="card border border-base-300 shadow mb-1">
+                        <div className="card-content p-2 text-[32px]">
+                          <RevealKanngKeyboard />
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
                 <button className="cursor-pointer px-2 h-10 bg-neutral-200 border rounded-sm border-neutral-700 text-xl">
                   暗槓
                 </button>
+              </div>
+              <div className="text-[24px]">
+                <MJTileCombinationDiv value="3ma-3m=3m3m 5p-0p=5p5p 4z-4z=4z4z 5z-5z=5z5z" />
               </div>
             </div>
 

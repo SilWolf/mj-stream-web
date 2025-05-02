@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import React, { HTMLAttributes, useMemo } from 'react'
 
 export type MJTileKey =
@@ -86,15 +85,16 @@ type Props = HTMLAttributes<HTMLSpanElement>
 export const TILE_W = 1.0
 export const TILE_H = 1.4
 
-export default function MJTileDiv({ className, children, ...props }: Props) {
+export default function MJTileV2Div({
+  className,
+  value,
+  ...props
+}: Props & { value: string }) {
   const tileClassName = useMemo(
     () =>
-      TILE_CLASS_MAP[children?.toString() as MJTileKey] ??
-      TILE_CLASS_MAP.default,
-    [children]
+      TILE_CLASS_MAP[value?.toString() as MJTileKey] ?? TILE_CLASS_MAP.default,
+    [value]
   )
 
-  return (
-    <div className={`mahjong-tile ${tileClassName} ${className}`} {...props} />
-  )
+  return <div className={`mahjong-tile-v2 ${tileClassName}`} {...props} />
 }
