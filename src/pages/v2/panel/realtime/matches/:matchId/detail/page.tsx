@@ -12,8 +12,6 @@ export default function MatchExportPage({ params: { matchId } }: Props) {
   const { rtMatch, rtMatchRounds, rtMatchCurrentRound } =
     useRealtimeMatch(matchId)
 
-  console.log(rtMatch, rtMatchRounds)
-
   const [isExported, setIsExported] = useState<boolean>(false)
   const [isExporting, setIsExporting] = useState<boolean>(false)
 
