@@ -9,6 +9,7 @@ import { RealtimePlayer } from '@/models'
 import MJTileDiv from '@/components/MJTileDiv'
 
 import styles from './index.module.css'
+import MJTileCombinationDiv from '@/components/MJTileCombinationDiv'
 
 type Props = HTMLAttributes<HTMLDivElement> & {
   score: number
@@ -22,6 +23,7 @@ type Props = HTMLAttributes<HTMLDivElement> & {
   isRonDisallowed?: boolean
   animated?: boolean
   waitingTiles?: string[]
+  reveals?: string[]
   showPointAndRanking?: boolean | null
 
   player: RealtimePlayer
@@ -38,6 +40,7 @@ export default function PlayerCard({
   isRedCarded,
   isRonDisallowed,
   waitingTiles,
+  reveals,
   showPointAndRanking,
   className,
 
@@ -88,7 +91,7 @@ export default function PlayerCard({
       </div>
 
       <div className={`relative pb-5`}>
-        <div className="relative flex flex-col gap-y-[0.125em] items-end justify-end">
+        <div className="relative flex flex-col gap-y-[0.125em] items-end justify-end min-h-[2.8em]">
           <div
             className={`${styles['riichi-sakura']} -z-1`}
             style={{
@@ -129,6 +132,31 @@ export default function PlayerCard({
             />
           )}
 
+          <div className="absolute bottom-full left-0 right-0">
+            <div
+              className="relative bg-black/50 rounded-[.125em] opacity-0 transition-opacity data-[has-reveals=true]:opacity-100 hide-if-changing overflow-visible origin-left"
+              style={{
+                transform:
+                  reveals && reveals.length > 0
+                    ? 'scale(100%, 100%)'
+                    : 'scale(0, 100%)',
+                transition: 'transform 1s',
+              }}
+              data-has-reveals={reveals && reveals.length > 0}
+            >
+              <div className="flex flex-wrap text-[0.3em] gap-x-2 p-2">
+                {reveals?.map((reveal, rI) => (
+                  <div
+                    key={rI}
+                    className="animate-[fadeInFromLeft_1s_ease-in-out]"
+                  >
+                    <MJTileCombinationDiv value={reveal} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
           <div className="pl-[2.4em] w-full gap-[0.125em] relative">
             <div
               className="relative bg-black/50 rounded-[.125em] opacity-0 transition-opacity data-[has-waiting-tiles='1']:opacity-100 hide-if-changing overflow-hidden origin-left"
@@ -151,7 +179,7 @@ export default function PlayerCard({
                   {waitingTiles?.map((tile) => (
                     <MJTileDiv
                       key={tile}
-                      className="inline-block align-bottom w-[0.85em]! animate-[fadeInFromLeftDelay1s_1.6s_ease-in-out]"
+                      className="inline-block align-bottom w-[0.85em]! animate-[fadeInFromLeft_1s_ease-in-out]"
                     >
                       {tile}
                     </MJTileDiv>

@@ -60,8 +60,8 @@ export default function RevealChiKeyboard({
 
   if (possibleCombinations) {
     return (
-      <div className="w-[12em] h-[6em] **:data-button:flex **:data-button:justify-center **:data-button:p-1 **:data-button:cursor-pointer **:data-button:hover:bg-base-200">
-        <div className="grid grid-cols-3 items-start">
+      <div className="**:data-button:flex **:data-button:justify-center **:data-button:p-1 **:data-button:cursor-pointer **:data-button:hover:bg-base-200">
+        <div className="w-[12em] h-[4em] grid grid-cols-3 items-start">
           {possibleCombinations.map((combination) => (
             <button
               key={combination}
@@ -72,6 +72,15 @@ export default function RevealChiKeyboard({
               <MJTileCombinationDiv value={combination} />
             </button>
           ))}
+        </div>
+        <div>
+          <button
+            className="w-full text-[16px]"
+            data-button
+            onClick={() => setSelectedTile(null)}
+          >
+            <i className="bi bi-x-circle-fill"></i>
+          </button>
         </div>
       </div>
     )

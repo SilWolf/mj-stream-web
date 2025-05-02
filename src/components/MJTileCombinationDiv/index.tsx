@@ -42,8 +42,8 @@ export default function MJTileCombinationDiv({ value }: { value: string }) {
 
   return (
     <div
-      className="relative"
-      style={{ width: `${width}em`, height: `${TILE_W * 2}em` }}
+      className="relative overflow-visible"
+      style={{ width: `${width}em`, height: `${TILE_H}em` }}
     >
       {tilePlacements.map(({ tile, x, y, isRotate }) => (
         <MJTileV2Div

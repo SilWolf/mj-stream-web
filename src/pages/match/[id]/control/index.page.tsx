@@ -349,7 +349,11 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
   }, [toggleHotfixDialog])
 
   const handlePlayerListViewAction = useCallback(
-    (playerIndex: PlayerIndex, action: PlayersViewAction) => {
+    (
+      playerIndex: PlayerIndex,
+      action: PlayersViewAction,
+      payload?: unknown
+    ) => {
       if (!rtMatch || !rtMatchCurrentRound) {
         return
       }
@@ -686,6 +690,98 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
               })
             },
           })
+
+        case 'push-reveal': {
+          const newReveals = [
+            ...(rtMatchCurrentRound.playerResults[playerIndex].reveals || []),
+            payload as string,
+          ]
+
+          const isRevealed = newReveals.some(
+            (reveal) => reveal.indexOf('0z') === -1
+          )
+
+          return updateCurrentMatchRound({
+            playerResults: {
+              ...rtMatchCurrentRound.playerResults,
+              [playerIndex]: {
+                ...rtMatchCurrentRound.playerResults[playerIndex],
+                reveals: [
+                  ...(rtMatchCurrentRound.playerResults[playerIndex].reveals ||
+                    []),
+                  payload as string,
+                ],
+                isRevealed,
+                detail: {
+                  ...rtMatchCurrentRound.playerResults[playerIndex].detail,
+                  isRevealed,
+                },
+              },
+            },
+          })
+        }
+
+        case 'replace-reveal': {
+          const newReveals =
+            rtMatchCurrentRound.playerResults[playerIndex].reveals || []
+          const [oldReveal, newReveal] = payload as [string, string]
+          const indexOfReveal = newReveals.indexOf(oldReveal)
+          if (indexOfReveal !== -1) {
+            newReveals[indexOfReveal] = newReveal
+
+            const isRevealed = newReveals.some(
+              (reveal) => reveal.indexOf('0z') === -1
+            )
+
+            return updateCurrentMatchRound({
+              playerResults: {
+                ...rtMatchCurrentRound.playerResults,
+                [playerIndex]: {
+                  ...rtMatchCurrentRound.playerResults[playerIndex],
+                  reveals: newReveals,
+                  isRevealed,
+                  detail: {
+                    ...rtMatchCurrentRound.playerResults[playerIndex].detail,
+                    isRevealed,
+                  },
+                },
+              },
+            })
+          }
+
+          return
+        }
+
+        case 'delete-reveal': {
+          const newReveals =
+            rtMatchCurrentRound.playerResults[playerIndex].reveals || []
+          const oldReveal = payload as string
+          const indexOfReveal = newReveals.indexOf(oldReveal)
+          if (indexOfReveal !== -1) {
+            newReveals.splice(indexOfReveal, 1)
+
+            const isRevealed = newReveals.some(
+              (reveal) => reveal.indexOf('0z') === -1
+            )
+
+            return updateCurrentMatchRound({
+              playerResults: {
+                ...rtMatchCurrentRound.playerResults,
+                [playerIndex]: {
+                  ...rtMatchCurrentRound.playerResults[playerIndex],
+                  reveals: newReveals,
+                  isRevealed,
+                  detail: {
+                    ...rtMatchCurrentRound.playerResults[playerIndex].detail,
+                    isRevealed,
+                  },
+                },
+              },
+            })
+          }
+
+          return
+        }
       }
     },
     [

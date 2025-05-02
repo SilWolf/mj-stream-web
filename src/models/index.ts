@@ -178,6 +178,7 @@ export type PlayerResult = {
   isRedCarded?: boolean
   isRonDisallowed?: boolean
   waitingTiles?: string[]
+  reveals?: string[]
   detail: {
     han: number
     fu: number

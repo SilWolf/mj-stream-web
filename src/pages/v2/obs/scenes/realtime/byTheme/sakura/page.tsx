@@ -204,6 +204,11 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
                     ? player.currentStatus.waitingTiles
                     : []
                 }
+                reveals={
+                  rtMatchCurrentRound.resultType === RoundResultTypeEnum.Unknown
+                    ? player.currentStatus.reveals
+                    : []
+                }
                 isYellowCarded={player.currentStatus.isYellowCarded}
                 isRedCarded={player.currentStatus.isRedCarded}
                 isRonDisallowed={player.currentStatus.isRonDisallowed}

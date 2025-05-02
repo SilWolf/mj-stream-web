@@ -16,10 +16,17 @@ export type PlayersViewAction =
   | 'yellow-card'
   | 'red-card'
   | 'disallow-ron'
+  | 'push-reveal'
+  | 'replace-reveal'
+  | 'delete-reveal'
 
 export type PlayersViewProps = {
   players: Record<PlayerIndex, RealtimePlayer>
   currentRound: RealtimeMatchRound
 
-  onAction: (playerIndex: PlayerIndex, action: PlayersViewAction) => unknown
+  onAction: (
+    playerIndex: PlayerIndex,
+    action: PlayersViewAction,
+    payload?: unknown
+  ) => unknown
 }

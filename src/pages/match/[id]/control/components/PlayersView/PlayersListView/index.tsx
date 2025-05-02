@@ -6,6 +6,7 @@ import MJTileCombinationDiv from '@/components/MJTileCombinationDiv'
 import RevealPonKeyboard from './widgets/RevealPonKeyboard'
 import RevealKanngKeyboard from './widgets/RevealKanngKeyboard'
 import RevealChiKeyboard from './widgets/RevealChiKeyboard'
+import RevealEditKeyboard from './widgets/RevealEditKeyboard'
 
 const PlayersListView = ({
   players,
@@ -22,6 +23,52 @@ const PlayersListView = ({
       ) as PlayersViewAction
 
       onAction(newPlayerIndex, action)
+    },
+    [onAction]
+  )
+
+  const handleClickAddReveal = useCallback(
+    (index: PlayerIndex) => (newReveal: string) => {
+      onAction(index, 'push-reveal', newReveal)
+      ;(
+        document.getElementById(
+          `player${index}-popover-pon-keyboard`
+        ) as HTMLElement
+      ).hidePopover()
+      ;(
+        document.getElementById(
+          `player${index}-popover-chi-keyboard`
+        ) as HTMLElement
+      ).hidePopover()
+      ;(
+        document.getElementById(
+          `player${index}-popover-kanng-keyboard`
+        ) as HTMLElement
+      ).hidePopover()
+    },
+    [onAction]
+  )
+
+  const handleClickReplaceReveal = useCallback(
+    (index: PlayerIndex, ci: number) =>
+      (oldReveal: string, newReveal: string) => {
+        onAction(index, 'replace-reveal', [oldReveal, newReveal])
+        ;(
+          document.getElementById(
+            `player${index}-reveal-${ci}-popover-edit-keyboard`
+          ) as HTMLElement
+        )?.hidePopover()
+      },
+    [onAction]
+  )
+  const handleClickDeleteReveal = useCallback(
+    (index: PlayerIndex, ci: number) => (oldReveal: string) => {
+      onAction(index, 'delete-reveal', oldReveal)
+      ;(
+        document.getElementById(
+          `player${index}-reveal-${ci}-popover-edit-keyboard`
+        ) as HTMLElement
+      )?.hidePopover()
     },
     [onAction]
   )
@@ -140,7 +187,9 @@ const PlayersListView = ({
                     >
                       <div className="card border border-base-300 shadow mb-1">
                         <div className="card-content p-2 text-[32px]">
-                          <RevealPonKeyboard />
+                          <RevealPonKeyboard
+                            onClick={handleClickAddReveal(index)}
+                          />
                         </div>
                       </div>
                     </div>
@@ -168,46 +217,86 @@ const PlayersListView = ({
                     >
                       <div className="card border border-base-300 shadow mb-1">
                         <div className="card-content p-2 text-[32px]">
-                          <RevealChiKeyboard />
-                        </div>
-                      </div>
-                    </div>
-
-                    <button
-                      className="cursor-pointer px-2 h-10 bg-neutral-200 border rounded-sm border-neutral-700 text-xl"
-                      popoverTarget={`player${index}-popover-kanng-keyboard`}
-                      style={
-                        {
-                          anchorName: `--player${index}-anchor-kanng-keyboard`,
-                        } as React.CSSProperties
-                      }
-                    >
-                      槓
-                    </button>
-                    <div
-                      className="dropdown dropdown-center dropdown-top rounded-box bg-base-100 shadow-sm"
-                      popover="auto"
-                      id={`player${index}-popover-kanng-keyboard`}
-                      style={
-                        {
-                          positionAnchor: `--player${index}-anchor-kanng-keyboard`,
-                        } as React.CSSProperties
-                      }
-                    >
-                      <div className="card border border-base-300 shadow mb-1">
-                        <div className="card-content p-2 text-[32px]">
-                          <RevealKanngKeyboard />
+                          <RevealChiKeyboard
+                            onClick={handleClickAddReveal(index)}
+                          />
                         </div>
                       </div>
                     </div>
                   </>
                 )}
-                <button className="cursor-pointer px-2 h-10 bg-neutral-200 border rounded-sm border-neutral-700 text-xl">
-                  暗槓
+
+                <button
+                  className="cursor-pointer px-2 h-10 bg-neutral-200 border rounded-sm border-neutral-700 text-xl"
+                  popoverTarget={`player${index}-popover-kanng-keyboard`}
+                  style={
+                    {
+                      anchorName: `--player${index}-anchor-kanng-keyboard`,
+                    } as React.CSSProperties
+                  }
+                >
+                  槓
                 </button>
+                <div
+                  className="dropdown dropdown-center dropdown-top rounded-box bg-base-100 shadow-sm"
+                  popover="auto"
+                  id={`player${index}-popover-kanng-keyboard`}
+                  style={
+                    {
+                      positionAnchor: `--player${index}-anchor-kanng-keyboard`,
+                    } as React.CSSProperties
+                  }
+                >
+                  <div className="card border border-base-300 shadow mb-1">
+                    <div className="card-content p-2 text-[32px]">
+                      <RevealKanngKeyboard
+                        onClick={handleClickAddReveal(index)}
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="text-[24px]">
-                <MJTileCombinationDiv value="3ma-3m=3m3m 5p-0p=5p5p 4z-4z=4z4z 5z-5z=5z5z" />
+              <div className="flex flex-wrap gap-x-1 text-[24px] **:data-button:cursor-pointer **:data-button:p-1 **:data-button:hover:bg-base-200">
+                {currentRound.playerResults[index].reveals?.map(
+                  (combination, ci) => (
+                    <React.Fragment key={ci}>
+                      <button
+                        data-button
+                        popoverTarget={`player${index}-reveal-${ci}-popover-edit-keyboard`}
+                        style={
+                          {
+                            anchorName: `--player${index}-reveal-${ci}-anchor-edit-keyboard`,
+                          } as React.CSSProperties
+                        }
+                      >
+                        <MJTileCombinationDiv value={combination} />
+                      </button>
+                      <div
+                        className="dropdown dropdown-center dropdown-top rounded-box bg-base-100 shadow-sm"
+                        popover="auto"
+                        id={`player${index}-reveal-${ci}-popover-edit-keyboard`}
+                        style={
+                          {
+                            positionAnchor: `--player${index}-reveal-${ci}-anchor-edit-keyboard`,
+                          } as React.CSSProperties
+                        }
+                      >
+                        <div className="card border border-base-300 shadow mb-1">
+                          <div className="card-content p-2 text-[32px]">
+                            <RevealEditKeyboard
+                              value={combination}
+                              onClickReplace={handleClickReplaceReveal(
+                                index,
+                                ci
+                              )}
+                              onClickDelete={handleClickDeleteReveal(index, ci)}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </React.Fragment>
+                  )
+                )}
               </div>
             </div>
 
