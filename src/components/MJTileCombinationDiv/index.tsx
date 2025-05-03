@@ -9,11 +9,14 @@ type TilePlacement = {
   isRotate: boolean
 }
 
-export const parseTileString = (s: string): [TilePlacement[], number] => {
+export const parseTileString = (
+  s: string
+): [TilePlacement[], number, number] => {
   const tileMatches = [...s.matchAll(/(\d[mpsz])(a?)([-=]?)(\s*)/g)]
   const tilePlacements: TilePlacement[] = []
 
   let x = 0.0
+  let height = TILE_H
 
   for (let i = 0; i < tileMatches.length; i++) {
     const tileMatch = tileMatches[i]
@@ -31,21 +34,26 @@ export const parseTileString = (s: string): [TilePlacement[], number] => {
       x += TILE_W
     }
 
+    if (tileMatch[3] === '=') {
+      height = TILE_W * 2
+    }
+
     x += (tileMatch[4].length || 0) * 0.2 * TILE_W
   }
 
-  return [tilePlacements, x]
+  return [tilePlacements, x, height]
 }
 
 export default function MJTileCombinationDiv({ value }: { value: string }) {
-  const [tilePlacements, width] = useMemo(() => parseTileString(value), [value])
-
-  console.log('1')
+  const [tilePlacements, width, height] = useMemo(
+    () => parseTileString(value),
+    [value]
+  )
 
   return (
     <div
       className="relative overflow-visible"
-      style={{ width: `${width}em`, height: `${TILE_H}em` }}
+      style={{ width: `${width}em`, height: `${height}em` }}
     >
       {tilePlacements.map(({ tile, x, y, isRotate }) => (
         <MJTileV2Div

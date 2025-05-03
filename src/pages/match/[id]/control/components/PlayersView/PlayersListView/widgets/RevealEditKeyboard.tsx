@@ -24,7 +24,6 @@ export default function RevealEditKeyboard({
       if (matches[0][1] === '5') {
         return value.replace('-', `-0${matches[0][2]}=`)
       } else {
-        console.log(value.replace('-', `-${matches[0][0]}=`))
         return value.replace('-', `-${matches[0][0]}=`)
       }
     }

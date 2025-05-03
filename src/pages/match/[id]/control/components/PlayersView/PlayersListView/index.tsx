@@ -13,6 +13,7 @@ import {
   getOppositeOfPlayerIndex,
 } from '@/helpers/mahjong.helper'
 import MJTileV2Div from '@/components/MJTileV2Div'
+import SelectNumber from '@/components/v2/inputs/SelectNumber'
 
 const PlayersListView = ({
   players,
@@ -75,6 +76,13 @@ const PlayersListView = ({
           `player${index}-reveal-${ci}-popover-edit-keyboard`
         ) as HTMLElement
       )?.hidePopover()
+    },
+    [onAction]
+  )
+
+  const handleClickWaitingTileRemain = useCallback(
+    (index: PlayerIndex) => (newValue: number | null) => {
+      onAction(index, 'waiting-tile-remain', newValue)
     },
     [onAction]
   )
@@ -314,19 +322,41 @@ const PlayersListView = ({
                 {currentRound.playerResults[index].afterScore}
               </div>
               <div className="flex-1 flex flex-col justify-around gap-1">
-                <button
-                  className="flex h-12 items-center gap-x-2 cursor-pointer bg-base-100 hover:bg-base-200 px-2"
-                  data-player-index={index}
-                  data-action="waitingTile"
-                  onClick={handleAction}
-                >
-                  <div>待牌</div>
-                  <div className="flex-1 flex gap-2 text-[24px]">
-                    {currentRound.playerResults[index].waitingTiles?.map(
-                      (tile) => <MJTileV2Div key={tile} value={tile} />
+                <div className="flex items-center gap-x-2">
+                  <button
+                    className="flex h-12 items-center gap-x-2cursor-pointer bg-base-100 hover:bg-base-200 px-2"
+                    data-player-index={index}
+                    data-action="waitingTile"
+                    onClick={handleAction}
+                  >
+                    <div>待牌</div>
+                    <div className="flex gap-2 text-[24px] min-w-[100px]">
+                      {currentRound.playerResults[index].waitingTiles?.map(
+                        (tile) => <MJTileV2Div key={tile} value={tile} />
+                      )}
+                    </div>
+                  </button>
+                  {currentRound.playerResults[index].waitingTiles &&
+                    currentRound.playerResults[index].waitingTiles.length >
+                      0 && (
+                      <div className="flex-1">
+                        <div className="inline-flex items-stretch gap-x-2 border-1 border-primary pr-1">
+                          <span className="content-center bg-primary text-primary-content px-2">
+                            山餘
+                          </span>
+                          <span className="text-[40px]">
+                            <SelectNumber
+                              value={
+                                currentRound.playerResults[index]
+                                  .waitingTileRemain
+                              }
+                              onClick={handleClickWaitingTileRemain(index)}
+                            />
+                          </span>
+                        </div>
+                      </div>
                     )}
-                  </div>
-                </button>
+                </div>
                 <button
                   className="flex h-12 items-center gap-x-2 cursor-pointer bg-base-100 hover:bg-base-200 px-2"
                   data-player-index={index}

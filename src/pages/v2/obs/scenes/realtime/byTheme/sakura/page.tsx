@@ -206,6 +206,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
                     ? player.currentStatus.waitingTiles
                     : []
                 }
+                waitingTileRemain={player.currentStatus.waitingTileRemain}
                 reveals={
                   rtMatchCurrentRound.resultType === RoundResultTypeEnum.Unknown
                     ? player.currentStatus.reveals

@@ -782,6 +782,18 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
 
           return
         }
+
+        case 'waiting-tile-remain': {
+          return updateCurrentMatchRound({
+            playerResults: {
+              ...rtMatchCurrentRound.playerResults,
+              [playerIndex]: {
+                ...rtMatchCurrentRound.playerResults[playerIndex],
+                waitingTileRemain: payload as number,
+              },
+            },
+          })
+        }
       }
     },
     [

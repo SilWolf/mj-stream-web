@@ -19,6 +19,7 @@ export type PlayersViewAction =
   | 'push-reveal'
   | 'replace-reveal'
   | 'delete-reveal'
+  | 'waiting-tile-remain'
 
 export type PlayersViewProps = {
   players: Record<PlayerIndex, RealtimePlayer>

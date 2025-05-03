@@ -23,6 +23,7 @@ type Props = HTMLAttributes<HTMLDivElement> & {
   isRonDisallowed?: boolean
   animated?: boolean
   waitingTiles?: string[]
+  waitingTileRemain?: number | null | undefined
   reveals?: string[]
   showPointAndRanking?: boolean | null
 
@@ -40,6 +41,7 @@ export default function PlayerCard({
   isRedCarded,
   isRonDisallowed,
   waitingTiles,
+  waitingTileRemain,
   reveals,
   showPointAndRanking,
   className,
@@ -122,6 +124,12 @@ export default function PlayerCard({
               src="/images/riichi-sakura-single.png"
               style={{ animationDelay: '9s' }}
             />
+
+            <img
+              className="riichi-sakura-single top-28 right-[30%] w-18"
+              src="/images/score-thousand-sakura.png"
+              style={{ animationDelay: '8s' }}
+            />
           </div>
 
           {player.propicUrl && (
@@ -144,20 +152,19 @@ export default function PlayerCard({
               }}
               data-has-reveals={reveals && reveals.length > 0}
             >
-              <div className="flex flex-wrap text-[0.3em] gap-x-2 p-2">
+              <div className="flex flex-row-reverse items-end justify-end flex-wrap text-[0.28em] gap-x-2 p-2">
                 {reveals?.map((reveal, rI) => (
-                  <div
-                    key={rI}
-                    className="animate-[fadeInFromLeft_1s_ease-in-out]"
-                  >
-                    <MJTileCombinationDiv value={reveal} />
+                  <div key={rI} className={styles['sakura-review-block']}>
+                    <div>
+                      <MJTileCombinationDiv value={reveal} />
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
           </div>
 
-          <div className="pl-[2.4em] w-full gap-[0.125em] relative">
+          <div className="pl-[2.4em] pt-[0.125em] w-full gap-[0.125em] relative">
             <div className="relative hide-if-changing">
               <div
                 className="relative rounded-[.125em] bg-black/50 opacity-0 transition-opacity data-[has-waiting-tiles='1']:opacity-100 overflow-hidden origin-left"
@@ -173,8 +180,14 @@ export default function PlayerCard({
                 }
               >
                 <div className="text-[0.5em] flex gap-x-[0.2em] p-[0.2em] pl-[0.2em] pr-[0.2em]">
-                  <div className="text-[#FFFFFF] text-[0.4em] leading-[1.3em] flex items-center">
-                    待<br />牌
+                  <div className="text-[#FFFFFF] w-[2em] text-[0.4em] leading-[1.3em] flex items-center justify-center">
+                    {typeof waitingTileRemain === 'number' ? (
+                      <div className="text-center">
+                        <p className="text-[1.5em]">{waitingTileRemain}</p>
+                      </div>
+                    ) : (
+                      '待牌'
+                    )}
                   </div>
                   <div className="flex-1 leading-none min-h-[1.19em] flex flex-wrap gap-[0.15em]">
                     {waitingTiles?.map((tile) => (
@@ -268,6 +281,12 @@ export default function PlayerCard({
                 className="riichi-sakura-single top-16 right-[60%] h-8 w-8 brightness-200"
                 src="/images/riichi-sakura-single.png"
                 style={{ animationDelay: '9s' }}
+              />
+
+              <img
+                className="riichi-sakura-single top-8 right-1/2 w-36 brightness-200"
+                src="/images/score-thousand-sakura.png"
+                style={{ animationDelay: '5s' }}
               />
             </div>
 
