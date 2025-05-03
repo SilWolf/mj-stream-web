@@ -7,6 +7,12 @@ import RevealPonKeyboard from './widgets/RevealPonKeyboard'
 import RevealKanngKeyboard from './widgets/RevealKanngKeyboard'
 import RevealChiKeyboard from './widgets/RevealChiKeyboard'
 import RevealEditKeyboard from './widgets/RevealEditKeyboard'
+import {
+  getAfterOfPlayerIndex,
+  getBeforeOfPlayerIndex,
+  getOppositeOfPlayerIndex,
+} from '@/helpers/mahjong.helper'
+import MJTileV2Div from '@/components/MJTileV2Div'
 
 const PlayersListView = ({
   players,
@@ -309,22 +315,20 @@ const PlayersListView = ({
               </div>
               <div className="flex-1 flex flex-col justify-around gap-1">
                 <button
-                  className="flex h-16 items-center gap-x-2 cursor-pointer bg-base-100 hover:bg-base-200 px-2"
+                  className="flex h-12 items-center gap-x-2 cursor-pointer bg-base-100 hover:bg-base-200 px-2"
                   data-player-index={index}
                   data-action="waitingTile"
                   onClick={handleAction}
                 >
                   <div>待牌</div>
-                  {currentRound.playerResults[index].waitingTiles?.map(
-                    (tile) => (
-                      <MJTileDiv key={tile} className="w-10!">
-                        {tile}
-                      </MJTileDiv>
-                    )
-                  )}
+                  <div className="flex-1 flex gap-2 text-[24px]">
+                    {currentRound.playerResults[index].waitingTiles?.map(
+                      (tile) => <MJTileV2Div key={tile} value={tile} />
+                    )}
+                  </div>
                 </button>
                 <button
-                  className="flex h-16 items-center gap-x-2 cursor-pointer bg-base-100 hover:bg-base-200 px-2"
+                  className="flex h-12 items-center gap-x-2 cursor-pointer bg-base-100 hover:bg-base-200 px-2"
                   data-player-index={index}
                   data-action="yaku"
                   onClick={handleAction}
@@ -354,7 +358,8 @@ const PlayersListView = ({
                     data-action="ron-before"
                     onClick={handleAction}
                   >
-                    和上家
+                    和
+                    {players[getBeforeOfPlayerIndex(index)].nickname || '上家'}
                   </button>
                   <button
                     className="px-1 h-10 bg-neutral-200 border rounded-sm border-neutral-700 text-xl"
@@ -362,7 +367,7 @@ const PlayersListView = ({
                     data-action="ron-after"
                     onClick={handleAction}
                   >
-                    和下家
+                    和{players[getAfterOfPlayerIndex(index)].nickname || '下家'}
                   </button>
                 </div>
                 <div className="flex flex-col gap-1">
@@ -372,7 +377,9 @@ const PlayersListView = ({
                     data-action="ron-opposite"
                     onClick={handleAction}
                   >
-                    和對家
+                    和
+                    {players[getOppositeOfPlayerIndex(index)].nickname ||
+                      '對家'}
                   </button>
                 </div>
                 {currentRound.playerResults[index].isRonDisallowed && (

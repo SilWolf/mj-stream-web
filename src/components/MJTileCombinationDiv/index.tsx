@@ -40,6 +40,8 @@ export const parseTileString = (s: string): [TilePlacement[], number] => {
 export default function MJTileCombinationDiv({ value }: { value: string }) {
   const [tilePlacements, width] = useMemo(() => parseTileString(value), [value])
 
+  console.log('1')
+
   return (
     <div
       className="relative overflow-visible"
