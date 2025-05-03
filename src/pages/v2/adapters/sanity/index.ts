@@ -27,7 +27,7 @@ type SchemaConfig = {
 export const q = createGroqBuilder<SchemaConfig>({})
 
 export const urlFor = (
-  assetId: string | null,
+  assetId: string | undefined | null,
   options: Omit<ImageSrcInputs, 'id' | 'baseUrl'>
 ) =>
   assetId

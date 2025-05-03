@@ -60,7 +60,16 @@ export const v2MatchSchema = zod
     schemaVersion: zod.string(),
     code: zod.string(),
     data: zod.object({
-      name: zod.string({ required_error: '對局必須有名稱' }),
+      name: zod.object({
+        official: zod.object({
+          primary: zod.string(),
+        }),
+        display: zod
+          .object({
+            primary: zod.string(),
+          })
+          .nullish(),
+      }),
       remark: zod.string().optional(),
       players: zod.array(v2MatchPlayerSchema),
       rulesetRef: zod.string(),

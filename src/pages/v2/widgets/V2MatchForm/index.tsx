@@ -13,6 +13,7 @@ const positionNames = ['東家', '南家', '西家', '北家']
 
 const formSchema = zod.object({
   name: zod.string({ required_error: '必須填寫對局名稱。' }),
+  nameAlt: zod.string().optional(),
   rulesetId: zod.string({ required_error: '必須選擇其中一套規則。' }),
   players: zod.array(
     zod.object({
@@ -105,7 +106,14 @@ export default function V2MatchForm({
           schemaVersion: 'v20250403',
           code: getRandomId(),
           data: {
-            name: values.name,
+            name: {
+              official: {
+                primary: values.name,
+              },
+              display: {
+                primary: values.nameAlt || values.name,
+              },
+            },
             remark: '',
             players: values.players.map((player) => ({
               id: '',
@@ -189,6 +197,17 @@ export default function V2MatchForm({
         placeholder="玩家名稱"
         {...register('name')}
       />
+
+      <label className="fieldset-label mt-8">直播顯示名稱</label>
+      <input
+        type="text"
+        className="input"
+        placeholder="直播顯示名稱"
+        {...register('nameAlt')}
+      />
+      <p className="fieldset-label text-error">
+        {formState.errors['nameAlt']?.message}
+      </p>
 
       <h4 className="mt-4">規則</h4>
       <fieldset className="fieldset">

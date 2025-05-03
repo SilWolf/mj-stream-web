@@ -81,6 +81,7 @@ export type Match = {
     [internalGroqTypeReferenceTo]?: 'matchTournament'
   }
   name?: string
+  nameAlt?: string
   playerEastTeam?: {
     _ref: string
     _type: 'reference'

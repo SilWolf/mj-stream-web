@@ -5,15 +5,15 @@ import { getLightColorOfColor } from '@/utils/string.util'
 
 const playerProject = q.fragmentForType<'player'>().project((playerRef) => ({
   _id: z.string(),
-  name: z.string().nullable(),
-  nickname: z.string().nullable(),
-  designation: z.string().nullable(),
-  introduction: z.string().nullable(),
+  name: z.string().nullish(),
+  nickname: z.string().nullish(),
+  designation: z.string().nullish(),
+  introduction: z.string().nullish(),
   portraitImage: playerRef.field('portraitImage.asset').field(
     '_ref',
     z
       .string()
-      .nullable()
+      .nullish()
       .transform((assetId) =>
         urlFor(assetId, { mode: 'cover', width: 720, height: 1000 })
       )
@@ -22,7 +22,7 @@ const playerProject = q.fragmentForType<'player'>().project((playerRef) => ({
     '_ref',
     z
       .string()
-      .nullable()
+      .nullish()
       .transform((assetId) =>
         urlFor(assetId, { mode: 'cover', width: 720, height: 1000 })
       )
@@ -31,7 +31,7 @@ const playerProject = q.fragmentForType<'player'>().project((playerRef) => ({
     '_ref',
     z
       .string()
-      .nullable()
+      .nullish()
       .transform((assetId) =>
         urlFor(assetId, { mode: 'contain', height: 1200 })
       )
@@ -40,7 +40,7 @@ const playerProject = q.fragmentForType<'player'>().project((playerRef) => ({
     '_ref',
     z
       .string()
-      .nullable()
+      .nullish()
       .transform((assetId) =>
         urlFor(assetId, { mode: 'contain', height: 1200 })
       )
@@ -49,7 +49,7 @@ const playerProject = q.fragmentForType<'player'>().project((playerRef) => ({
     '_ref',
     z
       .string()
-      .nullable()
+      .nullish()
       .transform((assetId) =>
         urlFor(assetId, { mode: 'cover', width: 800, height: 800 })
       )
@@ -58,19 +58,19 @@ const playerProject = q.fragmentForType<'player'>().project((playerRef) => ({
 
 const teamProject = q.fragmentForType<'team'>().project((teamRef) => ({
   _id: z.string(),
-  name: z.string().nullable(),
-  secondaryName: z.string().nullable(),
-  thirdName: z.string().nullable(),
-  preferredName: z.string().nullable(),
+  name: z.string().nullish(),
+  secondaryName: z.string().nullish(),
+  thirdName: z.string().nullish(),
+  preferredName: z.string().nullish(),
   squareLogoImage: teamRef.field('squareLogoImage.asset').field(
     '_ref',
     z
       .string()
-      .nullable()
+      .nullish()
       .transform((assetId) => urlFor(assetId, { width: 1000, height: 1000 }))
   ),
-  color: teamRef.field('color.hex', z.string().nullable()),
-  introduction: z.string().nullable(),
+  color: teamRef.field('color.hex', z.string().nullish()),
+  introduction: z.string().nullish(),
 }))
 
 export const apiQueryMatchesByTournamentId = async (tournamentId: string) => {
@@ -81,7 +81,8 @@ export const apiQueryMatchesByTournamentId = async (tournamentId: string) => {
     .slice(0, 10)
     .project((sub) => ({
       _id: z.string(),
-      name: z.string().nullable(),
+      name: z.string().nullish(),
+      nameAlt: z.string().nullish(),
       playerEast: sub.field('playerEast').deref().project(playerProject),
       playerSouth: sub.field('playerSouth').deref().project(playerProject),
       playerWest: sub.field('playerWest').deref().project(playerProject),
@@ -172,7 +173,7 @@ export const apiQueryMatchesByTournamentId = async (tournamentId: string) => {
         schemaVersion: '2',
         code: match._id,
         data: {
-          name: match.name ?? '',
+          name: { official: { primary: match.name ?? '' } },
           players: [
             formatPlayer(match.playerEast, match.playerEastTeam),
             formatPlayer(match.playerSouth, match.playerSouthTeam),
@@ -198,7 +199,8 @@ export const apiGetMatchById = async (matchId: string) => {
     .slice(0, 1)
     .project((sub) => ({
       _id: z.string(),
-      name: z.string().nullable(),
+      name: z.string().nullish(),
+      nameAlt: z.string().nullish(),
       playerEast: sub.field('playerEast').deref().project(playerProject),
       playerSouth: sub.field('playerSouth').deref().project(playerProject),
       playerWest: sub.field('playerWest').deref().project(playerProject),
@@ -262,7 +264,10 @@ export const apiGetMatchById = async (matchId: string) => {
       schemaVersion: '2',
       code: matches[0]._id,
       data: {
-        name: matches[0].name ?? '',
+        name: {
+          official: { primary: matches[0].name ?? '' },
+          display: matches[0].nameAlt ? { primary: matches[0].nameAlt } : null,
+        },
         players: [
           formatPlayer(matches[0].playerEast, matches[0].playerEastTeam),
           formatPlayer(matches[0].playerSouth, matches[0].playerSouthTeam),

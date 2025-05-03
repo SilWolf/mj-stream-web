@@ -38,7 +38,9 @@ export default function V2PanelMatchesByIdEditPage() {
 
       const newRTMatch: RealtimeMatch = {
         code: newMatchCode,
-        name: newMatch.data.name,
+        name: newMatch.data.name.official.primary,
+        nameDisplay: (newMatch.data.name.display ?? newMatch.data.name.official)
+          .primary,
         databaseId: matchId,
         remark: '',
         createdAt: new Date().toISOString(),
@@ -222,7 +224,8 @@ export default function V2PanelMatchesByIdEditPage() {
     }
 
     return {
-      name: match.data.name,
+      name: match.data.name.official.primary,
+      nameAlt: match.data.name.display?.primary || '',
       rulesetId: match.data.rulesetRef,
       players: [
         playersMap[match.data.players[0].id] ?? match.data.players[0],

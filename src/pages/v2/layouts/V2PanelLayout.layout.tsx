@@ -37,10 +37,20 @@ export default function V2PanelLayout({ children }: PropsWithChildren) {
 
   return (
     <CurrentTournamentIdContext.Provider value={currentTournamentId!}>
-      <div className="drawer drawer-open">
+      <div className="drawer lg:drawer-open">
         <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
         <div className="drawer-content">
           <div className="navbar bg-base-100 w-full border-b-1 border-base-300">
+            <div>
+              {/* Page content here */}
+              <label
+                htmlFor="my-drawer-2"
+                className="btn btn-primary drawer-button lg:hidden"
+              >
+                <i className="bi bi-list"></i>
+              </label>
+            </div>
+
             <div className="mx-2 flex-1 px-2 flex gap-x-2 items-center">
               <div className="flex gap-x-2 items-center">
                 <img

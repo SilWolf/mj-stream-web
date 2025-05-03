@@ -65,7 +65,7 @@ export default function RecentMatchesSection() {
           {/* row 1 */}
           {matches.map((match) => (
             <tr key={match.code}>
-              <th>{match.data.name}</th>
+              <th>{match.data.name.official.primary}</th>
               <td>
                 <PlayerMiniCard
                   player={

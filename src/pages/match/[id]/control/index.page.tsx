@@ -2003,6 +2003,8 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
           </div>
         </div>
       </div>
+
+      <div className="text-right text-base-300">{rtMatch.code}</div>
     </div>
   )
 }

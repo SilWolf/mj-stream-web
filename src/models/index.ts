@@ -223,6 +223,7 @@ export type Team = {
 
 export type RealtimeMatch = {
   name: string
+  nameDisplay?: string
   code: string
   databaseId: string
   remark: string

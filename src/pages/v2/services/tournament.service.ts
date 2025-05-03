@@ -11,18 +11,18 @@ export const apiGetTournaments = (): Promise<V2Tournament[]> => {
     .slice(0, 10)
     .project((sub) => ({
       _id: z.string(),
-      name: z.string().nullable(),
+      name: z.string().nullish(),
       logoUrl: sub.field('logo.asset').field(
         '_ref',
         z
           .string()
-          .nullable()
+          .nullish()
           .transform((assetId) =>
             urlFor(assetId, { width: 1000, height: 1000 })
           )
       ),
-      rulesetId: z.string().nullable(),
-      themeId: z.string().nullable(),
+      rulesetId: z.string().nullish(),
+      themeId: z.string().nullish(),
     }))
 
   return runQuery(query).then((tournaments) =>
@@ -50,18 +50,18 @@ export const apiGetTournamentById = (
     .slice(0, 1)
     .project((sub) => ({
       _id: z.string(),
-      name: z.string().nullable(),
+      name: z.string().nullish(),
       logoUrl: sub.field('logo.asset').field(
         '_ref',
         z
           .string()
-          .nullable()
+          .nullish()
           .transform((assetId) =>
             urlFor(assetId, { width: 1000, height: 1000 })
           )
       ),
-      rulesetId: z.string().nullable(),
-      themeId: z.string().nullable(),
+      rulesetId: z.string().nullish(),
+      themeId: z.string().nullish(),
       teams: sub.field('teams[]').project((team) => ({
         _key: z.string(),
         ref: team
@@ -69,42 +69,42 @@ export const apiGetTournamentById = (
           .deref()
           .project((teamRef) => ({
             _id: z.string(),
-            name: z.string().nullable(),
-            secondaryName: z.string().nullable(),
-            thirdName: z.string().nullable(),
-            preferredName: z.string().nullable(),
+            name: z.string().nullish(),
+            secondaryName: z.string().nullish(),
+            thirdName: z.string().nullish(),
+            preferredName: z.string().nullish(),
             squareLogoImage: teamRef.field('squareLogoImage.asset').field(
               '_ref',
               z
                 .string()
-                .nullable()
+                .nullish()
                 .transform((assetId) =>
                   urlFor(assetId, { width: 1000, height: 1000 })
                 )
             ),
-            color: teamRef.field('color.hex', z.string().nullable()),
-            introduction: z.string().nullable(),
+            color: teamRef.field('color.hex', z.string().nullish()),
+            introduction: z.string().nullish(),
           })),
         overrided: team
           .field('overrided')
           .project((teamOverrided) => ({
-            name: z.string().nullable(),
-            secondaryName: z.string().nullable(),
-            thirdName: z.string().nullable(),
-            preferredName: z.string().nullable(),
+            name: z.string().nullish(),
+            secondaryName: z.string().nullish(),
+            thirdName: z.string().nullish(),
+            preferredName: z.string().nullish(),
             squareLogoImageUrl: teamOverrided
               .field('squareLogoImage.asset')
               .field(
                 '_ref',
                 z
                   .string()
-                  .nullable()
+                  .nullish()
                   .transform((assetId) =>
                     urlFor(assetId, { width: 1000, height: 1000 })
                   )
               ),
-            color: teamOverrided.field('color.hex', z.string().nullable()),
-            introduction: z.string().nullable(),
+            color: teamOverrided.field('color.hex', z.string().nullish()),
+            introduction: z.string().nullish(),
           }))
           .nullable(true),
 
@@ -117,15 +117,15 @@ export const apiGetTournamentById = (
               .deref()
               .project((playerRef) => ({
                 _id: z.string(),
-                name: z.string().nullable(),
-                nickname: z.string().nullable(),
-                designation: z.string().nullable(),
-                introduction: z.string().nullable(),
+                name: z.string().nullish(),
+                nickname: z.string().nullish(),
+                designation: z.string().nullish(),
+                introduction: z.string().nullish(),
                 portraitImage: playerRef.field('portraitImage.asset').field(
                   '_ref',
                   z
                     .string()
-                    .nullable()
+                    .nullish()
                     .transform((assetId) =>
                       urlFor(assetId, {
                         mode: 'cover',
@@ -140,7 +140,7 @@ export const apiGetTournamentById = (
                     '_ref',
                     z
                       .string()
-                      .nullable()
+                      .nullish()
                       .transform((assetId) =>
                         urlFor(assetId, {
                           mode: 'cover',
@@ -153,7 +153,7 @@ export const apiGetTournamentById = (
                   '_ref',
                   z
                     .string()
-                    .nullable()
+                    .nullish()
                     .transform((assetId) =>
                       urlFor(assetId, { mode: 'contain', height: 1200 })
                     )
@@ -164,7 +164,7 @@ export const apiGetTournamentById = (
                     '_ref',
                     z
                       .string()
-                      .nullable()
+                      .nullish()
                       .transform((assetId) =>
                         urlFor(assetId, { mode: 'contain', height: 1200 })
                       )
@@ -173,7 +173,7 @@ export const apiGetTournamentById = (
                   '_ref',
                   z
                     .string()
-                    .nullable()
+                    .nullish()
                     .transform((assetId) =>
                       urlFor(assetId, {
                         mode: 'cover',
@@ -187,15 +187,15 @@ export const apiGetTournamentById = (
                 ),
               })),
             overrided: player.field('overrided').project((playerOverrided) => ({
-              name: z.string().nullable(),
-              nickname: z.string().nullable(),
-              designation: z.string().nullable(),
-              introduction: z.string().nullable(),
+              name: z.string().nullish(),
+              nickname: z.string().nullish(),
+              designation: z.string().nullish(),
+              introduction: z.string().nullish(),
               portraitImage: playerOverrided.field('portraitImage.asset').field(
                 '_ref',
                 z
                   .string()
-                  .nullable()
+                  .nullish()
                   .transform((assetId) =>
                     urlFor(assetId, { mode: 'cover', width: 720, height: 1000 })
                   )
@@ -206,7 +206,7 @@ export const apiGetTournamentById = (
                   '_ref',
                   z
                     .string()
-                    .nullable()
+                    .nullish()
                     .transform((assetId) =>
                       urlFor(assetId, {
                         mode: 'cover',
@@ -219,7 +219,7 @@ export const apiGetTournamentById = (
                 '_ref',
                 z
                   .string()
-                  .nullable()
+                  .nullish()
                   .transform((assetId) =>
                     urlFor(assetId, { mode: 'contain', height: 1200 })
                   )
@@ -230,7 +230,7 @@ export const apiGetTournamentById = (
                   '_ref',
                   z
                     .string()
-                    .nullable()
+                    .nullish()
                     .transform((assetId) =>
                       urlFor(assetId, { mode: 'contain', height: 1200 })
                     )
@@ -239,7 +239,7 @@ export const apiGetTournamentById = (
                 '_ref',
                 z
                   .string()
-                  .nullable()
+                  .nullish()
                   .transform((assetId) =>
                     urlFor(assetId, { mode: 'cover', width: 800, height: 800 })
                   )

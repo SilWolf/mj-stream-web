@@ -5,7 +5,7 @@ export const V2ObsRoomSchema = zod.object({
   matchId: zod.string(),
   activeSceneId: zod.string(),
   activeSceneProps: zod.record(zod.string(), zod.string().or(zod.number())),
-  themeId: zod.string().nullable(),
+  themeId: zod.string().nullish(),
 
   schemaVersion: zod.string(),
   displayProps: zod.object({
