@@ -10,6 +10,7 @@ import MJTileDiv from '@/components/MJTileDiv'
 
 import styles from './index.module.css'
 import MJTileCombinationDiv from '@/components/MJTileCombinationDiv'
+import useDebounce from '@/hooks/useDebounce'
 
 type Props = HTMLAttributes<HTMLDivElement> & {
   score: number
@@ -53,6 +54,7 @@ export default function PlayerCard({
   const [storedScoreChanges, setStoredScoreChanges] = useState<number[] | null>(
     null
   )
+  const debouncedWaitingTimeRemain = useDebounce(waitingTileRemain, 800)
 
   const lightenedColor = useMemo(
     () => getLightColorOfColor(player.color ?? '#000000'),
@@ -181,9 +183,11 @@ export default function PlayerCard({
               >
                 <div className="text-[0.5em] flex gap-x-[0.2em] p-[0.2em] pl-[0.2em] pr-[0.2em]">
                   <div className="text-[#FFFFFF] w-[2em] text-[0.4em] leading-[1.3em] flex items-center justify-center">
-                    {typeof waitingTileRemain === 'number' ? (
+                    {typeof debouncedWaitingTimeRemain === 'number' ? (
                       <div className="text-center">
-                        <p className="text-[1.5em]">{waitingTileRemain}</p>
+                        <p className="text-[1.8em]">
+                          {debouncedWaitingTimeRemain}
+                        </p>
                       </div>
                     ) : (
                       '待牌'

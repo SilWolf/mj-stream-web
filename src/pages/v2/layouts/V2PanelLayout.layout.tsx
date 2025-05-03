@@ -73,8 +73,8 @@ export default function V2PanelLayout({ children }: PropsWithChildren) {
           </div>
           <main>{children}</main>
         </div>
-        <div className="drawer-side w-60 border-r-1 bg-base-100 border-base-300">
-          <div className="w-full p-2">
+        <div className="drawer-side  border-r-1 bg-base-100 border-base-300">
+          <div className="w-60 p-2">
             <label
               htmlFor="layout-drawer"
               className="btn btn-ghost rounded-full text-lg drawer-button lg:hidden"

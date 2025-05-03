@@ -239,7 +239,7 @@ const MatchIntroductionSlide = ({
                       {renderPoint(slide.focusPlayer.statistics?.point)}
                     </span>
                     <span className="ml-4 font-numeric text-[.75em] min-w-[2.5em] text-right text-[#ec276e]">
-                      ( 第 {slide.focusPlayer.statistics?.pointRanking ?? '10'}{' '}
+                      ( 第 {slide.focusPlayer.statistics?.pointRanking ?? '-'}{' '}
                       名 )
                     </span>
                   </p>
