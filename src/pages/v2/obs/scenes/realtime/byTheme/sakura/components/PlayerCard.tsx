@@ -158,37 +158,39 @@ export default function PlayerCard({
           </div>
 
           <div className="pl-[2.4em] w-full gap-[0.125em] relative">
-            <div
-              className="relative bg-black/50 rounded-[.125em] opacity-0 transition-opacity data-[has-waiting-tiles='1']:opacity-100 hide-if-changing overflow-hidden origin-left"
-              style={{
-                transform:
-                  waitingTiles && waitingTiles.length > 0
-                    ? 'scale(100%, 100%)'
-                    : 'scale(0, 100%)',
-                transition: 'transform 1s',
-              }}
-              data-has-waiting-tiles={
-                waitingTiles && waitingTiles.length > 0 ? '1' : '0'
-              }
-            >
-              <div className="text-[0.5em] flex gap-x-[0.2em] p-[0.2em] pl-[0.2em] pr-[0.2em]">
-                <div className="text-[#FFFFFF] text-[0.4em] leading-[1.3em] flex items-center">
-                  待<br />牌
-                </div>
-                <div className="flex-1 leading-none min-h-[1.19em] flex flex-wrap gap-[0.15em]">
-                  {waitingTiles?.map((tile) => (
-                    <MJTileDiv
-                      key={tile}
-                      className="inline-block align-bottom w-[0.85em]! animate-[fadeInFromLeft_1s_ease-in-out]"
-                    >
-                      {tile}
-                    </MJTileDiv>
-                  ))}
+            <div className="relative hide-if-changing">
+              <div
+                className="relative rounded-[.125em] bg-black/50 opacity-0 transition-opacity data-[has-waiting-tiles='1']:opacity-100 overflow-hidden origin-left"
+                style={{
+                  transform:
+                    waitingTiles && waitingTiles.length > 0
+                      ? 'scale(100%, 100%)'
+                      : 'scale(0, 100%)',
+                  transition: 'transform 1s',
+                }}
+                data-has-waiting-tiles={
+                  waitingTiles && waitingTiles.length > 0 ? '1' : '0'
+                }
+              >
+                <div className="text-[0.5em] flex gap-x-[0.2em] p-[0.2em] pl-[0.2em] pr-[0.2em]">
+                  <div className="text-[#FFFFFF] text-[0.4em] leading-[1.3em] flex items-center">
+                    待<br />牌
+                  </div>
+                  <div className="flex-1 leading-none min-h-[1.19em] flex flex-wrap gap-[0.15em]">
+                    {waitingTiles?.map((tile) => (
+                      <MJTileDiv
+                        key={tile}
+                        className="inline-block align-bottom w-[0.85em]! animate-[fadeInFromLeft_1s_ease-in-out]"
+                      >
+                        {tile}
+                      </MJTileDiv>
+                    ))}
+                  </div>
                 </div>
               </div>
 
               <div
-                className="absolute bg-red-600/75 inset-0 flex gap-x-2 items-center justify-center opacity-0 transition-opacity duration-500 hide-if-changing cursor-pointer text-[0.3em]"
+                className="absolute rounded-[.125em] bg-red-600/75 inset-0 flex gap-x-2 items-center justify-center opacity-0 transition-opacity duration-500 hide-if-changing cursor-pointer text-[0.3em]"
                 style={{
                   opacity: isRonDisallowed ? 1 : 0,
                 }}

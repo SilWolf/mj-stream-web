@@ -38,14 +38,14 @@ export default function V2PanelLayout({ children }: PropsWithChildren) {
   return (
     <CurrentTournamentIdContext.Provider value={currentTournamentId!}>
       <div className="drawer lg:drawer-open">
-        <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
+        <input id="layout-drawer" type="checkbox" className="drawer-toggle" />
         <div className="drawer-content">
           <div className="navbar bg-base-100 w-full border-b-1 border-base-300">
             <div>
               {/* Page content here */}
               <label
-                htmlFor="my-drawer-2"
-                className="btn btn-primary drawer-button lg:hidden"
+                htmlFor="layout-drawer"
+                className="btn btn-ghost rounded-full text-lg drawer-button lg:hidden"
               >
                 <i className="bi bi-list"></i>
               </label>
@@ -73,8 +73,14 @@ export default function V2PanelLayout({ children }: PropsWithChildren) {
           </div>
           <main>{children}</main>
         </div>
-        <div className="drawer-side border-r-1 border-base-300">
-          <div className="w-60">
+        <div className="drawer-side w-60 border-r-1 bg-base-100 border-base-300">
+          <div className="w-full p-2">
+            <label
+              htmlFor="layout-drawer"
+              className="btn btn-ghost rounded-full text-lg drawer-button lg:hidden"
+            >
+              <i className="bi bi-list"></i>
+            </label>
             <div className="p-4 w-full text-lg text-center">日麻直播系統</div>
 
             <h5 className="text-sm font-bold px-4">聯賽控制</h5>
