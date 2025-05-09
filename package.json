@@ -17,6 +17,7 @@
     "classnames": "^2.5.1",
     "cva": "npm:class-variance-authority",
     "daisyui": "^5.0.28",
+    "dayjs": "^1.11.13",
     "deep-equal": "^2.2.3",
     "groqd": "^1.4.0",
     "nanoid": "^5.1.5",

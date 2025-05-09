@@ -532,7 +532,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
           toggleRonDialog()
           return
 
-        case 'dora-normal-plus':
+        case 'dora':
           return updateCurrentMatchRound({
             playerResults: {
               ...rtMatchCurrentRound.playerResults,
@@ -540,15 +540,13 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                 ...rtMatchCurrentRound.playerResults[playerIndex],
                 detail: {
                   ...rtMatchCurrentRound.playerResults[playerIndex].detail,
-                  dora:
-                    rtMatchCurrentRound.playerResults[playerIndex].detail.dora +
-                    1,
+                  dora: (payload ?? 0) as number,
                 },
               },
             },
           })
 
-        case 'dora-normal-minus':
+        case 'red-dora':
           return updateCurrentMatchRound({
             playerResults: {
               ...rtMatchCurrentRound.playerResults,
@@ -556,45 +554,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
                 ...rtMatchCurrentRound.playerResults[playerIndex],
                 detail: {
                   ...rtMatchCurrentRound.playerResults[playerIndex].detail,
-                  dora: Math.max(
-                    rtMatchCurrentRound.playerResults[playerIndex].detail.dora -
-                      1,
-                    0
-                  ),
-                },
-              },
-            },
-          })
-
-        case 'dora-red-plus':
-          return updateCurrentMatchRound({
-            playerResults: {
-              ...rtMatchCurrentRound.playerResults,
-              [playerIndex]: {
-                ...rtMatchCurrentRound.playerResults[playerIndex],
-                detail: {
-                  ...rtMatchCurrentRound.playerResults[playerIndex].detail,
-                  redDora:
-                    rtMatchCurrentRound.playerResults[playerIndex].detail
-                      .redDora + 1,
-                },
-              },
-            },
-          })
-
-        case 'dora-red-minus':
-          return updateCurrentMatchRound({
-            playerResults: {
-              ...rtMatchCurrentRound.playerResults,
-              [playerIndex]: {
-                ...rtMatchCurrentRound.playerResults[playerIndex],
-                detail: {
-                  ...rtMatchCurrentRound.playerResults[playerIndex].detail,
-                  redDora: Math.max(
-                    rtMatchCurrentRound.playerResults[playerIndex].detail
-                      .redDora - 1,
-                    0
-                  ),
+                  redDora: (payload ?? 0) as number,
                 },
               },
             },

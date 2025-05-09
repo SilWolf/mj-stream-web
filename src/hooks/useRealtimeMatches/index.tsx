@@ -24,7 +24,7 @@ export default function useRealtimeMatches() {
           databaseId: value.databaseId || key,
           _id: key,
         }))
-        .reverse(),
+        .sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1)),
     [rtMatchesMap]
   )
 

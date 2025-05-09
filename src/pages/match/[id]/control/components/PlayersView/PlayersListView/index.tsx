@@ -1,7 +1,6 @@
 import { PlayerIndex } from '@/models'
 import { PlayersViewAction, PlayersViewProps } from '..'
 import React, { useCallback } from 'react'
-import MJTileDiv from '@/components/MJTileDiv'
 import MJTileCombinationDiv from '@/components/MJTileCombinationDiv'
 import RevealPonKeyboard from './widgets/RevealPonKeyboard'
 import RevealKanngKeyboard from './widgets/RevealKanngKeyboard'
@@ -83,6 +82,20 @@ const PlayersListView = ({
   const handleClickWaitingTileRemain = useCallback(
     (index: PlayerIndex) => (newValue: number | null) => {
       onAction(index, 'waiting-tile-remain', newValue)
+    },
+    [onAction]
+  )
+
+  const handleClickDora = useCallback(
+    (index: PlayerIndex) => (newValue: number | null) => {
+      onAction(index, 'dora', newValue)
+    },
+    [onAction]
+  )
+
+  const handleClickRedDora = useCallback(
+    (index: PlayerIndex) => (newValue: number | null) => {
+      onAction(index, 'red-dora', newValue)
     },
     [onAction]
   )
@@ -324,13 +337,13 @@ const PlayersListView = ({
               <div className="flex-1 flex flex-col justify-around gap-1">
                 <div className="flex items-center gap-x-2">
                   <button
-                    className="flex h-12 items-center gap-x-2cursor-pointer bg-base-100 hover:bg-base-200 px-2"
+                    className="flex h-12 items-center gap-x-2cursor-pointer bg-base-100 hover:bg-base-200 px-2 min-w-[200px] cursor-pointer"
                     data-player-index={index}
                     data-action="waitingTile"
                     onClick={handleAction}
                   >
                     <div>待牌</div>
-                    <div className="flex gap-2 text-[24px] min-w-[100px]">
+                    <div className="flex gap-2 text-[24px]">
                       {currentRound.playerResults[index].waitingTiles?.map(
                         (tile) => <MJTileV2Div key={tile} value={tile} />
                       )}
@@ -357,20 +370,46 @@ const PlayersListView = ({
                       </div>
                     )}
                 </div>
-                <button
-                  className="flex h-12 items-center gap-x-2 cursor-pointer bg-base-100 hover:bg-base-200 px-2"
-                  data-player-index={index}
-                  data-action="yaku"
-                  onClick={handleAction}
-                >
-                  <div>役</div>
-                  {currentRound.playerResults[index].detail.yakus?.map(
-                    ({ label }) => <span key={label}>{label}</span>
-                  )}
-                </button>
+                <div className="flex items-center gap-x-2">
+                  <button
+                    className="flex-1 flex h-12 items-center gap-x-2cursor-pointer bg-base-100 hover:bg-base-200 px-2 cursor-pointer"
+                    data-player-index={index}
+                    data-action="yaku"
+                    onClick={handleAction}
+                  >
+                    <div>役</div>
+                    {currentRound.playerResults[index].detail.yakus?.map(
+                      ({ label }) => <span key={label}>{label}</span>
+                    )}
+                  </button>
+
+                  <div className="flex gap-x-1">
+                    <div className="inline-flex items-stretch gap-x-2 border-4 border-yellow-300 bg-yellow-300 pr-1">
+                      <span className="content-center px-2">寶牌</span>
+                      <span className="text-[40px]">
+                        <SelectNumber
+                          value={currentRound.playerResults[index].detail.dora}
+                          onClick={handleClickDora(index)}
+                        />
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-x-1">
+                    <div className="inline-flex items-stretch gap-x-2 border-4 border-red-300 bg-red-300 pr-1">
+                      <span className="content-center px-2">赤牌</span>
+                      <span className="text-[40px]">
+                        <SelectNumber
+                          value={currentRound.playerResults[index].detail.dora}
+                          onClick={handleClickDora(index)}
+                        />
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              <div className="flex items-center gap-x-1 relative">
+              <div className="flex items-center gap-x-1 relative ml-4">
                 <div className="flex flex-col gap-1">
                   <button
                     className="px-1 h-10 w-16 bg-neutral-200 border rounded-sm border-neutral-700 text-xl"

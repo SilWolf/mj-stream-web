@@ -1,8 +1,8 @@
 import { q, runQuery, urlFor } from '../adapters/sanity'
 import * as z from 'zod'
-import { V2Tournament } from '../models/V2Tournament.model'
+import { V2Tournament, V2TournamentTeam } from '../models/V2Tournament.model'
 import { mergeObject } from '@/utils/object.util'
-import { getLightColorOfColor } from '@/utils/string.util'
+import { V2MatchPlayer } from '../models/V2Match.model'
 
 export const apiGetTournaments = (): Promise<V2Tournament[]> => {
   const query = q.star
@@ -41,13 +41,11 @@ export const apiGetTournaments = (): Promise<V2Tournament[]> => {
   )
 }
 
-export const apiGetTournamentById = (
-  tournamentId: string
-): Promise<V2Tournament | null> => {
+export const apiGetTournamentById = async (tournamentId: string) => {
   const query = q.star
     .filterByType('matchTournament')
     .filterBy(`_id == "${tournamentId}"`)
-    .slice(0, 1)
+    .slice(0)
     .project((sub) => ({
       _id: z.string(),
       name: z.string().nullish(),
@@ -182,27 +180,71 @@ export const apiGetTournamentById = (
                       })
                     )
                 ),
-                statistics: playerRef.raw<unknown>(
-                  `statistics[_key=="${tournamentId}"][0]`
-                ),
+                statistics: playerRef
+                  .field('statistics[]')
+                  .filter(`_key=="${tournamentId}"`)
+                  .slice(0),
               })),
-            overrided: player.field('overrided').project((playerOverrided) => ({
-              name: z.string().nullish(),
-              nickname: z.string().nullish(),
-              designation: z.string().nullish(),
-              introduction: z.string().nullish(),
-              portraitImage: playerOverrided.field('portraitImage.asset').field(
-                '_ref',
-                z
-                  .string()
-                  .nullish()
-                  .transform((assetId) =>
-                    urlFor(assetId, { mode: 'cover', width: 720, height: 1000 })
-                  )
-              ),
-              portraitAltImage: playerOverrided
-                .field('portraitAltImage.asset')
-                .field(
+            overrided: player
+              .field('overrided')
+              .project((playerOverrided) => ({
+                name: z.string().nullish(),
+                nickname: z.string().nullish(),
+                designation: z.string().nullish(),
+                introduction: z.string().nullish(),
+                portraitImage: playerOverrided
+                  .field('portraitImage.asset')
+                  .field(
+                    '_ref',
+                    z
+                      .string()
+                      .nullish()
+                      .transform((assetId) =>
+                        urlFor(assetId, {
+                          mode: 'cover',
+                          width: 720,
+                          height: 1000,
+                        })
+                      )
+                  ),
+                portraitAltImage: playerOverrided
+                  .field('portraitAltImage.asset')
+                  .field(
+                    '_ref',
+                    z
+                      .string()
+                      .nullish()
+                      .transform((assetId) =>
+                        urlFor(assetId, {
+                          mode: 'cover',
+                          width: 720,
+                          height: 1000,
+                        })
+                      )
+                  ),
+                fullBodyImage: playerOverrided
+                  .field('fullBodyImage.asset')
+                  .field(
+                    '_ref',
+                    z
+                      .string()
+                      .nullish()
+                      .transform((assetId) =>
+                        urlFor(assetId, { mode: 'contain', height: 1200 })
+                      )
+                  ),
+                fullBodyAltImage: playerOverrided
+                  .field('fullBodyAltImage.asset')
+                  .field(
+                    '_ref',
+                    z
+                      .string()
+                      .nullish()
+                      .transform((assetId) =>
+                        urlFor(assetId, { mode: 'contain', height: 1200 })
+                      )
+                  ),
+                riichiImage: playerOverrided.field('riichiImage.asset').field(
                   '_ref',
                   z
                     .string()
@@ -210,41 +252,13 @@ export const apiGetTournamentById = (
                     .transform((assetId) =>
                       urlFor(assetId, {
                         mode: 'cover',
-                        width: 720,
-                        height: 1000,
+                        width: 800,
+                        height: 800,
                       })
                     )
                 ),
-              fullBodyImage: playerOverrided.field('fullBodyImage.asset').field(
-                '_ref',
-                z
-                  .string()
-                  .nullish()
-                  .transform((assetId) =>
-                    urlFor(assetId, { mode: 'contain', height: 1200 })
-                  )
-              ),
-              fullBodyAltImage: playerOverrided
-                .field('fullBodyAltImage.asset')
-                .field(
-                  '_ref',
-                  z
-                    .string()
-                    .nullish()
-                    .transform((assetId) =>
-                      urlFor(assetId, { mode: 'contain', height: 1200 })
-                    )
-                ),
-              riichiImage: playerOverrided.field('riichiImage.asset').field(
-                '_ref',
-                z
-                  .string()
-                  .nullish()
-                  .transform((assetId) =>
-                    urlFor(assetId, { mode: 'cover', width: 800, height: 800 })
-                  )
-              ),
-            })),
+              }))
+              .nullable(true),
           }))
           .nullable(true),
 
@@ -252,23 +266,23 @@ export const apiGetTournamentById = (
       })),
     }))
 
-  return runQuery(query).then((tournaments) => {
-    if (!tournaments[0]) {
+  const result = await runQuery(query).then((fetchedTournament) => {
+    if (!fetchedTournament) {
       return null
     }
 
-    return {
-      ...tournaments[0],
-      id: tournaments[0]._id,
-      name: tournaments[0].name ?? '(未命名的聯賽)',
+    const tournament = {
+      ...fetchedTournament,
+      id: fetchedTournament._id,
+      name: fetchedTournament.name ?? '(未命名的聯賽)',
       image: {
-        logo: tournaments[0].logoUrl
-          ? { default: { url: tournaments[0].logoUrl } }
+        logo: fetchedTournament.logoUrl
+          ? { default: { url: fetchedTournament.logoUrl } }
           : undefined,
       },
-      rulesetId: tournaments[0].rulesetId ?? 'hkleague-4p',
-      themeId: tournaments[0].themeId ?? 'default',
-      teams: (tournaments[0].teams ?? []).map((team) => {
+      rulesetId: fetchedTournament.rulesetId ?? 'hkleague-4p',
+      themeId: fetchedTournament.themeId ?? 'default',
+      teams: (fetchedTournament.teams ?? []).map((team) => {
         const teamFinal = mergeObject(
           mergeObject({}, team.ref ?? {}),
           team.overrided ?? {}
@@ -290,7 +304,7 @@ export const apiGetTournamentById = (
           },
           color: {
             primary: teamFinal.color ?? '#FFFF00',
-            secondary: getLightColorOfColor(teamFinal.color ?? '#FFFF00'),
+            secondary: teamFinal.color ?? '#FFFF00',
           },
           image: {
             logo: teamFinal.squareLogoImage
@@ -323,7 +337,7 @@ export const apiGetTournamentById = (
               },
               color: {
                 primary: teamFinal.color ?? '#FFFF00',
-                secondary: getLightColorOfColor(teamFinal.color ?? '#FFFF00'),
+                secondary: teamFinal.color ?? '#FFFF00',
               },
               image: {
                 portrait: playerFinal.portraitImage
@@ -375,5 +389,47 @@ export const apiGetTournamentById = (
         }
       }),
     } satisfies V2Tournament
+
+    const teams = tournament.teams ?? []
+    const teamsMap = teams.reduce(
+      (map, obj) => ((map[obj.id] = obj), map),
+      {} as Record<string, V2TournamentTeam>
+    )
+
+    const players = teams.map((team) => team.players).flat()
+    const playersMap = players.reduce(
+      (map, obj) => ((map[obj.id] = obj), map),
+      {} as Record<string, V2MatchPlayer>
+    )
+
+    return { tournament, teams, teamsMap, players, playersMap }
   })
+
+  if (!result) {
+    throw new Error('Error: Tournament not found.')
+  }
+
+  return result
+}
+
+export const apiGetTournamentIdByMatchId = async (matchId: string) => {
+  const query = q.star
+    .filterByType('match')
+    .filterRaw(`_id == "${matchId}"`)
+    .slice(0)
+    .project((sub) => ({
+      tournamentId: sub.field('tournament').field('_ref'),
+    }))
+
+  const tournamentId = await runQuery(query).then((res) => res?.tournamentId)
+  if (!tournamentId) {
+    throw new Error('Cannot find tournament id')
+  }
+
+  return tournamentId
+}
+
+export const apiGetTournamentByMatchId = async (matchId: string) => {
+  const tournamentId = await apiGetTournamentIdByMatchId(matchId)
+  return apiGetTournamentById(tournamentId)
 }

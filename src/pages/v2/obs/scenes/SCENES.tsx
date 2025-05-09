@@ -1,8 +1,9 @@
-import RealtimeSummaryPage from '@/pages/realtime-summary/index.page'
-
 import { V2ObsRoom } from '@/pages/v2/models/V2ObsRoom.model'
 import { lazy } from 'react'
 
+const V2ObsSceneOfLatestStatistics = lazy(
+  () => import('./latest-statistics/page')
+)
 const V2ObsSceneOfRealtime = lazy(() => import('./realtime/page'))
 const V2ObsSceneOfIntroductionForMatch = lazy(
   () => import('./introduction-of-match/page')
@@ -38,6 +39,62 @@ export const SCENES: Scene[] = [
         params={{ matchId: obsInfo.matchId }}
       />
     ),
+  },
+  {
+    id: 'latest-statistics',
+    name: '現時數據',
+    render: (obsInfo) => (
+      <V2ObsSceneOfLatestStatistics
+        themeId={obsInfo.themeId}
+        params={{ tournamentId: obsInfo.tournamentId as string }}
+        forwardFlag={obsInfo.activeSceneProps?.forwardFlag as number}
+        resetFlag={obsInfo.activeSceneProps?.resetFlag as number}
+      />
+    ),
+    actions: [
+      {
+        key: 'refetch',
+        label: (
+          <span>
+            <i className="bi bi-cloud-download"></i> 下載最新數據
+          </span>
+        ),
+        perform: (oldProp) => {
+          return {
+            ...oldProp,
+            refetchFlag: 1 - ((oldProp.refetchFlag as number) ?? 0),
+          }
+        },
+      },
+      {
+        key: 'reset',
+        label: (
+          <span>
+            <i className="bi bi-skip-backward-fill"></i> 回到第一頁
+          </span>
+        ),
+        perform: (oldProp) => {
+          return {
+            ...oldProp,
+            resetFlag: 1 - ((oldProp.resetFlag as number) ?? 0),
+          }
+        },
+      },
+      {
+        key: 'forward',
+        label: (
+          <span>
+            <i className="bi bi-forward"></i> 下一頁
+          </span>
+        ),
+        perform: (oldProp) => {
+          return {
+            ...oldProp,
+            forwardFlag: 1 - ((oldProp.forwardFlag as number) ?? 0),
+          }
+        },
+      },
+    ],
   },
   {
     id: 'introduction',
@@ -125,62 +182,6 @@ export const SCENES: Scene[] = [
       },
     ],
   },
-  // {
-  //   id: 'realtime-stat',
-  //   name: '現時數據',
-  //   render: (obsInfo) => (
-  //     <RealtimeSummaryPage
-  //       disableClick
-  //       forwardFlag={obsInfo.activeSceneProps?.forwardFlag as number}
-  //       resetFlag={obsInfo.activeSceneProps?.resetFlag as number}
-  //       refetchFlag={obsInfo.activeSceneProps?.refetchFlag as number}
-  //     />
-  //   ),
-  //   actions: [
-  //     {
-  //       key: 'refetch',
-  //       label: (
-  //         <span>
-  //           <i className="bi bi-cloud-download"></i> 下載最新數據
-  //         </span>
-  //       ),
-  //       perform: (oldProp) => {
-  //         return {
-  //           ...oldProp,
-  //           refetchFlag: 1 - ((oldProp.refetchFlag as number) ?? 0),
-  //         }
-  //       },
-  //     },
-  //     {
-  //       key: 'reset',
-  //       label: (
-  //         <span>
-  //           <i className="bi bi-skip-backward-fill"></i> 回到第一頁
-  //         </span>
-  //       ),
-  //       perform: (oldProp) => {
-  //         return {
-  //           ...oldProp,
-  //           resetFlag: 1 - ((oldProp.resetFlag as number) ?? 0),
-  //         }
-  //       },
-  //     },
-  //     {
-  //       key: 'forward',
-  //       label: (
-  //         <span>
-  //           <i className="bi bi-forward"></i> 下一頁
-  //         </span>
-  //       ),
-  //       perform: (oldProp) => {
-  //         return {
-  //           ...oldProp,
-  //           forwardFlag: 1 - ((oldProp.forwardFlag as number) ?? 0),
-  //         }
-  //       },
-  //     },
-  //   ],
-  // },
   // {
   //   id: 'realtime-stat-with-countdown',
   //   name: '現時數據(+下一場對局倒數＆自動播放)',

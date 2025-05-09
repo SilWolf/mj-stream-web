@@ -1,4 +1,5 @@
 import * as zod from 'zod'
+import { playerSchema } from '../adapters/sanity/sanity.zod'
 
 export const v2MatchPlayerSchema = zod.object({
   id: zod.string(),
@@ -53,6 +54,7 @@ export const v2MatchPlayerSchema = zod.object({
       })
       .optional(),
   }),
+  statistics: playerSchema.shape.statistics.unwrap().element.nullish(),
 })
 
 export const v2MatchSchema = zod

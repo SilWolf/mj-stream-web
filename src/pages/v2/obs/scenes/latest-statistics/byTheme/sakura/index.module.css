@@ -1,0 +1,16 @@
+.twr-players-ranking {
+  & :global(.twr-players-ranking-item) {
+    opacity: 0;
+    transform: translateY(100px);
+    transition:
+      opacity 0.5s,
+      transform 0.5s;
+    transition-delay: var(--transition-out-delay, 0s);
+  }
+
+  &[data-active='true'] :global(.twr-players-ranking-item) {
+    opacity: 1;
+    transform: translateY(0%);
+    transition-delay: var(--transition-in-delay, 0s);
+  }
+}

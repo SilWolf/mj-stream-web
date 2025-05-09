@@ -16,9 +16,7 @@ export default function V2PanelMatchesByIdEditPage() {
   const [searchParams] = useSearchParams()
   const [, navigate] = useLocation()
 
-  const {
-    data: { tournament, playersMap },
-  } = useCurrentTournament()
+  const { data } = useCurrentTournament()
 
   const { data: match } = useQuery({
     queryKey: ['v2-matches', matchId],
@@ -28,6 +26,9 @@ export default function V2PanelMatchesByIdEditPage() {
   const handleSubmit = useCallback(
     async (newMatch: V2Match) => {
       if (!match) {
+        return
+      }
+      if (!data) {
         return
       }
       if (!confirm('確定資料都正確了嗎？要開始對局了嗎？')) {
@@ -210,16 +211,20 @@ export default function V2PanelMatchesByIdEditPage() {
 
       await fb.push(`matchRounds`, matchRound)
       await fb.update(`obs/1`, {
+        tournamentId: data.tournament.id ?? null,
         matchId: newRTMatch.code,
-        themeId: tournament?.themeId ?? 'default',
+        themeId: data.tournament.themeId ?? 'default',
       })
       navigate('/obs/match-control')
     },
-    [fb, match, matchId, navigate, tournament?.themeId]
+    [fb, match, matchId, navigate, data]
   )
 
   const defaultValues = useMemo(() => {
     if (!match) {
+      return undefined
+    }
+    if (!data) {
       return undefined
     }
 
@@ -228,10 +233,10 @@ export default function V2PanelMatchesByIdEditPage() {
       nameAlt: match.data.name.display?.primary || '',
       rulesetId: match.data.rulesetRef,
       players: [
-        playersMap[match.data.players[0].id] ?? match.data.players[0],
-        playersMap[match.data.players[1].id] ?? match.data.players[1],
-        playersMap[match.data.players[2].id] ?? match.data.players[2],
-        playersMap[match.data.players[3].id] ?? match.data.players[3],
+        data.playersMap[match.data.players[0].id] ?? match.data.players[0],
+        data.playersMap[match.data.players[1].id] ?? match.data.players[1],
+        data.playersMap[match.data.players[2].id] ?? match.data.players[2],
+        data.playersMap[match.data.players[3].id] ?? match.data.players[3],
       ].map((player) => ({
         namePrimary: player.name.display.primary,
         nameSecondary: player.name.display.secondary ?? '',
@@ -244,7 +249,7 @@ export default function V2PanelMatchesByIdEditPage() {
           player.image.riichi?.default.url ?? player.image.logo?.default.url,
       })),
     }
-  }, [match, playersMap])
+  }, [match, data])
 
   if (!match) {
     return <></>

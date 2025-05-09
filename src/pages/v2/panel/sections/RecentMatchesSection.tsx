@@ -34,17 +34,24 @@ function PlayerMiniCard({ player }: { player: V2MatchPlayer }) {
 }
 
 export default function RecentMatchesSection() {
-  const {
-    data: { tournament, playersMap, teamsMap },
-  } = useCurrentTournament()
+  const { data } = useCurrentTournament()
 
   const [selectedCriteria, setSelectedCriteria] = useState<'recent'>('recent')
 
   const { data: matches = [] } = useQuery({
-    queryKey: ['v2-tournaments', tournament?.id, 'matches', selectedCriteria],
+    queryKey: [
+      'v2-tournaments',
+      data?.tournament.id,
+      'matches',
+      selectedCriteria,
+    ],
     queryFn: ({ queryKey }) => apiQueryMatchesByTournamentId(queryKey[1]!),
-    enabled: !!tournament?.id,
+    enabled: !!data?.tournament.id,
   })
+
+  if (!data) {
+    return <></>
+  }
 
   return (
     <>
@@ -69,7 +76,7 @@ export default function RecentMatchesSection() {
               <td>
                 <PlayerMiniCard
                   player={
-                    playersMap[match.data.players[0].id] ??
+                    data.playersMap[match.data.players[0].id] ??
                     match.data.players[0]
                   }
                 />
@@ -77,7 +84,7 @@ export default function RecentMatchesSection() {
               <td>
                 <PlayerMiniCard
                   player={
-                    playersMap[match.data.players[1].id] ??
+                    data.playersMap[match.data.players[1].id] ??
                     match.data.players[1]
                   }
                 />
@@ -85,7 +92,7 @@ export default function RecentMatchesSection() {
               <td>
                 <PlayerMiniCard
                   player={
-                    playersMap[match.data.players[2].id] ??
+                    data.playersMap[match.data.players[2].id] ??
                     match.data.players[2]
                   }
                 />
@@ -93,7 +100,7 @@ export default function RecentMatchesSection() {
               <td>
                 <PlayerMiniCard
                   player={
-                    playersMap[match.data.players[3].id] ??
+                    data.playersMap[match.data.players[3].id] ??
                     match.data.players[3]
                   }
                 />

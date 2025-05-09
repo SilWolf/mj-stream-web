@@ -1,5 +1,6 @@
 import useRealtimeMatches from '@/hooks/useRealtimeMatches'
 import { RealtimePlayer } from '@/models'
+import { renderDate } from '@/utils/string.util'
 import { Link } from 'wouter'
 
 function RealtimePlayerMiniCard({ player }: { player: RealtimePlayer }) {
@@ -46,13 +47,15 @@ export default function RecentRealtimeMatchesSection() {
             <tr key={rtMatch.code}>
               <th>
                 <div>{rtMatch.name}</div>
-                <div>{rtMatch.createdAt}</div>
+                <div className="font-normal opacity-50">
+                  {renderDate(rtMatch.createdAt)}
+                </div>
                 <div className="flex flex-wrap gap-1">
-                  {!rtMatch.flag?.isUploaded && (
+                  {/* {!rtMatch.flag?.isUploaded && (
                     <div className="badge badge-outline badge-error">
                       未上傳
                     </div>
-                  )}
+                  )} */}
                 </div>
               </th>
               <td>

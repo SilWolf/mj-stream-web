@@ -1,6 +1,13 @@
 import { PlayerIndex } from '@/models'
 import { nanoid } from 'nanoid'
 
+import dayjs from 'dayjs'
+import 'dayjs/locale/zh-hk'
+import LocalizedFormat from 'dayjs/plugin/localizedFormat'
+
+dayjs.extend(LocalizedFormat)
+dayjs.locale('zh-hk')
+
 export const getRandomId = (length = 12) => nanoid(length)
 
 export const getYearString = () => {
@@ -186,4 +193,8 @@ export const renderMatchCode = (code: string) => {
   } catch (_) {
     return '-'
   }
+}
+
+export function renderDate(str: string) {
+  return dayjs(str).format('lll')
 }

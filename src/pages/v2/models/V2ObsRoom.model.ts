@@ -3,6 +3,7 @@ import * as zod from 'zod'
 export const V2ObsRoomSchema = zod.object({
   /** Legace fields. Need to keep until fully upgrade to v2 **/
   matchId: zod.string(),
+  tournamentId: zod.string().nullish(),
   activeSceneId: zod.string(),
   activeSceneProps: zod.record(zod.string(), zod.string().or(zod.number())),
   themeId: zod.string().nullish(),
