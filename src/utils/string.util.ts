@@ -125,7 +125,7 @@ export const renderPoint = (value = 0) => {
     return `+ ${value.toFixed(1)}`
   }
 
-  return `▲${Math.abs(value).toFixed(1)}`
+  return `▲ ${Math.abs(value).toFixed(1)}`
 }
 
 export const renderRanking = (

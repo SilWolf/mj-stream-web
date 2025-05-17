@@ -1,5 +1,5 @@
 import { renderPoint, renderRanking, renderScore } from '@/utils/string.util'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { CSSProperties, useCallback, useEffect, useMemo, useState } from 'react'
 import cns from 'classnames'
 import MJMatchHistoryChart from '@/components/MJMatchHistoryChart'
 import useRealtimeMatch from '@/hooks/useRealtimeMatch'
@@ -7,7 +7,11 @@ import { convertMatchToExportedMatch } from '@/helpers/mahjong.helper'
 import { RealtimePlayer } from '@/models'
 
 import styles from './index.module.css'
-import useDbMatch from '@/hooks/useDbMatch'
+import { apiGetTournamentById } from '@/pages/v2/services/tournament.service'
+import { useQuery } from '@tanstack/react-query'
+import PlayerCardInRanking from './components/PlayerCardInRanking'
+import { V2MatchPlayer } from '@/pages/v2/models/V2Match.model'
+import useDbMatchV2 from '@/hooks/useDbMatchV2'
 
 const rankingColors = [
   { strokeColor: '#77475b', bgColor: '#562135C0', color: '#f9dddc' },
@@ -91,17 +95,8 @@ type Slide =
     }
   | {
       _id: string
-      type: 'ranking'
-      teams: {
-        _id: string
-        point: number
-        ranking: number
-        matchCount: number
-        newResult?: {
-          point: number
-          matchCount: number
-        }
-      }[]
+      type: 'grand-ranking'
+      players: { player: V2MatchPlayer; point: number; active: boolean }[]
       subslide: 1
     }
 
@@ -166,7 +161,7 @@ const MatchSummarySlide = ({
                 })}
               >
                 <h3
-                  className="text-[2em] font-semibold text-center"
+                  className="text-[2em] font-semibold text-center font-serif"
                   style={{
                     color: slide.teamAndPlayers[playerKey].player.color,
                   }}
@@ -219,7 +214,7 @@ const MatchSummarySlide = ({
         }}
       >
         <div className="flex-1"></div>
-        <div className="flex-3 flex flex-col items-stretch">
+        <div className="flex-3 flex flex-col items-stretch gap-y-[0.25em]">
           <div
             className={cns('flex gap-x-[1em] pl-[1em] mb-[.5em] items-end', {
               'mi-teams-in': status === 0,
@@ -255,7 +250,7 @@ const MatchSummarySlide = ({
             <div
               key={index}
               className={cns(
-                'text-[#78012c] relative overflow-hidden flex-1 border-b-1 border-t-1 border-[#78012c]',
+                'text-[#78012c] relative overflow-hidden flex-1 border-1 border-[#78012c] rounded-[0.5em]',
                 {
                   'mi-teams-in': status === 0,
                   'mi-teams-out': status > 0,
@@ -403,6 +398,48 @@ const MatchSummarySlide = ({
         </div>
       </div>
     )
+  } else if (slide.type === 'grand-ranking') {
+    return (
+      <div
+        className={`absolute top-[20vh] left-[5vw] right-[5vw] flex flex-col ${styles['twr-players-ranking']}`}
+        data-active={status === 0}
+      >
+        <div className="grid grid-cols-2 gap-x-8 text-[0.5em] mt-8">
+          <div className="space-y-4">
+            {slide.players.slice(0, 8).map((player, index) => (
+              <div
+                key={player.player.id}
+                className="twr-players-ranking-item"
+                style={
+                  {
+                    '--transition-in-delay': `${((index + 1) * 0.08).toFixed(2)}s`,
+                    '--transition-out-delay': `0s`,
+                  } as CSSProperties
+                }
+              >
+                <PlayerCardInRanking {...player} ranking={index + 1} />
+              </div>
+            ))}
+          </div>
+          <div className="space-y-4">
+            {slide.players.slice(8, 16).map((player, index) => (
+              <div
+                key={player.player.id}
+                className="twr-players-ranking-item"
+                style={
+                  {
+                    '--transition-in-delay': `${((index + 4) * 0.08).toFixed(2)}s`,
+                    '--transition-out-delay': `0s`,
+                  } as CSSProperties
+                }
+              >
+                <PlayerCardInRanking {...player} ranking={index + 9} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return <></>
@@ -414,7 +451,14 @@ const MatchSummaryPage = ({
   resetFlag,
 }: Props) => {
   const { rtMatch, rtMatchRounds } = useRealtimeMatch(matchId)
-  const { data: match } = useDbMatch(rtMatch?.databaseId)
+  const { data: match } = useDbMatchV2(rtMatch?.databaseId)
+
+  const { data } = useQuery({
+    queryKey: ['tournament', match?.data.tournamentId],
+    queryFn: () => apiGetTournamentById(match?.data.tournamentId as string),
+    enabled: !!match?.data.tournamentId,
+    staleTime: 5 * 60 * 1000,
+  })
 
   const slides = useMemo<Slide[]>(() => {
     if (!rtMatch || !rtMatchRounds) {
@@ -650,8 +694,42 @@ const MatchSummaryPage = ({
       subslide: 1,
     })
 
+    const playerKeys = [
+      'playerEast',
+      'playerSouth',
+      'playerWest',
+      'playerNorth',
+    ] as const
+
+    if (data && match) {
+      const updatedPlayers = data.players.map((player) => ({
+        player,
+        point: player.statistics?.point ?? 0.0,
+        active: false,
+      }))
+
+      for (let i = 0; i < 4; i++) {
+        const player = updatedPlayers.find(
+          (item) => item.player.id === match.data.players[i].id
+        )
+        if (player) {
+          player.point += playersStat[playerKeys[i]].point
+          player.active = true
+        }
+      }
+
+      resultSlides.push({
+        type: 'grand-ranking',
+        _id: 'grand-ranking',
+        players: updatedPlayers.toSorted(
+          (a, b) => (b.point ?? 0) - (a.point ?? 0)
+        ),
+        subslide: 1,
+      })
+    }
+
     return resultSlides
-  }, [rtMatch, rtMatchRounds])
+  }, [data, match, rtMatch, rtMatchRounds])
 
   const [slideIndex, setSlideIndex] = useState<number>(0)
   const [subSlideIndex, setSubSlideIndex] = useState<number>(0)
@@ -747,7 +825,7 @@ const MatchSummaryPage = ({
           <div className="flex-1">
             <div className="flex justify-start">
               <div className="font-bold text-[1.5em] leading-[100%]">
-                {match.startAt.substring(0, 10)}
+                {/* {match.metadata.startAt.substring(0, 10)} */}
               </div>
             </div>
             <div className="flex gap-x-10">
@@ -756,7 +834,9 @@ const MatchSummaryPage = ({
             </div>
           </div>
           <div>
-            <h1 className="text-[1.25em] font-semibold">{match.name}</h1>
+            <h1 className="text-[1.25em] font-semibold font-serif">
+              {match.data.name.official.primary}
+            </h1>
           </div>
         </div>
         {/* <h1 className="text-[2.2em] leading-[1.2em] font-semibold mi-subbtitle-in">

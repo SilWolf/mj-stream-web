@@ -217,6 +217,7 @@ export const apiGetMatchById = async (matchId: string) => {
         .project(teamProject),
       _createdAt: true,
       _updatedAt: true,
+      tournament: true,
     }))
 
   return runQuery(query).then((matches) => {
@@ -264,6 +265,7 @@ export const apiGetMatchById = async (matchId: string) => {
       schemaVersion: '2',
       code: matches[0]._id,
       data: {
+        tournamentId: matches[0].tournament?._ref,
         name: {
           official: { primary: matches[0].name ?? '' },
           display: matches[0].nameAlt ? { primary: matches[0].nameAlt } : null,

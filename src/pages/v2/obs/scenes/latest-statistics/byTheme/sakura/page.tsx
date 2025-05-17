@@ -48,20 +48,9 @@ const TournamentDetailSlide = ({
         className={`absolute inset-0 flex flex-col ${styles['twr-players-ranking']}`}
         data-active={status === 0}
       >
-        <div className="grid grid-cols-3 gap-x-8">
+        <div className="flex gap-x-8 items-end">
           <div
-            className="twr-players-ranking-item"
-            style={
-              {
-                '--transition-in-delay': '0s',
-                '--transition-out-delay': '0s',
-              } as CSSProperties
-            }
-          >
-            <PlayerLargeCardInRanking player={slide.players[0]} ranking={1} />
-          </div>
-          <div
-            className="twr-players-ranking-item"
+            className="twr-players-ranking-item flex-5"
             style={
               {
                 '--transition-in-delay': '0s',
@@ -72,7 +61,18 @@ const TournamentDetailSlide = ({
             <PlayerLargeCardInRanking player={slide.players[1]} ranking={2} />
           </div>
           <div
-            className="twr-players-ranking-item"
+            className="twr-players-ranking-item flex-6 text-[1.2em]"
+            style={
+              {
+                '--transition-in-delay': '0s',
+                '--transition-out-delay': '0s',
+              } as CSSProperties
+            }
+          >
+            <PlayerLargeCardInRanking player={slide.players[0]} ranking={1} />
+          </div>
+          <div
+            className="twr-players-ranking-item flex-5"
             style={
               {
                 '--transition-in-delay': '0s',
@@ -332,7 +332,7 @@ const RealtimeSummaryPage = ({
   const autoInSearch = useSearchParam('auto') || auto
 
   const { data, refetch: refetchTournament } = useQuery({
-    queryKey: ['tournament', 'byMatchId', params?.tournamentId],
+    queryKey: ['tournament', params?.tournamentId],
     queryFn: () => apiGetTournamentById(params?.tournamentId as string),
     enabled: !!params?.tournamentId,
     staleTime: 5 * 60 * 1000,

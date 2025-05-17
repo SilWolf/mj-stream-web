@@ -400,8 +400,10 @@ const PlayersListView = ({
                       <span className="content-center px-2">赤牌</span>
                       <span className="text-[40px]">
                         <SelectNumber
-                          value={currentRound.playerResults[index].detail.dora}
-                          onClick={handleClickDora(index)}
+                          value={
+                            currentRound.playerResults[index].detail.redDora
+                          }
+                          onClick={handleClickRedDora(index)}
                         />
                       </span>
                     </div>

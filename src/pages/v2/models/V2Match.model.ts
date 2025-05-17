@@ -62,6 +62,7 @@ export const v2MatchSchema = zod
     schemaVersion: zod.string(),
     code: zod.string(),
     data: zod.object({
+      tournamentId: zod.string().nullish(),
       name: zod.object({
         official: zod.object({
           primary: zod.string(),
