@@ -1,6 +1,6 @@
 import CountdownSpan from '@/components/CountdownSpan'
 import { V2MatchPlayer } from '@/pages/v2/models/V2Match.model'
-import { apiGetTournamentById } from '@/pages/v2/services/tournament.service'
+import { apiGetTournamentById } from '@/pages/v2/services/tournament/service'
 import { renderRanking } from '@/utils/string.util'
 import { useQuery } from '@tanstack/react-query'
 import { CSSProperties, useCallback, useEffect, useMemo, useState } from 'react'
@@ -9,6 +9,7 @@ import PlayerLargeCardInRanking from './components/PlayerLargeCardInRanking'
 import PlayerCardInRanking from './components/PlayerCardInRanking'
 
 import styles from './index.module.css'
+import SakuraLeagueStickerForTshirtScreen from './screens/SakuraLeagueStickerForTshirtScreen'
 
 type Slide =
   | {
@@ -568,6 +569,8 @@ const RealtimeSummaryPage = ({
               subslide={subSlideIndex}
             />
           ))}
+
+          <SakuraLeagueStickerForTshirtScreen active={true} />
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { q, runQuery } from '../adapters/sanity'
+import { q, runQuery } from '@/pages/v2/adapters/sanity'
 
 export const apiGetActivityBySlug = (slug: string) => {
   const query = q.star

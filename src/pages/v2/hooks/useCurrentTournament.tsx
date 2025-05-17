@@ -1,5 +1,5 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { apiGetTournamentById } from '../services/tournament.service'
+import { apiGetTournamentById } from '../services/tournament/service'
 import { createContext, useContext } from 'react'
 
 export const CurrentTournamentIdContext = createContext<string>('')

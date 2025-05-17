@@ -104,13 +104,13 @@ export type Activity = {
     [internalGroqTypeReferenceTo]?: 'matchTournament'
   }
   attendees?: Array<{
-    player?: {
+    player: {
       _ref: string
       _type: 'reference'
       _weak?: boolean
       [internalGroqTypeReferenceTo]?: 'player'
     }
-    attendOn?: string
+    attendOn: string
     _key: string
   }>
 }

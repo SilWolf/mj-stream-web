@@ -1,8 +1,11 @@
-import { q, runQuery, urlFor } from '../adapters/sanity'
+import { q, runQuery, urlFor } from '@/pages/v2/adapters/sanity'
 import * as z from 'zod'
-import { V2Tournament, V2TournamentTeam } from '../models/V2Tournament.model'
+import {
+  V2Tournament,
+  V2TournamentTeam,
+} from '@/pages/v2/models/V2Tournament.model'
 import { mergeObject } from '@/utils/object.util'
-import { V2MatchPlayer } from '../models/V2Match.model'
+import { V2MatchPlayer } from '@/pages/v2/models/V2Match.model'
 
 export const apiGetTournaments = (): Promise<V2Tournament[]> => {
   const query = q.star

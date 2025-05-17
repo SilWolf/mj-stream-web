@@ -1,4 +1,4 @@
-import { q, runQuery, urlFor } from '../adapters/sanity'
+import { q, runQuery, urlFor } from '@/pages/v2/adapters/sanity'
 import * as z from 'zod'
 import { V2Match } from '../models/V2Match.model'
 import { getLightColorOfColor } from '@/utils/string.util'

@@ -7,7 +7,7 @@ import { convertMatchToExportedMatch } from '@/helpers/mahjong.helper'
 import { RealtimePlayer } from '@/models'
 
 import styles from './index.module.css'
-import { apiGetTournamentById } from '@/pages/v2/services/tournament.service'
+import { apiGetTournamentById } from '@/pages/v2/services/tournament/service'
 import { useQuery } from '@tanstack/react-query'
 import PlayerCardInRanking from './components/PlayerCardInRanking'
 import { V2MatchPlayer } from '@/pages/v2/models/V2Match.model'

@@ -3,7 +3,7 @@ import { Player, Team } from '@/models'
 import { getLightColorOfColor } from '@/utils/string.util'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { apiGetTournamentById } from '../v2/services/tournament.service'
+import { apiGetTournamentById } from '../v2/services/tournament/service'
 import { V2TournamentTeam } from '../v2/models/V2Tournament.model'
 import { V2MatchPlayer } from '../v2/models/V2Match.model'
 
