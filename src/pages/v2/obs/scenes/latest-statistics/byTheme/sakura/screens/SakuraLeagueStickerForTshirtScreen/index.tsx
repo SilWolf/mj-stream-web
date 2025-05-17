@@ -8,6 +8,8 @@ import {
 } from '@/utils/date.util'
 import { useMemo } from 'react'
 
+import styles from './index.module.css'
+
 function PlayerMiniCard({ player }: { player: V2MatchPlayer }) {
   return (
     <div className="text-center">
@@ -20,7 +22,7 @@ function PlayerMiniCard({ player }: { player: V2MatchPlayer }) {
         }}
       />
       <h3
-        className="leading-[1em] text-[0.8em]"
+        className="leading-[1em] text-[0.8em] font-kurewa"
         style={{
           color: player.color.primary,
         }}
@@ -31,11 +33,7 @@ function PlayerMiniCard({ player }: { player: V2MatchPlayer }) {
   )
 }
 
-export default function SakuraLeagueStickerForTshirtScreen({
-  active,
-}: {
-  active?: boolean
-}) {
+export default function SakuraLeagueStickerForTshirtScreen() {
   const { data: activity } = useActivityBySlug(
     'sakura-league-sticker-for-tshirt'
   )
@@ -70,16 +68,13 @@ export default function SakuraLeagueStickerForTshirtScreen({
   }
 
   return (
-    <div
-      className="w-full h-full grid grid-cols-2 grid-rows-4 grid-flow-col gap-[0.5em]"
-      data-active={active}
-    >
+    <div className="w-full h-full grid grid-cols-2 grid-rows-4 grid-flow-col gap-[0.5em]">
       {playersGroupedByDate.map(({ date, players }) => (
         <div
           key={date}
-          className="bg-white/50 rounded-[0.5em] flex items-center"
+          className={`bg-white/50 rounded-[0.5em] flex items-center ${styles.item}`}
         >
-          <div className="w-[4em] text-[1.25em] text-center">
+          <div className="w-[4em] text-[1.25em] text-center font-kurewa">
             <p>{renderDateAsShortForm(date)}</p>
             <p>({renderDayOfDate(date)})</p>
           </div>
@@ -94,7 +89,9 @@ export default function SakuraLeagueStickerForTshirtScreen({
       ))}
 
       <div>
-        <p className="w-full h-full text-center place-content-center text-[1.8em]">
+        <p
+          className={`w-full h-full text-center place-content-center text-[1.8em] ${styles.item}`}
+        >
           集齊 5 張蓋滿的印花卡
           <br />
           即可換領女雀士應援 T 恤

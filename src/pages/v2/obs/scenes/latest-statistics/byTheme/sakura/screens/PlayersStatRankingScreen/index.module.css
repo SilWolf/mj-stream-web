@@ -1,16 +1,16 @@
-.screenTitle {
-  & {
+.twr-player-ranking {
+  & :global(.twr-player-ranking-row) {
     opacity: 0;
-    transform: translateX(-100px);
+    transform: translateY(100px);
     transition:
       opacity 0.5s,
       transform 0.5s;
     transition-delay: var(--transition-out-delay, 0s);
   }
 
-  &[data-active='true'] {
+  [data-active='true'] & :global(.twr-player-ranking-row) {
     opacity: 1;
-    transform: translateX(0%);
+    transform: translateY(0%);
     transition-delay: var(--transition-in-delay, 0s);
   }
 }
