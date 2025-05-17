@@ -41,79 +41,10 @@ export const geopointSchema = z.object({
   alt: z.number().optional(),
 })
 
-export const activitySchema = z.object({
-  _id: z.string(),
-  _type: z.literal('activity'),
-  _createdAt: z.string(),
-  _updatedAt: z.string(),
-  _rev: z.string(),
-  name: z.string().optional(),
-  briefDescription: z.string().optional(),
-  description: z
-    .array(
-      z.object({
-        children: z
-          .array(
-            z.object({
-              marks: z.array(z.string()).optional(),
-              text: z.string().optional(),
-              _type: z.literal('span'),
-              _key: z.string(),
-            }),
-          )
-          .optional(),
-        style: z
-          .union([
-            z.literal('normal'),
-            z.literal('h1'),
-            z.literal('h2'),
-            z.literal('h3'),
-            z.literal('h4'),
-            z.literal('h5'),
-            z.literal('h6'),
-            z.literal('blockquote'),
-          ])
-          .optional(),
-        listItem: z.union([z.literal('bullet'), z.literal('number')]).optional(),
-        markDefs: z
-          .array(
-            z.object({
-              href: z.string().optional(),
-              _type: z.literal('link'),
-              _key: z.string(),
-            }),
-          )
-          .optional(),
-        level: z.number().optional(),
-        _type: z.literal('block'),
-        _key: z.string(),
-      }),
-    )
-    .optional(),
-  startAt: z.string().optional(),
-  endAt: z.string().optional(),
-  tournament: z
-    .object({
-      _ref: z.string(),
-      _type: z.literal('reference'),
-      _weak: z.boolean().optional(),
-    })
-    .optional(),
-  attendees: z
-    .array(
-      z.object({
-        player: z
-          .object({
-            _ref: z.string(),
-            _type: z.literal('reference'),
-            _weak: z.boolean().optional(),
-          })
-          .optional(),
-        attendOn: z.string().optional(),
-        _key: z.string(),
-      }),
-    )
-    .optional(),
+export const slugSchema = z.object({
+  _type: z.literal('slug'),
+  current: z.string().optional(),
+  source: z.string().optional(),
 })
 
 export const matchSchema = z.object({
@@ -515,12 +446,6 @@ export const playerSchema = z.object({
     .optional(),
 })
 
-export const slugSchema = z.object({
-  _type: z.literal('slug'),
-  current: z.string().optional(),
-  source: z.string().optional(),
-})
-
 export const sanityImageMetadataSchema = z.object({
   _type: z.literal('sanity.imageMetadata'),
   location: geopointSchema.optional(),
@@ -576,6 +501,82 @@ export const sanityFileAssetSchema = z.object({
   path: z.string().optional(),
   url: z.string().optional(),
   source: sanityAssetSourceDataSchema.optional(),
+})
+
+export const activitySchema = z.object({
+  _id: z.string(),
+  _type: z.literal('activity'),
+  _createdAt: z.string(),
+  _updatedAt: z.string(),
+  _rev: z.string(),
+  slug: slugSchema.optional(),
+  name: z.string().optional(),
+  briefDescription: z.string().optional(),
+  description: z
+    .array(
+      z.object({
+        children: z
+          .array(
+            z.object({
+              marks: z.array(z.string()).optional(),
+              text: z.string().optional(),
+              _type: z.literal('span'),
+              _key: z.string(),
+            }),
+          )
+          .optional(),
+        style: z
+          .union([
+            z.literal('normal'),
+            z.literal('h1'),
+            z.literal('h2'),
+            z.literal('h3'),
+            z.literal('h4'),
+            z.literal('h5'),
+            z.literal('h6'),
+            z.literal('blockquote'),
+          ])
+          .optional(),
+        listItem: z.union([z.literal('bullet'), z.literal('number')]).optional(),
+        markDefs: z
+          .array(
+            z.object({
+              href: z.string().optional(),
+              _type: z.literal('link'),
+              _key: z.string(),
+            }),
+          )
+          .optional(),
+        level: z.number().optional(),
+        _type: z.literal('block'),
+        _key: z.string(),
+      }),
+    )
+    .optional(),
+  startAt: z.string().optional(),
+  endAt: z.string().optional(),
+  tournament: z
+    .object({
+      _ref: z.string(),
+      _type: z.literal('reference'),
+      _weak: z.boolean().optional(),
+    })
+    .optional(),
+  attendees: z
+    .array(
+      z.object({
+        player: z
+          .object({
+            _ref: z.string(),
+            _type: z.literal('reference'),
+            _weak: z.boolean().optional(),
+          })
+          .optional(),
+        attendOn: z.string().optional(),
+        _key: z.string(),
+      }),
+    )
+    .optional(),
 })
 
 export const sanityImageAssetSchema = z.object({

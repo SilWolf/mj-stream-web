@@ -74,6 +74,7 @@ export type Activity = {
   _createdAt: string
   _updatedAt: string
   _rev: string
+  slug?: Slug
   name?: string
   briefDescription?: string
   description?: Array<{
