@@ -68,6 +68,52 @@ export type Geopoint = {
   alt?: number
 }
 
+export type Activity = {
+  _id: string
+  _type: 'activity'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  name?: string
+  briefDescription?: string
+  description?: Array<{
+    children?: Array<{
+      marks?: Array<string>
+      text?: string
+      _type: 'span'
+      _key: string
+    }>
+    style?: 'normal' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'blockquote'
+    listItem?: 'bullet' | 'number'
+    markDefs?: Array<{
+      href?: string
+      _type: 'link'
+      _key: string
+    }>
+    level?: number
+    _type: 'block'
+    _key: string
+  }>
+  startAt?: string
+  endAt?: string
+  tournament?: {
+    _ref: string
+    _type: 'reference'
+    _weak?: boolean
+    [internalGroqTypeReferenceTo]?: 'matchTournament'
+  }
+  attendees?: Array<{
+    player?: {
+      _ref: string
+      _type: 'reference'
+      _weak?: boolean
+      [internalGroqTypeReferenceTo]?: 'player'
+    }
+    attendOn?: string
+    _key: string
+  }>
+}
+
 export type Match = {
   _id: string
   _type: 'match'
@@ -131,6 +177,7 @@ export type Match = {
     [internalGroqTypeReferenceTo]?: 'player'
   }
   startAt?: string
+  resultUploadedAt?: string
   status?: 'initialized' | 'completed'
   youtubeUrl?: string
   bilibiliUrl?: string
@@ -261,6 +308,7 @@ export type TeamPlayer = {
       _weak?: boolean
       [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
     }
+    media?: unknown
     hotspot?: SanityImageHotspot
     crop?: SanityImageCrop
     _type: 'image'
@@ -283,17 +331,7 @@ export type Player = {
       _weak?: boolean
       [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
     }
-    hotspot?: SanityImageHotspot
-    crop?: SanityImageCrop
-    _type: 'image'
-  }
-  portraitAltImage?: {
-    asset?: {
-      _ref: string
-      _type: 'reference'
-      _weak?: boolean
-      [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
-    }
+    media?: unknown
     hotspot?: SanityImageHotspot
     crop?: SanityImageCrop
     _type: 'image'
@@ -305,6 +343,19 @@ export type Player = {
       _weak?: boolean
       [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
     }
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    _type: 'image'
+  }
+  portraitAltImage?: {
+    asset?: {
+      _ref: string
+      _type: 'reference'
+      _weak?: boolean
+      [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+    }
+    media?: unknown
     hotspot?: SanityImageHotspot
     crop?: SanityImageCrop
     _type: 'image'
@@ -316,6 +367,7 @@ export type Player = {
       _weak?: boolean
       [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
     }
+    media?: unknown
     hotspot?: SanityImageHotspot
     crop?: SanityImageCrop
     _type: 'image'
@@ -327,6 +379,7 @@ export type Player = {
       _weak?: boolean
       [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
     }
+    media?: unknown
     hotspot?: SanityImageHotspot
     crop?: SanityImageCrop
     _type: 'image'
@@ -413,6 +466,7 @@ export type MatchTournament = {
       _weak?: boolean
       [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
     }
+    media?: unknown
     hotspot?: SanityImageHotspot
     crop?: SanityImageCrop
     _type: 'image'
@@ -446,17 +500,7 @@ export type MatchTournament = {
             _weak?: boolean
             [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
           }
-          hotspot?: SanityImageHotspot
-          crop?: SanityImageCrop
-          _type: 'image'
-        }
-        portraitAltImage?: {
-          asset?: {
-            _ref: string
-            _type: 'reference'
-            _weak?: boolean
-            [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
-          }
+          media?: unknown
           hotspot?: SanityImageHotspot
           crop?: SanityImageCrop
           _type: 'image'
@@ -468,6 +512,19 @@ export type MatchTournament = {
             _weak?: boolean
             [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
           }
+          media?: unknown
+          hotspot?: SanityImageHotspot
+          crop?: SanityImageCrop
+          _type: 'image'
+        }
+        portraitAltImage?: {
+          asset?: {
+            _ref: string
+            _type: 'reference'
+            _weak?: boolean
+            [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+          }
+          media?: unknown
           hotspot?: SanityImageHotspot
           crop?: SanityImageCrop
           _type: 'image'
@@ -479,6 +536,7 @@ export type MatchTournament = {
             _weak?: boolean
             [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
           }
+          media?: unknown
           hotspot?: SanityImageHotspot
           crop?: SanityImageCrop
           _type: 'image'
@@ -490,6 +548,7 @@ export type MatchTournament = {
             _weak?: boolean
             [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
           }
+          media?: unknown
           hotspot?: SanityImageHotspot
           crop?: SanityImageCrop
           _type: 'image'
@@ -513,6 +572,7 @@ export type MatchTournament = {
           _weak?: boolean
           [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
         }
+        media?: unknown
         hotspot?: SanityImageHotspot
         crop?: SanityImageCrop
         _type: 'image'
@@ -551,6 +611,7 @@ export type Team = {
       _weak?: boolean
       [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
     }
+    media?: unknown
     hotspot?: SanityImageHotspot
     crop?: SanityImageCrop
     _type: 'image'
@@ -662,6 +723,7 @@ export type AllSanitySchemaTypes =
   | SanityImageDimensions
   | SanityFileAsset
   | Geopoint
+  | Activity
   | Match
   | TeamPlayer
   | Player
