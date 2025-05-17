@@ -73,16 +73,23 @@ const teamProject = q.fragmentForType<'team'>().project((teamRef) => ({
   introduction: z.string().nullish(),
 }))
 
-export const apiQueryMatchesByTournamentId = async (tournamentId: string) => {
+export const apiQueryMatchesByTournamentId = async (
+  tournamentId: string,
+  options?: { recent?: boolean }
+) => {
   const query = q.star
     .filterByType('match')
-    .filterRaw(`tournament._ref == "${tournamentId}"`)
+    .filterRaw(
+      `tournament._ref == "${tournamentId}"` +
+        (options?.recent ? ' && !defined(resultUploadedAt)' : '')
+    )
     .order('startAt asc')
     .slice(0, 10)
     .project((sub) => ({
       _id: z.string(),
       name: z.string().nullish(),
       nameAlt: z.string().nullish(),
+      startAt: true,
       playerEast: sub.field('playerEast').deref().project(playerProject),
       playerSouth: sub.field('playerSouth').deref().project(playerProject),
       playerWest: sub.field('playerWest').deref().project(playerProject),
@@ -181,6 +188,7 @@ export const apiQueryMatchesByTournamentId = async (tournamentId: string) => {
             formatPlayer(match.playerNorth, match.playerNorthTeam),
           ],
           rulesetRef: 'hkleague-4p',
+          startAt: match.startAt,
         },
         metadata: {
           createdAt: match._createdAt,

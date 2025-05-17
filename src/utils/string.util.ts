@@ -195,6 +195,6 @@ export const renderMatchCode = (code: string) => {
   }
 }
 
-export function renderDate(str: string) {
+export function renderDate(str: dayjs.ConfigType) {
   return dayjs(str).format('lll')
 }

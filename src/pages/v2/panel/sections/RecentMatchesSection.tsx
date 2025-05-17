@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { apiQueryMatchesByTournamentId } from '../../services/match.service'
 import { V2MatchPlayer } from '../../models/V2Match.model'
 import { Link } from 'wouter'
+import { renderDate } from '@/utils/string.util'
 
 function PlayerMiniCard({ player }: { player: V2MatchPlayer }) {
   return (
@@ -45,7 +46,8 @@ export default function RecentMatchesSection() {
       'matches',
       selectedCriteria,
     ],
-    queryFn: ({ queryKey }) => apiQueryMatchesByTournamentId(queryKey[1]!),
+    queryFn: ({ queryKey }) =>
+      apiQueryMatchesByTournamentId(queryKey[1]!, { recent: true }),
     enabled: !!data?.tournament.id,
   })
 
@@ -72,7 +74,12 @@ export default function RecentMatchesSection() {
           {/* row 1 */}
           {matches.map((match) => (
             <tr key={match.code}>
-              <th>{match.data.name.official.primary}</th>
+              <th>
+                <p>{match.data.name.official.primary}</p>
+                <p className="font-normal opacity-50">
+                  {renderDate(match.data.startAt)}
+                </p>
+              </th>
               <td>
                 <PlayerMiniCard
                   player={
