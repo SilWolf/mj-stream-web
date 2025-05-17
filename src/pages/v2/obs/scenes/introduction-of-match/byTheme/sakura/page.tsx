@@ -6,6 +6,7 @@ import { Match, Player, Team } from '@/models'
 
 import styles from './index.module.css'
 import useRealtimeMatch from '@/hooks/useRealtimeMatch'
+import PlayersRankingScreen from '../../../screens/PlayersRankingScreen'
 
 type Props = {
   params: { matchId: string }
@@ -113,7 +114,7 @@ const MatchIntroductionSlide = ({
           </div>
         </div>
 
-        <div className="flex-2 grid grid-cols-4 items-center">
+        <div className="flex-2 grid grid-cols-4 items-center font-kurewa">
           {slide.teamAndPlayers.map(({ team, player }, index) => (
             <div
               key={player._id}
@@ -225,7 +226,7 @@ const MatchIntroductionSlide = ({
                 })}
               >
                 <div
-                  className="text-[5em] font-bold mb-2"
+                  className="text-[5em] font-bold mb-2 font-kurewa"
                   style={{
                     color: slide.team.color,
                   }}
@@ -566,6 +567,7 @@ const MatchIntroductionPage = ({
           {match.name}
         </h1> */}
       </div>
+
       {slides.map((slide, index) => (
         <MatchIntroductionSlide
           key={slide._id}

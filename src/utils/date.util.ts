@@ -1,4 +1,4 @@
-import dayjs, { Dayjs } from 'dayjs'
+import dayjs from 'dayjs'
 
 export const getArrayOfComingNDates = (n: number = 1): string[] =>
   new Array(n).fill(undefined).map((_, i) =>

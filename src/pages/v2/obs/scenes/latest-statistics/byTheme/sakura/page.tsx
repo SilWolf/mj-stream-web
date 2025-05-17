@@ -4,11 +4,10 @@ import { useQuery } from '@tanstack/react-query'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParam } from 'react-use'
 
-import SakuraLeagueStickerForTshirtScreen from './screens/SakuraLeagueStickerForTshirtScreen'
-import PlayerRankingScreen from './screens/PlayersRankingScreen'
-import PlayersStatRankingScreen from './screens/PlayersStatRankingScreen'
-
 import styles from './index.module.css'
+import PlayersRankingScreen from '@/pages/v2/obs/scenes/screens/PlayersRankingScreen'
+import PlayersStatRankingScreen from '@/pages/v2/obs/scenes/screens/PlayersStatRankingScreen'
+import SakuraLeagueStickerForTshirtScreen from '@/pages/v2/obs/scenes/screens/SakuraLeagueStickerForTshirtScreen'
 
 type Props = {
   forwardFlag?: number
@@ -37,7 +36,12 @@ const RealtimeSummaryPage = ({
     staleTime: 5 * 60 * 1000,
   })
 
-  const [screenIndex, setScreenIndex] = useState<number>(0)
+  const [screenIndex, setScreenIndex] = useState<number>(-1)
+  useEffect(() => {
+    setTimeout(() => {
+      setScreenIndex(0)
+    }, 500)
+  }, [])
   const [isSlideChanging, setIsSlideChanging] = useState<boolean>(false)
 
   const [prevForwardFlag, setPrevForwardFlag] = useState<number>(
@@ -50,11 +54,12 @@ const RealtimeSummaryPage = ({
 
   const screens = useMemo(
     () => [
-      <PlayerRankingScreen tournamentId={params?.tournamentId} />,
+      <PlayersRankingScreen tournamentId={params?.tournamentId} />,
       <PlayersStatRankingScreen tournamentId={params?.tournamentId} />,
       <SakuraLeagueStickerForTshirtScreen />,
     ],
-    [params?.tournamentId]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [params?.tournamentId, refetchFlag]
   )
 
   const handleSlideForward = useCallback(() => {
@@ -214,14 +219,14 @@ const RealtimeSummaryPage = ({
             </span>
           </p> */}
 
-          {mInSearch && (
+          {/* {mInSearch && (
             <div className="absolute bottom-0 left-0 right-0 bg-cyan-500 text-center font-numeric text-[1.5em] pt-[.125em]">
               <p className="text-[.56em]">下一場賽事</p>
               <p>
                 <CountdownSpan m={parseInt(mInSearch)} />
               </p>
             </div>
-          )}
+          )} */}
         </div>
 
         <div className="flex-1 relative">

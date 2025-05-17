@@ -161,7 +161,7 @@ const MatchSummarySlide = ({
                 })}
               >
                 <h3
-                  className="text-[2em] font-semibold text-center font-serif"
+                  className="text-[2em] font-semibold text-center font-kurewa"
                   style={{
                     color: slide.teamAndPlayers[playerKey].player.color,
                   }}
@@ -283,7 +283,7 @@ const MatchSummarySlide = ({
                 )}
               >
                 <div className="text-left flex-5">
-                  <h3 className="text-[1.5em] font-semibold">
+                  <h3 className="text-[1.5em] font-semibold font-kurewa">
                     {player.primaryName}
                   </h3>
                 </div>
@@ -379,7 +379,7 @@ const MatchSummarySlide = ({
               >
                 <div className="flex justify-between">
                   <div>
-                    <p className="text-[1.25em] leading-[1em]">
+                    <p className="text-[1.25em] leading-[1em] font-kurewa">
                       {slide.teamAndPlayers[index].player.primaryName}
                     </p>
                   </div>
@@ -401,7 +401,7 @@ const MatchSummarySlide = ({
   } else if (slide.type === 'grand-ranking') {
     return (
       <div
-        className={`absolute top-[20vh] left-[5vw] right-[5vw] flex flex-col ${styles['twr-players-ranking']}`}
+        className={`absolute top-[20vh] left-[5vw] right-[5vw] flex flex-col font-kurewa ${styles['twr-players-ranking']}`}
         data-active={status === 0}
       >
         <div className="grid grid-cols-2 gap-x-8 text-[0.5em] mt-8">
@@ -834,7 +834,7 @@ const MatchSummaryPage = ({
             </div>
           </div>
           <div>
-            <h1 className="text-[1.25em] font-semibold font-serif">
+            <h1 className="text-[1.25em] font-semibold font-kurewa">
               {match.data.name.official.primary}
             </h1>
           </div>

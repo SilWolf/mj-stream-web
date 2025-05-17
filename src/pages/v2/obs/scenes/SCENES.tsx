@@ -182,99 +182,100 @@ export const SCENES: Scene[] = [
       },
     ],
   },
-  // {
-  //   id: 'realtime-stat-with-countdown',
-  //   name: '現時數據(+下一場對局倒數＆自動播放)',
-  //   render: (obsInfo) => (
-  //     <RealtimeSummaryPage
-  //       disableClick
-  //       auto
-  //       minute={(obsInfo.activeSceneProps?.minute as number) ?? 0}
-  //       refetchFlag={obsInfo.activeSceneProps?.refetchFlag as number}
-  //     />
-  //   ),
-  //   actions: [
-  //     {
-  //       key: 'p5m',
-  //       label: (
-  //         <span>
-  //           <i className="bi bi-caret-up-fill"></i> +5 分鐘
-  //         </span>
-  //       ),
-  //       perform: (oldProp) => {
-  //         return {
-  //           minute: ((oldProp.minute as number) ?? 0) + 5,
-  //         }
-  //       },
-  //     },
-  //     {
-  //       key: 'p1m',
-  //       label: (
-  //         <span>
-  //           <i className="bi bi-caret-up"></i> +1 分鐘
-  //         </span>
-  //       ),
-  //       perform: (oldProp) => {
-  //         return {
-  //           minute: ((oldProp.minute as number) ?? 0) + 1,
-  //         }
-  //       },
-  //     },
-  //     {
-  //       key: 'm1m',
-  //       label: (
-  //         <span>
-  //           <i className="bi bi-caret-down"></i> -1 分鐘
-  //         </span>
-  //       ),
-  //       perform: (oldProp) => {
-  //         return {
-  //           minute: Math.max(((oldProp.minute as number) ?? 0) - 1, 0),
-  //         }
-  //       },
-  //     },
-  //     {
-  //       key: 'm5m',
-  //       label: (
-  //         <span>
-  //           <i className="bi bi-caret-down-fill"></i> -5 分鐘
-  //         </span>
-  //       ),
-  //       perform: (oldProp) => {
-  //         return {
-  //           minute: Math.max(((oldProp.minute as number) ?? 0) - 5, 0),
-  //         }
-  //       },
-  //     },
-  //     {
-  //       key: 'reset-10m',
-  //       label: (
-  //         <span>
-  //           <i className="bi bi-arrow-clockwise"></i> 重設成 10 分鐘
-  //         </span>
-  //       ),
-  //       perform: () => {
-  //         return {
-  //           minute: 10,
-  //         }
-  //       },
-  //     },
-  //     {
-  //       key: 'refetch',
-  //       label: (
-  //         <span>
-  //           <i className="bi bi-cloud-download"></i> 下載最新數據
-  //         </span>
-  //       ),
-  //       perform: (oldProp) => {
-  //         return {
-  //           ...oldProp,
-  //           refetchFlag: 1 - ((oldProp.refetchFlag as number) ?? 0),
-  //         }
-  //       },
-  //     },
-  //   ],
-  // },
+  {
+    id: 'realtime-stat-with-countdown',
+    name: '現時數據(+下一場對局倒數＆自動播放)',
+    render: (obsInfo) => (
+      <V2ObsSceneOfLatestStatistics
+        themeId={obsInfo.themeId}
+        params={{ tournamentId: obsInfo.tournamentId as string }}
+        auto
+        minute={(obsInfo.activeSceneProps?.minute as number) ?? 0}
+        refetchFlag={obsInfo.activeSceneProps?.refetchFlag as number}
+      />
+    ),
+    actions: [
+      {
+        key: 'p5m',
+        label: (
+          <span>
+            <i className="bi bi-caret-up-fill"></i> +5 分鐘
+          </span>
+        ),
+        perform: (oldProp) => {
+          return {
+            minute: ((oldProp.minute as number) ?? 0) + 5,
+          }
+        },
+      },
+      {
+        key: 'p1m',
+        label: (
+          <span>
+            <i className="bi bi-caret-up"></i> +1 分鐘
+          </span>
+        ),
+        perform: (oldProp) => {
+          return {
+            minute: ((oldProp.minute as number) ?? 0) + 1,
+          }
+        },
+      },
+      {
+        key: 'm1m',
+        label: (
+          <span>
+            <i className="bi bi-caret-down"></i> -1 分鐘
+          </span>
+        ),
+        perform: (oldProp) => {
+          return {
+            minute: Math.max(((oldProp.minute as number) ?? 0) - 1, 0),
+          }
+        },
+      },
+      {
+        key: 'm5m',
+        label: (
+          <span>
+            <i className="bi bi-caret-down-fill"></i> -5 分鐘
+          </span>
+        ),
+        perform: (oldProp) => {
+          return {
+            minute: Math.max(((oldProp.minute as number) ?? 0) - 5, 0),
+          }
+        },
+      },
+      {
+        key: 'reset-10m',
+        label: (
+          <span>
+            <i className="bi bi-arrow-clockwise"></i> 重設成 10 分鐘
+          </span>
+        ),
+        perform: () => {
+          return {
+            minute: 10,
+          }
+        },
+      },
+      {
+        key: 'refetch',
+        label: (
+          <span>
+            <i className="bi bi-cloud-download"></i> 下載最新數據
+          </span>
+        ),
+        perform: (oldProp) => {
+          return {
+            ...oldProp,
+            refetchFlag: 1 - ((oldProp.refetchFlag as number) ?? 0),
+          }
+        },
+      },
+    ],
+  },
   {
     id: 'ended',
     name: '本日已結束',

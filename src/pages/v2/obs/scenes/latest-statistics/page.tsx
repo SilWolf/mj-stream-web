@@ -8,6 +8,9 @@ type Props = {
   params: { tournamentId: string }
   forwardFlag?: number
   resetFlag?: number
+  auto?: boolean
+  minute?: number
+  refetchFlag?: number
 }
 
 export default function V2ObsSceneOfLatestStatistics({
