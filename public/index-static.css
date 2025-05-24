@@ -46,6 +46,7 @@
   background-image: url('images/mahjong-tiles.png');
   background-origin: padding-box;
   background-size: 1100% 600%;
+  background-color: #ff0000;
   width: 1em;
   aspect-ratio: 5 / 7;
   height: auto;

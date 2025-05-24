@@ -44,6 +44,7 @@ import MJMatchRoundEditForm, {
   MJMatchRoundEditFormProps,
 } from '@/components/MJMatchRoundEditForm'
 import MJPlayersForm from '@/components/MJPlayersForm'
+import MJTileKeyboardForWaitingTileDiv from '@/components/MJTileKeyboardForWaitingTileDiv'
 
 function MJMatchHistoryAmountSpan({ value }: { value: number }) {
   return (
@@ -991,7 +992,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
   }, [])
 
   const handleSubmitWaitingTileDoraKeyboard = useCallback(
-    (newTiles: string[]) => {
+    (newTiles: string[], isFuriten: boolean) => {
       if (!activeWaitingTilesData) {
         return
       }
@@ -1005,6 +1006,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
           [activeWaitingTilesData.index]: {
             ...rtMatchCurrentRound?.playerResults[activeWaitingTilesData.index],
             waitingTiles: newTiles,
+            isFuriten,
           },
         },
       })
@@ -1679,12 +1681,10 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
         title="選擇待牌"
         onClose={handleCloseWaitingTileDoraKeyboard}
       >
-        <MJTileKeyboardDiv
-          hideRedTiles
+        <MJTileKeyboardForWaitingTileDiv
           onSubmit={handleSubmitWaitingTileDoraKeyboard}
           onRemove={handleRemoveWaitingTileDoraKeyboard}
           defaultValue={activeWaitingTilesData?.tiles}
-          multiple
           canRemove
         />
       </MJUIDialogV2>

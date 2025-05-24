@@ -337,13 +337,27 @@ const PlayersListView = ({
               <div className="flex-1 flex flex-col justify-around gap-1">
                 <div className="flex items-center gap-x-2">
                   <button
-                    className="flex h-12 items-center gap-x-2cursor-pointer bg-base-100 hover:bg-base-200 px-2 min-w-[200px] cursor-pointer"
+                    className="flex h-12 items-center gap-x-2 bg-base-100 data-[is-furiten=true]:data-[is-waiting]:bg-red-500/50 data-[is-waiting]:bg-green-500/50 px-2 min-w-[200px] cursor-pointer"
                     data-player-index={index}
                     data-action="waitingTile"
+                    data-is-waiting={
+                      currentRound.playerResults[index].waitingTiles &&
+                      currentRound.playerResults[index].waitingTiles.length > 0
+                    }
+                    data-is-furiten={
+                      currentRound.playerResults[index].isFuriten
+                    }
                     onClick={handleAction}
                   >
-                    <div>待牌</div>
-                    <div className="flex gap-2 text-[24px]">
+                    {currentRound.playerResults[index].isFuriten ? (
+                      <div className="text-red-700">
+                        <i className="bi bi-exclamation-diamond"></i> 振聽
+                      </div>
+                    ) : (
+                      <div>待牌</div>
+                    )}
+
+                    <div className="flex gap-1 text-[28px]">
                       {currentRound.playerResults[index].waitingTiles?.map(
                         (tile) => <MJTileV2Div key={tile} value={tile} />
                       )}

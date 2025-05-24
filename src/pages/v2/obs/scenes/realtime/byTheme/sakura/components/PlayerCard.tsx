@@ -6,11 +6,11 @@ import {
   renderRanking,
 } from '@/utils/string.util'
 import { RealtimePlayer } from '@/models'
-import MJTileDiv from '@/components/MJTileDiv'
 
 import styles from './index.module.css'
 import MJTileCombinationDiv from '@/components/MJTileCombinationDiv'
 import useDebounce from '@/hooks/useDebounce'
+import MJTileV2Div from '@/components/MJTileV2Div'
 
 type Props = HTMLAttributes<HTMLDivElement> & {
   score: number
@@ -18,6 +18,7 @@ type Props = HTMLAttributes<HTMLDivElement> & {
   point?: number
   ranking?: number
   isEast?: boolean
+  isFuriten?: boolean
   isRiichi?: boolean
   isYellowCarded?: boolean
   isRedCarded?: boolean
@@ -38,6 +39,7 @@ export default function PlayerCard({
   ranking,
   isEast,
   isRiichi,
+  isFuriten,
   isYellowCarded,
   isRedCarded,
   isRonDisallowed,
@@ -169,17 +171,24 @@ export default function PlayerCard({
           <div className="pl-[2.4em] pt-[0.125em] w-full gap-[0.125em] relative">
             <div className="relative hide-if-changing">
               <div
-                className="relative rounded-[.125em] bg-black/50 overflow-hidden origin-left"
+                className="relative rounded-[.125em] bg-black/50 data-[furiten=true]:bg-red-500/25 overflow-hidden origin-left"
                 style={{
                   transform:
                     waitingTiles && waitingTiles.length > 0
                       ? 'scale(100%, 100%)'
                       : 'scale(0, 100%)',
                   opacity: waitingTiles && waitingTiles.length > 0 ? 1 : 0,
-                  transition: 'transform 1s, opacity 1s',
+                  transition: 'transform 1s, opacity 1s, background-color 1s',
                 }}
                 data-has-waiting-tiles={waitingTiles && waitingTiles.length > 0}
+                data-furiten={isFuriten}
               >
+                <div
+                  className="text-center text-[0.25em] bg-red-800/50 overflow-hidden h-0 data-[furiten=true]:h-[1.5em] transition-[height] duration-1000"
+                  data-furiten={isFuriten}
+                >
+                  <i className="bi bi-exclamation-diamond"></i> 振聽
+                </div>
                 <div className="text-[0.5em] flex gap-x-[0.2em] p-[0.2em] pl-[0.2em] pr-[0.2em]">
                   <div className="text-[#FFFFFF] w-[2em] text-[0.4em] leading-[1.3em] flex items-center justify-center">
                     {typeof debouncedWaitingTileRemain === 'number' ? (
@@ -203,14 +212,14 @@ export default function PlayerCard({
                       </>
                     )}
                   </div>
-                  <div className="flex-1 leading-none min-h-[1.19em] flex flex-wrap gap-[0.15em]">
+                  <div className="flex-1 leading-none flex flex-wrap gap-[0.18em] text-[0.85em]">
                     {waitingTiles?.map((tile) => (
-                      <MJTileDiv
+                      <div
                         key={tile}
-                        className="inline-block align-bottom w-[0.85em]! animate-[fadeInFromLeft_1s_ease-in-out]"
+                        className="animate-[fadeInFromLeft_1s_ease-in-out]"
                       >
-                        {tile}
-                      </MJTileDiv>
+                        <MJTileV2Div value={tile} />
+                      </div>
                     ))}
                   </div>
                 </div>

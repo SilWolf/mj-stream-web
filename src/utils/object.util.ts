@@ -21,3 +21,11 @@ export const mergeObject = <T extends Record<string, unknown>>(
 export function theFirstNonNull(...args: unknown[]) {
   return args.find((item) => !!item)
 }
+
+export function arrayToObject<T extends string, U>(arr: T[], value: U) {
+  const result: Partial<Record<T, U>> = {}
+  for (const key of arr) {
+    result[key] = value
+  }
+  return result as Record<T, U>
+}

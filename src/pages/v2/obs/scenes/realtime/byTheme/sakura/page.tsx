@@ -201,6 +201,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
                   player.currentStatus.isRiichi &&
                   rtMatchCurrentRound.resultType === RoundResultTypeEnum.Unknown
                 }
+                isFuriten={player.currentStatus.isFuriten}
                 waitingTiles={
                   rtMatchCurrentRound.resultType === RoundResultTypeEnum.Unknown
                     ? player.currentStatus.waitingTiles

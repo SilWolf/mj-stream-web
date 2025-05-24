@@ -86,15 +86,22 @@ export const TILE_W = 1.0
 export const TILE_H = 1.4
 
 export default function MJTileV2Div({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   className,
   value,
   ...props
 }: Props & { value: string }) {
   const tileClassName = useMemo(
     () =>
-      TILE_CLASS_MAP[value?.toString() as MJTileKey] ?? TILE_CLASS_MAP.default,
+      TILE_CLASS_MAP[(value?.[0] + value?.[1]) as MJTileKey] ??
+      TILE_CLASS_MAP.default,
     [value]
   )
 
-  return <div className={`mahjong-tile-v2 ${tileClassName}`} {...props} />
+  return (
+    <div
+      className={`mahjong-tile-v2 ${tileClassName} ${value?.[2] === '#' ? 'opacity-50' : ''}`}
+      {...props}
+    />
+  )
 }

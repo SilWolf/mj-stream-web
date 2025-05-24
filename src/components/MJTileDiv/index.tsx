@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import React, { HTMLAttributes, useMemo } from 'react'
 
 export type MJTileKey =
@@ -87,14 +86,16 @@ export const TILE_W = 1.0
 export const TILE_H = 1.4
 
 export default function MJTileDiv({ className, children, ...props }: Props) {
-  const tileClassName = useMemo(
-    () =>
-      TILE_CLASS_MAP[children?.toString() as MJTileKey] ??
-      TILE_CLASS_MAP.default,
-    [children]
-  )
+  const tileClassName = useMemo(() => {
+    const tileKey = children?.toString().substring(0, 2)
+
+    return TILE_CLASS_MAP[tileKey as MJTileKey] ?? TILE_CLASS_MAP.default
+  }, [children])
 
   return (
-    <div className={`mahjong-tile ${tileClassName} ${className}`} {...props} />
+    <div
+      className={`mahjong-tile ${tileClassName} ${className} ${children?.toString()?.[2] === '#' ? 'opacity-50' : ''}`}
+      {...props}
+    />
   )
 }
