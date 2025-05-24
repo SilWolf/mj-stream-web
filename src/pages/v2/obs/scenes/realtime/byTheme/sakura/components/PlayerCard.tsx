@@ -54,7 +54,7 @@ export default function PlayerCard({
   const [storedScoreChanges, setStoredScoreChanges] = useState<number[] | null>(
     null
   )
-  const debouncedWaitingTimeRemain = useDebounce(waitingTileRemain, 800)
+  const debouncedWaitingTileRemain = useDebounce(waitingTileRemain, 800)
 
   const lightenedColor = useMemo(
     () => getLightColorOfColor(player.color ?? '#000000'),
@@ -169,28 +169,38 @@ export default function PlayerCard({
           <div className="pl-[2.4em] pt-[0.125em] w-full gap-[0.125em] relative">
             <div className="relative hide-if-changing">
               <div
-                className="relative rounded-[.125em] bg-black/50 opacity-0 transition-opacity data-[has-waiting-tiles='1']:opacity-100 overflow-hidden origin-left"
+                className="relative rounded-[.125em] bg-black/50 overflow-hidden origin-left"
                 style={{
                   transform:
                     waitingTiles && waitingTiles.length > 0
                       ? 'scale(100%, 100%)'
                       : 'scale(0, 100%)',
-                  transition: 'transform 1s',
+                  opacity: waitingTiles && waitingTiles.length > 0 ? 1 : 0,
+                  transition: 'transform 1s, opacity 1s',
                 }}
-                data-has-waiting-tiles={
-                  waitingTiles && waitingTiles.length > 0 ? '1' : '0'
-                }
+                data-has-waiting-tiles={waitingTiles && waitingTiles.length > 0}
               >
                 <div className="text-[0.5em] flex gap-x-[0.2em] p-[0.2em] pl-[0.2em] pr-[0.2em]">
                   <div className="text-[#FFFFFF] w-[2em] text-[0.4em] leading-[1.3em] flex items-center justify-center">
-                    {typeof debouncedWaitingTimeRemain === 'number' ? (
+                    {typeof debouncedWaitingTileRemain === 'number' ? (
                       <div className="text-center">
-                        <p className="text-[1.8em]">
-                          {debouncedWaitingTimeRemain}
+                        <p
+                          className="pt-[0.1em] font-numeric"
+                          style={{
+                            fontSize:
+                              debouncedWaitingTileRemain > 9
+                                ? '1.8em'
+                                : '2.2em',
+                            opacity: debouncedWaitingTileRemain === 0 ? 0.5 : 1,
+                          }}
+                        >
+                          {debouncedWaitingTileRemain}
                         </p>
                       </div>
                     ) : (
-                      '待牌'
+                      <>
+                        待<br />牌
+                      </>
                     )}
                   </div>
                   <div className="flex-1 leading-none min-h-[1.19em] flex flex-wrap gap-[0.15em]">

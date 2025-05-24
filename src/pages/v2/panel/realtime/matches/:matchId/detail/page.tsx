@@ -40,7 +40,9 @@ export default function MatchExportPage({ params: { matchId } }: Props) {
     ).then(() => {
       setIsExported(true)
       setIsExporting(false)
-      alert('上傳完畢，請在資料庫上查看。')
+      alert(
+        '上傳完畢。計算數據及更新官網需時幾分鐘，請等待一會後再到官網查看成績。\n\n（強調：不需要去資料庫點擊更新成績的按鈕，這已經自動化了。）'
+      )
     })
   }, [rtMatch, matchId, rtMatchRounds])
 
