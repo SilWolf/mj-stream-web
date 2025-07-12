@@ -38,7 +38,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
               <div className="flex-1 flex flex-row items-center gap-x-2">
                 <div className="flex-1">
                   <img
-                    src="/images/score-hundred.png"
+                    src="/mj-stream-web/images/score-hundred.png"
                     alt="hundred"
                     className="h-4"
                   />
@@ -48,7 +48,7 @@ export default function MatchControlPage({ params: { matchId } }: Props) {
               <div className="flex-1 flex flex-row items-center gap-x-2">
                 <div className="flex-1">
                   <img
-                    src="/images/score-thousand.png"
+                    src="/mj-stream-web/images/score-thousand.png"
                     alt="thousand"
                     className="h-4"
                   />

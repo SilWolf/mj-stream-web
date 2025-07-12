@@ -539,7 +539,7 @@ const MatchIntroductionPage = ({
     >
       <div className="absolute inset-0">
         <video
-          src="/videos/ptt-bg3.mp4"
+          src="/mj-stream-web/videos/ptt-bg3.mp4"
           className="absolute inset-0"
           autoPlay
           loop
@@ -559,7 +559,7 @@ const MatchIntroductionPage = ({
             <h3 className="text-[2.5em]">{match.tournament.name}</h3>
           </div>
         </div> */}
-        {/* <img src="/images/logo-sakura-long.png" className="h-[4em]" alt="" /> */}
+        {/* <img src="/mj-stream-web/images/logo-sakura-long.png" className="h-[4em]" alt="" /> */}
         {/* <h1 className="mt-[0.8em] text-[1em] leading-[1.2em] font-semibold">
           {match.name}
         </h1> */}

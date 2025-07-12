@@ -106,32 +106,32 @@ export default function PlayerCard({
           >
             <img
               className="riichi-sakura-large"
-              src="/images/riichi-sakura.png"
+              src="/mj-stream-web/images/riichi-sakura.png"
             />
             <img
               className="riichi-sakura-single top-0 right-0 h-4 w-4"
-              src="/images/riichi-sakura-single.png"
+              src="/mj-stream-web/images/riichi-sakura-single.png"
               style={{ animationDelay: '3s' }}
             />
             <img
               className="riichi-sakura-single top-4 right-1/2 h-6 w-6"
-              src="/images/riichi-sakura-single.png"
+              src="/mj-stream-web/images/riichi-sakura-single.png"
               style={{ animationDelay: '5s' }}
             />
             <img
               className="riichi-sakura-single top-10 right-1/3 h-8 w-8"
-              src="/images/riichi-sakura-single.png"
+              src="/mj-stream-web/images/riichi-sakura-single.png"
               style={{ animationDelay: '2s' }}
             />
             <img
               className="riichi-sakura-single top-16 right-[60%] h-4 w-4"
-              src="/images/riichi-sakura-single.png"
+              src="/mj-stream-web/images/riichi-sakura-single.png"
               style={{ animationDelay: '9s' }}
             />
 
             <img
               className="riichi-sakura-single top-28 right-[30%] w-18"
-              src="/images/score-thousand-sakura.png"
+              src="/mj-stream-web/images/score-thousand-sakura.png"
               style={{ animationDelay: '8s' }}
             />
           </div>
@@ -287,28 +287,28 @@ export default function PlayerCard({
             >
               <img
                 className="riichi-sakura-single top-0 right-0 h-8 w-8 brightness-200"
-                src="/images/riichi-sakura-single.png"
+                src="/mj-stream-web/images/riichi-sakura-single.png"
                 style={{ animationDelay: '3s' }}
               />
               <img
                 className="riichi-sakura-single top-4 right-1/2 h-12 w-12 brightness-200"
-                src="/images/riichi-sakura-single.png"
+                src="/mj-stream-web/images/riichi-sakura-single.png"
                 style={{ animationDelay: '5s' }}
               />
               <img
                 className="riichi-sakura-single top-10 right-1/3 h-6 w-6 brightness-200"
-                src="/images/riichi-sakura-single.png"
+                src="/mj-stream-web/images/riichi-sakura-single.png"
                 style={{ animationDelay: '2s' }}
               />
               <img
                 className="riichi-sakura-single top-16 right-[60%] h-8 w-8 brightness-200"
-                src="/images/riichi-sakura-single.png"
+                src="/mj-stream-web/images/riichi-sakura-single.png"
                 style={{ animationDelay: '9s' }}
               />
 
               <img
                 className="riichi-sakura-single top-8 right-1/2 w-36 brightness-200"
-                src="/images/score-thousand-sakura.png"
+                src="/mj-stream-web/images/score-thousand-sakura.png"
                 style={{ animationDelay: '5s' }}
               />
             </div>

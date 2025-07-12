@@ -87,12 +87,16 @@ const MatchForecastPage = ({ params: { matchId } }: Props) => {
       <div className="w-[80vw]">
         <div className="flex justify-between">
           <img
-            src="/images/tournament-long-logo.png"
+            src="/mj-stream-web/images/tournament-long-logo.png"
             className="w-[50%]"
             alt=""
           />
           <div>
-            <img src="/images/logo-hkma.webp" className="w-[12vw]" alt="" />
+            <img
+              src="/mj-stream-web/images/logo-hkma.webp"
+              className="w-[12vw]"
+              alt=""
+            />
           </div>
         </div>
         <div className="flex justify-between items-center mb-[10vh]">
@@ -119,7 +123,11 @@ const MatchForecastPage = ({ params: { matchId } }: Props) => {
 
       <div className="absolute bottom-[5vh] left-[10vw]">
         <div>
-          <img src="/images/homepage-qr.png" className="w-[8vw]" alt="" />
+          <img
+            src="/mj-stream-web/images/homepage-qr.png"
+            className="w-[8vw]"
+            alt=""
+          />
         </div>
         <p className="text-[32px]">
           聯賽官網: <u>https://hkleague2025.hkmahjong.org/</u>

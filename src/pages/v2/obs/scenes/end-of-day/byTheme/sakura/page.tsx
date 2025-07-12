@@ -72,7 +72,7 @@ export default function ObsRoomEndPage() {
     >
       <div className="absolute inset-0">
         <video
-          src="/videos/ptt-bg3.mp4"
+          src="/mj-stream-web/videos/ptt-bg3.mp4"
           className="absolute inset-0"
           autoPlay
           loop
@@ -83,16 +83,24 @@ export default function ObsRoomEndPage() {
       <div className="relative z-10 w-full h-full pl-[2em] py-[3em] pr-[4em] grid grid-cols-3 gap-x-[2em] font-kurewa">
         <div className="relative flex flex-col justify-between border-r border-[#ec276e80]">
           <div className="mx-auto w-[80%]">
-            <img src="/images/logo-sakura-long.png" className="w-full" alt="" />
+            <img
+              src="/mj-stream-web/images/logo-sakura-long.png"
+              className="w-full"
+              alt=""
+            />
 
             <div className="flex items-center justify-center gap-x-[2em]">
               <div className="flex-1">
-                <img className="w-full" src="/images/logo-poly.webp" alt="" />
+                <img
+                  className="w-full"
+                  src="/mj-stream-web/images/logo-poly.webp"
+                  alt=""
+                />
               </div>
               <div className="flex-1">
                 <img
                   className="w-full"
-                  src="/images/logo-hkma-black.png"
+                  src="/mj-stream-web/images/logo-hkma-black.png"
                   alt=""
                 />
               </div>

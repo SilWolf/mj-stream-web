@@ -126,7 +126,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
                   <div className="flex-1 flex flex-row items-center gap-x-3">
                     <div className="flex-1">
                       <img
-                        src="/images/score-hundred.png"
+                        src="/mj-stream-web/images/score-hundred.png"
                         alt="hundred"
                         className="h-[0.25em] mt-[0.1em]"
                       />
@@ -138,7 +138,7 @@ export default function MatchDetailPage({ params: { matchId } }: Props) {
                   <div className="flex-1 flex flex-row items-center gap-x-3">
                     <div className="flex-1">
                       <img
-                        src="/images/score-thousand.png"
+                        src="/mj-stream-web/images/score-thousand.png"
                         alt="thousand"
                         className="h-[0.25em] mt-[0.1em]"
                       />

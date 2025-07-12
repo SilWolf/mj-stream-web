@@ -84,7 +84,7 @@ function IndexPage() {
         <div className="shrink-0">
           <h1 className="text-4xl font-bold text-center">
             <img
-              src="/images/master-logo.jpeg"
+              src="/mj-stream-web/images/master-logo.jpeg"
               className="inline-block w-16"
               alt="HKMSCA"
             />{' '}

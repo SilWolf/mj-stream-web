@@ -10,11 +10,15 @@ export default function ObsRoomEndPage() {
       <div className="w-[80%]">
         <div className="flex justify-between items-center">
           <img
-            src="/images/tournament-long-logo.png"
+            src="/mj-stream-web/images/tournament-long-logo.png"
             className="w-[50%]"
             alt=""
           />
-          <img src="/images/logo-hkma.webp" className="w-[20%]" alt="" />
+          <img
+            src="/mj-stream-web/images/logo-hkma.webp"
+            className="w-[20%]"
+            alt=""
+          />
         </div>
         <div className="flex flex-col justify-center items-center h-[70vh]">
           <p className="text-[100px] text-center">
@@ -22,7 +26,7 @@ export default function ObsRoomEndPage() {
           </p>
           <div className="text-center mt-[5vh]">
             <img
-              src="/images/homepage-qr.png"
+              src="/mj-stream-web/images/homepage-qr.png"
               className="w-[20%] mx-auto"
               alt=""
             />

@@ -132,7 +132,7 @@ const RealtimeSummaryPage = ({
     >
       <div className="absolute inset-0">
         <video
-          src="/videos/ptt-bg3.mp4"
+          src="/mj-stream-web/videos/ptt-bg3.mp4"
           className="absolute inset-0"
           autoPlay
           loop
