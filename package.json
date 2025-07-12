@@ -2,6 +2,7 @@
   "name": "hkmjbs",
   "version": "1.0.0",
   "private": true,
+  "homepage": "https://silwolf.github.io/mj-stream-web",
   "dependencies": {
     "@eslint/compat": "^1.2.8",
     "@hello-pangea/dnd": "^18.0.1",
@@ -19,6 +20,7 @@
     "daisyui": "^5.0.28",
     "dayjs": "^1.11.13",
     "deep-equal": "^2.2.3",
+    "gh-pages": "^6.3.0",
     "groqd": "^1.4.0",
     "nanoid": "^5.1.5",
     "react": "^19.1.0",
@@ -65,7 +67,8 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "start:mock": "firebase emulators:start",
-    "test": "vitest"
+    "test": "vitest",
+    "ghpage-deploy": "gh-pages -d dist"
   },
   "cracoConfig": "craco.config.js",
   "eslintConfig": {

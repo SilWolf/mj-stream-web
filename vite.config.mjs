@@ -5,7 +5,7 @@ import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   // depending on your application, base can also be "/"
-  base: '/',
+  base: '/mj-stream-web/',
   plugins: [react(), viteTsconfigPaths(), tailwindcss()],
   server: {
     // this ensures that the browser opens upon server start
