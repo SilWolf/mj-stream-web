@@ -1,0 +1,1 @@
+import{r as a,j as n}from"./index-XMqLaEd9.js";import{w as p}from"./mahjong.helper-czAoz2vP.js";function c({roundCount:e,extendedRoundCount:r,max:t=16,...s}){const o=a.useMemo(()=>p(e,r??0,t),[e,t,r]);return n.jsx("span",{...s,children:o})}c.defaultProps={extendedRoundCount:0};export{c as M};
