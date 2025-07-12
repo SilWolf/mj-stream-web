@@ -1,1 +1,0 @@
-import{r as t,u as n,k as a,m as u}from"./index-BMGwXdKL.js";const o=t.createContext("");function m(){const e=t.useContext(o);return n({queryKey:["v2-tournaments",e],queryFn:({queryKey:r})=>u(r[1]),placeholderData:a,enabled:!!e})}export{o as C,m as u};

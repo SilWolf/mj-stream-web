@@ -1,0 +1,2 @@
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/page-BuEm6oFO.js","assets/index-CEiwWyT-.js","assets/index-Cc8sWIJN.css","assets/date.util-fo3H7srN.js","assets/page-C_ud5Laq.js"])))=>i.map(i=>d[i]);
+import{j as t,r as e,_ as r}from"./index-CEiwWyT-.js";const o=e.lazy(()=>r(()=>import("./page-BuEm6oFO.js"),__vite__mapDeps([0,1,2,3]))),s=e.lazy(()=>r(()=>import("./page-C_ud5Laq.js"),__vite__mapDeps([4,1,2])));function u({themeId:a="default"}){switch(a){case"sakura":return t.jsx(o,{})}return t.jsx(s,{})}export{u as default};
