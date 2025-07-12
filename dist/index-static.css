@@ -1,0 +1,55 @@
+@font-face {
+  font-family: 'KurewaGothicCjkTc';
+  src: url('fonts/KurewaGothicCjkTc-Bold.ttf');
+}
+
+@font-face {
+  font-family: 'UDDigiKyokashoN';
+  src: url('fonts/UDDigiKyokashoN-B.ttc');
+}
+
+@font-face {
+  font-family: 'lansui';
+  src: url('fonts/Iansui-Regular.ttf');
+}
+
+@font-face {
+  font-family: 'YuPearl';
+  src: url('fonts/YuPearl-Regular.ttf');
+}
+
+@font-face {
+  font-family: 'ArialNumber';
+  src: url('arial-number.ttf');
+}
+
+@font-face {
+  font-family: 'AdobeZh';
+  src: url('fonts/adobe-zh.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'KdamThmorPro';
+  src: url('fonts/KdamThmorPro-Regular.ttf');
+}
+
+.mahjong-tile {
+  background-image: url('images/mahjong-tiles.png');
+  background-origin: padding-box;
+  background-size: 1100% 600%;
+  width: 100%;
+  aspect-ratio: 5 / 7;
+  height: auto;
+}
+
+.mahjong-tile-v2 {
+  background-image: url('images/mahjong-tiles.png');
+  background-origin: padding-box;
+  background-size: 1100% 600%;
+  background-color: #ff0000;
+  width: 1em;
+  aspect-ratio: 5 / 7;
+  height: auto;
+  font-size: inherit;
+  transform-origin: bottom left;
+}
