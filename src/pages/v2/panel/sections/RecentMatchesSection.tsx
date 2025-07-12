@@ -114,7 +114,7 @@ export default function RecentMatchesSection() {
               </td>
               <td>
                 <Link
-                  href={`/matches/${match.code}/edit?autoSubmit`}
+                  href={`/matches/${match.code}/edit`}
                   className="text-success"
                 >
                   導入至直播系統
